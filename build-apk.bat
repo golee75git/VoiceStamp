@@ -11,9 +11,14 @@ cd android
 call gradlew.bat assembleRelease --no-daemon
 if errorlevel 1 exit /b 1
 cd ..
+
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set STAMP=%%i
+set APK_NAME=VoiceStamp_%STAMP%.apk
+copy /Y "android\app\build\outputs\apk\release\app-release.apk" "%APK_NAME%" >nul
 copy /Y "android\app\build\outputs\apk\release\app-release.apk" "VoiceStamp.apk" >nul
 echo.
-echo [2/3] Done: %~dp0VoiceStamp.apk
+echo [2/3] Done: %~dp0%APK_NAME%
+echo       Also: %~dp0VoiceStamp.apk
 echo [3/3] Install on phone and allow camera/mic permissions.
 goto :eof
 
@@ -23,6 +28,9 @@ cd android
 call gradlew.bat assembleDebug --no-daemon
 if errorlevel 1 exit /b 1
 cd ..
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set STAMP=%%i
+copy /Y "android\app\build\outputs\apk\debug\app-debug.apk" "VoiceStamp-debug_%STAMP%.apk" >nul
 copy /Y "android\app\build\outputs\apk\debug\app-debug.apk" "VoiceStamp-debug.apk" >nul
 echo.
-echo [2/2] Done: %~dp0VoiceStamp-debug.apk
+echo [2/2] Done: %~dp0VoiceStamp-debug_%STAMP%.apk
+echo       Also: %~dp0VoiceStamp-debug.apk

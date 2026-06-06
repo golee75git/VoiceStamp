@@ -242,3 +242,19 @@ restore-speech-append.bat
 ```powershell
 Copy-Item src.pre-speech-append\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 19. PDF 페이지당 사진 수만 되돌리기 (선택)
+
+설정의 PDF 페이지당 사진 수(1~4장) 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-per-page.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-per-page\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-pdf-per-page\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-pdf-per-page\components\SettingsScreen.tsx src\components\ -Force
+```

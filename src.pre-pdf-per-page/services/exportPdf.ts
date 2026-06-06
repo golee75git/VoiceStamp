@@ -4,7 +4,6 @@ import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { resolveImageUri } from './fileService';
-import { getPdfPhotosPerPage, type PdfPhotosPerPage } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -38,67 +37,18 @@ async function readImageAsDataUri(imagePath: string): Promise<string> {
   return `data:image/${ext};base64,${base64}`;
 }
 
-function imageMaxHeight(photosPerPage: PdfPhotosPerPage): string {
-  switch (photosPerPage) {
-    case 1:
-      return '60vh';
-    case 2:
-      return '38vh';
-    case 3:
-      return '28vh';
-    default:
-      return '24vh';
-  }
-}
-
-function buildStampItem(
-  stamp: Stamp,
-  imageDataUri: string,
-  photosPerPage: PdfPhotosPerPage,
-): string {
-  const title = escapeHtml(stamp.title || '(제목 없음)');
-  const memo = escapeHtml(stamp.memo || '(메모 없음)');
-  const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
-  const maxHeight = imageMaxHeight(photosPerPage);
-
-  return `
-      <div class="item">
-        <img src="${imageDataUri}" alt="stamp" style="max-height: ${maxHeight};" />
+function buildHtml(stamps: Stamp[], imageDataUris: string[], documentTitle: string): string {
+  const pages = stamps
+    .map((stamp, i) => {
+      const title = escapeHtml(stamp.title || '(제목 없음)');
+      const memo = escapeHtml(stamp.memo || '(메모 없음)');
+      const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
+      return `
+      <div class="page">
+        <img src="${imageDataUris[i]}" alt="stamp" />
         <h1>${title}</h1>
         <p class="memo">${memo}</p>
         <p class="date">${date}</p>
-      </div>`;
-}
-
-function chunkStamps<T>(items: T[], size: number): T[][] {
-  const pages: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    pages.push(items.slice(i, i + size));
-  }
-  return pages;
-}
-
-function buildHtml(
-  stamps: Stamp[],
-  imageDataUris: string[],
-  documentTitle: string,
-  photosPerPage: PdfPhotosPerPage,
-): string {
-  const stampPages = chunkStamps(
-    stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
-    photosPerPage,
-  );
-
-  const pages = stampPages
-    .map((group) => {
-      const items = group
-        .map(({ stamp, imageDataUri }) => buildStampItem(stamp, imageDataUri, photosPerPage))
-        .join('');
-      return `
-      <div class="page">
-        <div class="grid grid-${photosPerPage}">
-          ${items}
-        </div>
       </div>`;
     })
     .join('');
@@ -110,18 +60,12 @@ function buildHtml(
 <title>${escapeHtml(documentTitle)}</title>
 <style>
   body { font-family: sans-serif; margin: 0; padding: 0; }
-  .page { page-break-after: always; padding: 16px; }
+  .page { page-break-after: always; padding: 24px; text-align: center; }
   .page:last-child { page-break-after: auto; }
-  .grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-  .item { box-sizing: border-box; text-align: center; padding: 8px; }
-  .grid-1 .item { width: 100%; }
-  .grid-2 .item { width: calc(50% - 6px); }
-  .grid-3 .item { width: calc(33.333% - 8px); }
-  .grid-4 .item { width: calc(50% - 6px); }
-  img { max-width: 100%; object-fit: contain; }
-  h1 { font-size: 16px; margin: 8px 0 4px; }
-  .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
-  .date { font-size: 11px; color: #888; margin-top: 6px; }
+  img { max-width: 100%; max-height: 60vh; object-fit: contain; }
+  h1 { font-size: 20px; margin: 16px 0 8px; }
+  .memo { font-size: 14px; color: #444; white-space: pre-wrap; }
+  .date { font-size: 12px; color: #888; margin-top: 12px; }
 </style>
 </head>
 <body>${pages}</body>
@@ -223,12 +167,11 @@ export async function createStampsPdf(stamps: Stamp[], fileName: string): Promis
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const photosPerPage = await getPdfPhotosPerPage();
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageAsDataUri(stamp.imagePath)),
   );
 
-  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage);
+  const html = buildHtml(stamps, imageDataUris, safeName);
 
   if (Platform.OS === 'web') {
     lastWebPrintHtml = html;

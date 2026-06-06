@@ -11,16 +11,10 @@ import {
 } from 'react-native';
 
 import {
-  DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_STAMPS_FOLDER,
-  getPdfPhotosPerPage,
   getStampsFolderName,
-  type PdfPhotosPerPage,
-  setPdfPhotosPerPage,
   setStampsFolderName,
 } from '../services/settingsService';
-
-const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 
 type SettingsScreenProps = {
   onBack: () => void;
@@ -28,9 +22,6 @@ type SettingsScreenProps = {
 
 export function SettingsScreen({ onBack }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
-  const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
-    DEFAULT_PDF_PHOTOS_PER_PAGE,
-  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -38,9 +29,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage] = await Promise.all([getStampsFolderName(), getPdfPhotosPerPage()]);
+        const name = await getStampsFolderName();
         setFolderName(name);
-        setPdfPhotosPerPageState(perPage);
       } finally {
         setLoading(false);
       }
@@ -50,16 +40,9 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const [savedFolder, savedPerPage] = await Promise.all([
-        setStampsFolderName(folderName),
-        setPdfPhotosPerPage(pdfPhotosPerPage),
-      ]);
-      setFolderName(savedFolder);
-      setPdfPhotosPerPageState(savedPerPage);
-      Alert.alert(
-        '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\nPDF는 페이지당 ${savedPerPage}장으로 보냅니다.`,
-      );
+      const saved = await setStampsFolderName(folderName);
+      setFolderName(saved);
+      Alert.alert('저장 완료', `새 사진은 "${saved}" 폴더에 저장됩니다.`);
     } catch (e) {
       Alert.alert(
         '저장 실패',
@@ -72,7 +55,6 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
 
   const handleReset = () => {
     setFolderName(DEFAULT_STAMPS_FOLDER);
-    setPdfPhotosPerPageState(DEFAULT_PDF_PHOTOS_PER_PAGE);
   };
 
   return (
@@ -105,27 +87,6 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
             autoCapitalize="none"
             editable={!saving}
           />
-
-          <Text style={[styles.label, styles.sectionGap]}>PDF 페이지당 사진 수</Text>
-          <Text style={styles.hint}>PDF보내기 시 한 페이지에 배치할 사진 개수입니다.</Text>
-          <View style={styles.optionRow}>
-            {PDF_OPTIONS.map((option) => {
-              const selected = pdfPhotosPerPage === option;
-              return (
-                <Pressable
-                  key={option}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setPdfPhotosPerPageState(option)}
-                  disabled={saving}
-                >
-                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
           <Pressable
             style={[styles.primaryButton, saving && styles.buttonDisabled]}
             onPress={handleSave}
@@ -138,9 +99,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
             )}
           </Pressable>
           <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
-            <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장)
-            </Text>
+            <Text style={styles.secondaryButtonText}>기본값 ({DEFAULT_STAMPS_FOLDER})</Text>
           </Pressable>
         </View>
       )}
@@ -185,9 +144,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
-  sectionGap: {
-    marginTop: 8,
-  },
   hint: {
     fontSize: 14,
     color: '#6b7280',
@@ -208,37 +164,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     color: '#111',
   },
-  optionRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  optionButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  optionButtonSelected: {
-    borderColor: '#2563eb',
-    backgroundColor: '#eff6ff',
-  },
-  optionButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4b5563',
-  },
-  optionButtonTextSelected: {
-    color: '#2563eb',
-  },
   primaryButton: {
     backgroundColor: '#2563eb',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
-    marginTop: 4,
   },
   primaryButtonText: {
     color: '#fff',
@@ -257,8 +187,6 @@ const styles = StyleSheet.create({
     color: '#4b5563',
     fontWeight: '600',
     fontSize: 15,
-    textAlign: 'center',
-    paddingHorizontal: 8,
   },
   buttonDisabled: {
     opacity: 0.6,
