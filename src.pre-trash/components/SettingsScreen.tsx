@@ -23,7 +23,6 @@ import {
   setPdfPhotosPerPage,
   setStampsFolderName,
 } from '../services/settingsService';
-import { emptyTrash, getTrashedStampCount } from '../services/stampTrash';
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
@@ -39,16 +38,9 @@ function pdfQualityLabel(quality: PdfImageQuality): string {
 type SettingsScreenProps = {
   onBack: () => void;
   backLabel?: string;
-  refreshKey?: number;
-  onTrashEmptied?: () => void;
 };
 
-export function SettingsScreen({
-  onBack,
-  backLabel = '목록',
-  refreshKey = 0,
-  onTrashEmptied,
-}: SettingsScreenProps) {
+export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
     DEFAULT_PDF_PHOTOS_PER_PAGE,
@@ -58,63 +50,24 @@ export function SettingsScreen({
   );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [trashCount, setTrashCount] = useState(0);
-  const [emptyingTrash, setEmptyingTrash] = useState(false);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, trashed] = await Promise.all([
+        const [name, perPage, quality] = await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
           getPdfImageQuality(),
-          getTrashedStampCount(),
         ]);
         setFolderName(name);
         setPdfPhotosPerPageState(perPage);
         setPdfImageQualityState(quality);
-        setTrashCount(trashed);
       } finally {
         setLoading(false);
       }
     })();
-  }, [refreshKey]);
-
-  const handleEmptyTrash = () => {
-    if (trashCount === 0) {
-      Alert.alert('휴지통 비우기', '휴지통이 이미 비어 있습니다.');
-      return;
-    }
-
-    Alert.alert(
-      '휴지통 비우기',
-      `${trashCount}개 스탬프를 영구 삭제합니다. 되돌릴 수 없습니다.`,
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '비우기',
-          style: 'destructive',
-          onPress: async () => {
-            setEmptyingTrash(true);
-            try {
-              const removed = await emptyTrash();
-              setTrashCount(0);
-              onTrashEmptied?.();
-              Alert.alert('완료', `${removed}개를 영구 삭제했습니다.`);
-            } catch (e) {
-              Alert.alert(
-                '실패',
-                e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-              );
-            } finally {
-              setEmptyingTrash(false);
-            }
-          },
-        },
-      ],
-    );
-  };
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
@@ -233,22 +186,6 @@ export function SettingsScreen({
             <Text style={styles.secondaryButtonText}>
               기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본)
             </Text>
-          </Pressable>
-
-          <Text style={[styles.label, styles.sectionGap]}>휴지통</Text>
-          <Text style={styles.hint}>
-            휴지통에 {trashCount}개 있습니다. 비우면 사진과 기록이 영구 삭제됩니다.
-          </Text>
-          <Pressable
-            style={[styles.dangerButton, (saving || emptyingTrash) && styles.buttonDisabled]}
-            onPress={handleEmptyTrash}
-            disabled={saving || emptyingTrash}
-          >
-            {emptyingTrash ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.dangerButtonText}>휴지통 비우기</Text>
-            )}
           </Pressable>
         </View>
       )}
@@ -370,16 +307,5 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.6,
-  },
-  dangerButton: {
-    backgroundColor: '#dc2626',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  dangerButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
 });

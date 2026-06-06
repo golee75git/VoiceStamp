@@ -5,7 +5,6 @@ export type Stamp = {
   imagePath: string;
   createdAt: number;
   updatedAt: number;
-  deletedAt?: number | null;
 };
 
 export type StampRow = {
@@ -15,5 +14,4 @@ export type StampRow = {
   image_path: string;
   created_at: number;
   updated_at: number;
-  deleted_at?: number | null;
 };

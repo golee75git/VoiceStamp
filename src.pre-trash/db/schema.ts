@@ -13,14 +13,6 @@ export const CREATE_STAMPS_INDEX = `
   CREATE INDEX IF NOT EXISTS idx_stamps_created_at ON stamps(created_at DESC);
 `;
 
-export const CREATE_STAMPS_TRASH_INDEX = `
-  CREATE INDEX IF NOT EXISTS idx_stamps_deleted_at ON stamps(deleted_at);
-`;
-
-export const ALTER_STAMPS_ADD_DELETED_AT = `
-  ALTER TABLE stamps ADD COLUMN deleted_at INTEGER;
-`;
-
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,

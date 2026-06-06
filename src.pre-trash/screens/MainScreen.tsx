@@ -5,16 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import { CameraScreen } from '../components/CameraScreen';
 import { SettingsScreen } from '../components/SettingsScreen';
 import { StampListScreen } from '../components/StampListScreen';
-import { TrashScreen } from '../components/TrashScreen';
 
-type Screen = 'camera' | 'list' | 'settings' | 'trash';
+type Screen = 'camera' | 'list' | 'settings';
 
 export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
   const [settingsReturnTo, setSettingsReturnTo] = useState<'camera' | 'list'>('list');
   const [refreshKey, setRefreshKey] = useState(0);
-
-  const bumpRefresh = () => setRefreshKey((value) => value + 1);
 
   const openSettings = (returnTo: 'camera' | 'list') => {
     setSettingsReturnTo(returnTo);
@@ -28,28 +25,18 @@ export function MainScreen() {
         <CameraScreen
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => openSettings('camera')}
-          onSaved={bumpRefresh}
+          onSaved={() => setRefreshKey((value) => value + 1)}
         />
       ) : screen === 'settings' ? (
         <SettingsScreen
           onBack={() => setScreen(settingsReturnTo)}
           backLabel={settingsReturnTo === 'camera' ? '카메라' : '목록'}
-          refreshKey={refreshKey}
-          onTrashEmptied={bumpRefresh}
-        />
-      ) : screen === 'trash' ? (
-        <TrashScreen
-          onBack={() => setScreen('list')}
-          refreshKey={refreshKey}
-          onChanged={bumpRefresh}
         />
       ) : (
         <StampListScreen
           onBack={() => setScreen('camera')}
           onOpenSettings={() => openSettings('list')}
-          onOpenTrash={() => setScreen('trash')}
           refreshKey={refreshKey}
-          onChanged={bumpRefresh}
         />
       )}
     </View>

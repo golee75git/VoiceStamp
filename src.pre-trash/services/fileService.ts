@@ -144,15 +144,3 @@ export function resolveImageUri(imagePath: string): string {
 
   return `${FileSystem.documentDirectory ?? ''}${imagePath}`;
 }
-
-export async function deleteStampImage(imagePath: string): Promise<void> {
-  if (Platform.OS === 'web' || isInlineImagePath(imagePath)) {
-    return;
-  }
-
-  const uri = resolveImageUri(imagePath);
-  const info = await FileSystem.getInfoAsync(uri);
-  if (info.exists) {
-    await FileSystem.deleteAsync(uri, { idempotent: true });
-  }
-}

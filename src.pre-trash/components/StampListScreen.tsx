@@ -15,25 +15,16 @@ import {
 import { StampSaveModal } from './StampSaveModal';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
 import { listStamps } from '../services/stampRepository';
-import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
 import type { Stamp } from '../types/stamp';
 
 type StampListScreenProps = {
   onBack: () => void;
   onOpenSettings: () => void;
-  onOpenTrash: () => void;
   refreshKey: number;
-  onChanged: () => void;
 };
 
-export function StampListScreen({
-  onBack,
-  onOpenSettings,
-  onOpenTrash,
-  refreshKey,
-  onChanged,
-}: StampListScreenProps) {
+export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampListScreenProps) {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
@@ -42,7 +33,6 @@ export function StampListScreen({
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfBusy, setPdfBusy] = useState(false);
-  const [deleteBusy, setDeleteBusy] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -159,45 +149,6 @@ export function StampListScreen({
     }
   };
 
-  const handleDeleteSelected = () => {
-    const selected = getSelectedStamps();
-    if (selected.length === 0) {
-      return;
-    }
-
-    Alert.alert(
-      '휴지통으로 이동',
-      `선택한 ${selected.length}개 스탬프를 휴지통으로 옮깁니다.`,
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            setDeleteBusy(true);
-            try {
-              const moved = await moveStampsToTrash([...selectedIds]);
-              if (moved === 0) {
-                Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
-                return;
-              }
-              onChanged();
-              await load();
-              exitSelection();
-            } catch (e) {
-              Alert.alert(
-                '삭제 실패',
-                e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-              );
-            } finally {
-              setDeleteBusy(false);
-            }
-          },
-        },
-      ],
-    );
-  };
-
   const selectedCount = selectedIds.size;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
@@ -281,19 +232,6 @@ export function StampListScreen({
             />
           </View>
         )}
-        {selecting && selectedCount > 0 && (
-          <Pressable
-            style={[styles.deleteButton, (pdfBusy || deleteBusy) && styles.pdfBarButtonDisabled]}
-            onPress={handleDeleteSelected}
-            disabled={pdfBusy || deleteBusy}
-          >
-            {deleteBusy ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.deleteButtonText}>휴지통으로 이동 ({selectedCount})</Text>
-            )}
-          </Pressable>
-        )}
       </View>
 
       <View style={styles.listArea}>
@@ -360,14 +298,9 @@ export function StampListScreen({
         )}
       </View>
 
-      <View style={styles.footerRow}>
-        <Pressable style={styles.footerButton} onPress={onOpenTrash}>
-          <Text style={styles.footerButtonText}>휴지통</Text>
-        </Pressable>
-        <Pressable style={styles.footerButton} onPress={onOpenSettings}>
-          <Text style={styles.footerButtonText}>설정</Text>
-        </Pressable>
-      </View>
+      <Pressable style={styles.settingsFooter} onPress={onOpenSettings}>
+        <Text style={styles.settingsFooterText}>설정</Text>
+      </Pressable>
 
       <StampSaveModal
         visible={editingStamp != null}
@@ -456,18 +389,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     color: '#111',
   },
-  deleteButton: {
-    backgroundColor: '#dc2626',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  deleteButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
   backText: {
     color: '#2563eb',
     fontWeight: '600',
@@ -499,22 +420,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   settingsFooterText: {
-    color: '#2563eb',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  footerRow: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    backgroundColor: '#fff',
-  },
-  footerButton: {
-    flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  footerButtonText: {
     color: '#2563eb',
     fontWeight: '600',
     fontSize: 16,

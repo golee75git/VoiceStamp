@@ -436,3 +436,27 @@ restore-location-fast.bat
 ```powershell
 Copy-Item src.pre-location-fast\services\locationService.ts src\services\ -Force
 ```
+
+## 32. 휴지통 기능만 되돌리기 (선택)
+
+휴지통·소프트 삭제 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-trash.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-trash\db\schema.ts src\db\ -Force
+Copy-Item src.pre-trash\db\database.ts src\db\ -Force
+Copy-Item src.pre-trash\types\stamp.ts src\types\ -Force
+Copy-Item src.pre-trash\services\stampRepository.ts src\services\ -Force
+Copy-Item src.pre-trash\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-trash\screens\MainScreen.tsx src\screens\ -Force
+Copy-Item src.pre-trash\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-trash\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\services\stampTrash.ts, src\components\TrashScreen.tsx -ErrorAction SilentlyContinue
+```
+
+※ DB에 추가된 `deleted_at` 컬럼은 앱 데이터에 남을 수 있습니다. 코드만 이전 동작으로 되돌립니다.
