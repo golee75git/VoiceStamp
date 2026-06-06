@@ -422,3 +422,17 @@ restore-keyboard-scroll.bat
 Copy-Item src.pre-keyboard-scroll\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-keyboard-scroll\components\VoiceInputField.tsx src\components\ -Force
 ```
+
+## 31. GPS 캐시·타임아웃만 되돌리기 (선택)
+
+`getLastKnownPositionAsync` + GPS 타임아웃 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-fast.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-fast\services\locationService.ts src\services\ -Force
+```
