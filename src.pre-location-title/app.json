@@ -33,13 +33,7 @@
       ],
       "expo-sqlite",
       "expo-speech-recognition",
-      "expo-sharing",
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "제목에 위치를 넣기 위해 위치 접근이 필요합니다."
-        }
-      ]
+      "expo-sharing"
     ]
   }
 }

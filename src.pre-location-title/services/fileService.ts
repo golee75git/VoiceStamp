@@ -14,20 +14,10 @@ function isInlineImagePath(imagePath: string): boolean {
   );
 }
 
-function sanitizePlaceForTitle(place: string): string {
-  return place
-    .trim()
-    .replace(/[\\/:*?"<>|]/g, '_')
-    .replace(/\s+/g, '')
-    .replace(/_+/g, '_');
-}
-
-export function formatDefaultStampTitle(timestamp: number, place?: string): string {
+export function formatDefaultStampTitle(timestamp: number): string {
   const date = new Date(timestamp);
   const pad = (value: number) => String(value).padStart(2, '0');
-  const dateTime = `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
-  const placePart = place ? sanitizePlaceForTitle(place) : '';
-  return placePart ? `${dateTime}_${placePart}` : dateTime;
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
 }
 
 export function sanitizeStampFileBaseName(name: string): string {

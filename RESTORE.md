@@ -304,3 +304,22 @@ restore-pdf-save.bat
 ```powershell
 Copy-Item src.pre-pdf-save\services\exportPdf.ts src\services\ -Force
 ```
+
+## 23. 제목 위치(카카오) 자동 입력만 되돌리기 (선택)
+
+카카오 역지오코딩으로 제목에 위치를 넣는 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-title.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-title\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-location-title\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-location-title\app.json . -Force
+Copy-Item src.pre-location-title\package.json . -Force
+Remove-Item src\services\kakaoLocal.ts, src\services\locationService.ts -ErrorAction SilentlyContinue
+npm install
+```

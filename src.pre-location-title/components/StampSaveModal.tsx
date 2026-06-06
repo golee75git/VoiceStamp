@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 
 import { useSpeechInput } from '../hooks/useSpeechInput';
-import { formatDefaultStampTitle } from '../services/fileService';
-import { getCurrentPlaceLabel } from '../services/locationService';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import type { Stamp } from '../types/stamp';
 import { VoiceInputField } from './VoiceInputField';
@@ -52,7 +50,6 @@ export function StampSaveModal({
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
-  const titleTouchedRef = useRef(false);
 
   useEffect(() => {
     speechTargetRef.current = speechTarget;
@@ -79,41 +76,12 @@ export function StampSaveModal({
       setSaving(false);
       setError(null);
       setSpeechTarget(null);
-      titleTouchedRef.current = false;
       stop();
     } else if (stamp) {
       setTitle(stamp.title);
       setMemo(stamp.memo);
-      titleTouchedRef.current = true;
     }
   }, [visible, stamp, stop]);
-
-  useEffect(() => {
-    if (!visible || isEdit || !imageUri) {
-      return;
-    }
-
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const place = await getCurrentPlaceLabel();
-        if (cancelled || titleTouchedRef.current) {
-          return;
-        }
-        setTitle(formatDefaultStampTitle(Date.now(), place ?? undefined));
-      } catch {
-        if (cancelled || titleTouchedRef.current) {
-          return;
-        }
-        setTitle(formatDefaultStampTitle(Date.now()));
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [visible, isEdit, imageUri]);
 
   const handleMicPress = async (target: SpeechTarget) => {
     if (listening && speechTarget === target) {
@@ -123,7 +91,6 @@ export function StampSaveModal({
     }
 
     if (target === 'title') {
-      titleTouchedRef.current = true;
       speechBaseRef.current.title = title;
     } else if (target === 'memo') {
       speechBaseRef.current.memo = memo;
@@ -182,10 +149,7 @@ export function StampSaveModal({
           <VoiceInputField
             label="제목"
             value={title}
-            onChangeText={(text) => {
-              titleTouchedRef.current = true;
-              setTitle(text);
-            }}
+            onChangeText={setTitle}
             onMicPress={() => handleMicPress('title')}
             listening={listening && speechTarget === 'title'}
             speechAvailable={available}
