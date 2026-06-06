@@ -8,7 +8,6 @@ type VoiceInputFieldProps = {
   listening: boolean;
   multiline?: boolean;
   speechAvailable?: boolean;
-  onFocus?: () => void;
 };
 
 export function VoiceInputField({
@@ -19,7 +18,6 @@ export function VoiceInputField({
   listening,
   multiline = false,
   speechAvailable = true,
-  onFocus,
 }: VoiceInputFieldProps) {
   return (
     <View style={styles.field}>
@@ -37,7 +35,6 @@ export function VoiceInputField({
         style={[styles.input, multiline && styles.inputMultiline]}
         value={value}
         onChangeText={onChangeText}
-        onFocus={onFocus}
         placeholder={`${label} 입력`}
         multiline={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}

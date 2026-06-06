@@ -407,3 +407,18 @@ restore-location-loading.bat
 ```powershell
 Copy-Item src.pre-location-loading\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 30. 저장 모달 키보드 스크롤만 되돌리기 (선택)
+
+키보드 올릴 때 메모 필드 스크롤 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-keyboard-scroll.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-keyboard-scroll\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-keyboard-scroll\components\VoiceInputField.tsx src\components\ -Force
+```

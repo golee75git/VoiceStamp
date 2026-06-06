@@ -57,13 +57,6 @@ export function StampSaveModal({
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
-  const scrollRef = useRef<ScrollView>(null);
-
-  const scrollFieldIntoView = () => {
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-  };
 
   useEffect(() => {
     speechTargetRef.current = speechTarget;
@@ -191,70 +184,57 @@ export function StampSaveModal({
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        style={styles.overlay}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
-      >
-        <ScrollView
-          ref={scrollRef}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.scrollContent}
-          style={styles.scroll}
-          bounces={false}
-        >
-          <View style={styles.card}>
-            <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
+      <View style={styles.overlay}>
+        <View style={styles.card}>
+          <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
-            ) : null}
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
+          ) : null}
 
-            <View>
-              <VoiceInputField
-                label="제목"
-                value={title}
-                onChangeText={(text) => {
-                  titleTouchedRef.current = true;
-                  setTitle(text);
-                }}
-                onMicPress={() => handleMicPress('title')}
-                listening={listening && speechTarget === 'title'}
-                speechAvailable={available}
-                onFocus={scrollFieldIntoView}
-              />
-              {!isEdit && locationLoading ? (
-                <Text style={styles.locationHint}>위치 확인 중…</Text>
-              ) : null}
-            </View>
-
+          <View>
             <VoiceInputField
-              label="메모"
-              value={memo}
-              onChangeText={setMemo}
-              onMicPress={() => handleMicPress('memo')}
-              listening={listening && speechTarget === 'memo'}
+              label="제목"
+              value={title}
+              onChangeText={(text) => {
+                titleTouchedRef.current = true;
+                setTitle(text);
+              }}
+              onMicPress={() => handleMicPress('title')}
+              listening={listening && speechTarget === 'title'}
               speechAvailable={available}
-              multiline
-              onFocus={scrollFieldIntoView}
             />
-
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-
-            <View style={styles.actions}>
-              <Pressable style={styles.cancelButton} onPress={onClose} disabled={saving}>
-                <Text style={styles.cancelText}>취소</Text>
-              </Pressable>
-              <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
-                {saving ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.saveText}>{isEdit ? '수정' : '저장'}</Text>
-                )}
-              </Pressable>
-            </View>
+            {!isEdit && locationLoading ? (
+              <Text style={styles.locationHint}>위치 확인 중…</Text>
+            ) : null}
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          <VoiceInputField
+            label="메모"
+            value={memo}
+            onChangeText={setMemo}
+            onMicPress={() => handleMicPress('memo')}
+            listening={listening && speechTarget === 'memo'}
+            speechAvailable={available}
+            multiline
+          />
+
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <View style={styles.actions}>
+            <Pressable style={styles.cancelButton} onPress={onClose} disabled={saving}>
+              <Text style={styles.cancelText}>취소</Text>
+            </Pressable>
+            <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
+              {saving ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.saveText}>{isEdit ? '수정' : '저장'}</Text>
+              )}
+            </Pressable>
+          </View>
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -265,20 +245,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
   },
-  scroll: {
-    maxHeight: '90%',
-    width: '100%',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-  },
   card: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
     gap: 14,
+    maxHeight: '90%',
   },
   heading: {
     fontSize: 18,
