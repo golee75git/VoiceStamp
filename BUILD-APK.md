@@ -179,7 +179,9 @@ Metro/이전 Expo 프로세스 종료 후 재시작. APK 빌드와는 무관.
 
 | 파일 | 역할 |
 |------|------|
-| `build-apk.bat` | Release/Debug APK 빌드 |
+| `build-apk.bat` | Release/Debug APK 빌드 (`VoiceStamp_YYYYMMDD_HHmmss.apk`) |
 | `eas.json` | EAS 클라우드 빌드용 (로컬 대안) |
 | `android/gradle.properties` | arm64 단일 아키텍처 등 |
-| `RESTORE.md` | 전체/부분 복구 |
+| `RESTORE.md` | 전체/부분 복구 (§8~36) |
+| `docs/PROJECT.md` | 빌드·APK·커밋 이력 |
+| `docs/PRD.md` | 제품 요구사항 |
