@@ -2,14 +2,11 @@ import { getDatabase } from '../db/database';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
-const PDF_IMAGE_QUALITY_KEY = 'pdf_image_quality';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
-export const DEFAULT_PDF_IMAGE_QUALITY = 'original' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
-export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 
 export function sanitizeStampsFolderName(name: string): string {
   const cleaned = name
@@ -83,25 +80,4 @@ export async function setPdfPhotosPerPage(count: number): Promise<PdfPhotosPerPa
   const safeCount = sanitizePdfPhotosPerPage(count);
   await writeSetting(PDF_PHOTOS_PER_PAGE_KEY, String(safeCount));
   return safeCount;
-}
-
-export function sanitizePdfImageQuality(value: string): PdfImageQuality {
-  if (value === 'standard' || value === 'compressed') {
-    return value;
-  }
-  return 'original';
-}
-
-export async function getPdfImageQuality(): Promise<PdfImageQuality> {
-  const value = await readSetting(PDF_IMAGE_QUALITY_KEY);
-  if (!value) {
-    return DEFAULT_PDF_IMAGE_QUALITY;
-  }
-  return sanitizePdfImageQuality(value);
-}
-
-export async function setPdfImageQuality(quality: PdfImageQuality): Promise<PdfImageQuality> {
-  const safeQuality = sanitizePdfImageQuality(quality);
-  await writeSetting(PDF_IMAGE_QUALITY_KEY, safeQuality);
-  return safeQuality;
 }

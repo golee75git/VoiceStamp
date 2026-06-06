@@ -360,3 +360,22 @@ restore-camera-resolution.bat
 Copy-Item src.pre-camera-resolution\components\CameraScreen.tsx src\components\ -Force
 Remove-Item src\utils\cameraPictureSize.ts -ErrorAction SilentlyContinue
 ```
+
+## 27. PDF 화질(원본/표준/압축)만 되돌리기 (선택)
+
+PDF 이미지 압축 옵션 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-quality.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-quality\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-pdf-quality\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-pdf-quality\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-pdf-quality\package.json package.json -Force
+Remove-Item src\services\pdfImageForExport.ts -ErrorAction SilentlyContinue
+npm install
+```

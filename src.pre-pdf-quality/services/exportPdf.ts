@@ -3,8 +3,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
-import { readImageDataUriForPdf } from './pdfImageForExport';
-import { getPdfImageQuality, getPdfPhotosPerPage, type PdfPhotosPerPage } from './settingsService';
+import { resolveImageUri } from './fileService';
+import { getPdfPhotosPerPage, type PdfPhotosPerPage } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -23,6 +23,19 @@ function escapeHtml(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+async function readImageAsDataUri(imagePath: string): Promise<string> {
+  if (imagePath.startsWith('data:')) {
+    return imagePath;
+  }
+
+  const uri = resolveImageUri(imagePath);
+  const ext = imagePath.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return `data:image/${ext};base64,${base64}`;
 }
 
 function imageMaxHeight(photosPerPage: PdfPhotosPerPage): string {
@@ -223,12 +236,9 @@ export async function createStampsPdf(stamps: Stamp[], fileName: string): Promis
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality] = await Promise.all([
-    getPdfPhotosPerPage(),
-    getPdfImageQuality(),
-  ]);
+  const photosPerPage = await getPdfPhotosPerPage();
   const imageDataUris = await Promise.all(
-    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
+    stamps.map((stamp) => readImageAsDataUri(stamp.imagePath)),
   );
 
   const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage);

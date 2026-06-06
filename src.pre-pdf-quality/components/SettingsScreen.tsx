@@ -11,29 +11,16 @@ import {
 } from 'react-native';
 
 import {
-  DEFAULT_PDF_IMAGE_QUALITY,
   DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_STAMPS_FOLDER,
-  getPdfImageQuality,
   getPdfPhotosPerPage,
   getStampsFolderName,
-  type PdfImageQuality,
   type PdfPhotosPerPage,
-  setPdfImageQuality,
   setPdfPhotosPerPage,
   setStampsFolderName,
 } from '../services/settingsService';
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
-const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
-  { value: 'original', label: '원본' },
-  { value: 'standard', label: '표준' },
-  { value: 'compressed', label: '압축' },
-];
-
-function pdfQualityLabel(quality: PdfImageQuality): string {
-  return PDF_QUALITY_OPTIONS.find((option) => option.value === quality)?.label ?? '원본';
-}
 
 type SettingsScreenProps = {
   onBack: () => void;
@@ -45,9 +32,6 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
     DEFAULT_PDF_PHOTOS_PER_PAGE,
   );
-  const [pdfImageQuality, setPdfImageQualityState] = useState<PdfImageQuality>(
-    DEFAULT_PDF_IMAGE_QUALITY,
-  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -55,14 +39,9 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality] = await Promise.all([
-          getStampsFolderName(),
-          getPdfPhotosPerPage(),
-          getPdfImageQuality(),
-        ]);
+        const [name, perPage] = await Promise.all([getStampsFolderName(), getPdfPhotosPerPage()]);
         setFolderName(name);
         setPdfPhotosPerPageState(perPage);
-        setPdfImageQualityState(quality);
       } finally {
         setLoading(false);
       }
@@ -72,17 +51,15 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
   const handleSave = async () => {
     setSaving(true);
     try {
-      const [savedFolder, savedPerPage, savedQuality] = await Promise.all([
+      const [savedFolder, savedPerPage] = await Promise.all([
         setStampsFolderName(folderName),
         setPdfPhotosPerPage(pdfPhotosPerPage),
-        setPdfImageQuality(pdfImageQuality),
       ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
-      setPdfImageQualityState(savedQuality);
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}으로 보냅니다.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\nPDF는 페이지당 ${savedPerPage}장으로 보냅니다.`,
       );
     } catch (e) {
       Alert.alert(
@@ -97,7 +74,6 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
   const handleReset = () => {
     setFolderName(DEFAULT_STAMPS_FOLDER);
     setPdfPhotosPerPageState(DEFAULT_PDF_PHOTOS_PER_PAGE);
-    setPdfImageQualityState(DEFAULT_PDF_IMAGE_QUALITY);
   };
 
   return (
@@ -151,26 +127,6 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>PDF 화질(용량)</Text>
-          <Text style={styles.hint}>PDF보내기 시 사진 압축 수준입니다. 원본 스탬프 사진은 바뀌지 않습니다.</Text>
-          <View style={styles.optionRow}>
-            {PDF_QUALITY_OPTIONS.map((option) => {
-              const selected = pdfImageQuality === option.value;
-              return (
-                <Pressable
-                  key={option.value}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setPdfImageQualityState(option.value)}
-                  disabled={saving}
-                >
-                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
           <Pressable
             style={[styles.primaryButton, saving && styles.buttonDisabled]}
             onPress={handleSave}
@@ -184,7 +140,7 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
           </Pressable>
           <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
             <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본)
+              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장)
             </Text>
           </Pressable>
         </View>
