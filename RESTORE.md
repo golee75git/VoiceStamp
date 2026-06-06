@@ -323,3 +323,11 @@ Copy-Item src.pre-location-title\package.json . -Force
 Remove-Item src\services\kakaoLocal.ts, src\services\locationService.ts -ErrorAction SilentlyContinue
 npm install
 ```
+
+## 24. .env gitignore만 되돌리기 (선택)
+
+`.env` gitignore 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-env-gitignore.bat
+```
