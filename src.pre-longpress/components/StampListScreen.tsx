@@ -250,8 +250,6 @@ export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampLis
               <Pressable
                 style={[styles.card, selecting && isSelected && styles.cardSelected]}
                 onPress={() => handleCardPress(item)}
-                onLongPress={() => handleCardLongPress(item)}
-                delayLongPress={400}
               >
                 {selecting && (
                   <View style={styles.checkbox}>
