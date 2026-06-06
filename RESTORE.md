@@ -480,3 +480,17 @@ npm install
 ```
 
 ※ `expo-media-library` 제거 후 APK 재빌드가 필요할 수 있습니다.
+
+## 34. PDF 원본 화질 상한만 되돌리기 (선택)
+
+PDF 「원본」 화질 HTML 크기 상한 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-original-cap.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-original-cap\services\pdfImageForExport.ts src\services\ -Force
+```

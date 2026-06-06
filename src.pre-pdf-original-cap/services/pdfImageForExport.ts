@@ -10,15 +10,14 @@ type PdfImageProfile = {
   compress: number;
 };
 
-function getProfile(quality: PdfImageQuality): PdfImageProfile {
+function getProfile(quality: PdfImageQuality): PdfImageProfile | null {
   switch (quality) {
     case 'standard':
       return { maxWidth: 1600, compress: 0.75 };
     case 'compressed':
       return { maxWidth: 1024, compress: 0.55 };
     default:
-      // PDF HTML embed only; on-disk stamp photos stay full resolution.
-      return { maxWidth: 2400, compress: 0.92 };
+      return null;
   }
 }
 
@@ -96,6 +95,9 @@ export async function readImageDataUriForPdf(
   quality: PdfImageQuality,
 ): Promise<string> {
   const profile = getProfile(quality);
+  if (!profile) {
+    return readOriginalDataUri(imagePath);
+  }
 
   if (imagePath.startsWith('data:')) {
     return dataUriToJpegDataUri(imagePath, profile);
