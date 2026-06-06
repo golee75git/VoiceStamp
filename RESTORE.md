@@ -258,3 +258,19 @@ Copy-Item src.pre-pdf-per-page\services\settingsService.ts src\services\ -Force
 Copy-Item src.pre-pdf-per-page\services\exportPdf.ts src\services\ -Force
 Copy-Item src.pre-pdf-per-page\components\SettingsScreen.tsx src\components\ -Force
 ```
+
+## 20. 사진 파일명(제목 기반)만 되돌리기 (선택)
+
+사진 파일명을 제목·날짜시간 기반으로 저장하는 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-filename.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-filename\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-stamp-filename\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-stamp-filename\services\stampRepository.ts src\services\ -Force
+```
