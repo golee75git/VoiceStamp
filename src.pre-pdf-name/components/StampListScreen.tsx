@@ -7,7 +7,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -29,7 +28,6 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [pdfUri, setPdfUri] = useState<string | null>(null);
-  const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfBusy, setPdfBusy] = useState(false);
 
   const load = useCallback(async () => {
@@ -46,21 +44,10 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
     load();
   }, [load, refreshKey]);
 
-  useEffect(() => {
-    if (!selecting || selectedIds.size === 0) {
-      return;
-    }
-
-    const selected = stamps.filter((s) => selectedIds.has(s.id));
-    const defaultName = selected[0]?.title?.trim() || 'VoiceStamp';
-    setPdfFileName(defaultName);
-  }, [selectedIds, stamps, selecting]);
-
   const exitSelection = () => {
     setSelecting(false);
     setSelectedIds(new Set());
     setPdfUri(null);
-    setPdfFileName('VoiceStamp');
   };
 
   const toggleSelect = (id: string) => {
@@ -92,7 +79,7 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
 
     setPdfBusy(true);
     try {
-      const uri = await createStampsPdf(selected, pdfFileName);
+      const uri = await createStampsPdf(selected);
       setPdfUri(uri);
       Alert.alert('PDF 생성 완료', '저장 또는 공유 버튼을 눌러주세요.');
     } catch (e) {
@@ -110,7 +97,7 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
 
     setPdfBusy(true);
     try {
-      await savePdf(pdfUri, pdfFileName);
+      await savePdf(pdfUri);
     } catch (e) {
       Alert.alert(
         'PDF 저장 실패',
@@ -126,7 +113,7 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
 
     setPdfBusy(true);
     try {
-      await sharePdf(pdfUri, pdfFileName);
+      await sharePdf(pdfUri);
     } catch (e) {
       Alert.alert(
         'PDF 공유 실패',
@@ -203,18 +190,6 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
                 공유
               </Text>
             </Pressable>
-          </View>
-        )}
-        {selecting && selectedCount > 0 && (
-          <View style={styles.pdfNameRow}>
-            <Text style={styles.pdfNameLabel}>PDF 파일명</Text>
-            <TextInput
-              style={styles.pdfNameInput}
-              value={pdfFileName}
-              onChangeText={setPdfFileName}
-              placeholder="VoiceStamp"
-              editable={!pdfBusy}
-            />
           </View>
         )}
       </View>
@@ -339,25 +314,6 @@ const styles = StyleSheet.create({
   },
   pdfBarButtonTextDisabled: {
     color: '#9ca3af',
-  },
-  pdfNameRow: {
-    gap: 4,
-    marginTop: 4,
-  },
-  pdfNameLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#4b5563',
-  },
-  pdfNameInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#111',
   },
   backText: {
     color: '#2563eb',

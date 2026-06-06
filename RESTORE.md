@@ -63,7 +63,7 @@ npm install
 | 구분 | 내용 |
 |------|------|
 | 수정 | `App.tsx`, `app.json`, `package.json` |
-| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `src.pre-web-fs/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `restore-web-fs.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
+| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `src.pre-web-fs/`, `src.pre-web-pdf/`, `src.pre-pdf-name/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `restore-web-fs.bat`, `restore-web-pdf.bat`, `restore-pdf-name.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
 | 미변경 | `app.json`, `index.ts`, DB 스키마, 카메라 화면 등 수정 기능 외 코드 |
 
 ## 8. 앱 아이콘 되돌리기 (선택)
@@ -150,4 +150,33 @@ restore-web-fs.bat
 ```powershell
 Copy-Item src.pre-web-fs\services\fileService.ts src\services\ -Force
 Copy-Item src.pre-web-fs\services\exportPdf.ts src\services\ -Force
+```
+
+## 13. 웹 PDF 사진 출력만 되돌리기 (선택)
+
+Vercel 웹 PDF 사진 출력 지원 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-web-pdf.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-web-pdf\services\exportPdf.ts src\services\ -Force
+```
+
+## 14. PDF 파일명 기능만 되돌리기 (선택)
+
+PDF 기본 파일명(첫 사진 제목) 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-name.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-name\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-pdf-name\services\exportPdf.ts src\services\ -Force
 ```
