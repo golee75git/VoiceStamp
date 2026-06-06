@@ -10,13 +10,7 @@ type Screen = 'camera' | 'list' | 'settings';
 
 export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
-  const [settingsReturnTo, setSettingsReturnTo] = useState<'camera' | 'list'>('list');
   const [refreshKey, setRefreshKey] = useState(0);
-
-  const openSettings = (returnTo: 'camera' | 'list') => {
-    setSettingsReturnTo(returnTo);
-    setScreen('settings');
-  };
 
   return (
     <View style={styles.container}>
@@ -24,18 +18,14 @@ export function MainScreen() {
       {screen === 'camera' ? (
         <CameraScreen
           onOpenList={() => setScreen('list')}
-          onOpenSettings={() => openSettings('camera')}
           onSaved={() => setRefreshKey((value) => value + 1)}
         />
       ) : screen === 'settings' ? (
-        <SettingsScreen
-          onBack={() => setScreen(settingsReturnTo)}
-          backLabel={settingsReturnTo === 'camera' ? '카메라' : '목록'}
-        />
+        <SettingsScreen onBack={() => setScreen('list')} />
       ) : (
         <StampListScreen
           onBack={() => setScreen('camera')}
-          onOpenSettings={() => openSettings('list')}
+          onOpenSettings={() => setScreen('settings')}
           refreshKey={refreshKey}
         />
       )}

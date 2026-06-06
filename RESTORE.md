@@ -274,3 +274,19 @@ Copy-Item src.pre-stamp-filename\services\fileService.ts src\services\ -Force
 Copy-Item src.pre-stamp-filename\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-stamp-filename\services\stampRepository.ts src\services\ -Force
 ```
+
+## 21. 카메라 화면 설정 버튼만 되돌리기 (선택)
+
+카메라 화면 상단 설정 버튼 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-settings.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-settings\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-settings\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-settings\screens\MainScreen.tsx src\screens\ -Force
+```

@@ -24,10 +24,9 @@ const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 
 type SettingsScreenProps = {
   onBack: () => void;
-  backLabel?: string;
 };
 
-export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenProps) {
+export function SettingsScreen({ onBack }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
     DEFAULT_PDF_PHOTOS_PER_PAGE,
@@ -80,7 +79,7 @@ export function SettingsScreen({ onBack, backLabel = '목록' }: SettingsScreenP
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={onBack}>
-          <Text style={styles.backText}>← {backLabel}</Text>
+          <Text style={styles.backText}>← 목록</Text>
         </Pressable>
         <Text style={styles.title}>설정</Text>
       </View>

@@ -6,11 +6,10 @@ import { StampSaveModal } from './StampSaveModal';
 
 type CameraScreenProps = {
   onOpenList: () => void;
-  onOpenSettings: () => void;
   onSaved: () => void;
 };
 
-export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScreenProps) {
+export function CameraScreen({ onOpenList, onSaved }: CameraScreenProps) {
   const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
@@ -61,11 +60,8 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
       <CameraView ref={cameraRef} style={styles.camera} facing="back" />
 
       <View style={styles.topBar}>
-        <Pressable style={styles.topButton} onPress={onOpenSettings}>
-          <Text style={styles.topButtonText}>설정</Text>
-        </Pressable>
-        <Pressable style={styles.topButton} onPress={onOpenList}>
-          <Text style={styles.topButtonText}>목록</Text>
+        <Pressable style={styles.listButton} onPress={onOpenList}>
+          <Text style={styles.listButtonText}>목록</Text>
         </Pressable>
       </View>
 
@@ -126,19 +122,15 @@ const styles = StyleSheet.create({
   topBar: {
     position: 'absolute',
     top: 48,
-    left: 20,
     right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
   },
-  topButton: {
+  listButton: {
     backgroundColor: 'rgba(0,0,0,0.45)',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
   },
-  topButtonText: {
+  listButtonText: {
     color: '#fff',
     fontWeight: '600',
   },
