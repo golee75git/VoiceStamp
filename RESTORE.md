@@ -63,7 +63,7 @@ npm install
 | 구분 | 내용 |
 |------|------|
 | 수정 | `App.tsx`, `app.json`, `package.json` |
-| 추가 | `src/`, `src.pre-edit/`, `restore-edit.bat`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `app.json.pre-eas`, `eas.json` |
+| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
 | 미변경 | `app.json`, `index.ts`, DB 스키마, 카메라 화면 등 수정 기능 외 코드 |
 
 ## 8. 앱 아이콘 되돌리기 (선택)
@@ -101,3 +101,38 @@ Copy-Item src.pre-edit\services\stampRepository.ts src\services\ -Force
 ```
 
 되돌린 뒤 APK에 반영하려면 `build-apk.bat`으로 다시 빌드하세요.
+
+## 10. PDF보내기 기능만 되돌리기 (선택)
+
+저장 목록 PDF보내기 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\services\exportPdf.ts -ErrorAction SilentlyContinue
+Copy-Item package.json.pre-pdf package.json -Force
+npm install
+```
+
+되돌린 뒤 APK에 반영하려면 `build-apk.bat`으로 다시 빌드하세요.
+
+## 11. Vercel 웹 배포 설정만 되돌리기 (선택)
+
+Vercel 배포 설정 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-vercel.bat
+```
+
+또는:
+
+```powershell
+Copy-Item package.json.pre-vercel package.json -Force
+Remove-Item vercel.json -ErrorAction SilentlyContinue
+Remove-Item metro.config.js -ErrorAction SilentlyContinue
+```

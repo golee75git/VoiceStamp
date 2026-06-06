@@ -94,6 +94,14 @@ adb install -r C:\VoiceStamp\VoiceStamp.apk
 build-apk.bat
 ```
 
+### PDF보내기 의존성 추가 (`expo-print`, `expo-sharing`)
+
+네이티브 모듈이 추가되므로 APK 재빌드가 필요합니다.
+
+```bat
+build-apk.bat
+```
+
 ### `assets/` 아이콘 변경
 
 ```bat
@@ -162,6 +170,7 @@ Metro/이전 Expo 프로세스 종료 후 재시작. APK 빌드와는 무관.
 |------|------|
 | APK 빌드 설정 전체 | `RESTORE.md` **섹션 6** |
 | 목록 수정 기능만 | `restore-edit.bat` 또는 **섹션 9** |
+| PDF보내기만 | `restore-pdf.bat` 또는 **섹션 10** |
 | 아이콘만 | `restore-icon.bat` 또는 **섹션 8** |
 
 ---

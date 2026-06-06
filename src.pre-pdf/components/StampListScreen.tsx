@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import { StampSaveModal } from './StampSaveModal';
-import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
+import { exportStampsToPdf } from '../services/exportPdf';
 import { listStamps } from '../services/stampRepository';
 import { resolveImageUri } from '../services/fileService';
 import type { Stamp } from '../types/stamp';
@@ -27,8 +27,7 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [pdfUri, setPdfUri] = useState<string | null>(null);
-  const [pdfBusy, setPdfBusy] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -47,11 +46,9 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
   const exitSelection = () => {
     setSelecting(false);
     setSelectedIds(new Set());
-    setPdfUri(null);
   };
 
   const toggleSelect = (id: string) => {
-    setPdfUri(null);
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -63,8 +60,6 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
     });
   };
 
-  const getSelectedStamps = () => stamps.filter((s) => selectedIds.has(s.id));
-
   const handleCardPress = (item: Stamp) => {
     if (selecting) {
       toggleSelect(item.id);
@@ -73,54 +68,21 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
     }
   };
 
-  const handleCreatePdf = async () => {
-    const selected = getSelectedStamps();
+  const handleExportPdf = async () => {
+    const selected = stamps.filter((s) => selectedIds.has(s.id));
     if (selected.length === 0) return;
 
-    setPdfBusy(true);
+    setExporting(true);
     try {
-      const uri = await createStampsPdf(selected);
-      setPdfUri(uri);
-      Alert.alert('PDF 생성 완료', '저장 또는 공유 버튼을 눌러주세요.');
+      await exportStampsToPdf(selected);
+      exitSelection();
     } catch (e) {
       Alert.alert(
-        'PDF 생성 실패',
+        'PDF보내기 실패',
         e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
       );
     } finally {
-      setPdfBusy(false);
-    }
-  };
-
-  const handleSavePdf = async () => {
-    if (!pdfUri) return;
-
-    setPdfBusy(true);
-    try {
-      await savePdf(pdfUri);
-    } catch (e) {
-      Alert.alert(
-        'PDF 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setPdfBusy(false);
-    }
-  };
-
-  const handleSharePdf = async () => {
-    if (!pdfUri) return;
-
-    setPdfBusy(true);
-    try {
-      await sharePdf(pdfUri);
-    } catch (e) {
-      Alert.alert(
-        'PDF 공유 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setPdfBusy(false);
+      setExporting(false);
     }
   };
 
@@ -135,9 +97,26 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
         <View style={styles.headerRow}>
           <Text style={styles.title}>저장 목록</Text>
           {selecting ? (
-            <Pressable onPress={exitSelection}>
-              <Text style={styles.actionText}>취소</Text>
-            </Pressable>
+            <View style={styles.headerActions}>
+              <Pressable onPress={exitSelection}>
+                <Text style={styles.actionText}>취소</Text>
+              </Pressable>
+              {selectedCount > 0 && (
+                <Pressable
+                  style={styles.pdfButton}
+                  onPress={handleExportPdf}
+                  disabled={exporting}
+                >
+                  {exporting ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.pdfButtonText}>
+                      PDF 만들기 ({selectedCount})
+                    </Text>
+                  )}
+                </Pressable>
+              )}
+            </View>
           ) : (
             stamps.length > 0 && (
               <Pressable onPress={() => setSelecting(true)}>
@@ -146,52 +125,6 @@ export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
             )
           )}
         </View>
-        {selecting && selectedCount > 0 && (
-          <View style={styles.pdfBar}>
-            <Pressable
-              style={styles.pdfBarButton}
-              onPress={handleCreatePdf}
-              disabled={pdfBusy}
-            >
-              {pdfBusy && !pdfUri ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>PDF 만들기</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, !pdfUri && styles.pdfBarButtonDisabled]}
-              onPress={handleSavePdf}
-              disabled={!pdfUri || pdfBusy}
-            >
-              <Text
-                style={[
-                  styles.pdfBarButtonText,
-                  !pdfUri && styles.pdfBarButtonTextDisabled,
-                ]}
-              >
-                저장
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.pdfBarButtonPrimary,
-                !pdfUri && styles.pdfBarButtonDisabled,
-              ]}
-              onPress={handleSharePdf}
-              disabled={!pdfUri || pdfBusy}
-            >
-              <Text
-                style={[
-                  styles.pdfBarButtonPrimaryText,
-                  !pdfUri && styles.pdfBarButtonTextDisabled,
-                ]}
-              >
-                공유
-              </Text>
-            </Pressable>
-          </View>
-        )}
       </View>
 
       {loading ? (
@@ -278,42 +211,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 12,
   },
-  pdfBar: {
+  headerActions: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
-  pdfBarButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#2563eb',
-    borderRadius: 8,
-    paddingVertical: 10,
     alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  pdfBarButtonPrimary: {
-    flex: 1,
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  pdfBarButtonDisabled: {
-    opacity: 0.45,
-  },
-  pdfBarButtonText: {
-    color: '#2563eb',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  pdfBarButtonPrimaryText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  pdfBarButtonTextDisabled: {
-    color: '#9ca3af',
+    gap: 12,
   },
   backText: {
     color: '#2563eb',
@@ -329,6 +230,19 @@ const styles = StyleSheet.create({
     color: '#2563eb',
     fontWeight: '600',
     fontSize: 15,
+  },
+  pdfButton: {
+    backgroundColor: '#2563eb',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    minWidth: 120,
+    alignItems: 'center',
+  },
+  pdfButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
   },
   centered: {
     flex: 1,
