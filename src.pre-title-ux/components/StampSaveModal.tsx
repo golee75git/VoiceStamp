@@ -94,11 +94,6 @@ export function StampSaveModal({
     }
 
     let cancelled = false;
-    const capturedAt = Date.now();
-
-    if (!titleTouchedRef.current) {
-      setTitle(formatDefaultStampTitle(capturedAt));
-    }
 
     (async () => {
       try {
@@ -106,9 +101,12 @@ export function StampSaveModal({
         if (cancelled || titleTouchedRef.current) {
           return;
         }
-        setTitle(formatDefaultStampTitle(capturedAt, place ?? undefined));
+        setTitle(formatDefaultStampTitle(Date.now(), place ?? undefined));
       } catch {
-        // 날짜·시간 제목은 이미 설정됨
+        if (cancelled || titleTouchedRef.current) {
+          return;
+        }
+        setTitle(formatDefaultStampTitle(Date.now()));
       }
     })();
 

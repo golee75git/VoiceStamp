@@ -379,3 +379,17 @@ Copy-Item src.pre-pdf-quality\package.json package.json -Force
 Remove-Item src\services\pdfImageForExport.ts -ErrorAction SilentlyContinue
 npm install
 ```
+
+## 28. 제목 즉시 표시(1단계 A)만 되돌리기 (선택)
+
+촬영 후 저장 모달에서 날짜·시간 제목을 즉시 보여주는 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-title-ux.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-title-ux\components\StampSaveModal.tsx src\components\ -Force
+```
