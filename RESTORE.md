@@ -393,3 +393,17 @@ restore-title-ux.bat
 ```powershell
 Copy-Item src.pre-title-ux\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 29. 위치 확인 중 표시만 되돌리기 (선택)
+
+저장 모달에서 "위치 확인 중…" 안내 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-loading.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-loading\components\StampSaveModal.tsx src\components\ -Force
+```

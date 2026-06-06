@@ -78,7 +78,6 @@ export function StampSaveModal({
       setTitle('');
       setMemo('');
       setSaving(false);
-      setLocationLoading(false);
       setError(null);
       setSpeechTarget(null);
       titleTouchedRef.current = false;
@@ -102,8 +101,6 @@ export function StampSaveModal({
       setTitle(formatDefaultStampTitle(capturedAt));
     }
 
-    setLocationLoading(true);
-
     (async () => {
       try {
         const place = await getCurrentPlaceLabel();
@@ -113,10 +110,6 @@ export function StampSaveModal({
         setTitle(formatDefaultStampTitle(capturedAt, place ?? undefined));
       } catch {
         // 날짜·시간 제목은 이미 설정됨
-      } finally {
-        if (!cancelled) {
-          setLocationLoading(false);
-        }
       }
     })();
 
@@ -189,22 +182,17 @@ export function StampSaveModal({
             <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
           ) : null}
 
-          <View>
-            <VoiceInputField
-              label="제목"
-              value={title}
-              onChangeText={(text) => {
-                titleTouchedRef.current = true;
-                setTitle(text);
-              }}
-              onMicPress={() => handleMicPress('title')}
-              listening={listening && speechTarget === 'title'}
-              speechAvailable={available}
-            />
-            {!isEdit && locationLoading ? (
-              <Text style={styles.locationHint}>위치 확인 중…</Text>
-            ) : null}
-          </View>
+          <VoiceInputField
+            label="제목"
+            value={title}
+            onChangeText={(text) => {
+              titleTouchedRef.current = true;
+              setTitle(text);
+            }}
+            onMicPress={() => handleMicPress('title')}
+            listening={listening && speechTarget === 'title'}
+            speechAvailable={available}
+          />
 
           <VoiceInputField
             label="메모"
@@ -260,11 +248,6 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 12,
     backgroundColor: '#f3f4f6',
-  },
-  locationHint: {
-    color: '#6b7280',
-    fontSize: 12,
-    marginTop: 4,
   },
   error: {
     color: '#dc2626',
