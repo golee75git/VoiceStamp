@@ -39,14 +39,6 @@
         {
           "locationWhenInUsePermission": "제목에 위치를 넣기 위해 위치 접근이 필요합니다."
         }
-      ],
-      [
-        "expo-media-library",
-        {
-          "photosPermission": "스탬프 사진을 갤러리에 저장하기 위해 사진 접근이 필요합니다.",
-          "savePhotosPermission": "스탬프 사진을 갤러리에 저장하기 위해 권한이 필요합니다.",
-          "isAccessMediaLocationEnabled": false
-        }
       ]
     ]
   }

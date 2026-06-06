@@ -460,3 +460,23 @@ Remove-Item src\services\stampTrash.ts, src\components\TrashScreen.tsx -ErrorAct
 ```
 
 ※ DB에 추가된 `deleted_at` 컬럼은 앱 데이터에 남을 수 있습니다. 코드만 이전 동작으로 되돌립니다.
+
+## 33. 갤러리 저장만 되돌리기 (선택)
+
+스탬프 저장 시 갤러리 복사 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-save.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-save\app.json . -Force
+Copy-Item src.pre-gallery-save\package.json . -Force
+Copy-Item src.pre-gallery-save\services\saveStamp.ts src\services\ -Force
+Remove-Item src\services\galleryService.ts -ErrorAction SilentlyContinue
+npm install
+```
+
+※ `expo-media-library` 제거 후 APK 재빌드가 필요할 수 있습니다.

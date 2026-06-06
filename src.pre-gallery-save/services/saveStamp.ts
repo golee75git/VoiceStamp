@@ -1,12 +1,8 @@
-import { Platform } from 'react-native';
-
 import {
   formatDefaultStampTitle,
   persistImage,
   renameStampImage,
-  resolveImageUri,
 } from './fileService';
-import { saveStampPhotoToGallery } from './galleryService';
 import {
   getStampById,
   insertStamp,
@@ -32,14 +28,6 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   const now = Date.now();
   const title = resolveStampTitle(input.title, now);
   const imagePath = await persistImage(input.tempImageUri, title, id);
-
-  if (Platform.OS !== 'web') {
-    try {
-      await saveStampPhotoToGallery(resolveImageUri(imagePath));
-    } catch {
-      // 앱 내부 저장은 완료됨. 갤러리 저장·권한 거부는 저장 실패로 처리하지 않음.
-    }
-  }
 
   const stamp: Stamp = {
     id,
