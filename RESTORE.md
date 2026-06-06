@@ -63,7 +63,7 @@ npm install
 | 구분 | 내용 |
 |------|------|
 | 수정 | `App.tsx`, `app.json`, `package.json` |
-| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
+| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `src.pre-web-fs/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `restore-web-fs.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
 | 미변경 | `app.json`, `index.ts`, DB 스키마, 카메라 화면 등 수정 기능 외 코드 |
 
 ## 8. 앱 아이콘 되돌리기 (선택)
@@ -135,4 +135,19 @@ restore-vercel.bat
 Copy-Item package.json.pre-vercel package.json -Force
 Remove-Item vercel.json -ErrorAction SilentlyContinue
 Remove-Item metro.config.js -ErrorAction SilentlyContinue
+```
+
+## 12. 웹 사진 저장만 되돌리기 (선택)
+
+Vercel 웹에서 사진 저장 지원 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-web-fs.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-web-fs\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-web-fs\services\exportPdf.ts src\services\ -Force
 ```

@@ -15,10 +15,6 @@ function escapeHtml(text: string): string {
 }
 
 async function readImageAsDataUri(imagePath: string): Promise<string> {
-  if (imagePath.startsWith('data:')) {
-    return imagePath;
-  }
-
   const uri = resolveImageUri(imagePath);
   const ext = imagePath.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
   const base64 = await FileSystem.readAsStringAsync(uri, {
@@ -62,10 +58,6 @@ function buildHtml(stamps: Stamp[], imageDataUris: string[]): string {
 }
 
 async function archivePdf(uri: string): Promise<string> {
-  if (!FileSystem.documentDirectory) {
-    return uri;
-  }
-
   const dir = `${FileSystem.documentDirectory}exports/`;
   const info = await FileSystem.getInfoAsync(dir);
   if (!info.exists) {
