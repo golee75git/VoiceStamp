@@ -508,3 +508,17 @@ restore-list-back-button.bat
 ```powershell
 Copy-Item src.pre-list-back-button\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 36. 저장 목록 설정 기어 푸터만 되돌리기 (선택)
+
+저장 목록 하단 설정을 기어 아이콘(중앙)으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-gear-footer.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-gear-footer\components\StampListScreen.tsx src\components\ -Force
+```
