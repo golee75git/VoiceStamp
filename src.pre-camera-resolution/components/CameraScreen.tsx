@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
 
 type CameraScreenProps = {
@@ -17,8 +16,6 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [capturing, setCapturing] = useState(false);
-  const [cameraReady, setCameraReady] = useState(false);
-  const [pictureSize, setPictureSize] = useState<string | undefined>();
 
   if (!permission) {
     return (
@@ -39,29 +36,15 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
     );
   }
 
-  const handleCameraReady = async () => {
-    setCameraReady(true);
-
-    try {
-      const sizes = await cameraRef.current?.getAvailablePictureSizesAsync();
-      const largest = sizes?.length ? pickLargestPictureSize(sizes) : undefined;
-      if (largest) {
-        setPictureSize(largest);
-      }
-    } catch {
-      // Keep the default camera picture size when sizes are unavailable.
-    }
-  };
-
   const handleCapture = async () => {
-    if (!cameraRef.current || capturing || !cameraReady) {
+    if (!cameraRef.current || capturing) {
       return;
     }
 
     setCapturing(true);
     try {
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 1,
+        quality: 0.8,
         skipProcessing: false,
       });
       if (photo?.uri) {
@@ -75,13 +58,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
 
   return (
     <View style={styles.container}>
-      <CameraView
-        ref={cameraRef}
-        style={styles.camera}
-        facing="back"
-        pictureSize={pictureSize}
-        onCameraReady={handleCameraReady}
-      />
+      <CameraView ref={cameraRef} style={styles.camera} facing="back" />
 
       <View style={styles.topBar}>
         <Pressable style={styles.topButton} onPress={onOpenSettings}>
@@ -94,9 +71,9 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
 
       <View style={styles.bottomBar}>
         <Pressable
-          style={[styles.captureButton, (capturing || !cameraReady) && styles.captureButtonDisabled]}
+          style={[styles.captureButton, capturing && styles.captureButtonDisabled]}
           onPress={handleCapture}
-          disabled={capturing || !cameraReady}
+          disabled={capturing}
         >
           <View style={styles.captureInner} />
         </Pressable>

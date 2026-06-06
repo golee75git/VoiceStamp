@@ -345,3 +345,18 @@ restore-building-title.bat
 ```powershell
 Copy-Item src.pre-building-title\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 26. 카메라 최대 해상도 촬영만 되돌리기 (선택)
+
+기기 최대 `pictureSize`와 `quality: 1` 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-resolution.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-resolution\components\CameraScreen.tsx src\components\ -Force
+Remove-Item src\utils\cameraPictureSize.ts -ErrorAction SilentlyContinue
+```
