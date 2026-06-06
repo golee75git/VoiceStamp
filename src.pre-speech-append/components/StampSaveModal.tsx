@@ -16,17 +16,6 @@ import { VoiceInputField } from './VoiceInputField';
 
 type SpeechTarget = 'title' | 'memo' | null;
 
-function appendSpeech(base: string, spoken: string): string {
-  const trimmed = spoken.trim();
-  if (!trimmed) {
-    return base;
-  }
-  if (!base.trim()) {
-    return trimmed;
-  }
-  return `${base.trimEnd()} ${trimmed}`;
-}
-
 type StampSaveModalProps = {
   visible: boolean;
   imageUri: string | null;
@@ -48,20 +37,13 @@ export function StampSaveModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
-  const speechTargetRef = useRef<SpeechTarget>(null);
-  const speechBaseRef = useRef({ title: '', memo: '' });
-
-  useEffect(() => {
-    speechTargetRef.current = speechTarget;
-  }, [speechTarget]);
 
   const { listening, available, start, stop } = useSpeechInput({
     onResult: (text, isFinal) => {
-      const target = speechTargetRef.current;
-      if (target === 'title') {
-        setTitle(appendSpeech(speechBaseRef.current.title, text));
-      } else if (target === 'memo') {
-        setMemo(appendSpeech(speechBaseRef.current.memo, text));
+      if (speechTarget === 'title') {
+        setTitle(text);
+      } else if (speechTarget === 'memo') {
+        setMemo(text);
       }
       if (isFinal) {
         setSpeechTarget(null);
@@ -88,12 +70,6 @@ export function StampSaveModal({
       stop();
       setSpeechTarget(null);
       return;
-    }
-
-    if (target === 'title') {
-      speechBaseRef.current.title = title;
-    } else if (target === 'memo') {
-      speechBaseRef.current.memo = memo;
     }
 
     setSpeechTarget(target);

@@ -150,9 +150,6 @@ export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampLis
   };
 
   const selectedCount = selectedIds.size;
-  const { width } = useWindowDimensions();
-  const numColumns = width >= 600 ? 2 : 1;
-  const isGrid = numColumns > 1;
 
   return (
     <View style={styles.container}>
@@ -245,55 +242,48 @@ export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampLis
           </View>
         ) : (
           <FlatList
-            key={numColumns}
             data={stamps}
             keyExtractor={(item) => item.id}
-            numColumns={numColumns}
-            columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={styles.list}
             renderItem={({ item }) => {
-              const isSelected = selectedIds.has(item.id);
-              return (
-                <Pressable
-                  style={[
-                    styles.card,
-                    isGrid && styles.cardGrid,
-                    selecting && isSelected && styles.cardSelected,
-                  ]}
-                  onPress={() => handleCardPress(item)}
-                  onLongPress={() => handleCardLongPress(item)}
-                  delayLongPress={400}
-                >
-                  {selecting && (
-                    <View style={isGrid ? styles.checkboxGrid : styles.checkbox}>
-                      <View
-                        style={[
-                          styles.checkboxInner,
-                          isSelected && styles.checkboxChecked,
-                        ]}
-                      >
-                        {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                      </View>
+            const isSelected = selectedIds.has(item.id);
+            return (
+              <Pressable
+                style={[styles.card, selecting && isSelected && styles.cardSelected]}
+                onPress={() => handleCardPress(item)}
+                onLongPress={() => handleCardLongPress(item)}
+                delayLongPress={400}
+              >
+                {selecting && (
+                  <View style={styles.checkbox}>
+                    <View
+                      style={[
+                        styles.checkboxInner,
+                        isSelected && styles.checkboxChecked,
+                      ]}
+                    >
+                      {isSelected && <Text style={styles.checkmark}>✓</Text>}
                     </View>
-                  )}
-                  <Image
-                    source={{ uri: resolveImageUri(item.imagePath) }}
-                    style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
-                  />
-                  <View style={styles.meta}>
-                    <Text style={styles.cardTitle} numberOfLines={1}>
-                      {item.title || '(제목 없음)'}
-                    </Text>
-                    <Text style={styles.cardMemo} numberOfLines={isGrid ? 3 : 2}>
-                      {item.memo || '(메모 없음)'}
-                    </Text>
-                    <Text style={styles.cardDate}>
-                      {new Date(item.createdAt).toLocaleString('ko-KR')}
-                    </Text>
                   </View>
-                </Pressable>
-              );
-            }}
+                )}
+                <Image
+                  source={{ uri: resolveImageUri(item.imagePath) }}
+                  style={styles.thumbnail}
+                />
+                <View style={styles.meta}>
+                  <Text style={styles.cardTitle} numberOfLines={1}>
+                    {item.title || '(제목 없음)'}
+                  </Text>
+                  <Text style={styles.cardMemo} numberOfLines={2}>
+                    {item.memo || '(메모 없음)'}
+                  </Text>
+                  <Text style={styles.cardDate}>
+                    {new Date(item.createdAt).toLocaleString('ko-KR')}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          }}
           />
         )}
       </View>
@@ -430,10 +420,7 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-  },
-  columnWrapper: {
     gap: 12,
-    marginBottom: 12,
   },
   card: {
     flexDirection: 'row',
@@ -445,12 +432,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     alignItems: 'center',
   },
-  cardGrid: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    marginBottom: 0,
-  },
   cardSelected: {
     borderColor: '#2563eb',
     backgroundColor: '#eff6ff',
@@ -458,10 +439,6 @@ const styles = StyleSheet.create({
   checkbox: {
     paddingLeft: 12,
     justifyContent: 'center',
-  },
-  checkboxGrid: {
-    padding: 8,
-    alignSelf: 'flex-start',
   },
   checkboxInner: {
     width: 22,
@@ -484,11 +461,6 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 96,
     height: 96,
-    backgroundColor: '#e5e7eb',
-  },
-  thumbnailGrid: {
-    width: '100%',
-    height: 140,
     backgroundColor: '#e5e7eb',
   },
   meta: {
