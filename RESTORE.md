@@ -290,3 +290,17 @@ Copy-Item src.pre-camera-settings\components\CameraScreen.tsx src\components\ -F
 Copy-Item src.pre-camera-settings\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-settings\screens\MainScreen.tsx src\screens\ -Force
 ```
+
+## 22. PDF 저장 copyAsync 수정만 되돌리기 (선택)
+
+PDF 저장/공유 시 copyAsync 오류 수정 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-save.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-save\services\exportPdf.ts src\services\ -Force
+```
