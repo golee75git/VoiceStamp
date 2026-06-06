@@ -331,3 +331,17 @@ npm install
 ```bat
 restore-env-gitignore.bat
 ```
+
+## 25. 제목 건물명(아파트) 보조 표시만 되돌리기 (선택)
+
+`coord2address`로 건물명을 제목에 붙이는 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-building-title.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-building-title\services\kakaoLocal.ts src\services\ -Force
+```
