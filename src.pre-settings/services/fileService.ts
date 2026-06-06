@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 
-import { getStampsFolderName } from './settingsService';
+const STAMPS_DIR = 'stamps/';
 
 function isInlineImagePath(imagePath: string): boolean {
   return (
@@ -36,8 +36,7 @@ export async function ensureStampsDir(): Promise<string> {
     throw new Error('documentDirectory is not available');
   }
 
-  const folderName = await getStampsFolderName();
-  const dir = `${base}${folderName}/`;
+  const dir = `${base}${STAMPS_DIR}`;
   const info = await FileSystem.getInfoAsync(dir);
   if (!info.exists) {
     await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
@@ -52,14 +51,13 @@ export async function persistImage(tempUri: string, id: string): Promise<string>
   }
 
   const dir = await ensureStampsDir();
-  const folderName = await getStampsFolderName();
   const ext = tempUri.toLowerCase().includes('.png') ? 'png' : 'jpg';
   const fileName = `${id}.${ext}`;
   const dest = `${dir}${fileName}`;
 
   await FileSystem.copyAsync({ from: tempUri, to: dest });
 
-  return `${folderName}/${fileName}`;
+  return `${STAMPS_DIR}${fileName}`;
 }
 
 export function resolveImageUri(imagePath: string): string {

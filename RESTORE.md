@@ -63,7 +63,7 @@ npm install
 | 구분 | 내용 |
 |------|------|
 | 수정 | `App.tsx`, `app.json`, `package.json` |
-| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `src.pre-web-fs/`, `src.pre-web-pdf/`, `src.pre-pdf-name/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `restore-web-fs.bat`, `restore-web-pdf.bat`, `restore-pdf-name.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
+| 추가 | `src/`, `src.pre-edit/`, `src.pre-pdf/`, `src.pre-web-fs/`, `src.pre-web-pdf/`, `src.pre-pdf-name/`, `src.pre-settings/`, `restore-edit.bat`, `restore-pdf.bat`, `restore-vercel.bat`, `restore-web-fs.bat`, `restore-web-pdf.bat`, `restore-pdf-name.bat`, `restore-settings.bat`, `vercel.json`, `metro.config.js`, `package.json.pre-vercel`, `App.original.tsx`, `RESTORE.md`, `BUILD-APK.md`, `start.bat`, `build-apk.bat`, `apply-icon.bat`, `restore-icon.bat`, `assets.pre-icon`, `package.json.pre-web`, `package.json.pre-pdf`, `app.json.pre-eas`, `eas.json` |
 | 미변경 | `app.json`, `index.ts`, DB 스키마, 카메라 화면 등 수정 기능 외 코드 |
 
 ## 8. 앱 아이콘 되돌리기 (선택)
@@ -179,4 +179,24 @@ restore-pdf-name.bat
 ```powershell
 Copy-Item src.pre-pdf-name\components\StampListScreen.tsx src\components\ -Force
 Copy-Item src.pre-pdf-name\services\exportPdf.ts src\services\ -Force
+```
+
+## 15. 사진 저장 폴더 설정만 되돌리기 (선택)
+
+앱 내부 저장 폴더 설정 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-settings\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings\screens\MainScreen.tsx src\screens\ -Force
+Copy-Item src.pre-settings\db\database.ts src\db\ -Force
+Copy-Item src.pre-settings\db\schema.ts src\db\ -Force
+Remove-Item src\services\settingsService.ts -ErrorAction SilentlyContinue
+Remove-Item src\components\SettingsScreen.tsx -ErrorAction SilentlyContinue
 ```

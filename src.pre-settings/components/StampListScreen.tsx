@@ -19,11 +19,10 @@ import type { Stamp } from '../types/stamp';
 
 type StampListScreenProps = {
   onBack: () => void;
-  onOpenSettings: () => void;
   refreshKey: number;
 };
 
-export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampListScreenProps) {
+export function StampListScreen({ onBack, refreshKey }: StampListScreenProps) {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
@@ -220,21 +219,20 @@ export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampLis
         )}
       </View>
 
-      <View style={styles.listArea}>
-        {loading ? (
-          <View style={styles.centered}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : stamps.length === 0 ? (
-          <View style={styles.centered}>
-            <Text style={styles.empty}>저장된 스탬프가 없습니다.</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={stamps}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
-            renderItem={({ item }) => {
+      {loading ? (
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : stamps.length === 0 ? (
+        <View style={styles.centered}>
+          <Text style={styles.empty}>저장된 스탬프가 없습니다.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={stamps}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => {
             const isSelected = selectedIds.has(item.id);
             return (
               <Pressable
@@ -271,13 +269,8 @@ export function StampListScreen({ onBack, onOpenSettings, refreshKey }: StampLis
               </Pressable>
             );
           }}
-          />
-        )}
-      </View>
-
-      <Pressable style={styles.settingsFooter} onPress={onOpenSettings}>
-        <Text style={styles.settingsFooterText}>설정</Text>
-      </Pressable>
+        />
+      )}
 
       <StampSaveModal
         visible={editingStamp != null}
@@ -381,25 +374,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 15,
   },
-  listArea: {
-    flex: 1,
-  },
   centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  settingsFooter: {
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    backgroundColor: '#fff',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  settingsFooterText: {
-    color: '#2563eb',
-    fontWeight: '600',
-    fontSize: 16,
   },
   empty: {
     color: '#6b7280',

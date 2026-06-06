@@ -3,10 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { CameraScreen } from '../components/CameraScreen';
-import { SettingsScreen } from '../components/SettingsScreen';
 import { StampListScreen } from '../components/StampListScreen';
 
-type Screen = 'camera' | 'list' | 'settings';
+type Screen = 'camera' | 'list';
 
 export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
@@ -20,14 +19,8 @@ export function MainScreen() {
           onOpenList={() => setScreen('list')}
           onSaved={() => setRefreshKey((value) => value + 1)}
         />
-      ) : screen === 'settings' ? (
-        <SettingsScreen onBack={() => setScreen('list')} />
       ) : (
-        <StampListScreen
-          onBack={() => setScreen('camera')}
-          onOpenSettings={() => setScreen('settings')}
-          refreshKey={refreshKey}
-        />
+        <StampListScreen onBack={() => setScreen('camera')} refreshKey={refreshKey} />
       )}
     </View>
   );
