@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -116,11 +116,11 @@ export function StampListScreen({
     try {
       const uri = await createStampsPdf(selected, pdfFileName);
       setPdfUri(uri);
-      Alert.alert('PDF 생성 완료', '저장 또는 공유 버튼을 눌러주세요.');
+      Alert.alert('PDF ?앹꽦 ?꾨즺', '????먮뒗 怨듭쑀 踰꾪듉???뚮윭二쇱꽭??');
     } catch (e) {
       Alert.alert(
-        'PDF 생성 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF ?앹꽦 ?ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -135,8 +135,8 @@ export function StampListScreen({
       await savePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
-        'PDF 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -151,8 +151,8 @@ export function StampListScreen({
       await sharePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
-        'PDF 공유 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF 怨듭쑀 ?ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -166,19 +166,19 @@ export function StampListScreen({
     }
 
     Alert.alert(
-      '휴지통으로 이동',
-      `선택한 ${selected.length}개 스탬프를 휴지통으로 옮깁니다.`,
+      '?댁??듭쑝濡??대룞',
+      `?좏깮??${selected.length}媛??ㅽ꺃?꾨? ?댁??듭쑝濡???퉩?덈떎.`,
       [
-        { text: '취소', style: 'cancel' },
+        { text: '痍⑥냼', style: 'cancel' },
         {
-          text: '삭제',
+          text: '??젣',
           style: 'destructive',
           onPress: async () => {
             setDeleteBusy(true);
             try {
               const moved = await moveStampsToTrash([...selectedIds]);
               if (moved === 0) {
-                Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
+                Alert.alert('??젣 ?ㅽ뙣', '?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
                 return;
               }
               onChanged();
@@ -186,8 +186,8 @@ export function StampListScreen({
               exitSelection();
             } catch (e) {
               Alert.alert(
-                '삭제 실패',
-                e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+                '??젣 ?ㅽ뙣',
+                e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
               );
             } finally {
               setDeleteBusy(false);
@@ -206,19 +206,19 @@ export function StampListScreen({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backText}>← 카메라</Text>
+        <Pressable onPress={onBack}>
+          <Text style={styles.backText}>??移대찓??/Text>
         </Pressable>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>저장 목록</Text>
+          <Text style={styles.title}>???紐⑸줉</Text>
           {selecting ? (
             <Pressable onPress={exitSelection}>
-              <Text style={styles.actionText}>취소</Text>
+              <Text style={styles.actionText}>痍⑥냼</Text>
             </Pressable>
           ) : (
             stamps.length > 0 && (
               <Pressable onPress={() => setSelecting(true)}>
-                <Text style={styles.actionText}>선택</Text>
+                <Text style={styles.actionText}>?좏깮</Text>
               </Pressable>
             )
           )}
@@ -233,7 +233,7 @@ export function StampListScreen({
               {pdfBusy && !pdfUri ? (
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <Text style={styles.pdfBarButtonText}>PDF 만들기</Text>
+                <Text style={styles.pdfBarButtonText}>PDF 留뚮뱾湲?/Text>
               )}
             </Pressable>
             <Pressable
@@ -247,8 +247,7 @@ export function StampListScreen({
                   !pdfUri && styles.pdfBarButtonTextDisabled,
                 ]}
               >
-                저장
-              </Text>
+                ???              </Text>
             </Pressable>
             <Pressable
               style={[
@@ -264,14 +263,14 @@ export function StampListScreen({
                   !pdfUri && styles.pdfBarButtonTextDisabled,
                 ]}
               >
-                공유
+                怨듭쑀
               </Text>
             </Pressable>
           </View>
         )}
         {selecting && selectedCount > 0 && (
           <View style={styles.pdfNameRow}>
-            <Text style={styles.pdfNameLabel}>PDF 파일명</Text>
+            <Text style={styles.pdfNameLabel}>PDF ?뚯씪紐?/Text>
             <TextInput
               style={styles.pdfNameInput}
               value={pdfFileName}
@@ -290,7 +289,7 @@ export function StampListScreen({
             {deleteBusy ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text style={styles.deleteButtonText}>휴지통으로 이동 ({selectedCount})</Text>
+              <Text style={styles.deleteButtonText}>?댁??듭쑝濡??대룞 ({selectedCount})</Text>
             )}
           </Pressable>
         )}
@@ -303,7 +302,7 @@ export function StampListScreen({
           </View>
         ) : stamps.length === 0 ? (
           <View style={styles.centered}>
-            <Text style={styles.empty}>저장된 스탬프가 없습니다.</Text>
+            <Text style={styles.empty}>??λ맂 ?ㅽ꺃?꾧? ?놁뒿?덈떎.</Text>
           </View>
         ) : (
           <FlatList
@@ -334,7 +333,7 @@ export function StampListScreen({
                           isSelected && styles.checkboxChecked,
                         ]}
                       >
-                        {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                        {isSelected && <Text style={styles.checkmark}>??/Text>}
                       </View>
                     </View>
                   )}
@@ -344,10 +343,10 @@ export function StampListScreen({
                   />
                   <View style={styles.meta}>
                     <Text style={styles.cardTitle} numberOfLines={1}>
-                      {item.title || '(제목 없음)'}
+                      {item.title || '(?쒕ぉ ?놁쓬)'}
                     </Text>
                     <Text style={styles.cardMemo} numberOfLines={isGrid ? 3 : 2}>
-                      {item.memo || '(메모 없음)'}
+                      {item.memo || '(硫붾え ?놁쓬)'}
                     </Text>
                     <Text style={styles.cardDate}>
                       {new Date(item.createdAt).toLocaleString('ko-KR')}
@@ -362,10 +361,10 @@ export function StampListScreen({
 
       <View style={styles.footerRow}>
         <Pressable style={styles.footerButton} onPress={onOpenTrash}>
-          <Text style={styles.footerButtonText}>휴지통</Text>
+          <Text style={styles.footerButtonText}>?댁???/Text>
         </Pressable>
         <Pressable style={styles.footerButton} onPress={onOpenSettings}>
-          <Text style={styles.footerButtonText}>설정</Text>
+          <Text style={styles.footerButtonText}>?ㅼ젙</Text>
         </Pressable>
       </View>
 
@@ -468,17 +467,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
-  backButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minHeight: 44,
-    justifyContent: 'center',
-  },
   backText: {
     color: '#2563eb',
-    fontWeight: '700',
-    fontSize: 17,
+    fontWeight: '600',
   },
   title: {
     fontSize: 20,

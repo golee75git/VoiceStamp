@@ -494,3 +494,17 @@ restore-pdf-original-cap.bat
 ```powershell
 Copy-Item src.pre-pdf-original-cap\services\pdfImageForExport.ts src\services\ -Force
 ```
+
+## 35. 저장 목록 카메라 버튼 크기만 되돌리기 (선택)
+
+저장 목록 「← 카메라」 버튼 크기 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-back-button.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-back-button\components\StampListScreen.tsx src\components\ -Force
+```
