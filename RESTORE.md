@@ -638,3 +638,19 @@ restore-pdf-report-title.bat
 Copy-Item src.pre-pdf-report-title\services\exportPdf.ts src\services\ -Force
 Copy-Item src.pre-pdf-report-title\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 44. 카메라·목록 메뉴 재배치만 되돌리기 (선택)
+
+카메라 왼쪽 세로 메뉴, 목록 앨범, 목록 하단 설정 제거 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-nav.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-nav\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-nav\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-nav\screens\MainScreen.tsx src\screens\ -Force
+```

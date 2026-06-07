@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-import { takePhotoWithSystemCamera } from '../services/pickStampImage';
+import { pickImageFromLibrary, takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -28,8 +28,26 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   };
 
   const handleExternalPickError = (label: string, error: unknown) => {
-    const message = error instanceof Error ? error.message : `${label}에 실패했습니다.`;
+    const message = error instanceof Error ? error.message : `${label}???ㅽ뙣?덉뒿?덈떎.`;
     Alert.alert(label, message);
+  };
+
+  const handlePickFromLibrary = async () => {
+    if (externalPickBusy || capturing) {
+      return;
+    }
+
+    setExternalPickBusy(true);
+    try {
+      const uri = await pickImageFromLibrary();
+      if (uri) {
+        openSaveModal(uri);
+      }
+    } catch (error) {
+      handleExternalPickError('?⑤쾾', error);
+    } finally {
+      setExternalPickBusy(false);
+    }
   };
 
   const handleSystemCamera = async () => {
@@ -38,7 +56,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
     }
 
     if (Platform.OS === 'web') {
-      Alert.alert('카메라', '웹에서는 목록의 앨범을 이용해 주세요.');
+      Alert.alert('移대찓??, '?뱀뿉?쒕뒗 ?⑤쾾?먯꽌 ?좏깮??二쇱꽭??');
       return;
     }
 
@@ -49,7 +67,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         openSaveModal(uri);
       }
     } catch (error) {
-      handleExternalPickError('카메라', error);
+      handleExternalPickError('移대찓??, error);
     } finally {
       setExternalPickBusy(false);
     }
@@ -58,7 +76,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   if (!permission) {
     return (
       <View style={styles.centered}>
-        <Text>카메라 권한 확인 중...</Text>
+        <Text>移대찓??沅뚰븳 ?뺤씤 以?..</Text>
       </View>
     );
   }
@@ -66,12 +84,16 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
+        <Text style={styles.message}>?ъ쭊 珥ъ쁺???꾪빐 移대찓??沅뚰븳???꾩슂?⑸땲??</Text>
         <Pressable style={styles.primaryButton} onPress={requestPermission}>
-          <Text style={styles.primaryButtonText}>권한 허용</Text>
+          <Text style={styles.primaryButtonText}>沅뚰븳 ?덉슜</Text>
         </Pressable>
-        <Pressable style={styles.secondaryButton} onPress={onOpenList}>
-          <Text style={styles.secondaryButtonText}>목록으로 (앨범)</Text>
+        <Pressable
+          style={styles.secondaryButton}
+          onPress={handlePickFromLibrary}
+          disabled={externalPickBusy}
+        >
+          <Text style={styles.secondaryButtonText}>?⑤쾾?먯꽌 ?좏깮</Text>
         </Pressable>
       </View>
     );
@@ -122,25 +144,24 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         onCameraReady={handleCameraReady}
       />
 
-      <View style={styles.leftNav}>
-        <Pressable style={styles.navButton} onPress={onOpenList}>
-          <Text style={styles.navButtonText}>목록</Text>
+      <View style={styles.topBar}>
+        <Pressable style={styles.topButton} onPress={onOpenSettings}>
+          <Text style={styles.topButtonText}>?ㅼ젙</Text>
         </Pressable>
-        <Pressable style={styles.navButton} onPress={onOpenSettings}>
-          <Text style={styles.navButtonText}>설정</Text>
+        <Pressable style={styles.topButton} onPress={onOpenList}>
+          <Text style={styles.topButtonText}>紐⑸줉</Text>
         </Pressable>
-        {Platform.OS !== 'web' && (
-          <Pressable
-            style={[styles.navButton, bottomBusy && styles.navButtonDisabled]}
-            onPress={handleSystemCamera}
-            disabled={bottomBusy}
-          >
-            <Text style={styles.navButtonText}>카메라</Text>
-          </Pressable>
-        )}
       </View>
 
       <View style={styles.bottomBar}>
+        <Pressable
+          style={[styles.sideButton, bottomBusy && styles.sideButtonDisabled]}
+          onPress={handlePickFromLibrary}
+          disabled={bottomBusy}
+        >
+          <Text style={styles.sideButtonText}>?⑤쾾</Text>
+        </Pressable>
+
         <Pressable
           style={[styles.captureButton, (bottomBusy || !cameraReady) && styles.captureButtonDisabled]}
           onPress={handleCapture}
@@ -148,6 +169,18 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         >
           <View style={styles.captureInner} />
         </Pressable>
+
+        {Platform.OS !== 'web' ? (
+          <Pressable
+            style={[styles.sideButton, bottomBusy && styles.sideButtonDisabled]}
+            onPress={handleSystemCamera}
+            disabled={bottomBusy}
+          >
+            <Text style={styles.sideButtonText}>移대찓??/Text>
+          </Pressable>
+        ) : (
+          <View style={styles.sideButtonPlaceholder} />
+        )}
       </View>
 
       <StampSaveModal
@@ -204,35 +237,52 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontWeight: '600',
   },
-  leftNav: {
+  topBar: {
     position: 'absolute',
     top: 48,
-    left: 16,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     gap: 8,
-    zIndex: 10,
   },
-  navButton: {
+  topButton: {
     backgroundColor: 'rgba(0,0,0,0.45)',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
-    alignSelf: 'flex-start',
   },
-  navButtonDisabled: {
-    opacity: 0.6,
-  },
-  navButtonText: {
+  topButtonText: {
     color: '#fff',
     fontWeight: '600',
   },
   bottomBar: {
     position: 'absolute',
     bottom: 40,
-    left: 0,
-    right: 0,
+    left: 20,
+    right: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+  },
+  sideButton: {
+    minWidth: 72,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 16,
+    alignItems: 'center',
+  },
+  sideButtonDisabled: {
+    opacity: 0.6,
+  },
+  sideButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  sideButtonPlaceholder: {
+    minWidth: 72,
   },
   captureButton: {
     width: 76,

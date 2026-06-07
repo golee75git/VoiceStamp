@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -11,9 +11,15 @@ type Screen = 'camera' | 'list' | 'settings' | 'trash';
 
 export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
+  const [settingsReturnTo, setSettingsReturnTo] = useState<'camera' | 'list'>('list');
   const [refreshKey, setRefreshKey] = useState(0);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
+
+  const openSettings = (returnTo: 'camera' | 'list') => {
+    setSettingsReturnTo(returnTo);
+    setScreen('settings');
+  };
 
   return (
     <View style={styles.container}>
@@ -21,13 +27,13 @@ export function MainScreen() {
       {screen === 'camera' ? (
         <CameraScreen
           onOpenList={() => setScreen('list')}
-          onOpenSettings={() => setScreen('settings')}
+          onOpenSettings={() => openSettings('camera')}
           onSaved={bumpRefresh}
         />
       ) : screen === 'settings' ? (
         <SettingsScreen
-          onBack={() => setScreen('camera')}
-          backLabel="카메라"
+          onBack={() => setScreen(settingsReturnTo)}
+          backLabel={settingsReturnTo === 'camera' ? '移대찓?? : '紐⑸줉'}
           refreshKey={refreshKey}
           onTrashEmptied={bumpRefresh}
           onSettingsSaved={bumpRefresh}
@@ -41,6 +47,7 @@ export function MainScreen() {
       ) : (
         <StampListScreen
           onBack={() => setScreen('camera')}
+          onOpenSettings={() => openSettings('list')}
           onOpenTrash={() => setScreen('trash')}
           refreshKey={refreshKey}
           onChanged={bumpRefresh}
