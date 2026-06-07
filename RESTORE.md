@@ -577,3 +577,17 @@ restore-settings-scroll.bat
 ```powershell
 Copy-Item src.pre-settings-scroll\components\SettingsScreen.tsx src\components\ -Force
 ```
+
+## 40. PDF 사진·텍스트 정렬 맞춤만 되돌리기 (선택)
+
+PDF에서 사진을 제목 정렬에 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-align.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-align\services\exportPdf.ts src\services\ -Force
+```
