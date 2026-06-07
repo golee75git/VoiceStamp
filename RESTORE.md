@@ -729,3 +729,17 @@ restore-mic-dot.bat
 ```powershell
 Copy-Item src.pre-mic-dot\components\VoiceInputField.tsx src\components\ -Force
 ```
+
+## 50. 카메라 목록·설정 메뉴 타원 크기 통일만 되돌리기 (선택)
+
+목록·설정 버튼 배경을 카메라 메뉴와 같은 타원 크기로 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-nav-button-size.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-nav-button-size\components\CameraScreen.tsx src\components\ -Force
+```

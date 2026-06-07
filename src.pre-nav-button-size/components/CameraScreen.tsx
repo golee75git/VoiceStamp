@@ -231,12 +231,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   navButton: {
-    width: 76,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: 'rgba(0,0,0,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 16,
   },
   navButtonDisabled: {
     opacity: 0.6,
