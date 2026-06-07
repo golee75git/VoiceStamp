@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 1.1 |
 | 작성일 | 2026-06-07 |
-| 기준 커밋 | `31332dc` (main) |
+| 기준 커밋 | `3b6201a` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -45,13 +45,15 @@
 | 46 | 갤러리 앨범 분류 실패 시 성공 처리 | `e4eada2` | §52 |
 | 47 | 제목·메모 별도 영역 / 워터마크 | `539c4c4` | §53 |
 | 48 | PDF·이미지 공통 파일명 | `31332dc` | §54 |
+| 49 | Android 뒤로가기 (종료 확인·화면 복귀) | `3b6201a` | §55 |
 
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
 |------|------|
 | `f125897` | PRD·PROJECT·PLAN·PRIVACY·LICENSE 문서 정리 (기준 `539c4c4`) |
-| (본 갱신) | `31332dc` 반영 — 공통 파일명·§54 |
+| `470606d` | PRD·PROJECT·PLAN 문서 정리 (기준 `31332dc`) |
+| (본 갱신) | `3b6201a` 반영 — Android 뒤로가기·§55 |
 
 ---
 
@@ -128,7 +130,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260607_131846.apk` |
+| 최신 APK (문서 기준) | `VoiceStamp_20260607_145955.apk` |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -151,5 +153,5 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~54 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~55 |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |

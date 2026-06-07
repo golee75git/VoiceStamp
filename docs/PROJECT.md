@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-07**  
-최신 커밋 기준: `31332dc` (main)
+최신 커밋 기준: `3b6201a` (main)
 
 ---
 
@@ -61,7 +61,7 @@ VoiceStamp/
 | 휴지통 | `TrashScreen.tsx` | 터치 복원 |
 | 설정 | `SettingsScreen.tsx` | 폴더·PDF·내보내기·손잡이·휴지통 비우기 |
 | JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx` | 합성 JPEG (ViewShot) |
-| 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환 |
+| 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환, Android `BackHandler` |
 
 ### 3.1 목록 화면 UI (현재)
 
@@ -72,6 +72,15 @@ VoiceStamp/
 | 본문 | 스탬프 카드 (600px+ 2열) |
 | 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 |
 | 하단 | 중앙 ⚙ → 설정 |
+
+### 3.2 Android 하드웨어 뒤로 (`MainScreen`, `3b6201a`)
+
+| 현재 화면 | 동작 |
+|-----------|------|
+| 카메라 | 「앱 종료 / 아니오」 확인 → 종료 시 `BackHandler.exitApp()` |
+| 목록·설정 | 카메라로 |
+| 휴지통 | 목록으로 |
+| 저장·수정 모달 | `StampSaveModal` `onRequestClose` (모달 우선) |
 
 ---
 
@@ -129,6 +138,7 @@ VoiceStamp/
 | 46 | 갤러리 앨범 분류 예외 처리 | `e4eada2` | `restore-gallery-album-fix.bat` §52 |
 | 47 | 별도 영역 / 워터마크 | `539c4c4` | `restore-stamp-text-layout.bat` §53 |
 | 48 | PDF·이미지 공통 파일명 | `31332dc` | `restore-export-filename.bat` §54 |
+| 49 | Android 뒤로가기 (종료 확인·화면 복귀) | `3b6201a` | `restore-back-handler.bat` §55 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -189,6 +199,7 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260607_145955.apk` | Android 뒤로가기 (종료 확인·화면 복귀) |
 | `VoiceStamp_20260607_131846.apk` | PDF·이미지 공통 파일명 |
 | `VoiceStamp_20260607_130727.apk` | 워터마크·별도 영역 설정 |
 | `VoiceStamp_20260607_125937.apk` | 갤러리 저장 성공 알림 수정 |
@@ -269,6 +280,8 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+3b6201a Handle Android back: confirm exit on camera, navigate on sub-screens.
+470606d Update PRD, PROJECT, and PLAN docs to commit 31332dc.
 31332dc Use shared export filename for PDF and JPEG image saves.
 f125897 Sync PRD, PROJECT, and PLAN docs to commit 539c4c4.
 539c4c4 Add caption vs watermark layout setting for PDF and image export.
@@ -299,7 +312,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~54) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~55) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

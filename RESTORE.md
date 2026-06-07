@@ -811,3 +811,17 @@ Copy-Item src.pre-export-filename\components\StampListScreen.tsx src\components\
 Copy-Item src.pre-export-filename\services\exportStampImage.ts src\services\ -Force
 Copy-Item src.pre-export-filename\services\galleryService.ts src\services\ -Force
 ```
+
+## 55. Android 뒤로가기만 되돌리기 (선택)
+
+카메라 종료 확인·하위 화면 복귀(`BackHandler`) 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-back-handler.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-back-handler\screens\MainScreen.tsx src\screens\ -Force
+```
