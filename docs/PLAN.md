@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.0 |
+| 문서 버전 | 1.1 |
 | 작성일 | 2026-06-07 |
-| 기준 커밋 | `539c4c4` (main) |
+| 기준 커밋 | `31332dc` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -44,6 +44,14 @@
 | 45 | 선택 스탬프 합성 JPEG 갤러리 저장 | `db111b3` | §51 |
 | 46 | 갤러리 앨범 분류 실패 시 성공 처리 | `e4eada2` | §52 |
 | 47 | 제목·메모 별도 영역 / 워터마크 | `539c4c4` | §53 |
+| 48 | PDF·이미지 공통 파일명 | `31332dc` | §54 |
+
+### 2.1 문서 동기화 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `f125897` | PRD·PROJECT·PLAN·PRIVACY·LICENSE 문서 정리 (기준 `539c4c4`) |
+| (본 갱신) | `31332dc` 반영 — 공통 파일명·§54 |
 
 ---
 
@@ -51,9 +59,9 @@
 
 | ID | 작업 | 우선순위 | 상태 |
 |----|------|----------|------|
-| LEG-01 | LICENSE 저작권 (이형우, MIT + OSS 고지) | P1 | ✅ 문서 작성 |
-| LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 문서 작성 |
-| LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 문서 작성 |
+| LEG-01 | LICENSE 저작권 (이형우, MIT + OSS 고지) | P1 | ✅ 커밋됨 (`f125897`) |
+| LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 커밋됨 |
+| LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
 | LEG-04 | **앱 설정 화면**에 버전·라이선스·정책 링크/표시 | P2 | 📋 미구현 |
 | LEG-05 | Play 스토어 등록용 정책 URL·스크린샷 | P3 | 📋 미구현 |
 
@@ -120,7 +128,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260607_130727.apk` |
+| 최신 APK (문서 기준) | `VoiceStamp_20260607_131846.apk` |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -143,5 +151,5 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~53 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~54 |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |

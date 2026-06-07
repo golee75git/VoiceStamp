@@ -20,7 +20,7 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~53, `restore-*.bat`) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~54, `restore-*.bat`) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 | [../AGENTS.md](../AGENTS.md) | Expo SDK 56 문서 참조 규칙 |
 
@@ -28,10 +28,16 @@
 
 ## 현재 상태 스냅샷 (2026-06-07)
 
-- **최신 커밋:** `539c4c4` (main)
+- **최신 커밋:** `31332dc` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
-- **구현 완료:** 카메라·음성·스탬프·목록·PDF·합성 JPEG·설정(정렬·워터마크·손잡이)·카카오 위치·휴지통·갤러리·웹 배포
-- **문서:** LICENSE, PRIVACY, 카카오 키 보안 체크리스트
-- **미구현 후보:** 앱 내 정책 화면, 목적별 필드 라벨, DB 백업/복원, 보고서 서식 — [PLAN.md](./PLAN.md) §4
+- **구현 완료:** 카메라·음성·스탬프·목록·PDF·합성 JPEG·**PDF·이미지 공통 파일명**·워터마크·손잡이·카카오 위치·휴지통·갤러리·웹 배포
+- **문서:** LICENSE, PRIVACY, PLAN, PRD, PROJECT (기준 `31332dc`)
+- **미구현 후보:** 앱 내 정책 화면(LEG-04), 목적별 필드 라벨, DB 백업/복원, 보고서 서식 — [PLAN.md](./PLAN.md) §4·§6
 
-자세한 내용은 [PRD.md](./PRD.md) §10.1, [PROJECT.md](./PROJECT.md) §4, [PLAN.md](./PLAN.md)를 참고하세요.
+### 개선 시 참고 순서
+
+1. [PLAN.md](./PLAN.md) §6 — 다음 권장 작업
+2. [PRD.md](./PRD.md) §10.1 — 미구현 후보 ID
+3. [PROJECT.md](./PROJECT.md) §4 — 기능별 커밋·RESTORE §
+
+자세한 내용은 [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [PLAN.md](./PLAN.md)를 참고하세요.

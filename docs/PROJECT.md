@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-07**  
-최신 커밋 기준: `539c4c4` (main)
+최신 커밋 기준: `31332dc` (main)
 
 ---
 
@@ -42,7 +42,7 @@ VoiceStamp/
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~53)
+├── RESTORE.md              # 기능별 되돌리기 (§8~54)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -70,6 +70,7 @@ VoiceStamp/
 | 상단 | 「← 카메라」(큰 버튼) |
 | 헤더 | 저장 목록 · 휴지통 · 선택/취소 |
 | 본문 | 스탬프 카드 (600px+ 2열) |
+| 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 |
 | 하단 | 중앙 ⚙ → 설정 |
 
 ---
@@ -127,6 +128,7 @@ VoiceStamp/
 | 45 | 합성 JPEG 이미지 저장 | `db111b3` | `restore-stamp-image-export.bat` §51 |
 | 46 | 갤러리 앨범 분류 예외 처리 | `e4eada2` | `restore-gallery-album-fix.bat` §52 |
 | 47 | 별도 영역 / 워터마크 | `539c4c4` | `restore-stamp-text-layout.bat` §53 |
+| 48 | PDF·이미지 공통 파일명 | `31332dc` | `restore-export-filename.bat` §54 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -187,9 +189,9 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260607_131846.apk` | PDF·이미지 공통 파일명 |
 | `VoiceStamp_20260607_130727.apk` | 워터마크·별도 영역 설정 |
 | `VoiceStamp_20260607_125937.apk` | 갤러리 저장 성공 알림 수정 |
-| `VoiceStamp_20260607_124612.apk` | 합성 JPEG 저장 |
 
 ---
 
@@ -201,10 +203,10 @@ build-apk.bat
 | `fileService.ts` | 이미지 persist, 제목 포맷, URI resolve, 삭제 |
 | `stampRepository.ts` | SQLite CRUD, soft delete 필터 |
 | `stampTrash.ts` | 휴지통 이동·복원·비우기 |
-| `galleryService.ts` | 갤러리 VoiceStamp 앨범 저장 |
+| `galleryService.ts` | 갤러리 VoiceStamp 앨범 저장 (선택적 파일명 복사) |
 | `settingsService.ts` | 앱 설정 get/set |
 | `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
-| `exportStampImage.ts` | 합성 JPEG (웹 canvas / APK ViewShot) |
+| `exportStampImage.ts` | 합성 JPEG, `buildExportJpegFileName` |
 | `pdfTitleFormat.ts` | PDF·내보내기 제목·파일명 포맷 |
 | `pickStampImage.ts` | 앨범·카메라 앱 피커 |
 | `pdfImageForExport.ts` | PDF용 이미지 압축 (원본 2400px 상한) |
@@ -241,6 +243,15 @@ build-apk.bat
 
 **원본** PDF 프리셋: HTML 임베드 최대 2400px, JPEG 92% (디스크 원본 파일은 미변경).
 
+### 10.1 선택 모드 내보내기 파일명
+
+| 항목 | 설명 |
+|------|------|
+| UI | 「PDF·이미지 파일명」 |
+| PDF | 입력값 기준 `.pdf` |
+| JPEG | 1장 `{name}.jpg`, 다장 `{name}_N.jpg` |
+| 되돌리기 | `restore-export-filename.bat` §54 |
+
 ---
 
 ## 11. 제목·위치 UX 로드맵
@@ -258,6 +269,8 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+31332dc Use shared export filename for PDF and JPEG image saves.
+f125897 Sync PRD, PROJECT, and PLAN docs to commit 539c4c4.
 539c4c4 Add caption vs watermark layout setting for PDF and image export.
 e4eada2 Treat gallery save as success when album grouping fails.
 db111b3 Add JPEG export for selected stamps with title and memo.
@@ -286,7 +299,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~53) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~54) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
