@@ -52,7 +52,8 @@
         "expo-image-picker",
         {
           "photosPermission": "앨범에서 스탬프용 사진을 선택합니다.",
-          "cameraPermission": "기본 카메라 앱으로 사진을 촬영합니다."
+          "cameraPermission": "기본 카메라 앱으로 사진을 촬영합니다.",
+          "microphonePermission": false
         }
       ]
     ]

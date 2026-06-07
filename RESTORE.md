@@ -827,3 +827,20 @@ restore-back-handler.bat
 ```powershell
 Copy-Item src.pre-back-handler\screens\MainScreen.tsx src\screens\ -Force
 ```
+
+## 56. APK 마이크 권한(RECORD_AUDIO) 복구만 되돌리기 (선택)
+
+`expo-image-picker`의 `microphonePermission: false` 제거 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-mic-permission.bat
+```
+
+또는:
+
+```powershell
+Copy-Item app.json.pre-mic-permission app.json -Force
+npx expo prebuild --platform android --no-install
+```
+
+※ 되돌린 뒤 APK 재빌드(`build-apk.bat`)가 필요합니다.
