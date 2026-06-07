@@ -762,3 +762,17 @@ Remove-Item src\components\StampExportCard.tsx -ErrorAction SilentlyContinue
 Remove-Item src\components\StampImageExportHost.tsx -ErrorAction SilentlyContinue
 npm install
 ```
+
+## 52. 갤러리 앨범 분류 예외 처리만 되돌리기 (선택)
+
+이미지 저장은 되는데 실패 알림만 뜨던 문제(앨범 추가 실패 시 예외) 수정 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-album-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-album-fix\services\galleryService.ts src\services\ -Force
+```
