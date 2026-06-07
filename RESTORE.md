@@ -605,3 +605,21 @@ restore-pdf-image-size.bat
 ```powershell
 Copy-Item src.pre-pdf-image-size\services\exportPdf.ts src\services\ -Force
 ```
+
+## 42. PDF 일시·파일명·빈 메모 표시만 되돌리기 (선택)
+
+PDF 촬영 일시 표시, 파일명 날짜·시간, 빈 메모 `(메모 없음)` 생략 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-datetime-memo.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-datetime-memo\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-pdf-datetime-memo\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-pdf-datetime-memo\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-pdf-datetime-memo\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\services\pdfTitleFormat.ts -ErrorAction SilentlyContinue
+```

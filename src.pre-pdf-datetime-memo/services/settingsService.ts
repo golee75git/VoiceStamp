@@ -1,20 +1,16 @@
-import { getDatabase } from '../db/database';
+﻿import { getDatabase } from '../db/database';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
 const PDF_IMAGE_QUALITY_KEY = 'pdf_image_quality';
 const TITLE_TEXT_ALIGN_KEY = 'title_text_align';
 const MEMO_TEXT_ALIGN_KEY = 'memo_text_align';
-const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
-const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
 export const DEFAULT_PDF_IMAGE_QUALITY = 'original' as const;
 export const DEFAULT_TITLE_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
-export const DEFAULT_PDF_SHOW_DATETIME = true;
-export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
@@ -25,11 +21,11 @@ export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
 export function textAlignLabel(align: TextAlign): string {
   switch (align) {
     case 'center':
-      return '가운데';
+      return '媛?대뜲';
     case 'right':
-      return '오른쪽';
+      return '?ㅻⅨ履?;
     default:
-      return '왼쪽';
+      return '?쇱そ';
   }
 }
 
@@ -161,31 +157,4 @@ export async function setMemoTextAlign(align: TextAlign): Promise<TextAlign> {
   const safeAlign = sanitizeTextAlign(align);
   await writeSetting(MEMO_TEXT_ALIGN_KEY, safeAlign);
   return safeAlign;
-}
-
-function parseBooleanSetting(value: string | null, defaultValue: boolean): boolean {
-  if (value === null) {
-    return defaultValue;
-  }
-  return value === 'true';
-}
-
-export async function getPdfShowDatetime(): Promise<boolean> {
-  const value = await readSetting(PDF_SHOW_DATETIME_KEY);
-  return parseBooleanSetting(value, DEFAULT_PDF_SHOW_DATETIME);
-}
-
-export async function setPdfShowDatetime(show: boolean): Promise<boolean> {
-  await writeSetting(PDF_SHOW_DATETIME_KEY, show ? 'true' : 'false');
-  return show;
-}
-
-export async function getPdfFilenameIncludeDatetime(): Promise<boolean> {
-  const value = await readSetting(PDF_FILENAME_INCLUDE_DATETIME_KEY);
-  return parseBooleanSetting(value, DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
-}
-
-export async function setPdfFilenameIncludeDatetime(include: boolean): Promise<boolean> {
-  await writeSetting(PDF_FILENAME_INCLUDE_DATETIME_KEY, include ? 'true' : 'false');
-  return include;
 }

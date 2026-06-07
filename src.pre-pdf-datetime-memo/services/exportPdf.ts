@@ -1,19 +1,10 @@
-import * as FileSystem from 'expo-file-system/legacy';
+﻿import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
-import { pdfDisplayTitle } from './pdfTitleFormat';
-import {
-  getMemoTextAlign,
-  getPdfImageQuality,
-  getPdfPhotosPerPage,
-  getPdfShowDatetime,
-  getTitleTextAlign,
-  type PdfPhotosPerPage,
-  type TextAlign,
-} from './settingsService';
+import { getMemoTextAlign, getPdfImageQuality, getPdfPhotosPerPage, getTitleTextAlign, type PdfPhotosPerPage, type TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -64,17 +55,10 @@ function buildStampItem(
   photosPerPage: PdfPhotosPerPage,
   titleAlign: TextAlign,
   memoAlign: TextAlign,
-  showDatetime: boolean,
 ): string {
-  const title = escapeHtml(pdfDisplayTitle(stamp.title, showDatetime));
-  const memoTrimmed = stamp.memo?.trim() ?? '';
-  const memoBlock = memoTrimmed
-    ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
-    : '';
+  const title = escapeHtml(stamp.title || '(?쒕ぉ ?놁쓬)');
+  const memo = escapeHtml(stamp.memo || '(硫붾え ?놁쓬)');
   const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
-  const dateBlock = showDatetime
-    ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
-    : '';
   const maxHeight = imageMaxHeight(photosPerPage);
 
   const imageMargin = imageMarginStyle(titleAlign);
@@ -83,8 +67,8 @@ function buildStampItem(
       <div class="item">
         <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
         <h1 style="text-align: ${titleAlign};">${title}</h1>
-        ${memoBlock}
-        ${dateBlock}
+        <p class="memo" style="text-align: ${memoAlign};">${memo}</p>
+        <p class="date" style="text-align: ${titleAlign};">${date}</p>
       </div>`;
 }
 
@@ -103,7 +87,6 @@ function buildHtml(
   photosPerPage: PdfPhotosPerPage,
   titleAlign: TextAlign,
   memoAlign: TextAlign,
-  showDatetime: boolean,
 ): string {
   const stampPages = chunkStamps(
     stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
@@ -114,7 +97,7 @@ function buildHtml(
     .map((group) => {
       const items = group
         .map(({ stamp, imageDataUri }) =>
-          buildStampItem(stamp, imageDataUri, photosPerPage, titleAlign, memoAlign, showDatetime),
+          buildStampItem(stamp, imageDataUri, photosPerPage, titleAlign, memoAlign),
         )
         .join('');
       return `
@@ -185,7 +168,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
   try {
     const doc = iframe.contentDocument ?? iframe.contentWindow?.document;
     if (!doc) {
-      throw new Error('인쇄 프레임을 열 수 없습니다.');
+      throw new Error('?몄뇙 ?꾨젅?꾩쓣 ?????놁뒿?덈떎.');
     }
 
     doc.open();
@@ -206,7 +189,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
 
 async function printWebPdf(fileName: string): Promise<void> {
   if (!lastWebPrintHtml) {
-    throw new Error('PDF가 준비되지 않았습니다.');
+    throw new Error('PDF媛 以鍮꾨릺吏 ?딆븯?듬땲??');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -255,22 +238,21 @@ async function archivePdf(uri: string, fileName: string): Promise<void> {
 
 export async function createStampsPdf(stamps: Stamp[], fileName: string): Promise<string> {
   if (stamps.length === 0) {
-    throw new Error('보낼 스탬프가 없습니다.');
+    throw new Error('蹂대궪 ?ㅽ꺃?꾧? ?놁뒿?덈떎.');
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
     getMemoTextAlign(),
-    getPdfShowDatetime(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
   );
 
-  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage, titleAlign, memoAlign, showDatetime);
+  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage, titleAlign, memoAlign);
 
   if (Platform.OS === 'web') {
     lastWebPrintHtml = html;
@@ -291,7 +273,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('저장 기능을 사용할 수 없습니다.');
+    throw new Error('???湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -299,7 +281,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 저장',
+    dialogTitle: 'PDF ???,
   });
 }
 
@@ -311,7 +293,7 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('공유 기능을 사용할 수 없습니다.');
+    throw new Error('怨듭쑀 湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -319,6 +301,6 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 공유',
+    dialogTitle: 'PDF 怨듭쑀',
   });
 }
