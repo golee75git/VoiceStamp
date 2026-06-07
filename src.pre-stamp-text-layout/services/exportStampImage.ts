@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import { buildStampImageFileName, resolveImageUri } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import type { StampTextLayout, TextAlign } from './settingsService';
+import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 export const STAMP_JPEG_MAX_WIDTH = 2048;
@@ -14,7 +14,6 @@ export type StampImageExportOptions = {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   showDatetime: boolean;
-  textLayout: StampTextLayout;
 };
 
 export async function compressStampJpeg(sourceUri: string): Promise<string> {
@@ -90,86 +89,7 @@ function drawAlignedText(
   return cursorY;
 }
 
-async function renderStampJpegWatermarkOnWeb(
-  stamp: Stamp,
-  options: StampImageExportOptions,
-): Promise<string> {
-  const imageUri = resolveImageUri(stamp.imagePath);
-  const img = await loadWebImage(imageUri);
-
-  const scale = img.width > STAMP_JPEG_MAX_WIDTH ? STAMP_JPEG_MAX_WIDTH / img.width : 1;
-  const imgWidth = Math.max(1, Math.round(img.width * scale));
-  const imgHeight = Math.max(1, Math.round(img.height * scale));
-
-  const title = pdfDisplayTitle(stamp.title, options.showDatetime);
-  const memo = stamp.memo?.trim() ?? '';
-  const barPaddingX = 20;
-  const barPaddingY = 16;
-  const textWidth = imgWidth - barPaddingX * 2;
-
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  if (!measureCtx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
-  }
-
-  measureCtx.font = '700 32px sans-serif';
-  const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
-  measureCtx.font = '400 26px sans-serif';
-  const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
-
-  const barHeight =
-    barPaddingY +
-    titleLines.length * 38 +
-    (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
-    barPaddingY;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = imgWidth;
-  canvas.height = imgHeight;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
-  }
-
-  ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-  ctx.fillRect(0, imgHeight - barHeight, imgWidth, barHeight);
-
-  let textY = imgHeight - barHeight + barPaddingY + 28;
-  textY =
-    drawAlignedText(
-      ctx,
-      title,
-      barPaddingX,
-      textY,
-      textWidth,
-      options.titleAlign,
-      32,
-      '700',
-      '#ffffff',
-      38,
-    ) + 4;
-
-  if (memo) {
-    drawAlignedText(
-      ctx,
-      memo,
-      barPaddingX,
-      textY + 4,
-      textWidth,
-      options.memoAlign,
-      26,
-      '400',
-      '#f3f4f6',
-      32,
-    );
-  }
-
-  return canvas.toDataURL('image/jpeg', STAMP_JPEG_COMPRESS);
-}
-
-async function renderStampJpegCaptionOnWeb(
+async function renderStampJpegOnWeb(
   stamp: Stamp,
   options: StampImageExportOptions,
 ): Promise<string> {
@@ -248,16 +168,6 @@ async function renderStampJpegCaptionOnWeb(
   }
 
   return canvas.toDataURL('image/jpeg', STAMP_JPEG_COMPRESS);
-}
-
-async function renderStampJpegOnWeb(
-  stamp: Stamp,
-  options: StampImageExportOptions,
-): Promise<string> {
-  if (options.textLayout === 'watermark') {
-    return renderStampJpegWatermarkOnWeb(stamp, options);
-  }
-  return renderStampJpegCaptionOnWeb(stamp, options);
 }
 
 function downloadDataUriOnWeb(dataUri: string, fileName: string): void {

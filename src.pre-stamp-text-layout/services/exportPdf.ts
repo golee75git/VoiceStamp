@@ -10,10 +10,8 @@ import {
   getPdfImageQuality,
   getPdfPhotosPerPage,
   getPdfShowDatetime,
-  getStampTextLayout,
   getTitleTextAlign,
   type PdfPhotosPerPage,
-  type StampTextLayout,
   type TextAlign,
 } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -68,29 +66,9 @@ function buildStampItem(
   memoAlign: TextAlign,
   showDatetime: boolean,
   shrinkForReportHeader: boolean,
-  textLayout: StampTextLayout,
 ): string {
   const title = escapeHtml(pdfDisplayTitle(stamp.title, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
-  const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
-  const imageMargin = imageMarginStyle(titleAlign);
-
-  if (textLayout === 'watermark') {
-    const memoBlock = memoTrimmed
-      ? `<div class="watermark-memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</div>`
-      : '';
-    return `
-      <div class="item item-watermark">
-        <div class="photo-wrap">
-          <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
-          <div class="watermark-bar">
-            <div class="watermark-title" style="text-align: ${titleAlign};">${title}</div>
-            ${memoBlock}
-          </div>
-        </div>
-      </div>`;
-  }
-
   const memoBlock = memoTrimmed
     ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
     : '';
@@ -98,6 +76,9 @@ function buildStampItem(
   const dateBlock = showDatetime
     ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
     : '';
+  const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
+
+  const imageMargin = imageMarginStyle(titleAlign);
 
   return `
       <div class="item">
@@ -125,7 +106,6 @@ function buildHtml(
   memoAlign: TextAlign,
   showDatetime: boolean,
   reportTitle: string,
-  textLayout: StampTextLayout,
 ): string {
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
@@ -146,7 +126,6 @@ function buildHtml(
             memoAlign,
             showDatetime,
             shrinkImages,
-            textLayout,
           ),
         )
         .join('');
@@ -184,13 +163,6 @@ function buildHtml(
   .item h1 { font-size: 16px; margin: 8px 0 4px; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
-  .item-watermark .photo-wrap { position: relative; display: block; width: 100%; }
-  .watermark-bar {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.55); padding: 8px 10px; color: #fff;
-  }
-  .watermark-title { font-size: 14px; font-weight: 700; }
-  .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
 </style>
 </head>
 <body>${pages}</body>
@@ -309,13 +281,12 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
-    getStampTextLayout(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -330,7 +301,6 @@ export async function createStampsPdf(
     memoAlign,
     showDatetime,
     reportTitle,
-    textLayout,
   );
 
   if (Platform.OS === 'web') {

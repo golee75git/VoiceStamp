@@ -18,21 +18,11 @@ export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
-export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
-export type StampTextLayout = 'caption' | 'watermark';
-
-export function stampTextLayoutLabel(layout: StampTextLayout): string {
-  return layout === 'watermark' ? '워터마크' : '별도 영역';
-}
-
-export function sanitizeStampTextLayout(value: string): StampTextLayout {
-  return value === 'watermark' ? 'watermark' : 'caption';
-}
 
 export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
 
@@ -220,18 +210,4 @@ export async function setCameraHand(hand: CameraHand): Promise<CameraHand> {
   const safeHand = sanitizeCameraHand(hand);
   await writeSetting(CAMERA_HAND_KEY, safeHand);
   return safeHand;
-}
-
-export async function getStampTextLayout(): Promise<StampTextLayout> {
-  const value = await readSetting(STAMP_TEXT_LAYOUT_KEY);
-  if (!value) {
-    return DEFAULT_STAMP_TEXT_LAYOUT;
-  }
-  return sanitizeStampTextLayout(value);
-}
-
-export async function setStampTextLayout(layout: StampTextLayout): Promise<StampTextLayout> {
-  const safeLayout = sanitizeStampTextLayout(layout);
-  await writeSetting(STAMP_TEXT_LAYOUT_KEY, safeLayout);
-  return safeLayout;
 }

@@ -776,3 +776,22 @@ restore-gallery-album-fix.bat
 ```powershell
 Copy-Item src.pre-gallery-album-fix\services\galleryService.ts src\services\ -Force
 ```
+
+## 53. 제목·메모 표시 방식(워터마크)만 되돌리기 (선택)
+
+설정에서 별도 영역/워터마크 선택 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-text-layout.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-text-layout\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-stamp-text-layout\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-stamp-text-layout\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-stamp-text-layout\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-stamp-text-layout\components\StampExportCard.tsx src\components\ -Force
+Copy-Item src.pre-stamp-text-layout\components\StampListScreen.tsx src\components\ -Force
+```

@@ -23,9 +23,7 @@ import {
   getMemoTextAlign,
   getPdfFilenameIncludeDatetime,
   getPdfShowDatetime,
-  getStampTextLayout,
   getTitleTextAlign,
-  type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
 import { listStamps } from '../services/stampRepository';
@@ -61,7 +59,6 @@ export function StampListScreen({
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
-  const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
@@ -70,20 +67,18 @@ export function StampListScreen({
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout] = await Promise.all([
+      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime] = await Promise.all([
         listStamps(),
         getTitleTextAlign(),
         getMemoTextAlign(),
         getPdfFilenameIncludeDatetime(),
         getPdfShowDatetime(),
-        getStampTextLayout(),
       ]);
       setStamps(rows);
       setTitleTextAlign(titleAlign);
       setMemoTextAlign(memoAlign);
       setPdfFilenameIncludeDatetime(filenameDatetime);
       setPdfShowDatetime(showDatetime);
-      setStampTextLayout(textLayout);
     } finally {
       setLoading(false);
     }
@@ -211,7 +206,6 @@ export function StampListScreen({
         titleAlign: titleTextAlign,
         memoAlign: memoTextAlign,
         showDatetime: pdfShowDatetime,
-        textLayout: stampTextLayout,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,
