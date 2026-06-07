@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -20,7 +20,6 @@ export function MainScreen() {
       <StatusBar style="light" />
       {screen === 'camera' ? (
         <CameraScreen
-          refreshKey={refreshKey}
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => setScreen('settings')}
           onSaved={bumpRefresh}
@@ -28,7 +27,7 @@ export function MainScreen() {
       ) : screen === 'settings' ? (
         <SettingsScreen
           onBack={() => setScreen('camera')}
-          backLabel="카메라"
+          backLabel="移대찓??
           refreshKey={refreshKey}
           onTrashEmptied={bumpRefresh}
           onSettingsSaved={bumpRefresh}

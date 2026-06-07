@@ -1,4 +1,4 @@
-import { getDatabase } from '../db/database';
+﻿import { getDatabase } from '../db/database';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
@@ -7,7 +7,6 @@ const TITLE_TEXT_ALIGN_KEY = 'title_text_align';
 const MEMO_TEXT_ALIGN_KEY = 'memo_text_align';
 const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
-const CAMERA_HAND_KEY = 'camera_hand';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
@@ -16,23 +15,21 @@ export const DEFAULT_TITLE_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
-export const DEFAULT_CAMERA_HAND = 'right' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
-export type CameraHand = 'left' | 'right';
 
 export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
 
 export function textAlignLabel(align: TextAlign): string {
   switch (align) {
     case 'center':
-      return '가운데';
+      return '媛?대뜲';
     case 'right':
-      return '오른쪽';
+      return '?ㅻⅨ履?;
     default:
-      return '왼쪽';
+      return '?쇱そ';
   }
 }
 
@@ -191,22 +188,4 @@ export async function getPdfFilenameIncludeDatetime(): Promise<boolean> {
 export async function setPdfFilenameIncludeDatetime(include: boolean): Promise<boolean> {
   await writeSetting(PDF_FILENAME_INCLUDE_DATETIME_KEY, include ? 'true' : 'false');
   return include;
-}
-
-export function sanitizeCameraHand(value: string): CameraHand {
-  return value === 'left' ? 'left' : 'right';
-}
-
-export async function getCameraHand(): Promise<CameraHand> {
-  const value = await readSetting(CAMERA_HAND_KEY);
-  if (!value) {
-    return DEFAULT_CAMERA_HAND;
-  }
-  return sanitizeCameraHand(value);
-}
-
-export async function setCameraHand(hand: CameraHand): Promise<CameraHand> {
-  const safeHand = sanitizeCameraHand(hand);
-  await writeSetting(CAMERA_HAND_KEY, safeHand);
-  return safeHand;
 }

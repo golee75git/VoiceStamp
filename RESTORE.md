@@ -668,3 +668,20 @@ restore-camera-nav-bottom.bat
 ```powershell
 Copy-Item src.pre-camera-nav-bottom\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 46. 카메라 손잡이(왼손/오른손) 메뉴 위치만 되돌리기 (선택)
+
+설정에서 카메라 메뉴를 왼손·오른손에 따라 좌/우 하단에 배치하는 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-hand.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-hand\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-camera-hand\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-hand\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-hand\screens\MainScreen.tsx src\screens\ -Force
+```

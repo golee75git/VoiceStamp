@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 
 import {
-  DEFAULT_CAMERA_HAND,
   DEFAULT_MEMO_TEXT_ALIGN,
   DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   DEFAULT_PDF_IMAGE_QUALITY,
@@ -20,7 +19,6 @@ import {
   DEFAULT_PDF_SHOW_DATETIME,
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_TITLE_TEXT_ALIGN,
-  getCameraHand,
   getMemoTextAlign,
   getPdfFilenameIncludeDatetime,
   getPdfImageQuality,
@@ -28,10 +26,8 @@ import {
   getPdfShowDatetime,
   getStampsFolderName,
   getTitleTextAlign,
-  type CameraHand,
   type PdfImageQuality,
   type PdfPhotosPerPage,
-  setCameraHand,
   setMemoTextAlign,
   setPdfFilenameIncludeDatetime,
   setPdfImageQuality,
@@ -47,13 +43,13 @@ import { emptyTrash, getTrashedStampCount } from '../services/stampTrash';
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
-  { value: 'original', label: '원본' },
-  { value: 'standard', label: '표준' },
-  { value: 'compressed', label: '압축' },
+  { value: 'original', label: '?먮낯' },
+  { value: 'standard', label: '?쒖?' },
+  { value: 'compressed', label: '?뺤텞' },
 ];
 
 function pdfQualityLabel(quality: PdfImageQuality): string {
-  return PDF_QUALITY_OPTIONS.find((option) => option.value === quality)?.label ?? '원본';
+  return PDF_QUALITY_OPTIONS.find((option) => option.value === quality)?.label ?? '?먮낯';
 }
 
 type SettingsScreenProps = {
@@ -66,7 +62,7 @@ type SettingsScreenProps = {
 
 export function SettingsScreen({
   onBack,
-  backLabel = '목록',
+  backLabel = '紐⑸줉',
   refreshKey = 0,
   onTrashEmptied,
   onSettingsSaved,
@@ -84,7 +80,6 @@ export function SettingsScreen({
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetimeState] = useState(
     DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   );
-  const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
@@ -94,7 +89,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, hand, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -103,7 +98,6 @@ export function SettingsScreen({
           getMemoTextAlign(),
           getPdfShowDatetime(),
           getPdfFilenameIncludeDatetime(),
-          getCameraHand(),
           getTrashedStampCount(),
         ]);
         setFolderName(name);
@@ -113,7 +107,6 @@ export function SettingsScreen({
         setMemoTextAlignState(memoAlign);
         setPdfShowDatetimeState(showDatetime);
         setPdfFilenameIncludeDatetimeState(filenameDatetime);
-        setCameraHandState(hand);
         setTrashCount(trashed);
       } finally {
         setLoading(false);
@@ -123,17 +116,17 @@ export function SettingsScreen({
 
   const handleEmptyTrash = () => {
     if (trashCount === 0) {
-      Alert.alert('휴지통 비우기', '휴지통이 이미 비어 있습니다.');
+      Alert.alert('?댁???鍮꾩슦湲?, '?댁??듭씠 ?대? 鍮꾩뼱 ?덉뒿?덈떎.');
       return;
     }
 
     Alert.alert(
-      '휴지통 비우기',
-      `${trashCount}개 스탬프를 영구 삭제합니다. 되돌릴 수 없습니다.`,
+      '?댁???鍮꾩슦湲?,
+      `${trashCount}媛??ㅽ꺃?꾨? ?곴뎄 ??젣?⑸땲?? ?섎룎由????놁뒿?덈떎.`,
       [
-        { text: '취소', style: 'cancel' },
+        { text: '痍⑥냼', style: 'cancel' },
         {
-          text: '비우기',
+          text: '鍮꾩슦湲?,
           style: 'destructive',
           onPress: async () => {
             setEmptyingTrash(true);
@@ -141,11 +134,11 @@ export function SettingsScreen({
               const removed = await emptyTrash();
               setTrashCount(0);
               onTrashEmptied?.();
-              Alert.alert('완료', `${removed}개를 영구 삭제했습니다.`);
+              Alert.alert('?꾨즺', `${removed}媛쒕? ?곴뎄 ??젣?덉뒿?덈떎.`);
             } catch (e) {
               Alert.alert(
-                '실패',
-                e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+                '?ㅽ뙣',
+                e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
               );
             } finally {
               setEmptyingTrash(false);
@@ -167,7 +160,6 @@ export function SettingsScreen({
         savedMemoAlign,
         savedShowDatetime,
         savedFilenameDatetime,
-        savedCameraHand,
       ] = await Promise.all([
           setStampsFolderName(folderName),
           setPdfPhotosPerPage(pdfPhotosPerPage),
@@ -176,7 +168,6 @@ export function SettingsScreen({
           setMemoTextAlign(memoTextAlign),
           setPdfShowDatetime(pdfShowDatetime),
           setPdfFilenameIncludeDatetime(pdfFilenameIncludeDatetime),
-          setCameraHand(cameraHand),
         ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
@@ -185,16 +176,15 @@ export function SettingsScreen({
       setMemoTextAlignState(savedMemoAlign);
       setPdfShowDatetimeState(savedShowDatetime);
       setPdfFilenameIncludeDatetimeState(savedFilenameDatetime);
-      setCameraHandState(savedCameraHand);
       onSettingsSaved?.();
       Alert.alert(
-        '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.`,
+        '????꾨즺',
+        `???ъ쭊? "${savedFolder}" ?대뜑????λ맗?덈떎.\nPDF???섏씠吏??${savedPerPage}?? ?붿쭏 ${pdfQualityLabel(savedQuality)}.\nPDF ?쇱떆 ${savedShowDatetime ? '?쒖떆' : '?④?'}, ?뚯씪紐??좎쭨쨌?쒓컙 ${savedFilenameDatetime ? '?ы븿' : '?쒖쇅'}.\n?쒕ぉ ${textAlignLabel(savedTitleAlign)}, 硫붾え ${textAlignLabel(savedMemoAlign)} ?뺣젹.`,
       );
     } catch (e) {
       Alert.alert(
-        '저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        '????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setSaving(false);
@@ -209,16 +199,15 @@ export function SettingsScreen({
     setMemoTextAlignState(DEFAULT_MEMO_TEXT_ALIGN);
     setPdfShowDatetimeState(DEFAULT_PDF_SHOW_DATETIME);
     setPdfFilenameIncludeDatetimeState(DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
-    setCameraHandState(DEFAULT_CAMERA_HAND);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={onBack}>
-          <Text style={styles.backText}>← {backLabel}</Text>
+          <Text style={styles.backText}>??{backLabel}</Text>
         </Pressable>
-        <Text style={styles.title}>설정</Text>
+        <Text style={styles.title}>?ㅼ젙</Text>
       </View>
 
       {loading ? (
@@ -232,12 +221,12 @@ export function SettingsScreen({
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
         >
-          <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
+          <Text style={styles.label}>?ъ쭊 ????대뜑 (???대?)</Text>
           <Text style={styles.hint}>
-            앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다.
+            ???곗씠???덉쓽 ?섏쐞 ?대뜑 ?대쫫?낅땲?? 蹂寃????덈줈 李띿? ?ъ쭊遺???곸슜?⑸땲??
           </Text>
           {Platform.OS === 'web' && (
-            <Text style={styles.webNote}>웹에서는 사진이 DB에 저장되어 이 설정이 적용되지 않습니다.</Text>
+            <Text style={styles.webNote}>?뱀뿉?쒕뒗 ?ъ쭊??DB????λ릺?????ㅼ젙???곸슜?섏? ?딆뒿?덈떎.</Text>
           )}
           <TextInput
             style={styles.input}
@@ -248,37 +237,8 @@ export function SettingsScreen({
             editable={!saving}
           />
 
-          <Text style={[styles.label, styles.sectionGap]}>카메라 메뉴 위치 (손잡이)</Text>
-          <Text style={styles.hint}>
-            목록·설정·카메라 버튼을 왼손은 왼쪽 하단, 오른손은 오른쪽 하단에 배치합니다.
-          </Text>
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, cameraHand === 'left' && styles.optionButtonSelected]}
-              onPress={() => setCameraHandState('left')}
-              disabled={saving}
-            >
-              <Text
-                style={[styles.optionButtonText, cameraHand === 'left' && styles.optionButtonTextSelected]}
-              >
-                왼손
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, cameraHand === 'right' && styles.optionButtonSelected]}
-              onPress={() => setCameraHandState('right')}
-              disabled={saving}
-            >
-              <Text
-                style={[styles.optionButtonText, cameraHand === 'right' && styles.optionButtonTextSelected]}
-              >
-                오른손
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>PDF 페이지당 사진 수</Text>
-          <Text style={styles.hint}>PDF보내기 시 한 페이지에 배치할 사진 개수입니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>PDF ?섏씠吏???ъ쭊 ??/Text>
+          <Text style={styles.hint}>PDF蹂대궡湲??????섏씠吏??諛곗튂???ъ쭊 媛쒖닔?낅땲??</Text>
           <View style={styles.optionRow}>
             {PDF_OPTIONS.map((option) => {
               const selected = pdfPhotosPerPage === option;
@@ -297,8 +257,8 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>PDF 화질(용량)</Text>
-          <Text style={styles.hint}>PDF보내기 시 사진 압축 수준입니다. 원본 스탬프 사진은 바뀌지 않습니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>PDF ?붿쭏(?⑸웾)</Text>
+          <Text style={styles.hint}>PDF蹂대궡湲????ъ쭊 ?뺤텞 ?섏??낅땲?? ?먮낯 ?ㅽ꺃???ъ쭊? 諛붾뚯? ?딆뒿?덈떎.</Text>
           <View style={styles.optionRow}>
             {PDF_QUALITY_OPTIONS.map((option) => {
               const selected = pdfImageQuality === option.value;
@@ -317,9 +277,9 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>PDF 촬영 일시 표시</Text>
+          <Text style={[styles.label, styles.sectionGap]}>PDF 珥ъ쁺 ?쇱떆 ?쒖떆</Text>
           <Text style={styles.hint}>
-            끄면 PDF 제목의 날짜·시간(20260607_1045)과 하단 일시 줄을 표시하지 않습니다.
+            ?꾨㈃ PDF ?쒕ぉ???좎쭨쨌?쒓컙(20260607_1045)怨??섎떒 ?쇱떆 以꾩쓣 ?쒖떆?섏? ?딆뒿?덈떎.
           </Text>
           <View style={styles.optionRow}>
             <Pressable
@@ -330,7 +290,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                표시
+                ?쒖떆
               </Text>
             </Pressable>
             <Pressable
@@ -341,13 +301,13 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, !pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                숨김
+                ?④?
               </Text>
             </Pressable>
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>PDF 파일명 날짜·시간</Text>
-          <Text style={styles.hint}>PDF보내기 시 파일명 기본값에 날짜·시간 포함 여부입니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>PDF ?뚯씪紐??좎쭨쨌?쒓컙</Text>
+          <Text style={styles.hint}>PDF蹂대궡湲????뚯씪紐?湲곕낯媛믪뿉 ?좎쭨쨌?쒓컙 ?ы븿 ?щ??낅땲??</Text>
           <View style={styles.optionRow}>
             <Pressable
               style={[styles.optionButton, pdfFilenameIncludeDatetime && styles.optionButtonSelected]}
@@ -360,7 +320,7 @@ export function SettingsScreen({
                   pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                포함
+                ?ы븿
               </Text>
             </Pressable>
             <Pressable
@@ -374,13 +334,13 @@ export function SettingsScreen({
                   !pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                제외
+                ?쒖쇅
               </Text>
             </Pressable>
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>
-          <Text style={styles.hint}>목록·입력·PDF에서 제목 텍스트 정렬입니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>?쒕ぉ ?뺣젹</Text>
+          <Text style={styles.hint}>紐⑸줉쨌?낅젰쨌PDF?먯꽌 ?쒕ぉ ?띿뒪???뺣젹?낅땲??</Text>
           <View style={styles.optionRow}>
             {TEXT_ALIGN_OPTIONS.map((option) => {
               const selected = titleTextAlign === option;
@@ -399,8 +359,8 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>메모 정렬</Text>
-          <Text style={styles.hint}>목록·입력·PDF에서 메모 텍스트 정렬입니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>硫붾え ?뺣젹</Text>
+          <Text style={styles.hint}>紐⑸줉쨌?낅젰쨌PDF?먯꽌 硫붾え ?띿뒪???뺣젹?낅땲??</Text>
           <View style={styles.optionRow}>
             {TEXT_ALIGN_OPTIONS.map((option) => {
               const selected = memoTextAlign === option;
@@ -427,18 +387,18 @@ export function SettingsScreen({
             {saving ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.primaryButtonText}>저장</Text>
+              <Text style={styles.primaryButtonText}>???/Text>
             )}
           </Pressable>
           <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
             <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
+              湲곕낯媛?(?대뜑: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}?? ?먮낯, ?뺣젹 ?쇱そ)
             </Text>
           </Pressable>
 
-          <Text style={[styles.label, styles.sectionGap]}>휴지통</Text>
+          <Text style={[styles.label, styles.sectionGap]}>?댁???/Text>
           <Text style={styles.hint}>
-            휴지통에 {trashCount}개 있습니다. 비우면 사진과 기록이 영구 삭제됩니다.
+            ?댁??듭뿉 {trashCount}媛??덉뒿?덈떎. 鍮꾩슦硫??ъ쭊怨?湲곕줉???곴뎄 ??젣?⑸땲??
           </Text>
           <Pressable
             style={[styles.dangerButton, (saving || emptyingTrash) && styles.buttonDisabled]}
@@ -448,7 +408,7 @@ export function SettingsScreen({
             {emptyingTrash ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.dangerButtonText}>휴지통 비우기</Text>
+              <Text style={styles.dangerButtonText}>?댁???鍮꾩슦湲?/Text>
             )}
           </Pressable>
         </ScrollView>
