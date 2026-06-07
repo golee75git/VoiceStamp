@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-06-08 |
-| 최신 반영 커밋 | `591666e` (main) |
+| 최신 반영 커밋 | `b222581` (main) |
 
 ---
 
@@ -136,6 +136,9 @@
 | F-Voice-03 | 네이티브 빌드에서만 동작 (웹 제한 안내) | ✅ |
 | F-Voice-04 | 손잡이 설정에 따른 마이크 버튼 좌/우 배치 | ✅ |
 | F-Voice-05 | 마이크 PNG 아이콘, 녹음 중 ● 표시 | ✅ |
+| F-Voice-06 | APK `RECORD_AUDIO` 유지 (`expo-image-picker`의 `microphonePermission: false` 제거) | ✅ |
+
+구현: `app.json` 플러그인 설정 (`b222581`). prebuild 후 manifest에 `RECORD_AUDIO` 포함. 되돌리기: `restore-mic-permission.bat` (RESTORE §56).
 
 ### 3.4 목록·수정·삭제 (P0)
 
@@ -214,6 +217,7 @@
 | F-DEP-05 | 앱 아이콘 3D 액자 디자인 (나무 액자·금색 마이크·VS) | ✅ |
 | F-DEP-06 | Android Adaptive Icon safe zone 여백 (`assets` 5종) | ✅ |
 | F-DEP-07 | Vercel CLI 배포용 `.vercelignore` (APK·android 제외) | ✅ |
+| F-DEP-08 | `app.json` 변경 시 `npx expo prebuild --platform android` 후 APK 재빌드 | ✅ |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
@@ -234,7 +238,7 @@
 
 | 항목 | 요구사항 |
 |------|----------|
-| 되돌리기 | 기능별 `restore-*.bat` + `src.pre-*` 백업 (`RESTORE.md` §8~55) |
+| 되돌리기 | 기능별 `restore-*.bat` + `src.pre-*` / `app.json.pre-*` 백업 (`RESTORE.md` §8~56) |
 | 최소 수정 | 기능 단위 작은 diff, 기존 구조 유지 |
 | 보안 | `EXPO_PUBLIC_KAKAO_REST_KEY`는 `.env`/Vercel env만, git 미포함 |
 | 성능 | APK arm64-v8a 단일 아키텍처 빌드로 시간 단축 |
@@ -300,6 +304,8 @@
 | READ/WRITE_MEDIA (또는 저장소) | 갤러리 저장 (`expo-media-library`) |
 
 패키지명: `com.voicestamp.app`
+
+**주의:** `expo-image-picker` 플러그인에 `microphonePermission: false`를 두면 prebuild 시 manifest에서 `RECORD_AUDIO`가 제거되어 APK 음성 입력이 동작하지 않는다 (`b222581`에서 수정).
 
 ---
 

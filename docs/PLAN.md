@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 1.1 |
 | 작성일 | 2026-06-08 |
-| 기준 커밋 | `591666e` (main) |
+| 기준 커밋 | `b222581` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -49,6 +49,7 @@
 | 50 | 3D 액자 앱 아이콘 | `565e4b3` | §8 |
 | 51 | Vercel `.vercelignore` | `919dbf2` | — |
 | 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | §8 |
+| 53 | APK 마이크 권한(RECORD_AUDIO) 복구 | `b222581` | §56 |
 
 ### 2.1 문서 동기화 이력
 
@@ -57,7 +58,8 @@
 | `f125897` | PRD·PROJECT·PLAN·PRIVACY·LICENSE 문서 정리 (기준 `539c4c4`) |
 | `470606d` | PRD·PROJECT·PLAN 문서 정리 (기준 `31332dc`) |
 | `ffa77bf` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `3b6201a`) |
-| (본 갱신) | `591666e` 반영 — 아이콘·`.vercelignore`·최신 APK |
+| `3eb9fd9` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `591666e`) |
+| (본 갱신) | `b222581` 반영 — APK 마이크 권한·최신 APK |
 
 ---
 
@@ -137,7 +139,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260608_003141.apk` |
+| 최신 APK (문서 기준) | `VoiceStamp_20260608_080743.apk` |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -160,5 +162,5 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~55 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~56 |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |

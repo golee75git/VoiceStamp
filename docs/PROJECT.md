@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-08**  
-최신 커밋 기준: `591666e` (main)
+최신 커밋 기준: `b222581` (main)
 
 ---
 
@@ -42,7 +42,7 @@ VoiceStamp/
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~54)
+├── RESTORE.md              # 기능별 되돌리기 (§8~56)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -146,6 +146,7 @@ VoiceStamp/
 | 50 | 3D 액자 앱 아이콘 (나무 액자·금색 마이크·VS) | `565e4b3` | `restore-icon.bat` §8 |
 | 51 | Vercel `.vercelignore` (로컬 배포 EBUSY 방지) | `919dbf2` | `.vercelignore` 삭제 또는 수정 |
 | 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | `restore-icon.bat` §8 |
+| 53 | APK 마이크 권한(RECORD_AUDIO) 복구 | `b222581` | `restore-mic-permission.bat` §56 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -206,10 +207,10 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260608_080743.apk` | APK 마이크 권한 복구 (`b222581`) |
 | `VoiceStamp_20260608_003141.apk` | 아이콘 safe zone 여백 (`591666e`) |
 | `VoiceStamp_20260608_001727.apk` | 3D 액자 아이콘 (`565e4b3`) |
 | `VoiceStamp_20260607_145955.apk` | Android 뒤로가기 (종료 확인·화면 복귀) |
-| `VoiceStamp_20260607_131846.apk` | PDF·이미지 공통 파일명 |
 
 ---
 
@@ -287,6 +288,8 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+b222581 Fix APK mic permission stripped by expo-image-picker config.
+3eb9fd9 Sync PRD, PROJECT, PLAN, and RESTORE docs to commit 591666e.
 591666e Add padding to app icon assets for adaptive icon safe zone.
 919dbf2 Add .vercelignore to avoid local file lock during Vercel deploy.
 565e4b3 Update app icon assets to the new VoiceStamp frame design.
@@ -323,7 +326,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~55) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~56) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
