@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react';
-import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
-import { pickImageFromLibrary, takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -18,60 +17,8 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [capturing, setCapturing] = useState(false);
-  const [externalPickBusy, setExternalPickBusy] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [pictureSize, setPictureSize] = useState<string | undefined>();
-
-  const openSaveModal = (uri: string) => {
-    setCapturedUri(uri);
-    setModalVisible(true);
-  };
-
-  const handleExternalPickError = (label: string, error: unknown) => {
-    const message = error instanceof Error ? error.message : `${label}에 실패했습니다.`;
-    Alert.alert(label, message);
-  };
-
-  const handlePickFromLibrary = async () => {
-    if (externalPickBusy || capturing) {
-      return;
-    }
-
-    setExternalPickBusy(true);
-    try {
-      const uri = await pickImageFromLibrary();
-      if (uri) {
-        openSaveModal(uri);
-      }
-    } catch (error) {
-      handleExternalPickError('앨범', error);
-    } finally {
-      setExternalPickBusy(false);
-    }
-  };
-
-  const handleSystemCamera = async () => {
-    if (externalPickBusy || capturing) {
-      return;
-    }
-
-    if (Platform.OS === 'web') {
-      Alert.alert('카메라', '웹에서는 앨범에서 선택해 주세요.');
-      return;
-    }
-
-    setExternalPickBusy(true);
-    try {
-      const uri = await takePhotoWithSystemCamera();
-      if (uri) {
-        openSaveModal(uri);
-      }
-    } catch (error) {
-      handleExternalPickError('카메라', error);
-    } finally {
-      setExternalPickBusy(false);
-    }
-  };
 
   if (!permission) {
     return (
@@ -87,13 +34,6 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
         <Pressable style={styles.primaryButton} onPress={requestPermission}>
           <Text style={styles.primaryButtonText}>권한 허용</Text>
-        </Pressable>
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={handlePickFromLibrary}
-          disabled={externalPickBusy}
-        >
-          <Text style={styles.secondaryButtonText}>앨범에서 선택</Text>
         </Pressable>
       </View>
     );
@@ -114,7 +54,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   };
 
   const handleCapture = async () => {
-    if (!cameraRef.current || capturing || !cameraReady || externalPickBusy) {
+    if (!cameraRef.current || capturing || !cameraReady) {
       return;
     }
 
@@ -125,14 +65,13 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         skipProcessing: false,
       });
       if (photo?.uri) {
-        openSaveModal(photo.uri);
+        setCapturedUri(photo.uri);
+        setModalVisible(true);
       }
     } finally {
       setCapturing(false);
     }
   };
-
-  const bottomBusy = capturing || externalPickBusy;
 
   return (
     <View style={styles.container}>
@@ -155,32 +94,12 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
 
       <View style={styles.bottomBar}>
         <Pressable
-          style={[styles.sideButton, bottomBusy && styles.sideButtonDisabled]}
-          onPress={handlePickFromLibrary}
-          disabled={bottomBusy}
-        >
-          <Text style={styles.sideButtonText}>앨범</Text>
-        </Pressable>
-
-        <Pressable
-          style={[styles.captureButton, (bottomBusy || !cameraReady) && styles.captureButtonDisabled]}
+          style={[styles.captureButton, (capturing || !cameraReady) && styles.captureButtonDisabled]}
           onPress={handleCapture}
-          disabled={bottomBusy || !cameraReady}
+          disabled={capturing || !cameraReady}
         >
           <View style={styles.captureInner} />
         </Pressable>
-
-        {Platform.OS !== 'web' ? (
-          <Pressable
-            style={[styles.sideButton, bottomBusy && styles.sideButtonDisabled]}
-            onPress={handleSystemCamera}
-            disabled={bottomBusy}
-          >
-            <Text style={styles.sideButtonText}>카메라</Text>
-          </Pressable>
-        ) : (
-          <View style={styles.sideButtonPlaceholder} />
-        )}
       </View>
 
       <StampSaveModal
@@ -227,16 +146,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
   },
-  secondaryButton: {
-    backgroundColor: '#e5e7eb',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 10,
-  },
-  secondaryButtonText: {
-    color: '#111827',
-    fontWeight: '600',
-  },
   topBar: {
     position: 'absolute',
     top: 48,
@@ -259,30 +168,9 @@ const styles = StyleSheet.create({
   bottomBar: {
     position: 'absolute',
     bottom: 40,
-    left: 20,
-    right: 20,
-    flexDirection: 'row',
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sideButton: {
-    minWidth: 72,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  sideButtonDisabled: {
-    opacity: 0.6,
-  },
-  sideButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  sideButtonPlaceholder: {
-    minWidth: 72,
   },
   captureButton: {
     width: 76,

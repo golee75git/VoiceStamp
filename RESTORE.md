@@ -522,3 +522,23 @@ restore-list-gear-footer.bat
 ```powershell
 Copy-Item src.pre-list-gear-footer\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 37. 앨범·기본 카메라 선택만 되돌리기 (선택)
+
+앨범에서 선택·기본 카메라 촬영 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-image-picker.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-image-picker\app.json . -Force
+Copy-Item src.pre-image-picker\package.json . -Force
+Copy-Item src.pre-image-picker\components\CameraScreen.tsx src\components\ -Force
+Remove-Item src\services\pickStampImage.ts -ErrorAction SilentlyContinue
+npm install
+```
+
+※ `expo-image-picker` 제거 후 APK 재빌드가 필요할 수 있습니다.
