@@ -715,3 +715,17 @@ restore-mic-icon.bat
 Copy-Item src.pre-mic-icon\components\VoiceInputField.tsx src\components\ -Force
 Remove-Item assets\mic-icon.png -ErrorAction SilentlyContinue
 ```
+
+## 49. 마이크 녹음 중 점(●) 표시만 되돌리기 (선택)
+
+녹음 중 PNG 대신 점(●) 표시로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-mic-dot.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-mic-dot\components\VoiceInputField.tsx src\components\ -Force
+```

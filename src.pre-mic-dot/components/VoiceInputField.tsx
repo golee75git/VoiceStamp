@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  micDot: {
-    fontSize: 16,
+  micIconActive: {
+    opacity: 0.85,
   },
   input: {
     borderWidth: 1,
