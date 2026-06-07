@@ -685,3 +685,18 @@ Copy-Item src.pre-camera-hand\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-hand\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-hand\screens\MainScreen.tsx src\screens\ -Force
 ```
+
+## 47. 마이크 버튼 손잡이 위치만 되돌리기 (선택)
+
+저장 모달에서 마이크 버튼을 왼손·오른손 설정에 맞춰 좌/우에 배치하는 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-mic-hand.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-mic-hand\components\VoiceInputField.tsx src\components\ -Force
+Copy-Item src.pre-mic-hand\components\StampSaveModal.tsx src\components\ -Force
+```

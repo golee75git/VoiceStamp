@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import type { CameraHand, TextAlign } from '../services/settingsService';
+import type { TextAlign } from '../services/settingsService';
 
 type VoiceInputFieldProps = {
   label: string;
@@ -12,7 +12,6 @@ type VoiceInputFieldProps = {
   speechAvailable?: boolean;
   onFocus?: () => void;
   textAlign?: TextAlign;
-  cameraHand?: CameraHand;
 };
 
 export function VoiceInputField({
@@ -25,11 +24,10 @@ export function VoiceInputField({
   speechAvailable = true,
   onFocus,
   textAlign = 'left',
-  cameraHand = 'right',
 }: VoiceInputFieldProps) {
   return (
     <View style={styles.field}>
-      <View style={[styles.labelRow, cameraHand === 'left' && styles.labelRowLeft]}>
+      <View style={styles.labelRow}>
         <Text style={styles.label}>{label}</Text>
         <Pressable
           style={[styles.micButton, listening && styles.micButtonActive]}
@@ -63,9 +61,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  labelRowLeft: {
-    flexDirection: 'row-reverse',
   },
   label: {
     fontSize: 14,

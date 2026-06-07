@@ -15,7 +15,7 @@ import {
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { formatDefaultStampTitle } from '../services/fileService';
 import { getCurrentPlaceLabel } from '../services/locationService';
-import { getCameraHand, getMemoTextAlign, getTitleTextAlign, type CameraHand, type TextAlign } from '../services/settingsService';
+import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import type { Stamp } from '../types/stamp';
 import { VoiceInputField } from './VoiceInputField';
@@ -57,7 +57,6 @@ export function StampSaveModal({
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
-  const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
@@ -94,15 +93,10 @@ export function StampSaveModal({
 
     let cancelled = false;
     (async () => {
-      const [titleAlign, memoAlign, hand] = await Promise.all([
-        getTitleTextAlign(),
-        getMemoTextAlign(),
-        getCameraHand(),
-      ]);
+      const [titleAlign, memoAlign] = await Promise.all([getTitleTextAlign(), getMemoTextAlign()]);
       if (!cancelled) {
         setTitleTextAlign(titleAlign);
         setMemoTextAlign(memoAlign);
-        setCameraHand(hand);
       }
     })();
 
@@ -250,7 +244,6 @@ export function StampSaveModal({
                 speechAvailable={available}
                 onFocus={scrollFieldIntoView}
                 textAlign={titleTextAlign}
-                cameraHand={cameraHand}
               />
               {!isEdit && locationLoading ? (
                 <Text style={styles.locationHint}>위치 확인 중…</Text>
@@ -267,7 +260,6 @@ export function StampSaveModal({
               multiline
               onFocus={scrollFieldIntoView}
               textAlign={memoTextAlign}
-              cameraHand={cameraHand}
             />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
