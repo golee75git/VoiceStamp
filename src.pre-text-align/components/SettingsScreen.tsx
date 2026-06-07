@@ -11,26 +11,17 @@ import {
 } from 'react-native';
 
 import {
-  DEFAULT_MEMO_TEXT_ALIGN,
   DEFAULT_PDF_IMAGE_QUALITY,
   DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_STAMPS_FOLDER,
-  DEFAULT_TITLE_TEXT_ALIGN,
-  getMemoTextAlign,
   getPdfImageQuality,
   getPdfPhotosPerPage,
   getStampsFolderName,
-  getTitleTextAlign,
   type PdfImageQuality,
   type PdfPhotosPerPage,
-  setMemoTextAlign,
   setPdfImageQuality,
   setPdfPhotosPerPage,
   setStampsFolderName,
-  setTitleTextAlign,
-  TEXT_ALIGN_OPTIONS,
-  type TextAlign,
-  textAlignLabel,
 } from '../services/settingsService';
 import { emptyTrash, getTrashedStampCount } from '../services/stampTrash';
 
@@ -50,7 +41,6 @@ type SettingsScreenProps = {
   backLabel?: string;
   refreshKey?: number;
   onTrashEmptied?: () => void;
-  onSettingsSaved?: () => void;
 };
 
 export function SettingsScreen({
@@ -58,7 +48,6 @@ export function SettingsScreen({
   backLabel = '목록',
   refreshKey = 0,
   onTrashEmptied,
-  onSettingsSaved,
 }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
@@ -67,8 +56,6 @@ export function SettingsScreen({
   const [pdfImageQuality, setPdfImageQualityState] = useState<PdfImageQuality>(
     DEFAULT_PDF_IMAGE_QUALITY,
   );
-  const [titleTextAlign, setTitleTextAlignState] = useState<TextAlign>(DEFAULT_TITLE_TEXT_ALIGN);
-  const [memoTextAlign, setMemoTextAlignState] = useState<TextAlign>(DEFAULT_MEMO_TEXT_ALIGN);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
@@ -78,19 +65,15 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, trashed] = await Promise.all([
+        const [name, perPage, quality, trashed] = await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
           getPdfImageQuality(),
-          getTitleTextAlign(),
-          getMemoTextAlign(),
           getTrashedStampCount(),
         ]);
         setFolderName(name);
         setPdfPhotosPerPageState(perPage);
         setPdfImageQualityState(quality);
-        setTitleTextAlignState(titleAlign);
-        setMemoTextAlignState(memoAlign);
         setTrashCount(trashed);
       } finally {
         setLoading(false);
@@ -136,23 +119,17 @@ export function SettingsScreen({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const [savedFolder, savedPerPage, savedQuality, savedTitleAlign, savedMemoAlign] =
-        await Promise.all([
-          setStampsFolderName(folderName),
-          setPdfPhotosPerPage(pdfPhotosPerPage),
-          setPdfImageQuality(pdfImageQuality),
-          setTitleTextAlign(titleTextAlign),
-          setMemoTextAlign(memoTextAlign),
-        ]);
+      const [savedFolder, savedPerPage, savedQuality] = await Promise.all([
+        setStampsFolderName(folderName),
+        setPdfPhotosPerPage(pdfPhotosPerPage),
+        setPdfImageQuality(pdfImageQuality),
+      ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
       setPdfImageQualityState(savedQuality);
-      setTitleTextAlignState(savedTitleAlign);
-      setMemoTextAlignState(savedMemoAlign);
-      onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\n제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}으로 보냅니다.`,
       );
     } catch (e) {
       Alert.alert(
@@ -168,8 +145,6 @@ export function SettingsScreen({
     setFolderName(DEFAULT_STAMPS_FOLDER);
     setPdfPhotosPerPageState(DEFAULT_PDF_PHOTOS_PER_PAGE);
     setPdfImageQualityState(DEFAULT_PDF_IMAGE_QUALITY);
-    setTitleTextAlignState(DEFAULT_TITLE_TEXT_ALIGN);
-    setMemoTextAlignState(DEFAULT_MEMO_TEXT_ALIGN);
   };
 
   return (
@@ -243,46 +218,6 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>
-          <Text style={styles.hint}>목록·입력·PDF에서 제목 텍스트 정렬입니다.</Text>
-          <View style={styles.optionRow}>
-            {TEXT_ALIGN_OPTIONS.map((option) => {
-              const selected = titleTextAlign === option;
-              return (
-                <Pressable
-                  key={`title-${option}`}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setTitleTextAlignState(option)}
-                  disabled={saving}
-                >
-                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>메모 정렬</Text>
-          <Text style={styles.hint}>목록·입력·PDF에서 메모 텍스트 정렬입니다.</Text>
-          <View style={styles.optionRow}>
-            {TEXT_ALIGN_OPTIONS.map((option) => {
-              const selected = memoTextAlign === option;
-              return (
-                <Pressable
-                  key={`memo-${option}`}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setMemoTextAlignState(option)}
-                  disabled={saving}
-                >
-                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
           <Pressable
             style={[styles.primaryButton, saving && styles.buttonDisabled]}
             onPress={handleSave}
@@ -296,7 +231,7 @@ export function SettingsScreen({
           </Pressable>
           <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
             <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
+              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본)
             </Text>
           </Pressable>
 

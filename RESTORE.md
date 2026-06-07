@@ -542,3 +542,24 @@ npm install
 ```
 
 ※ `expo-image-picker` 제거 후 APK 재빌드가 필요할 수 있습니다.
+
+## 38. 제목·메모 정렬만 되돌리기 (선택)
+
+설정의 제목·메모 정렬(왼쪽/가운데/오른쪽) 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-text-align.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-text-align\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-text-align\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-text-align\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-text-align\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-text-align\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-text-align\components\VoiceInputField.tsx src\components\ -Force
+Copy-Item src.pre-text-align\components\TrashScreen.tsx src\components\ -Force
+Copy-Item src.pre-text-align\screens\MainScreen.tsx src\screens\ -Force
+```

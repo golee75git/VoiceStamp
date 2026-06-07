@@ -14,7 +14,6 @@ import {
 
 import { StampSaveModal } from './StampSaveModal';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
-import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
@@ -44,20 +43,12 @@ export function StampListScreen({
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
-  const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
-  const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [rows, titleAlign, memoAlign] = await Promise.all([
-        listStamps(),
-        getTitleTextAlign(),
-        getMemoTextAlign(),
-      ]);
+      const rows = await listStamps();
       setStamps(rows);
-      setTitleTextAlign(titleAlign);
-      setMemoTextAlign(memoAlign);
     } finally {
       setLoading(false);
     }
@@ -359,13 +350,10 @@ export function StampListScreen({
                     style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                   />
                   <View style={styles.meta}>
-                    <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
+                    <Text style={styles.cardTitle} numberOfLines={1}>
                       {item.title || '(제목 없음)'}
                     </Text>
-                    <Text
-                      style={[styles.cardMemo, { textAlign: memoTextAlign }]}
-                      numberOfLines={isGrid ? 3 : 2}
-                    >
+                    <Text style={styles.cardMemo} numberOfLines={isGrid ? 3 : 2}>
                       {item.memo || '(메모 없음)'}
                     </Text>
                     <Text style={styles.cardDate}>

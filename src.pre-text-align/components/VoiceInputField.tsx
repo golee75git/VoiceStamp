@@ -1,7 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import type { TextAlign } from '../services/settingsService';
-
 type VoiceInputFieldProps = {
   label: string;
   value: string;
@@ -11,7 +9,6 @@ type VoiceInputFieldProps = {
   multiline?: boolean;
   speechAvailable?: boolean;
   onFocus?: () => void;
-  textAlign?: TextAlign;
 };
 
 export function VoiceInputField({
@@ -23,7 +20,6 @@ export function VoiceInputField({
   multiline = false,
   speechAvailable = true,
   onFocus,
-  textAlign = 'left',
 }: VoiceInputFieldProps) {
   return (
     <View style={styles.field}>
@@ -38,7 +34,7 @@ export function VoiceInputField({
         </Pressable>
       </View>
       <TextInput
-        style={[styles.input, multiline && styles.inputMultiline, { textAlign }]}
+        style={[styles.input, multiline && styles.inputMultiline]}
         value={value}
         onChangeText={onChangeText}
         onFocus={onFocus}

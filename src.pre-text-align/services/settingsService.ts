@@ -3,38 +3,13 @@ import { getDatabase } from '../db/database';
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
 const PDF_IMAGE_QUALITY_KEY = 'pdf_image_quality';
-const TITLE_TEXT_ALIGN_KEY = 'title_text_align';
-const MEMO_TEXT_ALIGN_KEY = 'memo_text_align';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
 export const DEFAULT_PDF_IMAGE_QUALITY = 'original' as const;
-export const DEFAULT_TITLE_TEXT_ALIGN = 'left' as const;
-export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
-export type TextAlign = 'left' | 'center' | 'right';
-
-export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
-
-export function textAlignLabel(align: TextAlign): string {
-  switch (align) {
-    case 'center':
-      return '가운데';
-    case 'right':
-      return '오른쪽';
-    default:
-      return '왼쪽';
-  }
-}
-
-export function sanitizeTextAlign(value: string): TextAlign {
-  if (value === 'center' || value === 'right') {
-    return value;
-  }
-  return 'left';
-}
 
 export function sanitizeStampsFolderName(name: string): string {
   const cleaned = name
@@ -129,32 +104,4 @@ export async function setPdfImageQuality(quality: PdfImageQuality): Promise<PdfI
   const safeQuality = sanitizePdfImageQuality(quality);
   await writeSetting(PDF_IMAGE_QUALITY_KEY, safeQuality);
   return safeQuality;
-}
-
-export async function getTitleTextAlign(): Promise<TextAlign> {
-  const value = await readSetting(TITLE_TEXT_ALIGN_KEY);
-  if (!value) {
-    return DEFAULT_TITLE_TEXT_ALIGN;
-  }
-  return sanitizeTextAlign(value);
-}
-
-export async function setTitleTextAlign(align: TextAlign): Promise<TextAlign> {
-  const safeAlign = sanitizeTextAlign(align);
-  await writeSetting(TITLE_TEXT_ALIGN_KEY, safeAlign);
-  return safeAlign;
-}
-
-export async function getMemoTextAlign(): Promise<TextAlign> {
-  const value = await readSetting(MEMO_TEXT_ALIGN_KEY);
-  if (!value) {
-    return DEFAULT_MEMO_TEXT_ALIGN;
-  }
-  return sanitizeTextAlign(value);
-}
-
-export async function setMemoTextAlign(align: TextAlign): Promise<TextAlign> {
-  const safeAlign = sanitizeTextAlign(align);
-  await writeSetting(MEMO_TEXT_ALIGN_KEY, safeAlign);
-  return safeAlign;
 }

@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
-import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { listTrashedStamps } from '../services/stampRepository';
 import { restoreStampFromTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
@@ -27,20 +26,12 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
-  const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [rows, titleAlign, memoAlign] = await Promise.all([
-        listTrashedStamps(),
-        getTitleTextAlign(),
-        getMemoTextAlign(),
-      ]);
+      const rows = await listTrashedStamps();
       setStamps(rows);
-      setTitleTextAlign(titleAlign);
-      setMemoTextAlign(memoAlign);
     } finally {
       setLoading(false);
     }
@@ -112,13 +103,10 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
                   style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                 />
                 <View style={styles.meta}>
-                  <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
+                  <Text style={styles.cardTitle} numberOfLines={1}>
                     {item.title || '(제목 없음)'}
                   </Text>
-                  <Text
-                    style={[styles.cardMemo, { textAlign: memoTextAlign }]}
-                    numberOfLines={isGrid ? 3 : 2}
-                  >
+                  <Text style={styles.cardMemo} numberOfLines={isGrid ? 3 : 2}>
                     {item.memo || '(메모 없음)'}
                   </Text>
                   <Text style={styles.cardDate}>

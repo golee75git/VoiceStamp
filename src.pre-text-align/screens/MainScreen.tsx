@@ -36,7 +36,6 @@ export function MainScreen() {
           backLabel={settingsReturnTo === 'camera' ? '카메라' : '목록'}
           refreshKey={refreshKey}
           onTrashEmptied={bumpRefresh}
-          onSettingsSaved={bumpRefresh}
         />
       ) : screen === 'trash' ? (
         <TrashScreen

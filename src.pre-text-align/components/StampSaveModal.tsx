@@ -15,7 +15,6 @@ import {
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { formatDefaultStampTitle } from '../services/fileService';
 import { getCurrentPlaceLabel } from '../services/locationService';
-import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import type { Stamp } from '../types/stamp';
 import { VoiceInputField } from './VoiceInputField';
@@ -55,8 +54,6 @@ export function StampSaveModal({
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
-  const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
-  const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
@@ -85,25 +82,6 @@ export function StampSaveModal({
       }
     },
   });
-
-  useEffect(() => {
-    if (!visible) {
-      return;
-    }
-
-    let cancelled = false;
-    (async () => {
-      const [titleAlign, memoAlign] = await Promise.all([getTitleTextAlign(), getMemoTextAlign()]);
-      if (!cancelled) {
-        setTitleTextAlign(titleAlign);
-        setMemoTextAlign(memoAlign);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [visible]);
 
   useEffect(() => {
     if (!visible) {
@@ -243,7 +221,6 @@ export function StampSaveModal({
                 listening={listening && speechTarget === 'title'}
                 speechAvailable={available}
                 onFocus={scrollFieldIntoView}
-                textAlign={titleTextAlign}
               />
               {!isEdit && locationLoading ? (
                 <Text style={styles.locationHint}>위치 확인 중…</Text>
@@ -259,7 +236,6 @@ export function StampSaveModal({
               speechAvailable={available}
               multiline
               onFocus={scrollFieldIntoView}
-              textAlign={memoTextAlign}
             />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}

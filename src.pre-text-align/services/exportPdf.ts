@@ -4,7 +4,7 @@ import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
-import { getMemoTextAlign, getPdfImageQuality, getPdfPhotosPerPage, getTitleTextAlign, type PdfPhotosPerPage, type TextAlign } from './settingsService';
+import { getPdfImageQuality, getPdfPhotosPerPage, type PdfPhotosPerPage } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -42,8 +42,6 @@ function buildStampItem(
   stamp: Stamp,
   imageDataUri: string,
   photosPerPage: PdfPhotosPerPage,
-  titleAlign: TextAlign,
-  memoAlign: TextAlign,
 ): string {
   const title = escapeHtml(stamp.title || '(제목 없음)');
   const memo = escapeHtml(stamp.memo || '(메모 없음)');
@@ -53,8 +51,8 @@ function buildStampItem(
   return `
       <div class="item">
         <img src="${imageDataUri}" alt="stamp" style="max-height: ${maxHeight};" />
-        <h1 style="text-align: ${titleAlign};">${title}</h1>
-        <p class="memo" style="text-align: ${memoAlign};">${memo}</p>
+        <h1>${title}</h1>
+        <p class="memo">${memo}</p>
         <p class="date">${date}</p>
       </div>`;
 }
@@ -72,8 +70,6 @@ function buildHtml(
   imageDataUris: string[],
   documentTitle: string,
   photosPerPage: PdfPhotosPerPage,
-  titleAlign: TextAlign,
-  memoAlign: TextAlign,
 ): string {
   const stampPages = chunkStamps(
     stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
@@ -83,9 +79,7 @@ function buildHtml(
   const pages = stampPages
     .map((group) => {
       const items = group
-        .map(({ stamp, imageDataUri }) =>
-          buildStampItem(stamp, imageDataUri, photosPerPage, titleAlign, memoAlign),
-        )
+        .map(({ stamp, imageDataUri }) => buildStampItem(stamp, imageDataUri, photosPerPage))
         .join('');
       return `
       <div class="page">
@@ -106,12 +100,12 @@ function buildHtml(
   .page { page-break-after: always; padding: 16px; }
   .page:last-child { page-break-after: auto; }
   .grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-  .item { box-sizing: border-box; padding: 8px; }
+  .item { box-sizing: border-box; text-align: center; padding: 8px; }
   .grid-1 .item { width: 100%; }
   .grid-2 .item { width: calc(50% - 6px); }
   .grid-3 .item { width: calc(33.333% - 8px); }
   .grid-4 .item { width: calc(50% - 6px); }
-  img { display: block; max-width: 100%; margin-left: auto; margin-right: auto; object-fit: contain; }
+  img { max-width: 100%; object-fit: contain; }
   h1 { font-size: 16px; margin: 8px 0 4px; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
@@ -229,17 +223,15 @@ export async function createStampsPdf(stamps: Stamp[], fileName: string): Promis
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign] = await Promise.all([
+  const [photosPerPage, imageQuality] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
-    getTitleTextAlign(),
-    getMemoTextAlign(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
   );
 
-  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage, titleAlign, memoAlign);
+  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage);
 
   if (Platform.OS === 'web') {
     lastWebPrintHtml = html;
