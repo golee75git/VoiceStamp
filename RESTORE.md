@@ -623,3 +623,18 @@ Copy-Item src.pre-pdf-datetime-memo\components\SettingsScreen.tsx src\components
 Copy-Item src.pre-pdf-datetime-memo\components\StampListScreen.tsx src\components\ -Force
 Remove-Item src\services\pdfTitleFormat.ts -ErrorAction SilentlyContinue
 ```
+
+## 43. PDF 1페이지 보고서 제목만 되돌리기 (선택)
+
+PDF 1페이지 상단 보고서 제목 입력·표시 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-report-title.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-report-title\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-pdf-report-title\components\StampListScreen.tsx src\components\ -Force
+```

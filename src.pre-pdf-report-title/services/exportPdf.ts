@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system/legacy';
+﻿import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
@@ -34,16 +34,16 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function imageMaxHeight(photosPerPage: PdfPhotosPerPage, shrinkForReportHeader: boolean): string {
+function imageMaxHeight(photosPerPage: PdfPhotosPerPage): string {
   switch (photosPerPage) {
     case 1:
-      return shrinkForReportHeader ? '72vh' : '80vh';
+      return '80vh';
     case 2:
-      return shrinkForReportHeader ? '40vh' : '45vh';
+      return '45vh';
     case 3:
-      return shrinkForReportHeader ? '30vh' : '34vh';
+      return '34vh';
     default:
-      return shrinkForReportHeader ? '26vh' : '30vh';
+      return '30vh';
   }
 }
 
@@ -65,7 +65,6 @@ function buildStampItem(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
   showDatetime: boolean,
-  shrinkForReportHeader: boolean,
 ): string {
   const title = escapeHtml(pdfDisplayTitle(stamp.title, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
@@ -76,7 +75,7 @@ function buildStampItem(
   const dateBlock = showDatetime
     ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
     : '';
-  const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
+  const maxHeight = imageMaxHeight(photosPerPage);
 
   const imageMargin = imageMarginStyle(titleAlign);
 
@@ -105,37 +104,21 @@ function buildHtml(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
   showDatetime: boolean,
-  reportTitle: string,
 ): string {
-  const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
     stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
     photosPerPage,
   );
 
   const pages = stampPages
-    .map((group, pageIndex) => {
-      const shrinkImages = pageIndex === 0 && reportTitleTrimmed.length > 0;
+    .map((group) => {
       const items = group
         .map(({ stamp, imageDataUri }) =>
-          buildStampItem(
-            stamp,
-            imageDataUri,
-            photosPerPage,
-            titleAlign,
-            memoAlign,
-            showDatetime,
-            shrinkImages,
-          ),
+          buildStampItem(stamp, imageDataUri, photosPerPage, titleAlign, memoAlign, showDatetime),
         )
         .join('');
-      const reportHeader =
-        pageIndex === 0 && reportTitleTrimmed
-          ? `<h1 class="report-title" style="text-align: ${titleAlign};">${escapeHtml(reportTitleTrimmed)}</h1>`
-          : '';
       return `
       <div class="page">
-        ${reportHeader}
         <div class="grid grid-${photosPerPage}">
           ${items}
         </div>
@@ -159,8 +142,7 @@ function buildHtml(
   .grid-3 .item { width: calc(33.333% - 8px); }
   .grid-4 .item { width: calc(50% - 6px); }
   img { display: block; max-width: 100%; object-fit: contain; }
-  h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-  .item h1 { font-size: 16px; margin: 8px 0 4px; }
+  h1 { font-size: 16px; margin: 8px 0 4px; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
 </style>
@@ -203,7 +185,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
   try {
     const doc = iframe.contentDocument ?? iframe.contentWindow?.document;
     if (!doc) {
-      throw new Error('인쇄 프레임을 열 수 없습니다.');
+      throw new Error('?몄뇙 ?꾨젅?꾩쓣 ?????놁뒿?덈떎.');
     }
 
     doc.open();
@@ -224,7 +206,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
 
 async function printWebPdf(fileName: string): Promise<void> {
   if (!lastWebPrintHtml) {
-    throw new Error('PDF가 준비되지 않았습니다.');
+    throw new Error('PDF媛 以鍮꾨릺吏 ?딆븯?듬땲??');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -271,13 +253,9 @@ async function archivePdf(uri: string, fileName: string): Promise<void> {
   await safeCopyAsync(uri, dest);
 }
 
-export async function createStampsPdf(
-  stamps: Stamp[],
-  fileName: string,
-  reportTitle = '',
-): Promise<string> {
+export async function createStampsPdf(stamps: Stamp[], fileName: string): Promise<string> {
   if (stamps.length === 0) {
-    throw new Error('보낼 스탬프가 없습니다.');
+    throw new Error('蹂대궪 ?ㅽ꺃?꾧? ?놁뒿?덈떎.');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -292,16 +270,7 @@ export async function createStampsPdf(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
   );
 
-  const html = buildHtml(
-    stamps,
-    imageDataUris,
-    safeName,
-    photosPerPage,
-    titleAlign,
-    memoAlign,
-    showDatetime,
-    reportTitle,
-  );
+  const html = buildHtml(stamps, imageDataUris, safeName, photosPerPage, titleAlign, memoAlign, showDatetime);
 
   if (Platform.OS === 'web') {
     lastWebPrintHtml = html;
@@ -322,7 +291,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('저장 기능을 사용할 수 없습니다.');
+    throw new Error('???湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -330,7 +299,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 저장',
+    dialogTitle: 'PDF ???,
   });
 }
 
@@ -342,7 +311,7 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('공유 기능을 사용할 수 없습니다.');
+    throw new Error('怨듭쑀 湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -350,6 +319,6 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 공유',
+    dialogTitle: 'PDF 怨듭쑀',
   });
 }
