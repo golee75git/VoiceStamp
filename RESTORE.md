@@ -591,3 +591,17 @@ restore-pdf-align.bat
 ```powershell
 Copy-Item src.pre-pdf-align\services\exportPdf.ts src\services\ -Force
 ```
+
+## 41. PDF 이미지 크기 확대만 되돌리기 (선택)
+
+PDF 사진 표시 크기(vh·여백) 확대 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-image-size.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-image-size\services\exportPdf.ts src\services\ -Force
+```

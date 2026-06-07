@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system/legacy';
+﻿import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
@@ -28,13 +28,13 @@ function escapeHtml(text: string): string {
 function imageMaxHeight(photosPerPage: PdfPhotosPerPage): string {
   switch (photosPerPage) {
     case 1:
-      return '80vh';
+      return '60vh';
     case 2:
-      return '45vh';
+      return '38vh';
     case 3:
-      return '34vh';
+      return '28vh';
     default:
-      return '30vh';
+      return '24vh';
   }
 }
 
@@ -56,8 +56,8 @@ function buildStampItem(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
 ): string {
-  const title = escapeHtml(stamp.title || '(제목 없음)');
-  const memo = escapeHtml(stamp.memo || '(메모 없음)');
+  const title = escapeHtml(stamp.title || '(?쒕ぉ ?놁쓬)');
+  const memo = escapeHtml(stamp.memo || '(硫붾え ?놁쓬)');
   const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
   const maxHeight = imageMaxHeight(photosPerPage);
 
@@ -65,7 +65,7 @@ function buildStampItem(
 
   return `
       <div class="item">
-        <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
+        <img src="${imageDataUri}" alt="stamp" style="max-height: ${maxHeight}; ${imageMargin}" />
         <h1 style="text-align: ${titleAlign};">${title}</h1>
         <p class="memo" style="text-align: ${memoAlign};">${memo}</p>
         <p class="date" style="text-align: ${titleAlign};">${date}</p>
@@ -116,10 +116,10 @@ function buildHtml(
 <title>${escapeHtml(documentTitle)}</title>
 <style>
   body { font-family: sans-serif; margin: 0; padding: 0; }
-  .page { page-break-after: always; padding: 12px; }
+  .page { page-break-after: always; padding: 16px; }
   .page:last-child { page-break-after: auto; }
-  .grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-  .item { box-sizing: border-box; padding: 4px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .item { box-sizing: border-box; padding: 8px; }
   .grid-1 .item { width: 100%; }
   .grid-2 .item { width: calc(50% - 6px); }
   .grid-3 .item { width: calc(33.333% - 8px); }
@@ -168,7 +168,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
   try {
     const doc = iframe.contentDocument ?? iframe.contentWindow?.document;
     if (!doc) {
-      throw new Error('인쇄 프레임을 열 수 없습니다.');
+      throw new Error('?몄뇙 ?꾨젅?꾩쓣 ?????놁뒿?덈떎.');
     }
 
     doc.open();
@@ -189,7 +189,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
 
 async function printWebPdf(fileName: string): Promise<void> {
   if (!lastWebPrintHtml) {
-    throw new Error('PDF가 준비되지 않았습니다.');
+    throw new Error('PDF媛 以鍮꾨릺吏 ?딆븯?듬땲??');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -238,7 +238,7 @@ async function archivePdf(uri: string, fileName: string): Promise<void> {
 
 export async function createStampsPdf(stamps: Stamp[], fileName: string): Promise<string> {
   if (stamps.length === 0) {
-    throw new Error('보낼 스탬프가 없습니다.');
+    throw new Error('蹂대궪 ?ㅽ꺃?꾧? ?놁뒿?덈떎.');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -273,7 +273,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('저장 기능을 사용할 수 없습니다.');
+    throw new Error('???湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -281,7 +281,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 저장',
+    dialogTitle: 'PDF ???,
   });
 }
 
@@ -293,7 +293,7 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('공유 기능을 사용할 수 없습니다.');
+    throw new Error('怨듭쑀 湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -301,6 +301,6 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 공유',
+    dialogTitle: 'PDF 怨듭쑀',
   });
 }
