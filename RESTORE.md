@@ -654,3 +654,17 @@ Copy-Item src.pre-camera-nav\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-nav\components\StampListScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-nav\screens\MainScreen.tsx src\screens\ -Force
 ```
+
+## 45. 카메라 메뉴 오른쪽 하단 배치만 되돌리기 (선택)
+
+카메라 메뉴를 오른쪽 하단으로 옮긴 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-nav-bottom.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-nav-bottom\components\CameraScreen.tsx src\components\ -Force
+```

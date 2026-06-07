@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
@@ -28,7 +28,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   };
 
   const handleExternalPickError = (label: string, error: unknown) => {
-    const message = error instanceof Error ? error.message : `${label}에 실패했습니다.`;
+    const message = error instanceof Error ? error.message : `${label}???ㅽ뙣?덉뒿?덈떎.`;
     Alert.alert(label, message);
   };
 
@@ -38,7 +38,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
     }
 
     if (Platform.OS === 'web') {
-      Alert.alert('카메라', '웹에서는 목록의 앨범을 이용해 주세요.');
+      Alert.alert('移대찓??, '?뱀뿉?쒕뒗 紐⑸줉???⑤쾾???댁슜??二쇱꽭??');
       return;
     }
 
@@ -49,7 +49,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         openSaveModal(uri);
       }
     } catch (error) {
-      handleExternalPickError('카메라', error);
+      handleExternalPickError('移대찓??, error);
     } finally {
       setExternalPickBusy(false);
     }
@@ -58,7 +58,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   if (!permission) {
     return (
       <View style={styles.centered}>
-        <Text>카메라 권한 확인 중...</Text>
+        <Text>移대찓??沅뚰븳 ?뺤씤 以?..</Text>
       </View>
     );
   }
@@ -66,12 +66,12 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
+        <Text style={styles.message}>?ъ쭊 珥ъ쁺???꾪빐 移대찓??沅뚰븳???꾩슂?⑸땲??</Text>
         <Pressable style={styles.primaryButton} onPress={requestPermission}>
-          <Text style={styles.primaryButtonText}>권한 허용</Text>
+          <Text style={styles.primaryButtonText}>沅뚰븳 ?덉슜</Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={onOpenList}>
-          <Text style={styles.secondaryButtonText}>목록으로 (앨범)</Text>
+          <Text style={styles.secondaryButtonText}>紐⑸줉?쇰줈 (?⑤쾾)</Text>
         </Pressable>
       </View>
     );
@@ -122,12 +122,12 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
         onCameraReady={handleCameraReady}
       />
 
-      <View style={styles.rightNav}>
+      <View style={styles.leftNav}>
         <Pressable style={styles.navButton} onPress={onOpenList}>
-          <Text style={styles.navButtonText}>목록</Text>
+          <Text style={styles.navButtonText}>紐⑸줉</Text>
         </Pressable>
         <Pressable style={styles.navButton} onPress={onOpenSettings}>
-          <Text style={styles.navButtonText}>설정</Text>
+          <Text style={styles.navButtonText}>?ㅼ젙</Text>
         </Pressable>
         {Platform.OS !== 'web' && (
           <Pressable
@@ -135,7 +135,7 @@ export function CameraScreen({ onOpenList, onOpenSettings, onSaved }: CameraScre
             onPress={handleSystemCamera}
             disabled={bottomBusy}
           >
-            <Text style={styles.navButtonText}>카메라</Text>
+            <Text style={styles.navButtonText}>移대찓??/Text>
           </Pressable>
         )}
       </View>
@@ -204,12 +204,11 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontWeight: '600',
   },
-  rightNav: {
+  leftNav: {
     position: 'absolute',
-    bottom: 48,
-    right: 16,
+    top: 48,
+    left: 16,
     gap: 8,
-    alignItems: 'flex-end',
     zIndex: 10,
   },
   navButton: {
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
   },
   navButtonDisabled: {
     opacity: 0.6,
