@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
   Image,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -13,16 +12,13 @@ import {
   View,
 } from 'react-native';
 
-import { StampImageExportHost, type StampImageExportHostRef } from './StampImageExportHost';
 import { StampSaveModal } from './StampSaveModal';
-import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
   getMemoTextAlign,
   getPdfFilenameIncludeDatetime,
-  getPdfShowDatetime,
   getTitleTextAlign,
   type TextAlign,
 } from '../services/settingsService';
@@ -53,32 +49,27 @@ export function StampListScreen({
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
   const [pdfBusy, setPdfBusy] = useState(false);
-  const [imageBusy, setImageBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
-  const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
-  const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime] = await Promise.all([
+      const [rows, titleAlign, memoAlign, filenameDatetime] = await Promise.all([
         listStamps(),
         getTitleTextAlign(),
         getMemoTextAlign(),
         getPdfFilenameIncludeDatetime(),
-        getPdfShowDatetime(),
       ]);
       setStamps(rows);
       setTitleTextAlign(titleAlign);
       setMemoTextAlign(memoAlign);
       setPdfFilenameIncludeDatetime(filenameDatetime);
-      setPdfShowDatetime(showDatetime);
     } finally {
       setLoading(false);
     }
@@ -194,47 +185,6 @@ export function StampListScreen({
     }
   };
 
-  const handleSaveImages = async () => {
-    const selected = getSelectedStamps();
-    if (selected.length === 0) {
-      return;
-    }
-
-    setImageBusy(true);
-    try {
-      const exportOptions = {
-        titleAlign: titleTextAlign,
-        memoAlign: memoTextAlign,
-        showDatetime: pdfShowDatetime,
-      };
-      const { saved, failed } = await saveStampsAsJpegToGallery(
-        selected,
-        exportOptions,
-        (stamp, options) => exportHostRef.current!.captureStamp(stamp, options),
-      );
-
-      if (saved === 0) {
-        Alert.alert('이미지 저장 실패', '선택한 스탬프를 저장하지 못했습니다.');
-        return;
-      }
-
-      const failPart = failed > 0 ? `\n${failed}장은 실패했습니다.` : '';
-      Alert.alert(
-        '이미지 저장 완료',
-        Platform.OS === 'web'
-          ? `${saved}장을 다운로드했습니다.${failPart}`
-          : `${saved}장을 갤러리 VoiceStamp 앨범에 저장했습니다.${failPart}`,
-      );
-    } catch (e) {
-      Alert.alert(
-        '이미지 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setImageBusy(false);
-    }
-  };
-
   const handlePickFromLibrary = async () => {
     if (albumBusy || selecting) {
       return;
@@ -344,7 +294,7 @@ export function StampListScreen({
             <Pressable
               style={styles.pdfBarButton}
               onPress={handleCreatePdf}
-              disabled={pdfBusy || imageBusy}
+              disabled={pdfBusy}
             >
               {pdfBusy && !pdfUri ? (
                 <ActivityIndicator size="small" color="#2563eb" />
@@ -355,7 +305,7 @@ export function StampListScreen({
             <Pressable
               style={[styles.pdfBarButton, !pdfUri && styles.pdfBarButtonDisabled]}
               onPress={handleSavePdf}
-              disabled={!pdfUri || pdfBusy || imageBusy}
+              disabled={!pdfUri || pdfBusy}
             >
               <Text
                 style={[
@@ -367,23 +317,12 @@ export function StampListScreen({
               </Text>
             </Pressable>
             <Pressable
-              style={[styles.pdfBarButton, (pdfBusy || imageBusy) && styles.pdfBarButtonDisabled]}
-              onPress={handleSaveImages}
-              disabled={pdfBusy || imageBusy}
-            >
-              {imageBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>이미지 저장</Text>
-              )}
-            </Pressable>
-            <Pressable
               style={[
                 styles.pdfBarButtonPrimary,
                 !pdfUri && styles.pdfBarButtonDisabled,
               ]}
               onPress={handleSharePdf}
-              disabled={!pdfUri || pdfBusy || imageBusy}
+              disabled={!pdfUri || pdfBusy}
             >
               <Text
                 style={[
@@ -404,7 +343,7 @@ export function StampListScreen({
               value={pdfFileName}
               onChangeText={setPdfFileName}
               placeholder="VoiceStamp"
-              editable={!pdfBusy && !imageBusy}
+              editable={!pdfBusy}
             />
             <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
             <TextInput
@@ -412,15 +351,15 @@ export function StampListScreen({
               value={pdfReportTitle}
               onChangeText={setPdfReportTitle}
               placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
-              editable={!pdfBusy && !imageBusy}
+              editable={!pdfBusy}
             />
           </View>
         )}
         {selecting && selectedCount > 0 && (
           <Pressable
-            style={[styles.deleteButton, (pdfBusy || deleteBusy || imageBusy) && styles.pdfBarButtonDisabled]}
+            style={[styles.deleteButton, (pdfBusy || deleteBusy) && styles.pdfBarButtonDisabled]}
             onPress={handleDeleteSelected}
-            disabled={pdfBusy || deleteBusy || imageBusy}
+            disabled={pdfBusy || deleteBusy}
           >
             {deleteBusy ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -518,8 +457,6 @@ export function StampListScreen({
           load();
         }}
       />
-
-      {Platform.OS !== 'web' ? <StampImageExportHost ref={exportHostRef} /> : null}
     </View>
   );
 }

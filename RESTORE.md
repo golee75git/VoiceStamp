@@ -743,3 +743,22 @@ restore-nav-button-size.bat
 ```powershell
 Copy-Item src.pre-nav-button-size\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 51. 스탬프 합성 JPEG 저장만 되돌리기 (선택)
+
+목록 선택 후 제목·메모가 포함된 JPEG를 갤러리에 저장하는 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-image-export.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-image-export\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-stamp-image-export\package.json . -Force
+Remove-Item src\services\exportStampImage.ts -ErrorAction SilentlyContinue
+Remove-Item src\components\StampExportCard.tsx -ErrorAction SilentlyContinue
+Remove-Item src\components\StampImageExportHost.tsx -ErrorAction SilentlyContinue
+npm install
+```
