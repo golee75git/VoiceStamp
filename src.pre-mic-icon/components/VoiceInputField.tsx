@@ -1,8 +1,6 @@
-import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import type { CameraHand, TextAlign } from '../services/settingsService';
-
-const micIcon = require('../../assets/mic-icon.png');
 
 type VoiceInputFieldProps = {
   label: string;
@@ -38,11 +36,7 @@ export function VoiceInputField({
           onPress={onMicPress}
           disabled={!speechAvailable}
         >
-          <Image
-            source={micIcon}
-            style={[styles.micIcon, listening && styles.micIconActive]}
-            resizeMode="contain"
-          />
+          <Text style={styles.micText}>{listening ? '●' : '🎤'}</Text>
         </Pressable>
       </View>
       <TextInput
@@ -82,19 +76,15 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'transparent',
+    backgroundColor: '#eef2ff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   micButtonActive: {
-    backgroundColor: 'rgba(199, 210, 254, 0.45)',
+    backgroundColor: '#c7d2fe',
   },
-  micIcon: {
-    width: 32,
-    height: 32,
-  },
-  micIconActive: {
-    opacity: 0.85,
+  micText: {
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,

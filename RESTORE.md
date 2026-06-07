@@ -700,3 +700,18 @@ restore-mic-hand.bat
 Copy-Item src.pre-mic-hand\components\VoiceInputField.tsx src\components\ -Force
 Copy-Item src.pre-mic-hand\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 48. 마이크 PNG 아이콘만 되돌리기 (선택)
+
+저장 모달 마이크 버튼을 이모지(🎤)에서 PNG 아이콘으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-mic-icon.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-mic-icon\components\VoiceInputField.tsx src\components\ -Force
+Remove-Item assets\mic-icon.png -ErrorAction SilentlyContinue
+```
