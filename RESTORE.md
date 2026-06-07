@@ -563,3 +563,17 @@ Copy-Item src.pre-text-align\components\VoiceInputField.tsx src\components\ -For
 Copy-Item src.pre-text-align\components\TrashScreen.tsx src\components\ -Force
 Copy-Item src.pre-text-align\screens\MainScreen.tsx src\screens\ -Force
 ```
+
+## 39. 설정 화면 스크롤만 되돌리기 (선택)
+
+설정 페이지 세로 스크롤 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings-scroll.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-scroll\components\SettingsScreen.tsx src\components\ -Force
+```

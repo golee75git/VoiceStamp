@@ -187,12 +187,7 @@ export function SettingsScreen({
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.body}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-        >
+        <View style={styles.body}>
           <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
             앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다.
@@ -321,7 +316,7 @@ export function SettingsScreen({
               <Text style={styles.dangerButtonText}>휴지통 비우기</Text>
             )}
           </Pressable>
-        </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -355,12 +350,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scroll: {
-    flex: 1,
-  },
   body: {
     padding: 20,
-    paddingBottom: 32,
     gap: 12,
   },
   label: {
