@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-07**  
-최신 커밋 기준: `9f4a525` (main)
+최신 커밋 기준: `539c4c4` (main)
 
 ---
 
@@ -28,19 +28,22 @@ VoiceStamp/
 ├── app.json                # Expo 설정·플러그인
 ├── src/
 │   ├── components/         # CameraScreen, StampListScreen, StampSaveModal,
-│   │                       # SettingsScreen, TrashScreen, VoiceInputField
+│   │                       # SettingsScreen, TrashScreen, VoiceInputField,
+│   │                       # StampExportCard, StampImageExportHost
 │   ├── screens/            # MainScreen
-│   ├── services/           # saveStamp, fileService, exportPdf, settingsService,
-│   │                       # kakaoLocal, locationService, pdfImageForExport,
-│   │                       # galleryService, stampTrash, stampRepository
+│   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
+│   │                       # settingsService, kakaoLocal, locationService,
+│   │                       # pdfImageForExport, galleryService, stampTrash,
+│   │                       # stampRepository, pickStampImage, pdfTitleFormat
 │   ├── hooks/              # useSpeechInput
 │   ├── db/                 # database, schema
 │   ├── types/              # stamp
 │   └── utils/              # id, cameraPictureSize
 ├── android/                # 네이티브 Android (로컬 빌드용)
-├── docs/                   # PRD, 본 문서, 문서 목록
+├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~36)
+├── RESTORE.md              # 기능별 되돌리기 (§8~53)
+├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
 └── .env                    # EXPO_PUBLIC_KAKAO_REST_KEY (git 제외)
@@ -52,11 +55,12 @@ VoiceStamp/
 
 | 화면 | 파일 | 설명 |
 |------|------|------|
-| 카메라 | `CameraScreen.tsx` | 촬영, 설정·목록 버튼 |
+| 카메라 | `CameraScreen.tsx` | 촬영, 설정·목록·앨범, 손잡이별 하단 메뉴 |
 | 저장 모달 | `StampSaveModal.tsx` | 제목·메모·음성·저장, 위치 로딩, 키보드 스크롤 |
-| 목록 | `StampListScreen.tsx` | 목록·선택·PDF·수정·휴지통·⚙ 설정 |
+| 목록 | `StampListScreen.tsx` | 목록·선택·PDF·이미지 저장·수정·휴지통·⚙ 설정 |
 | 휴지통 | `TrashScreen.tsx` | 터치 복원 |
-| 설정 | `SettingsScreen.tsx` | 폴더·PDF 옵션·휴지통 비우기 |
+| 설정 | `SettingsScreen.tsx` | 폴더·PDF·내보내기·손잡이·휴지통 비우기 |
+| JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx` | 합성 JPEG (ViewShot) |
 | 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환 |
 
 ### 3.1 목록 화면 UI (현재)
@@ -106,6 +110,25 @@ VoiceStamp/
 | 28 | PDF 원본 HTML 상한 (2400px) | `b77c296` | `restore-pdf-original-cap.bat` §34 |
 | 29 | 목록 ← 카메라 버튼 확대 | `a49a374` | `restore-list-back-button.bat` §35 |
 | 30 | 목록 하단 ⚙ 설정 푸터 | `9f4a525` | `restore-list-gear-footer.bat` §36 |
+| 31 | 앨범·기본 카메라 사진 가져오기 | (세션) | `restore-image-picker.bat` §37 |
+| 32 | 제목·메모 정렬 | (세션) | `restore-text-align.bat` §38 |
+| 33 | 설정 화면 스크롤 | `c05376a` | `restore-settings-scroll.bat` §39 |
+| 34 | PDF 사진·텍스트 정렬 | `a32eff6` | `restore-pdf-align.bat` §40 |
+| 35 | PDF 이미지 크기 확대 | `354a942` | `restore-pdf-image-size.bat` §41 |
+| 36 | PDF 일시·파일명·빈 메모 | `6989370` | `restore-pdf-datetime-memo.bat` §42 |
+| 37 | PDF 1페이지 보고서 제목 | `ab897ba` | `restore-pdf-report-title.bat` §43 |
+| 38 | 카메라·목록 메뉴 재배치 | `ecf2823` | `restore-camera-nav.bat` §44 |
+| 39 | 카메라 메뉴 하단 코너 | `c7d4925` | `restore-camera-nav-bottom.bat` §45 |
+| 40 | 손잡이 카메라 메뉴 | `111bc3c` | `restore-camera-hand.bat` §46 |
+| 41 | 손잡이 마이크 위치 | `86e06e5` | `restore-mic-hand.bat` §47 |
+| 42 | 마이크 PNG 아이콘 | `5c7b1de` | `restore-mic-icon.bat` §48 |
+| 43 | 마이크 녹음 ● 표시 | `4d4e68b` | `restore-mic-dot.bat` §49 |
+| 44 | 메뉴 타원 크기 통일 | `b0086c0` | `restore-nav-button-size.bat` §50 |
+| 45 | 합성 JPEG 이미지 저장 | `db111b3` | `restore-stamp-image-export.bat` §51 |
+| 46 | 갤러리 앨범 분류 예외 처리 | `e4eada2` | `restore-gallery-album-fix.bat` §52 |
+| 47 | 별도 영역 / 워터마크 | `539c4c4` | `restore-stamp-text-layout.bat` §53 |
+
+전체 일정·후보: [PLAN.md](./PLAN.md)
 
 ---
 
@@ -120,7 +143,9 @@ VoiceStamp/
 | expo-location | GPS |
 | expo-media-library | 갤러리 저장 |
 | expo-print / expo-sharing | PDF |
-| expo-image-manipulator | PDF 이미지 압축 |
+| expo-image-manipulator | PDF·JPEG 이미지 압축 |
+| expo-image-picker | 앨범·카메라 앱에서 사진 선택 |
+| react-native-view-shot | APK 합성 JPEG 캡처 |
 | react-native-web | 웹 |
 
 ---
@@ -162,9 +187,9 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
-| `VoiceStamp_20260607_004429.apk` | 목록 ⚙ 설정 푸터 |
-| `VoiceStamp_20260607_003539.apk` | ← 카메라 버튼 확대 |
-| `VoiceStamp_20260607_003030.apk` | PDF 원본 HTML 상한 |
+| `VoiceStamp_20260607_130727.apk` | 워터마크·별도 영역 설정 |
+| `VoiceStamp_20260607_125937.apk` | 갤러리 저장 성공 알림 수정 |
+| `VoiceStamp_20260607_124612.apk` | 합성 JPEG 저장 |
 
 ---
 
@@ -178,7 +203,10 @@ build-apk.bat
 | `stampTrash.ts` | 휴지통 이동·복원·비우기 |
 | `galleryService.ts` | 갤러리 VoiceStamp 앨범 저장 |
 | `settingsService.ts` | 앱 설정 get/set |
-| `exportPdf.ts` | PDF HTML·생성·저장·공유 |
+| `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
+| `exportStampImage.ts` | 합성 JPEG (웹 canvas / APK ViewShot) |
+| `pdfTitleFormat.ts` | PDF·내보내기 제목·파일명 포맷 |
+| `pickStampImage.ts` | 앨범·카메라 앱 피커 |
 | `pdfImageForExport.ts` | PDF용 이미지 압축 (원본 2400px 상한) |
 | `locationService.ts` | GPS 캐시·타임아웃·카카오 연동 |
 | `kakaoLocal.ts` | 카카오 역지오코딩 |
@@ -205,6 +233,11 @@ build-apk.bat
 |------|-----|------|
 | 페이지당 사진 수 | 1, 2, 3, 4 | 1 |
 | 화질 | 원본, 표준, 압축 | 원본 |
+| 촬영 일시 표시 | 표시 / 숨김 | 표시 |
+| PDF 파일명 날짜·시간 | 포함 / 제외 | 포함 |
+| 제목·메모 정렬 | 왼쪽 / 가운데 / 오른쪽 | 왼쪽 |
+| 제목·메모 표시 | 별도 영역 / 워터마크 | 별도 영역 |
+| 카메라 손잡이 | 왼손 / 오른손 | 오른손 |
 
 **원본** PDF 프리셋: HTML 임베드 최대 2400px, JPEG 92% (디스크 원본 파일은 미변경).
 
@@ -225,32 +258,22 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+539c4c4 Add caption vs watermark layout setting for PDF and image export.
+e4eada2 Treat gallery save as success when album grouping fails.
+db111b3 Add JPEG export for selected stamps with title and memo.
+b0086c0 Unify list and settings nav pill size with camera menu.
+4d4e68b Show dot indicator while mic is listening.
+5c7b1de Replace mic emoji with PNG icon in voice input.
+86e06e5 Place mic button on left when left-hand mode is set.
+111bc3c Add left/right hand camera menu placement setting.
+c7d4925 Move camera side menu to bottom-right corner.
+ecf2823 Reorganize camera and list navigation menus.
+ab897ba Add separate PDF report title on first page.
+6989370 Add PDF datetime settings and omit empty memo in exports.
+354a942 Enlarge PDF stamp images in exported layout.
+a32eff6 Align PDF images with title text alignment setting.
+c05376a Add vertical scroll to settings screen for long content.
 9f4a525 Show centered gear icon for settings on the stamp list footer.
-a49a374 Enlarge the stamp list back-to-camera button for easier tapping.
-b77c296 Cap PDF original preset size to avoid String is too long on large photos.
-4e8675d Save stamp photos to the device gallery in a VoiceStamp album.
-50cd4bf Add trash bin with soft delete, restore screen, and empty trash in settings.
-c52a22e Use cached GPS with timeout fallback for faster stamp location titles.
-b96658e Keep stamp save modal fields visible when the keyboard opens.
-02b0cb1 Show location loading hint while fetching place for stamp title.
-8a9c7ce Show stamp title date-time immediately when save modal opens.
-4e8d3f2 Add PDF image quality setting with original, standard, and compressed presets.
-2309d62 Use the device largest picture size and max JPEG quality for captures.
-9f8ffc4 Add building name to stamp title when Kakao address API provides it.
-200d49b Ignore .env in git to keep Kakao API keys out of the repository.
-2ec2768 Add Kakao reverse geocoding for auto location in stamp titles.
-292b61f Fix PDF save failing when copyAsync targets the same file path.
-b18babc Add settings button on camera screen for easier access.
-82df9cd Save stamp photos with title-based filenames and date-time default.
-57c6fb0 Add PDF photos-per-page setting and dated APK output.
-3213851 Add responsive stamp list, speech append, and fix build-apk.bat.
-8d8e41c Add long-press to enter stamp selection mode in list.
-b5faa2f Add configurable internal photo save folder in settings.
-1224df8 Add editable PDF filename defaulting to first stamp title.
-88da589 Fix web photo save when documentDirectory is unavailable.
-a78d347 Add PDF export and Vercel web deploy for browser testing.
-e4fe0d3 Add VoiceStamp app with camera capture, voice memo stamps, and APK tooling.
-0b446a2 Initial commit
 ```
 
 ---
@@ -261,7 +284,10 @@ e4fe0d3 Add VoiceStamp app with camera capture, voice memo stamps, and APK tooli
 |------|------|
 | [README.md](./README.md) | docs 폴더 문서 목록 |
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~36) |
+| [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
+| [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~53) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
+| [../LICENSE](../LICENSE) | MIT 라이선스 |
 | [../AGENTS.md](../AGENTS.md) | Expo SDK 56 문서 참조 규칙 |

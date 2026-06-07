@@ -10,13 +10,17 @@
 |------|------|------|
 | [PRD.md](./PRD.md) | 기획·QA | 제품 요구사항, 기능 ID, 데이터 모델, 미구현 후보 |
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, 커밋, 모듈, 빌드·APK, UX 로드맵 |
+| [PLAN.md](./PLAN.md) | 기획·개발 | 단계별 계획, 완료 기능, 후보·우선순위 |
+| [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보·권한·제3자(카카오·음성) 처리 안내 |
+| [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | 운영 | 카카오 REST API 키 노출·콘솔 제한 체크리스트 |
 
 ## 루트 문서
 
 | 문서 | 설명 |
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~36, `restore-*.bat`) |
+| [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~53, `restore-*.bat`) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 | [../AGENTS.md](../AGENTS.md) | Expo SDK 56 문서 참조 규칙 |
 
@@ -24,8 +28,10 @@
 
 ## 현재 상태 스냅샷 (2026-06-07)
 
-- **최신 커밋:** `9f4a525` (main)
-- **구현 완료:** 카메라·음성 스탬프·목록·PDF·설정·카카오 위치 제목·키보드 스크롤·GPS 캐시·휴지통·갤러리 저장·PDF 원본 상한·목록 UI(← 카메라·⚙)
-- **미구현 후보:** 구·동/건물명 분리(C), 위치 실패 안내(D2), PDF 진행 표시, DB 내보내기/가져오기
+- **최신 커밋:** `539c4c4` (main)
+- **웹:** https://voicestamp-gilt.vercel.app
+- **구현 완료:** 카메라·음성·스탬프·목록·PDF·합성 JPEG·설정(정렬·워터마크·손잡이)·카카오 위치·휴지통·갤러리·웹 배포
+- **문서:** LICENSE, PRIVACY, 카카오 키 보안 체크리스트
+- **미구현 후보:** 앱 내 정책 화면, 목적별 필드 라벨, DB 백업/복원, 보고서 서식 — [PLAN.md](./PLAN.md) §4
 
-자세한 내용은 [PRD.md](./PRD.md) §10.1, [PROJECT.md](./PROJECT.md) §11을 참고하세요.
+자세한 내용은 [PRD.md](./PRD.md) §10.1, [PROJECT.md](./PROJECT.md) §4, [PLAN.md](./PLAN.md)를 참고하세요.
