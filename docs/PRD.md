@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-06-07 |
-| 최신 반영 커밋 | `3b6201a` (main) |
+| 문서 작성일 | 2026-06-08 |
+| 최신 반영 커밋 | `591666e` (main) |
 
 ---
 
@@ -211,6 +211,11 @@
 | F-DEP-02 | 로컬 Gradle Release APK (`build-apk.bat`) | ✅ |
 | F-DEP-03 | APK 파일명 `VoiceStamp_YYYYMMDD_HHmmss.apk` | ✅ |
 | F-DEP-04 | `.env` git 제외 (카카오 REST 키) | ✅ |
+| F-DEP-05 | 앱 아이콘 3D 액자 디자인 (나무 액자·금색 마이크·VS) | ✅ |
+| F-DEP-06 | Android Adaptive Icon safe zone 여백 (`assets` 5종) | ✅ |
+| F-DEP-07 | Vercel CLI 배포용 `.vercelignore` (APK·android 제외) | ✅ |
+
+**아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
 ### 3.9 Android 뒤로가기 (P2)
 

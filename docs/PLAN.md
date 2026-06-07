@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 1.1 |
-| 작성일 | 2026-06-07 |
-| 기준 커밋 | `3b6201a` (main) |
+| 작성일 | 2026-06-08 |
+| 기준 커밋 | `591666e` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -46,6 +46,9 @@
 | 47 | 제목·메모 별도 영역 / 워터마크 | `539c4c4` | §53 |
 | 48 | PDF·이미지 공통 파일명 | `31332dc` | §54 |
 | 49 | Android 뒤로가기 (종료 확인·화면 복귀) | `3b6201a` | §55 |
+| 50 | 3D 액자 앱 아이콘 | `565e4b3` | §8 |
+| 51 | Vercel `.vercelignore` | `919dbf2` | — |
+| 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | §8 |
 
 ### 2.1 문서 동기화 이력
 
@@ -53,7 +56,8 @@
 |------|------|
 | `f125897` | PRD·PROJECT·PLAN·PRIVACY·LICENSE 문서 정리 (기준 `539c4c4`) |
 | `470606d` | PRD·PROJECT·PLAN 문서 정리 (기준 `31332dc`) |
-| (본 갱신) | `3b6201a` 반영 — Android 뒤로가기·§55 |
+| `ffa77bf` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `3b6201a`) |
+| (본 갱신) | `591666e` 반영 — 아이콘·`.vercelignore`·최신 APK |
 
 ---
 
@@ -61,6 +65,9 @@
 
 | ID | 작업 | 우선순위 | 상태 |
 |----|------|----------|------|
+| DEP-01 | 3D 액자 앱 아이콘 (`assets` 5종) | P1 | ✅ `565e4b3` |
+| DEP-02 | Adaptive Icon safe zone 여백 | P1 | ✅ `591666e` |
+| DEP-03 | Vercel `.vercelignore` | P2 | ✅ `919dbf2` |
 | LEG-01 | LICENSE 저작권 (이형우, MIT + OSS 고지) | P1 | ✅ 커밋됨 (`f125897`) |
 | LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 커밋됨 |
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
@@ -130,7 +137,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260607_145955.apk` |
+| 최신 APK (문서 기준) | `VoiceStamp_20260608_003141.apk` |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---

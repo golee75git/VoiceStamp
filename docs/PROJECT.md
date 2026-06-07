@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-07**  
-최신 커밋 기준: `3b6201a` (main)
+문서 작성일: **2026-06-08**  
+최신 커밋 기준: `591666e` (main)
 
 ---
 
@@ -46,6 +46,10 @@ VoiceStamp/
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
+├── .vercelignore           # Vercel CLI 업로드 제외 (APK·android 등)
+├── apply-icon.bat          # 아이콘 적용 (수동)
+├── restore-icon.bat        # assets.pre-icon 복원
+├── assets.pre-icon/        # 아이콘 되돌리기 백업
 └── .env                    # EXPO_PUBLIC_KAKAO_REST_KEY (git 제외)
 ```
 
@@ -91,7 +95,7 @@ VoiceStamp/
 | # | 기능 | 커밋 (요약) | 되돌리기 |
 |---|------|-------------|----------|
 | 1 | 초기 앱 (카메라·음성·스탬프·APK) | `e4fe0d3` | RESTORE §1~6 |
-| 2 | 커스텀 앱 아이콘 | (세션 내) | `restore-icon.bat` §8 |
+| 2 | 커스텀 앱 아이콘 | `565e4b3` · `591666e` | `restore-icon.bat` §8 |
 | 3 | 목록 터치 수정 | (세션 내) | `restore-edit.bat` §9 |
 | 4 | PDF 만들기/공유 | `a78d347` | `restore-pdf.bat` §10 |
 | 5 | Vercel 웹 배포 | `a78d347` | `restore-vercel.bat` §11 |
@@ -139,6 +143,9 @@ VoiceStamp/
 | 47 | 별도 영역 / 워터마크 | `539c4c4` | `restore-stamp-text-layout.bat` §53 |
 | 48 | PDF·이미지 공통 파일명 | `31332dc` | `restore-export-filename.bat` §54 |
 | 49 | Android 뒤로가기 (종료 확인·화면 복귀) | `3b6201a` | `restore-back-handler.bat` §55 |
+| 50 | 3D 액자 앱 아이콘 (나무 액자·금색 마이크·VS) | `565e4b3` | `restore-icon.bat` §8 |
+| 51 | Vercel `.vercelignore` (로컬 배포 EBUSY 방지) | `919dbf2` | `.vercelignore` 삭제 또는 수정 |
+| 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | `restore-icon.bat` §8 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -199,10 +206,10 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260608_003141.apk` | 아이콘 safe zone 여백 (`591666e`) |
+| `VoiceStamp_20260608_001727.apk` | 3D 액자 아이콘 (`565e4b3`) |
 | `VoiceStamp_20260607_145955.apk` | Android 뒤로가기 (종료 확인·화면 복귀) |
 | `VoiceStamp_20260607_131846.apk` | PDF·이미지 공통 파일명 |
-| `VoiceStamp_20260607_130727.apk` | 워터마크·별도 영역 설정 |
-| `VoiceStamp_20260607_125937.apk` | 갤러리 저장 성공 알림 수정 |
 
 ---
 
@@ -280,6 +287,10 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+591666e Add padding to app icon assets for adaptive icon safe zone.
+919dbf2 Add .vercelignore to avoid local file lock during Vercel deploy.
+565e4b3 Update app icon assets to the new VoiceStamp frame design.
+ffa77bf Sync PRD, PROJECT, PLAN, and RESTORE docs to commit 3b6201a.
 3b6201a Handle Android back: confirm exit on camera, navigate on sub-screens.
 470606d Update PRD, PROJECT, and PLAN docs to commit 31332dc.
 31332dc Use shared export filename for PDF and JPEG image saves.

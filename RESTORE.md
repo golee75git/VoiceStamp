@@ -83,6 +83,8 @@ restore-icon.bat
 
 아이콘을 다시 적용하려면 `apply-icon.bat` 실행 후 `npx expo prebuild --platform android --no-install` 및 `build-apk.bat`로 APK를 다시 빌드하세요.
 
+**현재 아이콘 (2026-06-08):** 3D 나무 액자 + 금색 마이크 + VS. `565e4b3` 디자인, `591666e` Adaptive Icon safe zone 여백. 로컬 `assets/*--.png`는 git 미포함 수동 백업.
+
 ## 9. 목록 수정 기능만 되돌리기 (선택)
 
 저장 목록 터치 수정 기능 후 문제가 생기면 아래로 복구합니다.
