@@ -216,7 +216,6 @@ export function StampListScreen({
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,
         exportOptions,
-        pdfFileName,
         (stamp, options) => exportHostRef.current!.captureStamp(stamp, options),
       );
 
@@ -405,7 +404,7 @@ export function StampListScreen({
         )}
         {selecting && selectedCount > 0 && (
           <View style={styles.pdfNameRow}>
-            <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
+            <Text style={styles.pdfNameLabel}>PDF 파일명</Text>
             <TextInput
               style={styles.pdfNameInput}
               value={pdfFileName}

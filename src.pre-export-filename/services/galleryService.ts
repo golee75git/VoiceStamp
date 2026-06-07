@@ -1,4 +1,3 @@
-import * as FileSystem from 'expo-file-system/legacy';
 import * as MediaLibrary from 'expo-media-library/legacy';
 import { Platform } from 'react-native';
 
@@ -13,10 +12,7 @@ async function ensureGalleryAlbum(asset: MediaLibrary.Asset): Promise<void> {
   await MediaLibrary.createAlbumAsync(GALLERY_ALBUM, asset, false);
 }
 
-export async function saveStampPhotoToGallery(
-  localFileUri: string,
-  preferredFileName?: string,
-): Promise<void> {
+export async function saveStampPhotoToGallery(localFileUri: string): Promise<void> {
   if (Platform.OS === 'web') {
     return;
   }
@@ -26,17 +22,7 @@ export async function saveStampPhotoToGallery(
     return;
   }
 
-  let uri = localFileUri;
-  if (preferredFileName) {
-    const dir = FileSystem.cacheDirectory;
-    if (dir) {
-      const dest = `${dir}${preferredFileName}`;
-      await FileSystem.copyAsync({ from: localFileUri, to: dest });
-      uri = dest;
-    }
-  }
-
-  const asset = await MediaLibrary.createAssetAsync(uri);
+  const asset = await MediaLibrary.createAssetAsync(localFileUri);
   try {
     await ensureGalleryAlbum(asset);
   } catch {

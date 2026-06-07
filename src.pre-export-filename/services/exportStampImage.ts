@@ -1,7 +1,7 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
-import { sanitizeStampFileBaseName, resolveImageUri } from './fileService';
+import { buildStampImageFileName, resolveImageUri } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign } from './settingsService';
@@ -267,36 +267,21 @@ function downloadDataUriOnWeb(dataUri: string, fileName: string): void {
   anchor.click();
 }
 
-export function buildExportJpegFileName(
-  exportBaseName: string,
-  index: number,
-  total: number,
-): string {
-  const base = sanitizeStampFileBaseName(exportBaseName.trim() || 'VoiceStamp');
-  if (total <= 1) {
-    return `${base}.jpg`;
-  }
-  return `${base}_${index + 1}.jpg`;
-}
-
 export async function saveStampsAsJpegToGallery(
   stamps: Stamp[],
   options: StampImageExportOptions,
-  exportBaseName: string,
   captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
 ): Promise<{ saved: number; failed: number }> {
   let saved = 0;
   let failed = 0;
-  const total = stamps.length;
 
-  for (let index = 0; index < stamps.length; index += 1) {
-    const stamp = stamps[index];
-    const fileName = buildExportJpegFileName(exportBaseName, index, total);
+  for (const stamp of stamps) {
     try {
       let jpegUri: string;
 
       if (Platform.OS === 'web') {
         const dataUri = await renderStampJpegOnWeb(stamp, options);
+        const fileName = buildStampImageFileName(stamp.title, stamp.id, 'jpg');
         downloadDataUriOnWeb(dataUri, fileName);
         saved += 1;
         continue;
@@ -308,7 +293,7 @@ export async function saveStampsAsJpegToGallery(
 
       const capturedUri = await captureNative(stamp, options);
       jpegUri = await compressStampJpeg(capturedUri);
-      await saveStampPhotoToGallery(jpegUri, fileName);
+      await saveStampPhotoToGallery(jpegUri);
       saved += 1;
     } catch {
       failed += 1;

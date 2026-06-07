@@ -795,3 +795,19 @@ Copy-Item src.pre-stamp-text-layout\components\SettingsScreen.tsx src\components
 Copy-Item src.pre-stamp-text-layout\components\StampExportCard.tsx src\components\ -Force
 Copy-Item src.pre-stamp-text-layout\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 54. PDF·이미지 공통 파일명만 되돌리기 (선택)
+
+선택 모드 파일명 라벨·이미지 저장 파일명 연동 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-export-filename.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-export-filename\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-export-filename\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-export-filename\services\galleryService.ts src\services\ -Force
+```
