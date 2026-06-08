@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-08**  
-최신 커밋 기준: `b222581` (main)
+최신 커밋 기준: `6baa947` (main)
 
 ---
 
@@ -34,7 +34,8 @@ VoiceStamp/
 │   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
 │   │                       # settingsService, kakaoLocal, locationService,
 │   │                       # pdfImageForExport, galleryService, stampTrash,
-│   │                       # stampRepository, pickStampImage, pdfTitleFormat
+│   │                       # stampRepository, stampFolderService, pickStampImage,
+│   │                       # pdfTitleFormat
 │   ├── hooks/              # useSpeechInput
 │   ├── db/                 # database, schema
 │   ├── types/              # stamp
@@ -42,7 +43,7 @@ VoiceStamp/
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~56)
+├── RESTORE.md              # 기능별 되돌리기 (§8~66)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -60,7 +61,7 @@ VoiceStamp/
 | 화면 | 파일 | 설명 |
 |------|------|------|
 | 카메라 | `CameraScreen.tsx` | 촬영, 설정·목록·앨범, 손잡이별 하단 메뉴 |
-| 저장 모달 | `StampSaveModal.tsx` | 제목·메모·음성·저장, 위치 로딩, 키보드 스크롤 |
+| 저장 모달 | `StampSaveModal.tsx` | 장소명·저장 폴더·제목·메모·음성·전체 보기·폴더 선택 |
 | 목록 | `StampListScreen.tsx` | 목록·선택·PDF·이미지 저장·수정·휴지통·⚙ 설정 |
 | 휴지통 | `TrashScreen.tsx` | 터치 복원 |
 | 설정 | `SettingsScreen.tsx` | 폴더·PDF·내보내기·손잡이·휴지통 비우기 |
@@ -147,6 +148,16 @@ VoiceStamp/
 | 51 | Vercel `.vercelignore` (로컬 배포 EBUSY 방지) | `919dbf2` | `.vercelignore` 삭제 또는 수정 |
 | 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | `restore-icon.bat` §8 |
 | 53 | APK 마이크 권한(RECORD_AUDIO) 복구 | `b222581` | `restore-mic-permission.bat` §56 |
+| 54 | 현장명·날짜별 앱 폴더·갤러리 앨범 | `9ae5725` | `restore-site-group.bat` §57 |
+| 55 | 현장명 저장 모달 배치 | `ebda9cc` | `restore-site-modal.bat` §58 |
+| 56 | 갤러리 앨범 (initialAsset) | `bbec4aa` | `restore-gallery-album-v2.bat` §59 |
+| 57 | 갤러리 (Next API + 읽기) | `204ba88` | `restore-gallery-album-v3.bat` §60 |
+| 58 | 갤러리 (쓰기 전용 + ID 캐시) | `3076dc6` | `restore-gallery-album-v4.bat` §61 |
+| 59 | 장소명 라벨 문구 | `3b88fe9` | `restore-site-label.bat` §62 |
+| 60 | 사진 전체 보기 | `27e5f6e` | `restore-image-viewer.bat` §63 |
+| 61 | 전체 보기 삭제·버리기 | `cd7ed89` | `restore-image-viewer-delete.bat` §64 |
+| 62 | 수정 화면 폴더·앨범 이동 | `2f2385b` | `restore-stamp-folder-edit.bat` §65 |
+| 63 | 수정 화면 폴더 선택 모달 | `6baa947` | `restore-stamp-folder-picker.bat` §66 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -207,6 +218,8 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260608_235051.apk` | 수정 화면 폴더 선택 모달 (`6baa947`) |
+| `VoiceStamp_20260608_233514.apk` | 수정 화면 폴더·앨범 이동 (`2f2385b`) |
 | `VoiceStamp_20260608_080743.apk` | APK 마이크 권한 복구 (`b222581`) |
 | `VoiceStamp_20260608_003141.apk` | 아이콘 safe zone 여백 (`591666e`) |
 | `VoiceStamp_20260608_001727.apk` | 3D 액자 아이콘 (`565e4b3`) |
@@ -218,12 +231,13 @@ build-apk.bat
 
 | 모듈 | 역할 |
 |------|------|
-| `saveStamp.ts` | 저장·수정 오케스트레이션, 갤러리 저장 호출 |
-| `fileService.ts` | 이미지 persist, 제목 포맷, URI resolve, 삭제 |
-| `stampRepository.ts` | SQLite CRUD, soft delete 필터 |
+| `saveStamp.ts` | 저장·수정, 갤러리·폴더 이동 오케스트레이션 |
+| `fileService.ts` | persist, 그룹 폴더, `moveStampImageToGroup`, rename |
+| `stampRepository.ts` | SQLite CRUD, `gallery_asset_id`, soft delete |
+| `stampFolderService.ts` | 수정 모달용 기존 폴더 목록 수집 |
 | `stampTrash.ts` | 휴지통 이동·복원·비우기 |
-| `galleryService.ts` | 갤러리 VoiceStamp 앨범 저장 (선택적 파일명 복사) |
-| `settingsService.ts` | 앱 설정 get/set |
+| `galleryService.ts` | MediaLibrary Next, 앨범 저장·이동, asset ID 반환 |
+| `settingsService.ts` | 앱 설정, `current_site_name`, `gallery_album_ids` |
 | `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
 | `exportStampImage.ts` | 합성 JPEG, `buildExportJpegFileName` |
 | `pdfTitleFormat.ts` | PDF·내보내기 제목·파일명 포맷 |
@@ -288,6 +302,17 @@ build-apk.bat
 ## 12. 커밋 로그 (최근)
 
 ```
+6baa947 Add folder picker modal on stamp edit for save location.
+2f2385b Add editable save folder and gallery album move on stamp edit.
+cd7ed89 Add delete from full-screen photo preview on save and edit.
+27e5f6e Add full-screen photo preview on save and edit modals.
+3b88fe9 Rename site name label to clarify album folder grouping.
+3076dc6 Fix gallery album grouping without photo picker modal.
+204ba88 Fix gallery album save via cache copy and MediaLibrary Next API.
+bbec4aa Fix Android gallery album grouping for date-site folders.
+ebda9cc Move site name input from camera to save modal.
+9ae5725 Add site name with date-based folder and gallery album grouping.
+36361b4 Sync PRD, PROJECT, PLAN, and README docs to commit b222581.
 b222581 Fix APK mic permission stripped by expo-image-picker config.
 3eb9fd9 Sync PRD, PROJECT, PLAN, and RESTORE docs to commit 591666e.
 591666e Add padding to app icon assets for adaptive icon safe zone.
@@ -326,7 +351,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~56) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~66) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

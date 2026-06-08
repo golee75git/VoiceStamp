@@ -20,7 +20,7 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~56, `restore-*.bat`) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~66, `restore-*.bat`) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 | [../AGENTS.md](../AGENTS.md) | Expo SDK 56 문서 참조 규칙 |
 
@@ -28,10 +28,10 @@
 
 ## 현재 상태 스냅샷 (2026-06-08)
 
-- **최신 커밋:** `b222581` (main)
-- **웹:** https://voicestamp-gilt.vercel.app
-- **구현 완료:** 카메라·음성·스탬프·목록·PDF·합성 JPEG·**PDF·이미지 공통 파일명**·워터마크·손잡이·카카오 위치·휴지통·갤러리·**Android 뒤로가기**·**3D 액자 아이콘(safe zone 여백)**·**APK 마이크 권한**·웹 배포
-- **문서:** LICENSE, PRIVACY, PLAN, PRD, PROJECT (기준 `b222581`)
+- **최신 커밋:** `6baa947` (main)
+- **웹:** https://voicestamp-golee75git-golee75gits-projects.vercel.app
+- **구현 완료:** 카메라·음성·스탬프·목록·PDF·합성 JPEG·워터마크·손잡이·카카오 위치·휴지통·**장소명·날짜_장소 폴더·갤러리 앨범**·**수정 화면 폴더·앨범 이동·폴더 선택**·**사진 전체 보기·버리기**·Android 뒤로가기·3D 액자 아이콘·APK 마이크 권한·웹 배포
+- **문서:** LICENSE, PRIVACY, PLAN, PRD, PROJECT (기준 `6baa947`)
 - **미구현 후보:** 앱 내 정책 화면(LEG-04), 목적별 필드 라벨, DB 백업/복원, 보고서 서식 — [PLAN.md](./PLAN.md) §4·§6
 
 ### 개선 시 참고 순서

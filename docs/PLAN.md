@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.1 |
+| 문서 버전 | 1.2 |
 | 작성일 | 2026-06-08 |
-| 기준 커밋 | `b222581` (main) |
+| 기준 커밋 | `6baa947` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -50,6 +50,16 @@
 | 51 | Vercel `.vercelignore` | `919dbf2` | — |
 | 52 | 아이콘 Adaptive Icon safe zone 여백 | `591666e` | §8 |
 | 53 | APK 마이크 권한(RECORD_AUDIO) 복구 | `b222581` | §56 |
+| 54 | 현장명·날짜별 앱 폴더·갤러리 앨범 분류 | `9ae5725` | §57 |
+| 55 | 현장명 입력을 저장 모달로 이동 | `ebda9cc` | §58 |
+| 56 | 갤러리 앨범 분류 (legacy initialAsset) | `bbec4aa` | §59 |
+| 57 | 갤러리 앨범 (MediaLibrary Next + 읽기 권한) | `204ba88` | §60 |
+| 58 | 갤러리 앨범 (쓰기 전용 + 앨범 ID 캐시) | `3076dc6` | §61 |
+| 59 | 저장 모달 장소명 라벨 문구 변경 | `3b88fe9` | §62 |
+| 60 | 저장·수정 모달 사진 전체 보기 | `27e5f6e` | §63 |
+| 61 | 전체 보기에서 사진 버리기·휴지통 이동 | `cd7ed89` | §64 |
+| 62 | 수정 화면 저장 폴더 표시·갤러리 앨범 이동 | `2f2385b` | §65 |
+| 63 | 수정 화면 저장 폴더 선택 모달 | `6baa947` | §66 |
 
 ### 2.1 문서 동기화 이력
 
@@ -59,7 +69,8 @@
 | `470606d` | PRD·PROJECT·PLAN 문서 정리 (기준 `31332dc`) |
 | `ffa77bf` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `3b6201a`) |
 | `3eb9fd9` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `591666e`) |
-| (본 갱신) | `b222581` 반영 — APK 마이크 권한·최신 APK |
+| `36361b4` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b222581`) |
+| (본 갱신) | `6baa947` 반영 — 장소·폴더·갤러리 앨범·수정 UX·폴더 선택 모달 (PRD·PROJECT·README 동기화) |
 
 ---
 
@@ -138,8 +149,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 항목 | 값 |
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
-| Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260608_080743.apk` |
+| Vercel | https://voicestamp-golee75git-golee75gits-projects.vercel.app |
+| 최신 APK (문서 기준) | `VoiceStamp_20260608_235051.apk` |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -162,5 +173,5 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~56 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~66 |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
