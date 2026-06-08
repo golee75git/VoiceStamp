@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import { useSpeechInput } from '../hooks/useSpeechInput';
-import { extractStampGroupFromImagePath, formatDefaultStampTitle } from '../services/fileService';
+import { formatDefaultStampTitle } from '../services/fileService';
 import { getCurrentPlaceLabel } from '../services/locationService';
 import {
   getCameraHand,
@@ -61,7 +61,6 @@ export function StampSaveModal({
 }: StampSaveModalProps) {
   const isEdit = stamp != null;
   const [siteName, setSiteName] = useState('');
-  const [groupName, setGroupName] = useState('');
   const [title, setTitle] = useState('');
   const [memo, setMemo] = useState('');
   const [saving, setSaving] = useState(false);
@@ -129,7 +128,6 @@ export function StampSaveModal({
   useEffect(() => {
     if (!visible) {
       setSiteName('');
-      setGroupName('');
       setTitle('');
       setMemo('');
       setSaving(false);
@@ -143,7 +141,6 @@ export function StampSaveModal({
     } else if (stamp) {
       setTitle(stamp.title);
       setMemo(stamp.memo);
-      setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
       titleTouchedRef.current = true;
     }
   }, [visible, stamp, stop]);
@@ -270,7 +267,7 @@ export function StampSaveModal({
 
     try {
       if (isEdit && stamp) {
-        await updateStamp({ id: stamp.id, title, memo, groupName });
+        await updateStamp({ id: stamp.id, title, memo });
       } else {
         await setCurrentSiteName(siteName);
         await saveStamp({
@@ -329,20 +326,7 @@ export function StampSaveModal({
                   maxLength={80}
                 />
               </View>
-            ) : (
-              <View style={styles.siteField}>
-                <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
-                <TextInput
-                  style={styles.siteInput}
-                  value={groupName}
-                  onChangeText={setGroupName}
-                  placeholder="예: 20260608_OO초 (비우면 기본)"
-                  onFocus={scrollFieldIntoView}
-                  maxLength={80}
-                />
-                <Text style={styles.locationHint}>앱 폴더와 갤러리 앨범이 함께 변경됩니다.</Text>
-              </View>
-            )}
+            ) : null}
 
             <View>
               <VoiceInputField

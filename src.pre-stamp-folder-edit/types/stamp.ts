@@ -6,7 +6,6 @@ export type Stamp = {
   createdAt: number;
   updatedAt: number;
   deletedAt?: number | null;
-  galleryAssetId?: string | null;
 };
 
 export type StampRow = {
@@ -17,5 +16,4 @@ export type StampRow = {
   created_at: number;
   updated_at: number;
   deleted_at?: number | null;
-  gallery_asset_id?: string | null;
 };

@@ -2,7 +2,7 @@ import { getDatabase } from '../db/database';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at';
 
 function mapRow(row: StampRow): Stamp {
   return {
@@ -13,15 +13,14 @@ function mapRow(row: StampRow): Stamp {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at ?? null,
-    galleryAssetId: row.gallery_asset_id ?? null,
   };
 }
 
 export async function insertStamp(stamp: Stamp): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -29,7 +28,6 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     stamp.createdAt,
     stamp.updatedAt,
     stamp.deletedAt ?? null,
-    stamp.galleryAssetId ?? null,
   );
 }
 
@@ -132,27 +130,6 @@ export async function updateStampMetadataAndImagePath(
     title,
     memo,
     imagePath,
-    Date.now(),
-    id,
-  );
-}
-
-export async function updateStampRecord(
-  id: string,
-  title: string,
-  memo: string,
-  imagePath: string,
-  galleryAssetId?: string | null,
-): Promise<void> {
-  const db = await getDatabase();
-  await db.runAsync(
-    `UPDATE stamps
-     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, updated_at = ?
-     WHERE id = ?`,
-    title,
-    memo,
-    imagePath,
-    galleryAssetId ?? null,
     Date.now(),
     id,
   );

@@ -71,14 +71,6 @@ export function extractStampGroupFromImagePath(imagePath: string): string | null
   return null;
 }
 
-export function normalizeStampGroupName(name: string): string {
-  const trimmed = name.trim();
-  if (!trimmed) {
-    return '';
-  }
-  return sanitizeStampFileBaseName(trimmed);
-}
-
 function stampRelativeDir(imagePath: string): string {
   const lastSlash = imagePath.lastIndexOf('/');
   if (lastSlash < 0) {
@@ -158,52 +150,6 @@ export async function persistImage(
   const dest = `${dir}${fileName}`;
   await FileSystem.copyAsync({ from: tempUri, to: dest });
   return `${folderName}/${fileName}`;
-}
-
-export async function moveStampImageToGroup(
-  imagePath: string,
-  newGroupName: string,
-  title: string,
-  id: string,
-): Promise<string> {
-  if (Platform.OS === 'web' || isInlineImagePath(imagePath)) {
-    return imagePath;
-  }
-
-  const folderName = await getStampsFolderName();
-  const ext = imagePath.toLowerCase().endsWith('.png') ? 'png' : 'jpg';
-  const fileName = buildStampImageFileName(title, id, ext);
-  const safeGroup = normalizeStampGroupName(newGroupName);
-
-  let nextPath: string;
-  let destUri: string;
-
-  if (safeGroup) {
-    const dir = await ensureStampGroupDir(safeGroup);
-    destUri = `${dir}${fileName}`;
-    nextPath = `${folderName}/${safeGroup}/${fileName}`;
-  } else {
-    const dir = await ensureStampsDir();
-    destUri = `${dir}${fileName}`;
-    nextPath = `${folderName}/${fileName}`;
-  }
-
-  if (nextPath === imagePath) {
-    return imagePath;
-  }
-
-  const from = resolveImageUri(imagePath);
-  if (from === destUri) {
-    return nextPath;
-  }
-
-  const oldInfo = await FileSystem.getInfoAsync(from);
-  if (!oldInfo.exists) {
-    return imagePath;
-  }
-
-  await FileSystem.moveAsync({ from, to: destUri });
-  return nextPath;
 }
 
 export async function renameStampImage(

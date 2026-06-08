@@ -963,3 +963,24 @@ restore-image-viewer-delete.bat
 ```powershell
 Copy-Item src.pre-image-viewer-delete\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 65. 수정 화면 저장 폴더·갤러리 앨범 변경만 되돌리기 (선택)
+
+저장 폴더 표시/변경 및 `gallery_asset_id` 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-folder-edit.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-folder-edit\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-stamp-folder-edit\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-stamp-folder-edit\services\galleryService.ts src\services\ -Force
+Copy-Item src.pre-stamp-folder-edit\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-stamp-folder-edit\services\stampRepository.ts src\services\ -Force
+Copy-Item src.pre-stamp-folder-edit\db\schema.ts src\db\ -Force
+Copy-Item src.pre-stamp-folder-edit\db\database.ts src\db\ -Force
+Copy-Item src.pre-stamp-folder-edit\types\stamp.ts src\types\ -Force
+```

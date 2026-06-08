@@ -21,10 +21,6 @@ export const ALTER_STAMPS_ADD_DELETED_AT = `
   ALTER TABLE stamps ADD COLUMN deleted_at INTEGER;
 `;
 
-export const ALTER_STAMPS_ADD_GALLERY_ASSET_ID = `
-  ALTER TABLE stamps ADD COLUMN gallery_asset_id TEXT;
-`;
-
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,

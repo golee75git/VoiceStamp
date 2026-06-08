@@ -2,7 +2,6 @@ import * as SQLite from 'expo-sqlite';
 
 import {
   ALTER_STAMPS_ADD_DELETED_AT,
-  ALTER_STAMPS_ADD_GALLERY_ASSET_ID,
   CREATE_SETTINGS_TABLE,
   CREATE_STAMPS_INDEX,
   CREATE_STAMPS_TABLE,
@@ -16,10 +15,6 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasDeletedAt = columns.some((column) => column.name === 'deleted_at');
   if (!hasDeletedAt) {
     await db.execAsync(ALTER_STAMPS_ADD_DELETED_AT);
-  }
-  const hasGalleryAssetId = columns.some((column) => column.name === 'gallery_asset_id');
-  if (!hasGalleryAssetId) {
-    await db.execAsync(ALTER_STAMPS_ADD_GALLERY_ASSET_ID);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }
