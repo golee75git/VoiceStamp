@@ -27,7 +27,6 @@ import {
   type TextAlign,
 } from '../services/settingsService';
 import { saveStamp, updateStamp } from '../services/saveStamp';
-import { moveStampsToTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
 import { VoiceInputField } from './VoiceInputField';
 
@@ -71,7 +70,6 @@ export function StampSaveModal({
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
@@ -135,7 +133,6 @@ export function StampSaveModal({
       setError(null);
       setSpeechTarget(null);
       setImageViewerVisible(false);
-      setDeleting(false);
       titleTouchedRef.current = false;
       stop();
     } else if (stamp) {
@@ -204,57 +201,6 @@ export function StampSaveModal({
     if (!started) {
       setSpeechTarget(null);
     }
-  };
-
-  const confirmTrashDelete = async () => {
-    if (!stamp) {
-      return;
-    }
-
-    setDeleting(true);
-    try {
-      const moved = await moveStampsToTrash([stamp.id]);
-      if (moved === 0) {
-        Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
-        return;
-      }
-      setImageViewerVisible(false);
-      onSaved();
-      onClose();
-    } catch (err) {
-      Alert.alert(
-        '삭제 실패',
-        err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  const handleImageDeletePress = () => {
-    if (saving || deleting) {
-      return;
-    }
-
-    if (isEdit && stamp) {
-      Alert.alert('휴지통으로 이동', '이 스탬프를 휴지통으로 옮깁니다.', [
-        { text: '취소', style: 'cancel' },
-        { text: '삭제', style: 'destructive', onPress: () => void confirmTrashDelete() },
-      ]);
-      return;
-    }
-
-    Alert.alert('사진 버리기', '저장하지 않은 사진을 버립니다.', [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '버리기',
-        style: 'destructive',
-        onPress: () => {
-          setImageViewerVisible(false);
-          onClose();
-        },
-      },
-    ]);
   };
 
   const handleSave = async () => {
@@ -386,36 +332,11 @@ export function StampSaveModal({
       animationType="fade"
       onRequestClose={() => setImageViewerVisible(false)}
     >
-      <View style={styles.imageViewerOverlay}>
-        <Pressable
-          style={StyleSheet.absoluteFill}
-          onPress={() => setImageViewerVisible(false)}
-          accessibilityLabel="전체 보기 닫기"
-        />
+      <Pressable style={styles.imageViewerOverlay} onPress={() => setImageViewerVisible(false)}>
         {imageUri ? (
-          <Image
-            source={{ uri: imageUri }}
-            style={styles.imageViewerImage}
-            resizeMode="contain"
-            pointerEvents="none"
-          />
+          <Image source={{ uri: imageUri }} style={styles.imageViewerImage} resizeMode="contain" />
         ) : null}
-        <View style={styles.imageViewerDeleteBar}>
-          <Pressable
-            style={[styles.imageViewerDeleteButton, deleting && styles.imageViewerDeleteButtonDisabled]}
-            onPress={handleImageDeletePress}
-            disabled={deleting || saving}
-          >
-            {deleting ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.imageViewerDeleteText}>
-                {isEdit ? '휴지통으로 이동' : '사진 버리기'}
-              </Text>
-            )}
-          </Pressable>
-        </View>
-      </View>
+      </Pressable>
     </Modal>
     </>
   );
@@ -461,26 +382,6 @@ const styles = StyleSheet.create({
   imageViewerImage: {
     width: '100%',
     height: '100%',
-  },
-  imageViewerDeleteBar: {
-    position: 'absolute',
-    bottom: 40,
-    left: 20,
-    right: 20,
-  },
-  imageViewerDeleteButton: {
-    backgroundColor: 'rgba(220, 38, 38, 0.92)',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  imageViewerDeleteButtonDisabled: {
-    opacity: 0.7,
-  },
-  imageViewerDeleteText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
   },
   siteField: {
     gap: 8,

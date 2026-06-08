@@ -949,3 +949,17 @@ restore-image-viewer.bat
 ```powershell
 Copy-Item src.pre-image-viewer\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 64. 전체 보기 사진 삭제·버리기만 되돌리기 (선택)
+
+전체 보기 화면 삭제/버리기 버튼 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-image-viewer-delete.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-image-viewer-delete\components\StampSaveModal.tsx src\components\ -Force
+```
