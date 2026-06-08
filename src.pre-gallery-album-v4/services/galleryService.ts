@@ -2,8 +2,6 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { Album, Asset, requestPermissionsAsync } from 'expo-media-library';
 import { Platform } from 'react-native';
 
-import { getGalleryAlbumId, setGalleryAlbumId } from './settingsService';
-
 const LEGACY_GALLERY_ALBUM = 'VoiceStamp';
 
 function toFileUri(uri: string): string {
@@ -34,19 +32,14 @@ async function copyToGalleryCache(localUri: string, preferredFileName?: string):
 
 async function saveToGalleryAlbum(localUri: string, albumName: string, preferredFileName?: string): Promise<void> {
   const fileUri = await copyToGalleryCache(localUri, preferredFileName);
-  const storedAlbumId = await getGalleryAlbumId(albumName);
+  const existing = await Album.get(albumName);
 
-  if (storedAlbumId) {
-    try {
-      await Asset.create(fileUri, new Album(storedAlbumId));
-      return;
-    } catch {
-      // Stored album id may be stale; create a new album below.
-    }
+  if (existing) {
+    await Asset.create(fileUri, existing);
+    return;
   }
 
-  const album = await Album.create(albumName, [fileUri], true);
-  await setGalleryAlbumId(albumName, album.id);
+  await Album.create(albumName, [fileUri], true);
 }
 
 export async function saveStampPhotoToGallery(
@@ -58,7 +51,7 @@ export async function saveStampPhotoToGallery(
     return;
   }
 
-  const permission = await requestPermissionsAsync(true);
+  const permission = await requestPermissionsAsync(false);
   if (!permission.granted) {
     return;
   }

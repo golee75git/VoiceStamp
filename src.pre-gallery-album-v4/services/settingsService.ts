@@ -10,7 +10,6 @@ const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
-const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
@@ -260,28 +259,4 @@ export async function setCurrentSiteName(name: string): Promise<string> {
   const safeName = sanitizeSiteName(name);
   await writeSetting(CURRENT_SITE_NAME_KEY, safeName);
   return safeName;
-}
-
-async function readGalleryAlbumIdMap(): Promise<Record<string, string>> {
-  const raw = await readSetting(GALLERY_ALBUM_IDS_KEY);
-  if (!raw) {
-    return {};
-  }
-  try {
-    const parsed = JSON.parse(raw) as Record<string, string>;
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
-export async function getGalleryAlbumId(albumName: string): Promise<string | null> {
-  const map = await readGalleryAlbumIdMap();
-  return map[albumName] ?? null;
-}
-
-export async function setGalleryAlbumId(albumName: string, albumId: string): Promise<void> {
-  const map = await readGalleryAlbumIdMap();
-  map[albumName] = albumId;
-  await writeSetting(GALLERY_ALBUM_IDS_KEY, JSON.stringify(map));
 }

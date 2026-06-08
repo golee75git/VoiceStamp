@@ -906,3 +906,18 @@ restore-gallery-album-v3.bat
 ```powershell
 Copy-Item src.pre-gallery-album-v3\services\galleryService.ts src\services\ -Force
 ```
+
+## 61. 갤러리 앨범 분류(쓰기 전용·앨범 ID 캐시)만 되돌리기 (선택)
+
+쓰기 전용 권한 + 앨범 ID 로컬 저장 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-album-v4.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-album-v4\services\galleryService.ts src\services\ -Force
+Copy-Item src.pre-gallery-album-v4\services\settingsService.ts src\services\ -Force
+```
