@@ -9,22 +9,13 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { formatDefaultStampTitle } from '../services/fileService';
 import { getCurrentPlaceLabel } from '../services/locationService';
-import {
-  getCameraHand,
-  getCurrentSiteName,
-  getMemoTextAlign,
-  getTitleTextAlign,
-  setCurrentSiteName,
-  type CameraHand,
-  type TextAlign,
-} from '../services/settingsService';
+import { getCameraHand, getMemoTextAlign, getTitleTextAlign, type CameraHand, type TextAlign } from '../services/settingsService';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import type { Stamp } from '../types/stamp';
 import { VoiceInputField } from './VoiceInputField';
@@ -58,7 +49,6 @@ export function StampSaveModal({
   onSaved,
 }: StampSaveModalProps) {
   const isEdit = stamp != null;
-  const [siteName, setSiteName] = useState('');
   const [title, setTitle] = useState('');
   const [memo, setMemo] = useState('');
   const [saving, setSaving] = useState(false);
@@ -123,7 +113,6 @@ export function StampSaveModal({
 
   useEffect(() => {
     if (!visible) {
-      setSiteName('');
       setTitle('');
       setMemo('');
       setSaving(false);
@@ -154,11 +143,6 @@ export function StampSaveModal({
     setLocationLoading(true);
 
     (async () => {
-      const savedSiteName = await getCurrentSiteName();
-      if (!cancelled) {
-        setSiteName(savedSiteName);
-      }
-
       try {
         const place = await getCurrentPlaceLabel();
         if (cancelled || titleTouchedRef.current) {
@@ -212,7 +196,6 @@ export function StampSaveModal({
       if (isEdit && stamp) {
         await updateStamp({ id: stamp.id, title, memo });
       } else {
-        await setCurrentSiteName(siteName);
         await saveStamp({
           tempImageUri: imageUri,
           title,
@@ -252,20 +235,6 @@ export function StampSaveModal({
 
             {imageUri ? (
               <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
-            ) : null}
-
-            {!isEdit ? (
-              <View style={styles.siteField}>
-                <Text style={styles.siteLabel}>현장명</Text>
-                <TextInput
-                  style={styles.siteInput}
-                  value={siteName}
-                  onChangeText={setSiteName}
-                  placeholder="예: OO초 (비우면 날짜만 분류)"
-                  onFocus={scrollFieldIntoView}
-                  maxLength={80}
-                />
-              </View>
             ) : null}
 
             <View>
@@ -353,24 +322,6 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 12,
     backgroundColor: '#f3f4f6',
-  },
-  siteField: {
-    gap: 8,
-  },
-  siteLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#222',
-  },
-  siteInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    color: '#111',
   },
   locationHint: {
     color: '#6b7280',

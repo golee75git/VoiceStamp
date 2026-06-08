@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
-import { getCameraHand, type CameraHand } from '../services/settingsService';
+import {
+  getCameraHand,
+  getCurrentSiteName,
+  setCurrentSiteName,
+  type CameraHand,
+} from '../services/settingsService';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -24,12 +29,23 @@ export function CameraScreen({ refreshKey, onOpenList, onOpenSettings, onSaved }
   const [cameraReady, setCameraReady] = useState(false);
   const [pictureSize, setPictureSize] = useState<string | undefined>();
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
+  const [siteName, setSiteName] = useState('');
 
   useEffect(() => {
-    getCameraHand().then(setCameraHand);
+    Promise.all([getCameraHand(), getCurrentSiteName()]).then(([hand, site]) => {
+      setCameraHand(hand);
+      setSiteName(site);
+    });
   }, [refreshKey]);
 
-  const openSaveModal = (uri: string) => {
+  const persistSiteName = async (value: string) => {
+    const saved = await setCurrentSiteName(value);
+    setSiteName(saved);
+    return saved;
+  };
+
+  const openSaveModal = async (uri: string) => {
+    await persistSiteName(siteName);
     setCapturedUri(uri);
     setModalVisible(true);
   };
@@ -129,6 +145,21 @@ export function CameraScreen({ refreshKey, onOpenList, onOpenSettings, onSaved }
         onCameraReady={handleCameraReady}
       />
 
+      <View style={styles.siteBar}>
+        <Text style={styles.siteLabel}>현장명</Text>
+        <TextInput
+          style={styles.siteInput}
+          value={siteName}
+          onChangeText={setSiteName}
+          onBlur={() => {
+            void persistSiteName(siteName);
+          }}
+          placeholder="예: OO초"
+          placeholderTextColor="rgba(255,255,255,0.55)"
+          maxLength={80}
+        />
+      </View>
+
       <View
         style={[
           styles.sideNav,
@@ -182,6 +213,32 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  siteBar: {
+    position: 'absolute',
+    top: 52,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    zIndex: 10,
+  },
+  siteLabel: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  siteInput: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 15,
+    paddingVertical: 4,
+    paddingHorizontal: 0,
   },
   centered: {
     flex: 1,

@@ -863,3 +863,18 @@ Copy-Item src.pre-site-group\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-site-group\services\exportStampImage.ts src\services\ -Force
 Copy-Item src.pre-site-group\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 58. 현장명 저장 모달 배치만 되돌리기 (선택)
+
+현장명을 카메라가 아닌 저장 모달(제목 위)에 표시한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-site-modal.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-site-modal\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-site-modal\components\StampSaveModal.tsx src\components\ -Force
+```
