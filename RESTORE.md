@@ -984,3 +984,19 @@ Copy-Item src.pre-stamp-folder-edit\db\schema.ts src\db\ -Force
 Copy-Item src.pre-stamp-folder-edit\db\database.ts src\db\ -Force
 Copy-Item src.pre-stamp-folder-edit\types\stamp.ts src\types\ -Force
 ```
+
+## 66. 수정 화면 저장 폴더 선택 모달만 되돌리기 (선택)
+
+저장 폴더 [선택] 모달 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-folder-picker.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-folder-picker\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-stamp-folder-picker\services\settingsService.ts src\services\ -Force
+Remove-Item src\services\stampFolderService.ts -ErrorAction SilentlyContinue
+```

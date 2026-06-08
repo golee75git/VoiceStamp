@@ -285,8 +285,3 @@ export async function setGalleryAlbumId(albumName: string, albumId: string): Pro
   map[albumName] = albumId;
   await writeSetting(GALLERY_ALBUM_IDS_KEY, JSON.stringify(map));
 }
-
-export async function listKnownGalleryAlbumNames(): Promise<string[]> {
-  const map = await readGalleryAlbumIdMap();
-  return Object.keys(map).sort((a, b) => b.localeCompare(a));
-}
