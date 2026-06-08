@@ -921,3 +921,17 @@ restore-gallery-album-v4.bat
 Copy-Item src.pre-gallery-album-v4\services\galleryService.ts src\services\ -Force
 Copy-Item src.pre-gallery-album-v4\services\settingsService.ts src\services\ -Force
 ```
+
+## 62. 저장 모달 장소명 라벨 문구만 되돌리기 (선택)
+
+`장소명(앨범에 날짜_장소명 폴더저장)` 라벨 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-site-label.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-site-label\components\StampSaveModal.tsx src\components\ -Force
+```
