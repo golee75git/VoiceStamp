@@ -4,35 +4,12 @@ import { Platform } from 'react-native';
 
 const LEGACY_GALLERY_ALBUM = 'VoiceStamp';
 
-function toFileUri(uri: string): string {
-  if (uri.startsWith('file://')) {
-    return uri;
-  }
-  return `file://${uri}`;
-}
-
-async function saveToGalleryAlbumAndroid(localUri: string, albumName: string): Promise<void> {
-  const fileUri = toFileUri(localUri);
+async function ensureGalleryAlbum(asset: MediaLibrary.Asset, albumName: string): Promise<void> {
   const existing = await MediaLibrary.getAlbumAsync(albumName);
-
-  if (existing) {
-    const asset = await MediaLibrary.createAssetAsync(fileUri);
-    await MediaLibrary.addAssetsToAlbumAsync([asset], existing, true);
-    return;
-  }
-
-  await MediaLibrary.createAlbumAsync(albumName, undefined, true, fileUri);
-}
-
-async function saveToGalleryAlbumIos(localUri: string, albumName: string): Promise<void> {
-  const asset = await MediaLibrary.createAssetAsync(localUri);
-  const existing = await MediaLibrary.getAlbumAsync(albumName);
-
   if (existing) {
     await MediaLibrary.addAssetsToAlbumAsync([asset], existing, false);
     return;
   }
-
   await MediaLibrary.createAlbumAsync(albumName, asset, false);
 }
 
@@ -60,21 +37,11 @@ export async function saveStampPhotoToGallery(
     }
   }
 
+  const asset = await MediaLibrary.createAssetAsync(uri);
   const album = albumName?.trim() || LEGACY_GALLERY_ALBUM;
-
   try {
-    if (Platform.OS === 'android') {
-      await saveToGalleryAlbumAndroid(uri, album);
-      return;
-    }
-
-    await saveToGalleryAlbumIos(uri, album);
+    await ensureGalleryAlbum(asset, album);
   } catch {
-    // Album grouping failed; createAssetAsync path may still have saved to the library.
-    try {
-      await MediaLibrary.createAssetAsync(uri);
-    } catch {
-      // Ignore fallback failure.
-    }
+    // createAssetAsync already saved the file; album grouping is best-effort.
   }
 }

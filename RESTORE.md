@@ -878,3 +878,17 @@ restore-site-modal.bat
 Copy-Item src.pre-site-modal\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-site-modal\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 59. 갤러리 날짜·현장 앨범 분류(Android)만 되돌리기 (선택)
+
+`initialAssetLocalUri`·`copyAsset: true` 앨범 저장 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-album-v2.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-album-v2\services\galleryService.ts src\services\ -Force
+```
