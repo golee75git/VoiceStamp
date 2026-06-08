@@ -935,3 +935,17 @@ restore-site-label.bat
 ```powershell
 Copy-Item src.pre-site-label\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 63. 저장·수정 모달 사진 전체 보기만 되돌리기 (선택)
+
+미리보기 탭 시 전체 화면 사진 보기 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-image-viewer.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-image-viewer\components\StampSaveModal.tsx src\components\ -Force
+```

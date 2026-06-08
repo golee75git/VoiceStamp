@@ -131,7 +131,6 @@ export function StampSaveModal({
       setLocationLoading(false);
       setError(null);
       setSpeechTarget(null);
-      setImageViewerVisible(false);
       titleTouchedRef.current = false;
       stop();
     } else if (stamp) {
@@ -237,7 +236,6 @@ export function StampSaveModal({
   };
 
   return (
-    <>
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         style={styles.overlay}
@@ -254,9 +252,7 @@ export function StampSaveModal({
             <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
             {imageUri ? (
-              <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
-                <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
-              </Pressable>
+              <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
             ) : null}
 
             {!isEdit ? (
@@ -324,20 +320,6 @@ export function StampSaveModal({
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
-
-    <Modal
-      visible={imageViewerVisible && imageUri != null}
-      transparent
-      animationType="fade"
-      onRequestClose={() => setImageViewerVisible(false)}
-    >
-      <Pressable style={styles.imageViewerOverlay} onPress={() => setImageViewerVisible(false)}>
-        {imageUri ? (
-          <Image source={{ uri: imageUri }} style={styles.imageViewerImage} resizeMode="contain" />
-        ) : null}
-      </Pressable>
-    </Modal>
-    </>
   );
 }
 
@@ -372,15 +354,6 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 12,
     backgroundColor: '#f3f4f6',
-  },
-  imageViewerOverlay: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-  },
-  imageViewerImage: {
-    width: '100%',
-    height: '100%',
   },
   siteField: {
     gap: 8,
