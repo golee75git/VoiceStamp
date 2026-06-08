@@ -844,3 +844,22 @@ npx expo prebuild --platform android --no-install
 ```
 
 ※ 되돌린 뒤 APK 재빌드(`build-apk.bat`)가 필요합니다.
+
+## 57. 현장명·날짜별 폴더/앨범 분류만 되돌리기 (선택)
+
+현장명 입력 및 `YYYYMMDD_현장명` 앱 하위 폴더·갤러리 앨범 분류 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-site-group.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-site-group\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-site-group\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-site-group\services\galleryService.ts src\services\ -Force
+Copy-Item src.pre-site-group\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-site-group\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-site-group\components\CameraScreen.tsx src\components\ -Force
+```

@@ -52,33 +52,6 @@ export function buildStampImageFileName(title: string, id: string, ext: string):
   return `${base}_${shortIdFromStampId(id)}.${ext}`;
 }
 
-export function formatStampGroupName(timestamp: number, siteName?: string): string {
-  const date = new Date(timestamp);
-  const pad = (value: number) => String(value).padStart(2, '0');
-  const datePart = `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}`;
-  const placePart = siteName?.trim() ? sanitizePlaceForTitle(siteName) : '';
-  if (!placePart) {
-    return datePart;
-  }
-  return `${datePart}_${placePart}`;
-}
-
-export function extractStampGroupFromImagePath(imagePath: string): string | null {
-  const parts = imagePath.split('/');
-  if (parts.length >= 3) {
-    return parts[1] ?? null;
-  }
-  return null;
-}
-
-function stampRelativeDir(imagePath: string): string {
-  const lastSlash = imagePath.lastIndexOf('/');
-  if (lastSlash < 0) {
-    return '';
-  }
-  return imagePath.substring(0, lastSlash + 1);
-}
-
 async function persistImageWeb(tempUri: string): Promise<string> {
   const response = await fetch(tempUri);
   const blob = await response.blob();
@@ -113,42 +86,19 @@ export async function ensureStampsDir(): Promise<string> {
   return dir;
 }
 
-export async function ensureStampGroupDir(groupName: string): Promise<string> {
-  const rootDir = await ensureStampsDir();
-  const safeGroup = sanitizeStampFileBaseName(groupName);
-  const dir = `${rootDir}${safeGroup}/`;
-  const info = await FileSystem.getInfoAsync(dir);
-  if (!info.exists) {
-    await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-  }
-  return dir;
-}
-
-export async function persistImage(
-  tempUri: string,
-  title: string,
-  id: string,
-  groupName?: string,
-): Promise<string> {
+export async function persistImage(tempUri: string, title: string, id: string): Promise<string> {
   if (Platform.OS === 'web') {
     return persistImageWeb(tempUri);
   }
 
+  const dir = await ensureStampsDir();
   const folderName = await getStampsFolderName();
   const ext = tempUri.toLowerCase().includes('.png') ? 'png' : 'jpg';
   const fileName = buildStampImageFileName(title, id, ext);
-  const safeGroup = groupName?.trim() ? sanitizeStampFileBaseName(groupName) : '';
-
-  if (safeGroup) {
-    const dir = await ensureStampGroupDir(safeGroup);
-    const dest = `${dir}${fileName}`;
-    await FileSystem.copyAsync({ from: tempUri, to: dest });
-    return `${folderName}/${safeGroup}/${fileName}`;
-  }
-
-  const dir = await ensureStampsDir();
   const dest = `${dir}${fileName}`;
+
   await FileSystem.copyAsync({ from: tempUri, to: dest });
+
   return `${folderName}/${fileName}`;
 }
 
@@ -161,17 +111,18 @@ export async function renameStampImage(
     return imagePath;
   }
 
+  const folderName = await getStampsFolderName();
   const ext = imagePath.toLowerCase().endsWith('.png') ? 'png' : 'jpg';
   const fileName = buildStampImageFileName(title, id, ext);
-  const relativeDir = stampRelativeDir(imagePath);
-  const nextPath = `${relativeDir}${fileName}`;
+  const nextPath = `${folderName}/${fileName}`;
 
   if (nextPath === imagePath) {
     return imagePath;
   }
 
+  const dir = await ensureStampsDir();
   const from = resolveImageUri(imagePath);
-  const to = resolveImageUri(nextPath);
+  const to = `${dir}${fileName}`;
 
   if (from === to) {
     return nextPath;

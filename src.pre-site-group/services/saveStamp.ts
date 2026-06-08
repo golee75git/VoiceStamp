@@ -2,13 +2,11 @@ import { Platform } from 'react-native';
 
 import {
   formatDefaultStampTitle,
-  formatStampGroupName,
   persistImage,
   renameStampImage,
   resolveImageUri,
 } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
-import { getCurrentSiteName } from './settingsService';
 import {
   getStampById,
   insertStamp,
@@ -33,13 +31,11 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   const id = generateId();
   const now = Date.now();
   const title = resolveStampTitle(input.title, now);
-  const siteName = await getCurrentSiteName();
-  const groupName = formatStampGroupName(now, siteName);
-  const imagePath = await persistImage(input.tempImageUri, title, id, groupName);
+  const imagePath = await persistImage(input.tempImageUri, title, id);
 
   if (Platform.OS !== 'web') {
     try {
-      await saveStampPhotoToGallery(resolveImageUri(imagePath), undefined, groupName);
+      await saveStampPhotoToGallery(resolveImageUri(imagePath));
     } catch {
       // 앱 내부 저장은 완료됨. 갤러리 저장·권한 거부는 저장 실패로 처리하지 않음.
     }

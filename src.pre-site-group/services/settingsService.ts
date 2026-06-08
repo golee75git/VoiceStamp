@@ -9,7 +9,6 @@ const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
-const CURRENT_SITE_NAME_KEY = 'current_site_name';
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
@@ -235,28 +234,4 @@ export async function setStampTextLayout(layout: StampTextLayout): Promise<Stamp
   const safeLayout = sanitizeStampTextLayout(layout);
   await writeSetting(STAMP_TEXT_LAYOUT_KEY, safeLayout);
   return safeLayout;
-}
-
-export function sanitizeSiteName(name: string): string {
-  const cleaned = name
-    .trim()
-    .replace(/[\\/:*?"<>|]/g, '_')
-    .replace(/\s+/g, '')
-    .replace(/_+/g, '_')
-    .replace(/^\.+/, '');
-  return cleaned.length > 80 ? cleaned.slice(0, 80) : cleaned;
-}
-
-export async function getCurrentSiteName(): Promise<string> {
-  const value = await readSetting(CURRENT_SITE_NAME_KEY);
-  if (!value) {
-    return '';
-  }
-  return sanitizeSiteName(value);
-}
-
-export async function setCurrentSiteName(name: string): Promise<string> {
-  const safeName = sanitizeSiteName(name);
-  await writeSetting(CURRENT_SITE_NAME_KEY, safeName);
-  return safeName;
 }

@@ -1,11 +1,7 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
-import {
-  extractStampGroupFromImagePath,
-  sanitizeStampFileBaseName,
-  resolveImageUri,
-} from './fileService';
+import { sanitizeStampFileBaseName, resolveImageUri } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign } from './settingsService';
@@ -312,8 +308,7 @@ export async function saveStampsAsJpegToGallery(
 
       const capturedUri = await captureNative(stamp, options);
       jpegUri = await compressStampJpeg(capturedUri);
-      const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
-      await saveStampPhotoToGallery(jpegUri, fileName, albumName);
+      await saveStampPhotoToGallery(jpegUri, fileName);
       saved += 1;
     } catch {
       failed += 1;
