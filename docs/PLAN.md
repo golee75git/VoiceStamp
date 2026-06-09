@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.2 |
-| 작성일 | 2026-06-08 |
-| 기준 커밋 | `6baa947` (main) |
+| 문서 버전 | 1.3 |
+| 작성일 | 2026-06-09 |
+| 기준 커밋 | `b44c469` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -61,6 +61,20 @@
 | 62 | 수정 화면 저장 폴더 표시·갤러리 앨범 이동 | `2f2385b` | §65 |
 | 63 | 수정 화면 저장 폴더 선택 모달 | `6baa947` | §66 |
 
+## 2A. Phase 2 추가 완료 (2026-06-09)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 64 | 신규 저장 시 `YYYYMMDD_장소명` 폴더명 자동 채움·기존 폴더 선택 | `a3d4351` | `restore-site-group-full.bat` §64 |
+| 65 | 웹 크래시 수정 (`galleryService.web.ts` 스텁) | `59c7007` | `restore-gallery-web-stub.bat` §65 |
+| 66 | 목록 선택 휴지통 후 스크롤 유지 (1차: silent load) | `eef0891` | — |
+| 67 | 목록 휴지통 후 스크롤 (skipRefresh·scrollToOffset) | `5831512` | `restore-list-trash-scroll.bat` §66 |
+| 68 | 목록 휴지통 스크롤 앵커 인덱스 (시도) | `6cf82f5` | — |
+| 69 | 앵커 인덱스 되돌림 (앱 종료 방지) | `953c2cd` | — |
+| 70 | 카메라→목록 재진입 무한 로딩 수정 | `bfb77d8` | `restore-list-silent-loading.bat` §67 |
+| 71 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
+| — | 정보·법무 페이지 UI 설계 (코드 미반영) | — | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -70,7 +84,8 @@
 | `ffa77bf` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `3b6201a`) |
 | `3eb9fd9` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `591666e`) |
 | `36361b4` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b222581`) |
-| (본 갱신) | `6baa947` 반영 — 장소·폴더·갤러리 앨범·수정 UX·폴더 선택 모달 (PRD·PROJECT·README 동기화) |
+| `cc5c3f1` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `6baa947`) |
+| (본 갱신) | `b44c469` 반영 — 저장 폴더 자동 채움·웹 스텁·목록 스크롤·날짜별 이력 (PRD·PROJECT·README 동기화) |
 
 ---
 
@@ -84,7 +99,7 @@
 | LEG-01 | LICENSE 저작권 (이형우, MIT + OSS 고지) | P1 | ✅ 커밋됨 (`f125897`) |
 | LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 커밋됨 |
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
-| LEG-04 | **앱 설정 화면**에 버전·라이선스·정책 링크/표시 | P2 | 📋 미구현 |
+| LEG-04 | 버전·라이선스·개인정보·도움말 (앱 또는 웹 `/info` 등) | P2 | 📋 설계만 ([DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md)) |
 | LEG-05 | Play 스토어 등록용 정책 URL·스크린샷 | P3 | 📋 미구현 |
 
 > **참고:** APK/Web만 배포할 때는 문서(`docs/`)만으로도 내부·테스터 배포는 가능. 스토어 등록 시 LEG-04·05 권장.
@@ -149,8 +164,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 항목 | 값 |
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
-| Vercel | https://voicestamp-golee75git-golee75gits-projects.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260608_235051.apk` |
+| Vercel | https://voicestamp-gilt.vercel.app |
+| 최신 APK (문서 기준) | `VoiceStamp_20260609_181249.apk` (`b44c469`) |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -173,5 +188,18 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~66 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~68 |
+| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계 (미구현) |
+
+---
+
+## 10. 날짜별 개발 요약
+
+| 날짜 | Phase | 요약 |
+|------|-------|------|
+| 2026-06-05 | 0 | Git 저장소 생성 |
+| 2026-06-06 | 0→1 | MVP·PDF·웹·설정·위치·휴지통·갤러리·APK 파이프라인 |
+| 2026-06-07 | 2 | PDF/JPEG보내기·UI·손잡이·Android 뒤로·아이콘·권한 |
+| 2026-06-08 | 2→3 | 장소·폴더·갤러리 앨범·수정 UX·폴더 선택·문서 동기화 |
+| 2026-06-09 | 2 | 저장 폴더 자동 채움·웹 안정화·목록 스크롤 UX·되돌리기 §64~68 |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |

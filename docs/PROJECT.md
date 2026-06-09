@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-08**  
-최신 커밋 기준: `6baa947` (main)
+문서 작성일: **2026-06-09**  
+최신 커밋 기준: `b44c469` (main)
 
 ---
 
@@ -33,7 +33,7 @@ VoiceStamp/
 │   ├── screens/            # MainScreen
 │   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
 │   │                       # settingsService, kakaoLocal, locationService,
-│   │                       # pdfImageForExport, galleryService, stampTrash,
+│   │                       # pdfImageForExport, galleryService(.web), stampTrash,
 │   │                       # stampRepository, stampFolderService, pickStampImage,
 │   │                       # pdfTitleFormat
 │   ├── hooks/              # useSpeechInput
@@ -43,7 +43,7 @@ VoiceStamp/
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~66)
+├── RESTORE.md              # 기능별 되돌리기 (§8~68)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -158,6 +158,13 @@ VoiceStamp/
 | 61 | 전체 보기 삭제·버리기 | `cd7ed89` | `restore-image-viewer-delete.bat` §64 |
 | 62 | 수정 화면 폴더·앨범 이동 | `2f2385b` | `restore-stamp-folder-edit.bat` §65 |
 | 63 | 수정 화면 폴더 선택 모달 | `6baa947` | `restore-stamp-folder-picker.bat` §66 |
+| 64 | 저장 폴더 `YYYYMMDD_장소명` 자동 채움 | `a3d4351` | `restore-site-group-full.bat` §64 |
+| 65 | 웹 갤러리 스텁 (ExpoMediaLibraryNext 크래시 방지) | `59c7007` | `restore-gallery-web-stub.bat` §65 |
+| 66 | 목록 선택 휴지통 후 스크롤 유지 | `5831512` | `restore-list-trash-scroll.bat` §66 |
+| 67 | 휴지통 후 카메라→목록 무한 로딩 수정 | `bfb77d8` | `restore-list-silent-loading.bat` §67 |
+| 68 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
+
+> **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -218,6 +225,9 @@ build-apk.bat
 
 | 파일 | 비고 |
 |------|------|
+| `VoiceStamp_20260609_181249.apk` | 수정 모달 휴지통 스크롤 유지 (`b44c469`) |
+| `VoiceStamp_20260609_175552.apk` | 무한 로딩 수정 (`bfb77d8`) |
+| `VoiceStamp_20260609_174552.apk` | 앵커 인덱스 되돌림 (`953c2cd`) |
 | `VoiceStamp_20260608_235051.apk` | 수정 화면 폴더 선택 모달 (`6baa947`) |
 | `VoiceStamp_20260608_233514.apk` | 수정 화면 폴더·앨범 이동 (`2f2385b`) |
 | `VoiceStamp_20260608_080743.apk` | APK 마이크 권한 복구 (`b222581`) |
@@ -237,6 +247,7 @@ build-apk.bat
 | `stampFolderService.ts` | 수정 모달용 기존 폴더 목록 수집 |
 | `stampTrash.ts` | 휴지통 이동·복원·비우기 |
 | `galleryService.ts` | MediaLibrary Next, 앨범 저장·이동, asset ID 반환 |
+| `galleryService.web.ts` | 웹 스텁 (네이티브 갤러리 모듈 미로드) |
 | `settingsService.ts` | 앱 설정, `current_site_name`, `gallery_album_ids` |
 | `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
 | `exportStampImage.ts` | 합성 JPEG, `buildExportJpegFileName` |
@@ -299,9 +310,80 @@ build-apk.bat
 
 ---
 
-## 12. 커밋 로그 (최근)
+## 12. 날짜별 수정 상세
+
+### 2026-06-09
+
+| 커밋 | 내용 |
+|------|------|
+| `b44c469` | 수정 모달 `onTrashed` + `removeStampsKeepScroll` — 휴지통 후 목록 스크롤 유지 |
+| `bfb77d8` | `silent` load 완료 시에도 `setLoading(false)` — 카메라→목록 재진입 무한 로딩 해결 |
+| `953c2cd` | `scrollToIndex` 앵커 방식 되돌림 (앱 종료) |
+| `6cf82f5` | (되돌림됨) 반복 휴지통 이동 시 scrollToIndex 앵커 |
+| `5831512` | `skipRefreshLoadRef` + `scrollToOffset` — 선택 휴지통 후 스크롤 유지 |
+| `eef0891` | (대체됨) silent load로 목록 스크롤 유지 1차 시도 |
+| `59c7007` | `galleryService.web.ts` — 웹 `ExpoMediaLibraryNext` 크래시 수정 |
+| `a3d4351` | 저장 모달 저장 폴더 `YYYYMMDD_장소명` 자동 채움·기존 폴더 선택 |
+
+### 2026-06-08
+
+| 커밋 | 내용 |
+|------|------|
+| `cc5c3f1` | 문서 동기화 (`6baa947` 기준) |
+| `6baa947` | 수정 화면 저장 폴더 선택 모달 |
+| `2f2385b` | 수정 화면 저장 폴더·갤러리 앨범 이동 |
+| `cd7ed89` | 전체 보기에서 사진 버리기·휴지통 |
+| `27e5f6e` | 저장·수정 모달 사진 전체 보기 |
+| `3b88fe9` ~ `9ae5725` | 장소명·날짜_장소 폴더·갤러리 앨범 분류 |
+| `b222581` | APK `RECORD_AUDIO` 권한 복구 |
+| `591666e` · `565e4b3` | 3D 액자 아이콘·safe zone |
+| `3b6201a` | Android 뒤로가기 |
+
+### 2026-06-07
+
+| 커밋 | 내용 |
+|------|------|
+| `31332dc` | PDF·JPEG 공통 파일명 |
+| `539c4c4` | 별도 영역 / 워터마크 레이아웃 |
+| `db111b3` | 합성 JPEG 갤러리 저장 |
+| `111bc3c` ~ `ecf2823` | 손잡이·카메라·목록 메뉴 UI |
+| `ab897ba` ~ `6989370` | PDF 보고서 제목·일시·정렬·이미지 크기 |
+| `1020bae` | 앨범·카메라 앱 사진 가져오기 |
+| `9f4a525` · `a49a374` | 목록 ←카메라·⚙설정 |
+| `50cd4bf` · `4e8675d` | 휴지통·갤러리 VoiceStamp 앨범 |
+| `e1d45a0` | PRD·PROJECT 문서 최초 추가 |
+
+### 2026-06-06
+
+| 커밋 | 내용 |
+|------|------|
+| `e4fe0d3` | VoiceStamp 초기 앱 (카메라·음성·스탬프·APK) |
+| `a78d347` | PDF·Vercel 웹 배포 |
+| `2ec2768` | 카카오 역지오코딩 위치 제목 |
+| `50cd4bf` | 휴지통 소프트 삭제 |
+| `4e8d3f2` · `57c6fb0` | PDF 화질·페이지당 장수 |
+| `b5faa2f` · `1224df8` | 설정 폴더·PDF 파일명 |
+
+### 2026-06-05
+
+| 커밋 | 내용 |
+|------|------|
+| `0b446a2` | Initial commit |
+
+---
+
+## 13. 커밋 로그 (최근)
 
 ```
+b44c469 Keep list scroll position when trashing stamp from edit modal.
+bfb77d8 Fix infinite loading when re-opening list after trash delete.
+953c2cd Revert anchor-index trash scroll fix that crashed the app.
+6cf82f5 Keep list scroll at deleted item anchor on repeated trash moves.
+5831512 Fix list scroll reset after trash move by skipping redundant reload.
+eef0891 Keep list scroll position after moving stamps to trash.
+59c7007 Fix web crash by stubbing galleryService on web platform.
+a3d4351 Auto-fill full save folder name with date and location on new stamps.
+cc5c3f1 Sync PRD, PROJECT, PLAN, and README docs to commit 6baa947.
 6baa947 Add folder picker modal on stamp edit for save location.
 2f2385b Add editable save folder and gallery album move on stamp edit.
 cd7ed89 Add delete from full-screen photo preview on save and edit.
@@ -343,15 +425,16 @@ c05376a Add vertical scroll to settings screen for long content.
 
 ---
 
-## 13. 관련 문서
+## 14. 관련 문서
 
 | 문서 | 설명 |
 |------|------|
 | [README.md](./README.md) | docs 폴더 문서 목록 |
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
+| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계 (미구현) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~66) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~68) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
