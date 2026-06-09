@@ -66,6 +66,19 @@ export function StampListScreen({
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
   const exportHostRef = useRef<StampImageExportHostRef>(null);
+  const listRef = useRef<FlatList<Stamp>>(null);
+  const scrollOffsetRef = useRef(0);
+  const skipRefreshLoadRef = useRef(false);
+
+  const restoreListScroll = useCallback(() => {
+    const offset = scrollOffsetRef.current;
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({ offset, animated: false });
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset, animated: false });
+      });
+    });
+  }, []);
 
   const load = useCallback(async (options?: { silent?: boolean }) => {
     const silent = options?.silent ?? false;
@@ -95,6 +108,10 @@ export function StampListScreen({
   }, []);
 
   useEffect(() => {
+    if (skipRefreshLoadRef.current) {
+      skipRefreshLoadRef.current = false;
+      return;
+    }
     load({ silent: refreshKey > 0 });
   }, [load, refreshKey]);
 
@@ -295,7 +312,9 @@ export function StampListScreen({
               const trashedIds = new Set(idsToTrash);
               exitSelection();
               setStamps((prev) => prev.filter((stamp) => !trashedIds.has(stamp.id)));
+              skipRefreshLoadRef.current = true;
               onChanged();
+              restoreListScroll();
             } catch (e) {
               Alert.alert(
                 '삭제 실패',
@@ -456,12 +475,18 @@ export function StampListScreen({
           </View>
         ) : (
           <FlatList
+            ref={listRef}
             key={numColumns}
             data={stamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={styles.list}
+            maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+            onScroll={(event) => {
+              scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
+            }}
+            scrollEventThrottle={16}
             renderItem={({ item }) => {
               const isSelected = selectedIds.has(item.id);
               return (
