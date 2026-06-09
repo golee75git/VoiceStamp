@@ -1030,3 +1030,17 @@ restore-gallery-web-stub.bat
 ```powershell
 Remove-Item src\services\galleryService.web.ts -ErrorAction SilentlyContinue
 ```
+
+## 66. 목록 휴지통 이동 후 스크롤 유지 되돌리기 (선택)
+
+휴지통 이동 후 목록 스크롤 위치 유지 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-trash-scroll.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-trash-scroll\components\StampListScreen.tsx src\components\ -Force
+```
