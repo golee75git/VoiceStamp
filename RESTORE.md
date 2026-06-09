@@ -1044,3 +1044,17 @@ restore-list-trash-scroll.bat
 ```powershell
 Copy-Item src.pre-list-trash-scroll\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 67. 목록 silent 로드 후 재진입 무한 로딩 수정 되돌리기 (선택)
+
+휴지통 이동 후 카메라 갔다가 목록 재진입 시 무한 로딩 수정( silent load 에서도 setLoading(false) ) 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-silent-loading.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-silent-loading\components\StampListScreen.tsx src\components\ -Force
+```
