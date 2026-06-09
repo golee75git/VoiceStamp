@@ -80,17 +80,6 @@ export function StampListScreen({
     });
   }, []);
 
-  const removeStampsKeepScroll = useCallback(
-    (ids: string[]) => {
-      const trashedIds = new Set(ids);
-      setStamps((prev) => prev.filter((stamp) => !trashedIds.has(stamp.id)));
-      skipRefreshLoadRef.current = true;
-      onChanged();
-      restoreListScroll();
-    },
-    [onChanged, restoreListScroll],
-  );
-
   const load = useCallback(async (options?: { silent?: boolean }) => {
     const silent = options?.silent ?? false;
     if (!silent) {
@@ -318,8 +307,12 @@ export function StampListScreen({
                 Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
                 return;
               }
+              const trashedIds = new Set(idsToTrash);
               exitSelection();
-              removeStampsKeepScroll(idsToTrash);
+              setStamps((prev) => prev.filter((stamp) => !trashedIds.has(stamp.id)));
+              skipRefreshLoadRef.current = true;
+              onChanged();
+              restoreListScroll();
             } catch (e) {
               Alert.alert(
                 '삭제 실패',
@@ -548,7 +541,6 @@ export function StampListScreen({
         imageUri={editingStamp ? resolveImageUri(editingStamp.imagePath) : null}
         onClose={() => setEditingStamp(null)}
         onSaved={load}
-        onTrashed={(id) => removeStampsKeepScroll([id])}
       />
 
       <StampSaveModal

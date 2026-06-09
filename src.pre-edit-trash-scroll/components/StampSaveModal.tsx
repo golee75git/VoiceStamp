@@ -57,7 +57,6 @@ type StampSaveModalProps = {
   stamp?: Stamp | null;
   onClose: () => void;
   onSaved: () => void;
-  onTrashed?: (id: string) => void;
 };
 
 export function StampSaveModal({
@@ -66,7 +65,6 @@ export function StampSaveModal({
   stamp = null,
   onClose,
   onSaved,
-  onTrashed,
 }: StampSaveModalProps) {
   const isEdit = stamp != null;
   const [siteName, setSiteName] = useState('');
@@ -248,11 +246,7 @@ export function StampSaveModal({
         return;
       }
       setImageViewerVisible(false);
-      if (onTrashed) {
-        onTrashed(stamp.id);
-      } else {
-        onSaved();
-      }
+      onSaved();
       onClose();
     } catch (err) {
       Alert.alert(

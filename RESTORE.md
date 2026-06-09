@@ -1058,3 +1058,18 @@ restore-list-silent-loading.bat
 ```powershell
 Copy-Item src.pre-list-silent-loading\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 68. 수정 모달 휴지통 이동 후 목록 스크롤 유지 되돌리기 (선택)
+
+스탬프 수정에서 사진 휴지통 이동 후 목록 스크롤 위치 유지( onTrashed·removeStampsKeepScroll ) 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-edit-trash-scroll.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-edit-trash-scroll\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-edit-trash-scroll\components\StampListScreen.tsx src\components\ -Force
+```
