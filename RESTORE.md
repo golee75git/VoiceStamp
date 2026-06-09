@@ -1016,3 +1016,17 @@ Copy-Item src.pre-site-group-full\components\StampSaveModal.tsx src\components\ 
 Copy-Item src.pre-site-group-full\services\fileService.ts src\services\ -Force
 Copy-Item src.pre-site-group-full\services\saveStamp.ts src\services\ -Force
 ```
+
+## 65. 웹 갤러리 스텁 되돌리기 (선택)
+
+웹에서 `ExpoMediaLibraryNext` 오류 방지용 `galleryService.web.ts` 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-web-stub.bat
+```
+
+또는:
+
+```powershell
+Remove-Item src\services\galleryService.web.ts -ErrorAction SilentlyContinue
+```
