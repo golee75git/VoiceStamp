@@ -86,7 +86,6 @@ export function StampSaveModal({
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
-  const siteNameTouchedRef = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
 
   const scrollFieldIntoView = () => {
@@ -153,7 +152,6 @@ export function StampSaveModal({
       setFolderOptionsLoading(false);
       setDeleting(false);
       titleTouchedRef.current = false;
-      siteNameTouchedRef.current = false;
       stop();
     } else if (stamp) {
       setTitle(stamp.title);
@@ -175,31 +173,22 @@ export function StampSaveModal({
       setTitle(formatDefaultStampTitle(capturedAt));
     }
 
-    if (!siteNameTouchedRef.current) {
-      setSiteName(formatStampGroupName(capturedAt));
-    }
-
     setLocationLoading(true);
 
     (async () => {
       const savedSiteName = await getCurrentSiteName();
-      if (!cancelled && !siteNameTouchedRef.current) {
-        setSiteName(savedSiteName ? refreshStampGroupDate(savedSiteName, capturedAt) : formatStampGroupName(capturedAt));
+      if (!cancelled) {
+        setSiteName(savedSiteName);
       }
 
       try {
         const place = await getCurrentPlaceLabel();
-        if (cancelled) {
+        if (cancelled || titleTouchedRef.current) {
           return;
         }
-        if (!titleTouchedRef.current) {
-          setTitle(formatDefaultStampTitle(capturedAt, place ?? undefined));
-        }
-        if (!siteNameTouchedRef.current) {
-          setSiteName(formatStampGroupName(capturedAt, place ?? undefined));
-        }
+        setTitle(formatDefaultStampTitle(capturedAt, place ?? undefined));
       } catch {
-        // 날짜·시간 제목·폴더는 이미 설정됨
+        // 날짜·시간 제목은 이미 설정됨
       } finally {
         if (!cancelled) {
           setLocationLoading(false);
@@ -314,7 +303,6 @@ export function StampSaveModal({
           tempImageUri: imageUri,
           title,
           memo,
-          groupName: siteName,
         });
       }
       onSaved();
@@ -357,26 +345,15 @@ export function StampSaveModal({
 
             {!isEdit ? (
               <View style={styles.siteField}>
-                <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
-                <View style={styles.folderInputRow}>
-                  <TextInput
-                    style={styles.folderInput}
-                    value={siteName}
-                    onChangeText={(text) => {
-                      siteNameTouchedRef.current = true;
-                      setSiteName(text);
-                    }}
-                    placeholder="예: 20260609_역삼동 (비우면 기본)"
-                    onFocus={scrollFieldIntoView}
-                    maxLength={80}
-                  />
-                  <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                    <Text style={styles.folderPickButtonText}>선택</Text>
-                  </Pressable>
-                </View>
-                {locationLoading ? (
-                  <Text style={styles.locationHint}>위치 확인 중…</Text>
-                ) : null}
+                <Text style={styles.siteLabel}>장소명(앨범에 날짜_장소명 폴더저장)</Text>
+                <TextInput
+                  style={styles.siteInput}
+                  value={siteName}
+                  onChangeText={setSiteName}
+                  placeholder="예: OO초 (비우면 날짜만 분류)"
+                  onFocus={scrollFieldIntoView}
+                  maxLength={80}
+                />
               </View>
             ) : (
               <View style={styles.siteField}>
@@ -415,6 +392,9 @@ export function StampSaveModal({
                 textAlign={titleTextAlign}
                 cameraHand={cameraHand}
               />
+              {!isEdit && locationLoading ? (
+                <Text style={styles.locationHint}>위치 확인 중…</Text>
+              ) : null}
             </View>
 
             <VoiceInputField
@@ -511,12 +491,7 @@ export function StampSaveModal({
                 <Pressable
                   style={styles.folderPickerItem}
                   onPress={() => {
-                    if (isEdit) {
-                      setGroupName(item);
-                    } else {
-                      siteNameTouchedRef.current = true;
-                      setSiteName(item);
-                    }
+                    setGroupName(item);
                     setFolderPickerVisible(false);
                   }}
                 >

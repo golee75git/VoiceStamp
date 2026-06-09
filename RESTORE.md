@@ -1000,3 +1000,19 @@ Copy-Item src.pre-stamp-folder-picker\components\StampSaveModal.tsx src\componen
 Copy-Item src.pre-stamp-folder-picker\services\settingsService.ts src\services\ -Force
 Remove-Item src\services\stampFolderService.ts -ErrorAction SilentlyContinue
 ```
+
+## 64. 저장 폴더 전체 자동 채우기 되돌리기 (선택)
+
+저장 모달에 `YYYYMMDD_장소` 전체 표시·기존 폴더 선택 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-site-group-full.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-site-group-full\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-site-group-full\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-site-group-full\services\saveStamp.ts src\services\ -Force
+```

@@ -37,10 +37,9 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   const id = generateId();
   const now = Date.now();
   const title = resolveStampTitle(input.title, now);
-  const groupName =
-    input.groupName !== undefined
-      ? normalizeStampGroupName(input.groupName)
-      : formatStampGroupName(now, await getCurrentSiteName());
+  const groupName = input.groupName?.trim()
+    ? normalizeStampGroupName(input.groupName)
+    : formatStampGroupName(now, await getCurrentSiteName());
   const imagePath = await persistImage(input.tempImageUri, title, id, groupName);
 
   let galleryAssetId: string | null = null;
