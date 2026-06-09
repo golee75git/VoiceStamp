@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Constants from 'expo-constants';
 import {
   ActivityIndicator,
   Alert,
@@ -11,8 +10,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-
-import { openInfoPage } from '../constants/infoUrls';
 
 import {
   DEFAULT_CAMERA_HAND,
@@ -100,7 +97,6 @@ export function SettingsScreen({
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
   const [emptyingTrash, setEmptyingTrash] = useState(false);
-  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   useEffect(() => {
     (async () => {
@@ -504,28 +500,6 @@ export function SettingsScreen({
               <Text style={styles.dangerButtonText}>휴지통 비우기</Text>
             )}
           </Pressable>
-
-          <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>
-          <Text style={styles.hint}>VoiceStamp {appVersion}</Text>
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => void openInfoPage('/privacy')}
-          >
-            <Text style={styles.secondaryButtonText}>개인정보 처리 안내</Text>
-          </Pressable>
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => void openInfoPage('/license')}
-          >
-            <Text style={styles.secondaryButtonText}>라이선스</Text>
-          </Pressable>
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => void openInfoPage('/help')}
-          >
-            <Text style={styles.secondaryButtonText}>도움말</Text>
-          </Pressable>
-          <Text style={styles.copyright}>© 2026 이형우</Text>
         </ScrollView>
       )}
     </View>
@@ -661,11 +635,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
-  },
-  copyright: {
-    marginTop: 4,
-    fontSize: 13,
-    color: '#9ca3af',
-    textAlign: 'center',
   },
 });

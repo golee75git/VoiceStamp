@@ -11,10 +11,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/info", "destination": "/info.html" },
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/license", "destination": "/license.html" },
-    { "source": "/help", "destination": "/help.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1073,3 +1073,22 @@ restore-edit-trash-scroll.bat
 Copy-Item src.pre-edit-trash-scroll\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-edit-trash-scroll\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 69. 목록 헤더 설정·앱 정보 링크·정책 웹페이지 되돌리기 (선택)
+
+목록 헤더 「설정」·설정 복귀(목록/카메라)·앱 정보 링크·`public/*.html`·`vercel.json` rewrites 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-info-leg04.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-info-leg04\screens\MainScreen.tsx src\screens\ -Force
+Copy-Item src.pre-info-leg04\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-info-leg04\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item vercel.json.pre-info-leg04 vercel.json -Force
+Remove-Item src\constants\infoUrls.ts -ErrorAction SilentlyContinue
+Remove-Item public\info.html, public\privacy.html, public\license.html, public\help.html -ErrorAction SilentlyContinue
+```

@@ -36,7 +36,6 @@ import type { Stamp } from '../types/stamp';
 type StampListScreenProps = {
   onBack: () => void;
   onOpenTrash: () => void;
-  onOpenSettings: () => void;
   refreshKey: number;
   onChanged: () => void;
 };
@@ -44,7 +43,6 @@ type StampListScreenProps = {
 export function StampListScreen({
   onBack,
   onOpenTrash,
-  onOpenSettings,
   refreshKey,
   onChanged,
 }: StampListScreenProps) {
@@ -362,14 +360,9 @@ export function StampListScreen({
           <Text style={styles.title}>저장 목록</Text>
           <View style={styles.headerActions}>
             {!selecting && (
-              <>
-                <Pressable onPress={onOpenTrash}>
-                  <Text style={styles.actionText}>휴지통</Text>
-                </Pressable>
-                <Pressable onPress={onOpenSettings}>
-                  <Text style={styles.actionText}>설정</Text>
-                </Pressable>
-              </>
+              <Pressable onPress={onOpenTrash}>
+                <Text style={styles.actionText}>휴지통</Text>
+              </Pressable>
             )}
             {selecting ? (
               <Pressable onPress={exitSelection}>

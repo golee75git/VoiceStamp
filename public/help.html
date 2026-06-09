@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceStamp — 도움말</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1.25rem; color: #111; line-height: 1.6; background: #fff; }
+    a { color: #2563eb; }
+    nav { margin-bottom: 1.5rem; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.05rem; margin-top: 1.25rem; }
+    footer { margin-top: 2rem; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <nav><a href="/">← 앱으로</a> · <a href="/info">앱 정보</a></nav>
+  <h1>도움말</h1>
+
+  <h2>시작하기</h2>
+  <p><strong>APK:</strong> 카메라로 촬영 → 저장 모달에서 제목·메모 입력 → 저장.</p>
+  <p><strong>웹:</strong> 저장 목록 → 앨범에서 사진 가져오기.</p>
+
+  <h2>스탬프 저장</h2>
+  <ul>
+    <li>제목: 촬영 시각이 먼저 표시되고, 위치 권한 허용 시 구·동·건물명이 추가될 수 있습니다.</li>
+    <li>저장 폴더: <code>YYYYMMDD_장소명</code> 형식. [선택]으로 기존 폴더 선택 가능.</li>
+    <li>마이크 버튼으로 제목·메모 음성 입력 (APK).</li>
+  </ul>
+
+  <h2>저장 목록</h2>
+  <ul>
+    <li>카드 탭 → 수정 · 길게 누르기 → 여러 개 선택</li>
+    <li>선택 후 PDF 만들기·저장·공유, 이미지 저장, 휴지통 이동</li>
+    <li>헤더 「설정」에서 PDF·폴더·손잡이 등 변경</li>
+  </ul>
+
+  <h2>Android 뒤로가기</h2>
+  <ul>
+    <li>목록·설정 → 카메라 (설정은 들어온 화면으로 복귀)</li>
+    <li>카메라 → 앱 종료 확인</li>
+  </ul>
+
+  <h2>웹 제한</h2>
+  <ul>
+    <li>갤러리 앨범 백업 없음</li>
+    <li>카메라·음성은 브라우저·환경에 따라 제한될 수 있음</li>
+  </ul>
+
+  <h2>문제 해결</h2>
+  <ul>
+    <li>위치가 안 나옴 → GPS·위치 권한·카카오 API 키 확인</li>
+    <li>APK 키 변경 후 → <code>android/gradlew clean</code> 후 재빌드</li>
+  </ul>
+
+  <footer><a href="/privacy">개인정보</a> · <a href="/license">라이선스</a></footer>
+</body>
+</html>

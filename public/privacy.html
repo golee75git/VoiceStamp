@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceStamp — 개인정보 처리 안내</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1.25rem; color: #111; line-height: 1.6; background: #fff; }
+    a { color: #2563eb; }
+    nav { margin-bottom: 1.5rem; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 0.5rem 0; }
+    th, td { border: 1px solid #e5e7eb; padding: 0.4rem 0.5rem; text-align: left; vertical-align: top; }
+    .muted { color: #6b7280; font-size: 0.85rem; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <nav><a href="/">← 앱으로</a> · <a href="/info">앱 정보</a></nav>
+  <h1>개인정보 처리 안내</h1>
+  <p class="muted">문서 버전 1.0 · 최종 수정 2026-06-09 · Android APK, Web (Vercel)</p>
+  <p>VoiceStamp는 사진·제목·메모를 <strong>사용자 기기(또는 브라우저)</strong>에 저장합니다. 운영자가 별도 서버에 계정·사진을 모으지 않습니다.</p>
+
+  <h2>1. 수집·이용 정보</h2>
+  <table>
+    <tr><th>정보</th><th>목적</th><th>보관</th></tr>
+    <tr><td>사진</td><td>스탬프·PDF</td><td>기기 파일 + SQLite (웹: 브라우저)</td></tr>
+    <tr><td>제목·메모</td><td>표시·PDF·음성 입력</td><td>SQLite</td></tr>
+    <tr><td>GPS 좌표</td><td>제목에 장소 반영 (카카오 API)</td><td>좌표는 DB에 저장하지 않음</td></tr>
+  </table>
+
+  <h2>2. 기기 권한</h2>
+  <ul>
+    <li><strong>카메라</strong> — 사진 촬영</li>
+    <li><strong>마이크</strong> — 음성으로 제목·메모 입력</li>
+    <li><strong>위치</strong> — 제목 자동 장소 (거부 시 날짜·시간만)</li>
+    <li><strong>사진/저장소</strong> — 갤러리 백업 (APK)</li>
+  </ul>
+
+  <h2>3. 제3자 제공</h2>
+  <ul>
+    <li><strong>카카오 로컬 API</strong> — GPS 좌표를 주소·건물명으로 변환 (키 설정 시)</li>
+    <li><strong>OS 음성 인식</strong> — 음성을 텍스트로 변환 (기기/OS 정책 적용)</li>
+  </ul>
+
+  <h2>4. 보관·파기</h2>
+  <p>클라우드 동기화 없음. 앱 삭제·휴지통·브라우저 데이터 삭제로 제거할 수 있습니다.</p>
+
+  <h2>5. 보안·이용자 권리</h2>
+  <p>데이터는 기기에 평문 저장됩니다. 권한은 OS 설정에서 거부할 수 있습니다.</p>
+
+  <h2>6. 아동</h2>
+  <p>만 14세 미만을 대상으로 하지 않습니다.</p>
+
+  <footer>
+    <a href="https://github.com/golee75git/VoiceStamp">GitHub</a> ·
+    <a href="/license">라이선스</a> ·
+    <a href="/help">도움말</a>
+  </footer>
+</body>
+</html>
