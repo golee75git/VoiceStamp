@@ -4,12 +4,12 @@
 |------|------|
 | 문서 버전 | 1.0 |
 | 작성일 | 2026-06-09 |
-| 상태 | 📋 설계 (미구현) |
-| 관련 ID | LEG-04, LEG-05 |
-| 기준 커밋 | `59c7007` (main) |
+| 상태 | ✅ 구현 (`a4a55d2`) — Phase A·B 완료 |
+| 관련 ID | LEG-04 ✅, LEG-05 (스토어 등록) |
+| 기준 커밋 | `a4a55d2` (main) |
 | 관련 문서 | [PLAN.md](./PLAN.md) §3, [PRD.md](./PRD.md) §10.1, [PRIVACY.md](./PRIVACY.md), [../LICENSE](../LICENSE) |
 
-> **범위:** 본 문서는 **설계만** 정의합니다. 구현 시 `src/` 최소 수정 + `public/` 정적 페이지 + `vercel.json` 라우팅 조정을 따릅니다.
+> **범위:** 설계 + `a4a55d2` 구현 반영. `SettingsScreen` 앱 정보, `public/*.html`, `vercel.json` rewrites, 목록 헤더 설정.
 
 ---
 

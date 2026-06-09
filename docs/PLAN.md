@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.3 |
+| 문서 버전 | 1.4 |
 | 작성일 | 2026-06-09 |
-| 기준 커밋 | `b44c469` (main) |
+| 기준 커밋 | `a4a55d2` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -16,7 +16,7 @@
 | **Phase 0** | MVP — 촬영·음성·저장·목록·PDF | ✅ 완료 |
 | **Phase 1** | 설정·위치 제목·휴지통·갤러리·웹 배포 | ✅ 완료 |
 | **Phase 2** | PDF 고도화·UI/UX·손잡이·내보내기 확장 | ✅ 완료 |
-| **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 |
+| **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 (LEG-04 ✅) |
 | **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 | 📋 계획 |
 
 ---
@@ -73,7 +73,8 @@
 | 69 | 앵커 인덱스 되돌림 (앱 종료 방지) | `953c2cd` | — |
 | 70 | 카메라→목록 재진입 무한 로딩 수정 | `bfb77d8` | `restore-list-silent-loading.bat` §67 |
 | 71 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
-| — | 정보·법무 페이지 UI 설계 (코드 미반영) | — | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) |
+| 72 | 목록 헤더 「설정」·설정 복귀(목록/카메라) | `a4a55d2` | `restore-info-leg04.bat` §69 |
+| 73 | LEG-04 앱 정보·정책 웹 (`public/*.html`) | `a4a55d2` | `restore-info-leg04.bat` §69 |
 
 ### 2.1 문서 동기화 이력
 
@@ -85,7 +86,8 @@
 | `3eb9fd9` | PRD·PROJECT·PLAN·RESTORE 문서 정리 (기준 `591666e`) |
 | `36361b4` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b222581`) |
 | `cc5c3f1` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `6baa947`) |
-| (본 갱신) | `b44c469` 반영 — 저장 폴더 자동 채움·웹 스텁·목록 스크롤·날짜별 이력 (PRD·PROJECT·README 동기화) |
+| `89a9ee2` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b44c469`) |
+| (본 갱신) | `a4a55d2` 반영 — LEG-04·목록 설정·APK별 이력·날짜별 이력 |
 
 ---
 
@@ -99,8 +101,8 @@
 | LEG-01 | LICENSE 저작권 (이형우, MIT + OSS 고지) | P1 | ✅ 커밋됨 (`f125897`) |
 | LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 커밋됨 |
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
-| LEG-04 | 버전·라이선스·개인정보·도움말 (앱 또는 웹 `/info` 등) | P2 | 📋 설계만 ([DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md)) |
-| LEG-05 | Play 스토어 등록용 정책 URL·스크린샷 | P3 | 📋 미구현 |
+| LEG-04 | 버전·라이선스·개인정보·도움말 (설정 앱 정보 + 웹 `/privacy` 등) | P2 | ✅ `a4a55d2` |
+| LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 미구현 (정책 URL: `/privacy` 준비됨) |
 
 > **참고:** APK/Web만 배포할 때는 문서(`docs/`)만으로도 내부·테스터 배포는 가능. 스토어 등록 시 LEG-04·05 권장.
 
@@ -150,7 +152,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | 순서 | 작업 | 이유 |
 |------|------|------|
-| 1 | LEG-04 앱 내 「정보」 화면 (버전·LICENSE·PRIVACY 링크) | 사용자·스토어 대비 |
+| 1 | LEG-05 Play 스토어 스크린샷·등록 | 정책 URL 준비됨 |
 | 2 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
 | 3 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
 | 4 | UX-PURPOSE 목적별 필드 라벨 | 기획 메모 반영 |
@@ -165,7 +167,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260609_181249.apk` (`b44c469`) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260609_183510.apk` (`a4a55d2`) |
+| 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
 
 ---
@@ -188,8 +191,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~68 |
-| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계 (미구현) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~69 |
+| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 
 ---
 
@@ -201,5 +204,18 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-06 | 0→1 | MVP·PDF·웹·설정·위치·휴지통·갤러리·APK 파이프라인 |
 | 2026-06-07 | 2 | PDF/JPEG보내기·UI·손잡이·Android 뒤로·아이콘·권한 |
 | 2026-06-08 | 2→3 | 장소·폴더·갤러리 앨범·수정 UX·폴더 선택·문서 동기화 |
-| 2026-06-09 | 2 | 저장 폴더 자동 채움·웹 안정화·목록 스크롤 UX·되돌리기 §64~68 |
-| [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
+| 2026-06-09 | 2→3 | 폴더 자동 채움·웹 스텁·목록 스크롤·**LEG-04·목록 설정** |
+
+---
+
+## 11. APK 빌드별 요약
+
+| APK (권장) | 커밋 | 한 줄 |
+|------------|------|--------|
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | **최신** — 설정·앱 정보·정책 웹 |
+| `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 휴지통 스크롤 |
+| `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
+| `VoiceStamp_20260608_235051.apk` | `6baa947` | 폴더 선택 모달 |
+| `VoiceStamp_20260607_145955.apk` | `3b6201a` | Android 뒤로가기 |
+
+전체: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13

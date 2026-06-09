@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-09**  
-최신 커밋 기준: `b44c469` (main)
+최신 커밋 기준: `a4a55d2` (main)
 
 ---
 
@@ -43,7 +43,8 @@ VoiceStamp/
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
-├── RESTORE.md              # 기능별 되돌리기 (§8~68)
+├── public/                 # 정책 정적 HTML (info, privacy, license, help)
+├── RESTORE.md              # 기능별 되돌리기 (§8~69)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -72,18 +73,18 @@ VoiceStamp/
 
 | 영역 | 요소 |
 |------|------|
-| 상단 | 「← 카메라」(큰 버튼) |
-| 헤더 | 저장 목록 · 휴지통 · 선택/취소 |
+| 상단 | 「← 카메라」(큰 버튼) · 「앨범」 |
+| 헤더 | 저장 목록 · 휴지통 · **설정** · 선택/취소 |
 | 본문 | 스탬프 카드 (600px+ 2열) |
 | 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 |
-| 하단 | 중앙 ⚙ → 설정 |
 
-### 3.2 Android 하드웨어 뒤로 (`MainScreen`, `3b6201a`)
+### 3.2 Android 하드웨어 뒤로 (`MainScreen`)
 
 | 현재 화면 | 동작 |
 |-----------|------|
 | 카메라 | 「앱 종료 / 아니오」 확인 → 종료 시 `BackHandler.exitApp()` |
-| 목록·설정 | 카메라로 |
+| 목록 | 카메라로 |
+| 설정 | 진입 화면으로 (목록에서 왔으면 목록, 카메라에서 왔으면 카메라) |
 | 휴지통 | 목록으로 |
 | 저장·수정 모달 | `StampSaveModal` `onRequestClose` (모달 우선) |
 
@@ -163,6 +164,8 @@ VoiceStamp/
 | 66 | 목록 선택 휴지통 후 스크롤 유지 | `5831512` | `restore-list-trash-scroll.bat` §66 |
 | 67 | 휴지통 후 카메라→목록 무한 로딩 수정 | `bfb77d8` | `restore-list-silent-loading.bat` §67 |
 | 68 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
+| 69 | 목록 헤더 「설정」·설정 복귀(목록/카메라) | `a4a55d2` | `restore-info-leg04.bat` §69 |
+| 70 | 앱 정보 링크·정책 웹페이지 (LEG-04) | `a4a55d2` | `restore-info-leg04.bat` §69 |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
 
@@ -223,17 +226,57 @@ build-apk.bat
 
 ### 7.3 최신 APK (문서 작성 시점)
 
-| 파일 | 비고 |
-|------|------|
-| `VoiceStamp_20260609_181249.apk` | 수정 모달 휴지통 스크롤 유지 (`b44c469`) |
-| `VoiceStamp_20260609_175552.apk` | 무한 로딩 수정 (`bfb77d8`) |
-| `VoiceStamp_20260609_174552.apk` | 앵커 인덱스 되돌림 (`953c2cd`) |
-| `VoiceStamp_20260608_235051.apk` | 수정 화면 폴더 선택 모달 (`6baa947`) |
-| `VoiceStamp_20260608_233514.apk` | 수정 화면 폴더·앨범 이동 (`2f2385b`) |
-| `VoiceStamp_20260608_080743.apk` | APK 마이크 권한 복구 (`b222581`) |
-| `VoiceStamp_20260608_003141.apk` | 아이콘 safe zone 여백 (`591666e`) |
-| `VoiceStamp_20260608_001727.apk` | 3D 액자 아이콘 (`565e4b3`) |
-| `VoiceStamp_20260607_145955.apk` | Android 뒤로가기 (종료 확인·화면 복귀) |
+| 파일 | 커밋 | 비고 |
+|------|------|------|
+| **`VoiceStamp_20260609_183510.apk`** | `a4a55d2` | **권장 최신** — 목록 설정·앱 정보·정책 웹 |
+| `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 스크롤 유지 |
+| `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 휴지통 후 목록 재진입 무한 로딩 수정 |
+| `VoiceStamp_20260609_174552.apk` | `953c2cd` | 앵커 인덱스 되돌림 |
+| `VoiceStamp_20260608_235051.apk` | `6baa947` | 수정 화면 폴더 선택 모달 |
+
+### 7.4 APK 빌드별 수정 사항 (전체)
+
+앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. APK는 git에 포함하지 않으며 로컬 `build-apk.bat` 산출물입니다.
+
+#### 2026-06-09
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 헤더 설정, 설정→목록 복귀, 앱 정보(버전·개인정보·라이선스·도움말), `public/*.html` | **권장** |
+| `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 후 목록 스크롤 유지 | OK |
+| `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 카메라→목록 재진입 무한 로딩 수정 | OK |
+| `VoiceStamp_20260609_174552.apk` | `953c2cd` | scrollToIndex 앵커 되돌림 | OK |
+| `VoiceStamp_20260609_173859.apk` | `6cf82f5` | scrollToIndex 앵커 (휴지통 반복) | **금지** (앱 종료) |
+| `VoiceStamp_20260609_172915.apk` | `5831512` | 선택 휴지통 후 스크롤 유지 | OK |
+| `VoiceStamp_20260609_151610.apk` | `59c7007` 근처 | 웹 갤러리 스텁·폴더 자동 채움 포함 빌드 | OK |
+| `VoiceStamp_20260609_171954.apk` | — | 중간 빌드 (스크롤 UX 작업 중) | 보관용 |
+
+#### 2026-06-08
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260608_235051.apk` | `6baa947` | 수정 화면 폴더 선택 모달 | OK |
+| `VoiceStamp_20260608_233514.apk` | `2f2385b` | 수정 화면 폴더·갤러리 앨범 이동 | OK |
+| `VoiceStamp_20260608_080743.apk` | `b222581` | APK `RECORD_AUDIO` 마이크 권한 복구 | OK |
+| `VoiceStamp_20260608_003141.apk` | `591666e` | Adaptive Icon safe zone 여백 | OK |
+| `VoiceStamp_20260608_001727.apk` | `565e4b3` | 3D 액자 앱 아이콘 | OK |
+| `VoiceStamp_20260608_21xxxx.apk` 등 | `9ae5725`~`cd7ed89` | 장소·폴더·갤러리·전체보기 작업 중간 빌드 다수 | 보관용 |
+
+#### 2026-06-07
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260607_145955.apk` | `3b6201a` | Android 뒤로가기 (카메라 종료 확인) | OK |
+| `VoiceStamp_20260607_12xxxx.apk` ~ `13xxxx.apk` | `31332dc` 이전 | PDF·JPEG·UI 고도화 중간 빌드 | 보관용 |
+
+#### 2026-06-06
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| (초기 다수) | `e4fe0d3` ~ | MVP·PDF·위치·휴지통·갤러리 | 보관용 |
+
+**웹 정책 URL (APK와 별도, Vercel만 갱신 가능):**  
+https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ---
 
@@ -248,6 +291,7 @@ build-apk.bat
 | `stampTrash.ts` | 휴지통 이동·복원·비우기 |
 | `galleryService.ts` | MediaLibrary Next, 앨범 저장·이동, asset ID 반환 |
 | `galleryService.web.ts` | 웹 스텁 (네이티브 갤러리 모듈 미로드) |
+| `infoUrls.ts` | 정책 웹 URL·`Linking.openURL` |
 | `settingsService.ts` | 앱 설정, `current_site_name`, `gallery_album_ids` |
 | `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
 | `exportStampImage.ts` | 합성 JPEG, `buildExportJpegFileName` |
@@ -316,6 +360,8 @@ build-apk.bat
 
 | 커밋 | 내용 |
 |------|------|
+| `a4a55d2` | 목록 헤더 설정·설정 복귀 분기·앱 정보 섹션·`public/*.html`·`vercel.json` rewrites (LEG-04) |
+| `89a9ee2` | 문서 동기화 (`b44c469` 기준) |
 | `b44c469` | 수정 모달 `onTrashed` + `removeStampsKeepScroll` — 휴지통 후 목록 스크롤 유지 |
 | `bfb77d8` | `silent` load 완료 시에도 `setLoading(false)` — 카메라→목록 재진입 무한 로딩 해결 |
 | `953c2cd` | `scrollToIndex` 앵커 방식 되돌림 (앱 종료) |
@@ -375,6 +421,8 @@ build-apk.bat
 ## 13. 커밋 로그 (최근)
 
 ```
+a4a55d2 Add list header settings, app info links, and policy web pages.
+89a9ee2 Sync PRD, PROJECT, PLAN, and README docs to commit b44c469.
 b44c469 Keep list scroll position when trashing stamp from edit modal.
 bfb77d8 Fix infinite loading when re-opening list after trash delete.
 953c2cd Revert anchor-index trash scroll fix that crashed the app.
@@ -434,7 +482,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계 (미구현) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~68) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~69) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
