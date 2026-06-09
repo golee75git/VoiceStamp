@@ -67,8 +67,11 @@ export function StampListScreen({
   const [albumBusy, setAlbumBusy] = useState(false);
   const exportHostRef = useRef<StampImageExportHostRef>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (options?: { silent?: boolean }) => {
+    const silent = options?.silent ?? false;
+    if (!silent) {
+      setLoading(true);
+    }
     try {
       const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout] = await Promise.all([
         listStamps(),
@@ -85,12 +88,14 @@ export function StampListScreen({
       setPdfShowDatetime(showDatetime);
       setStampTextLayout(textLayout);
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    load();
+    load({ silent: refreshKey > 0 });
   }, [load, refreshKey]);
 
   useEffect(() => {
@@ -281,14 +286,16 @@ export function StampListScreen({
           onPress: async () => {
             setDeleteBusy(true);
             try {
-              const moved = await moveStampsToTrash([...selectedIds]);
+              const idsToTrash = [...selectedIds];
+              const moved = await moveStampsToTrash(idsToTrash);
               if (moved === 0) {
                 Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
                 return;
               }
-              onChanged();
-              await load();
+              const trashedIds = new Set(idsToTrash);
               exitSelection();
+              setStamps((prev) => prev.filter((stamp) => !trashedIds.has(stamp.id)));
+              onChanged();
             } catch (e) {
               Alert.alert(
                 '삭제 실패',
