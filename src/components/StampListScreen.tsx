@@ -67,14 +67,16 @@ export function StampListScreen({
   const [albumBusy, setAlbumBusy] = useState(false);
   const exportHostRef = useRef<StampImageExportHostRef>(null);
   const listRef = useRef<FlatList<Stamp>>(null);
+  const scrollOffsetRef = useRef(0);
+  const skipRefreshLoadRef = useRef(false);
 
-  const restoreListScroll = useCallback((index: number) => {
-    const scrollToAnchor = () => {
-      listRef.current?.scrollToIndex({ index, animated: false, viewPosition: 0 });
-    };
+  const restoreListScroll = useCallback(() => {
+    const offset = scrollOffsetRef.current;
     requestAnimationFrame(() => {
-      scrollToAnchor();
-      requestAnimationFrame(scrollToAnchor);
+      listRef.current?.scrollToOffset({ offset, animated: false });
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset, animated: false });
+      });
     });
   }, []);
 
@@ -106,6 +108,10 @@ export function StampListScreen({
   }, []);
 
   useEffect(() => {
+    if (skipRefreshLoadRef.current) {
+      skipRefreshLoadRef.current = false;
+      return;
+    }
     load({ silent: refreshKey > 0 });
   }, [load, refreshKey]);
 
@@ -296,29 +302,19 @@ export function StampListScreen({
           style: 'destructive',
           onPress: async () => {
             setDeleteBusy(true);
-            let scrollAnchorIndex: number | null = null;
             try {
               const idsToTrash = [...selectedIds];
-              let anchorIndex = stamps.length;
-              for (let i = 0; i < stamps.length; i++) {
-                if (selectedIds.has(stamps[i]!.id)) {
-                  anchorIndex = Math.min(anchorIndex, i);
-                }
-              }
               const moved = await moveStampsToTrash(idsToTrash);
               if (moved === 0) {
                 Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
                 return;
               }
               const trashedIds = new Set(idsToTrash);
-              const remaining = stamps.filter((stamp) => !trashedIds.has(stamp.id));
-              scrollAnchorIndex =
-                remaining.length === 0 ? null : Math.min(anchorIndex, remaining.length - 1);
               exitSelection();
-              setStamps(remaining);
-              if (scrollAnchorIndex !== null) {
-                restoreListScroll(scrollAnchorIndex);
-              }
+              setStamps((prev) => prev.filter((stamp) => !trashedIds.has(stamp.id)));
+              skipRefreshLoadRef.current = true;
+              onChanged();
+              restoreListScroll();
             } catch (e) {
               Alert.alert(
                 '삭제 실패',
@@ -326,9 +322,6 @@ export function StampListScreen({
               );
             } finally {
               setDeleteBusy(false);
-              if (scrollAnchorIndex !== null) {
-                restoreListScroll(scrollAnchorIndex);
-              }
             }
           },
         },
@@ -489,12 +482,11 @@ export function StampListScreen({
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={styles.list}
-            onScrollToIndexFailed={(info) => {
-              listRef.current?.scrollToOffset({
-                offset: info.averageItemLength * info.index,
-                animated: false,
-              });
+            maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+            onScroll={(event) => {
+              scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
             }}
+            scrollEventThrottle={16}
             renderItem={({ item }) => {
               const isSelected = selectedIds.has(item.id);
               return (
