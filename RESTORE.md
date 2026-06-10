@@ -1092,3 +1092,17 @@ Copy-Item vercel.json.pre-info-leg04 vercel.json -Force
 Remove-Item src\constants\infoUrls.ts -ErrorAction SilentlyContinue
 Remove-Item public\info.html, public\privacy.html, public\license.html, public\help.html -ErrorAction SilentlyContinue
 ```
+
+## 70. 저장 폴더 기본 현장명 유지 되돌리기 (선택)
+
+GPS 위치로 저장 폴더(앨범)명을 덮어쓰지 않고 `current_site_name`만 유지하도록 변경한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-site-folder-keep.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-site-folder-keep\components\StampSaveModal.tsx src\components\ -Force
+```

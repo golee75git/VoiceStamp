@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -197,9 +197,11 @@ export function StampSaveModal({
         if (!titleTouchedRef.current) {
           setTitle(formatDefaultStampTitle(capturedAt, place ?? undefined));
         }
+        if (!siteNameTouchedRef.current) {
+          setSiteName(formatStampGroupName(capturedAt, place ?? undefined));
+        }
       } catch {
-        // 날짜·시간 제목은 이미 설정됨; 저장 폴더는 current_site_name 유지
-      } finally {
+        // ?좎쭨쨌?쒓컙 ?쒕ぉ쨌?대뜑???대? ?ㅼ젙??      } finally {
         if (!cancelled) {
           setLocationLoading(false);
         }
@@ -241,7 +243,7 @@ export function StampSaveModal({
     try {
       const moved = await moveStampsToTrash([stamp.id]);
       if (moved === 0) {
-        Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
+        Alert.alert('??젣 ?ㅽ뙣', '?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
         return;
       }
       setImageViewerVisible(false);
@@ -253,8 +255,8 @@ export function StampSaveModal({
       onClose();
     } catch (err) {
       Alert.alert(
-        '삭제 실패',
-        err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.',
+        '??젣 ?ㅽ뙣',
+        err instanceof Error ? err.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setDeleting(false);
@@ -267,17 +269,17 @@ export function StampSaveModal({
     }
 
     if (isEdit && stamp) {
-      Alert.alert('휴지통으로 이동', '이 스탬프를 휴지통으로 옮깁니다.', [
-        { text: '취소', style: 'cancel' },
-        { text: '삭제', style: 'destructive', onPress: () => void confirmTrashDelete() },
+      Alert.alert('?댁??듭쑝濡??대룞', '???ㅽ꺃?꾨? ?댁??듭쑝濡???퉩?덈떎.', [
+        { text: '痍⑥냼', style: 'cancel' },
+        { text: '??젣', style: 'destructive', onPress: () => void confirmTrashDelete() },
       ]);
       return;
     }
 
-    Alert.alert('사진 버리기', '저장하지 않은 사진을 버립니다.', [
-      { text: '취소', style: 'cancel' },
+    Alert.alert('?ъ쭊 踰꾨━湲?, '??ν븯吏 ?딆? ?ъ쭊??踰꾨┰?덈떎.', [
+      { text: '痍⑥냼', style: 'cancel' },
       {
-        text: '버리기',
+        text: '踰꾨━湲?,
         style: 'destructive',
         onPress: () => {
           setImageViewerVisible(false);
@@ -327,8 +329,8 @@ export function StampSaveModal({
         err instanceof Error
           ? err.message
           : isEdit
-            ? '수정에 실패했습니다.'
-            : '저장에 실패했습니다.',
+            ? '?섏젙???ㅽ뙣?덉뒿?덈떎.'
+            : '??μ뿉 ?ㅽ뙣?덉뒿?덈떎.',
       );
     } finally {
       setSaving(false);
@@ -350,17 +352,17 @@ export function StampSaveModal({
           bounces={false}
         >
           <View style={styles.card}>
-            <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
+            <Text style={styles.heading}>{isEdit ? '?ㅽ꺃???섏젙' : '?ㅽ꺃?????}</Text>
 
             {imageUri ? (
-              <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
+              <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="?ъ쭊 ?꾩껜 蹂닿린">
                 <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
               </Pressable>
             ) : null}
 
             {!isEdit ? (
               <View style={styles.siteField}>
-                <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
+                <Text style={styles.siteLabel}>????대뜑(?⑤쾾)</Text>
                 <View style={styles.folderInputRow}>
                   <TextInput
                     style={styles.folderInput}
@@ -369,43 +371,43 @@ export function StampSaveModal({
                       siteNameTouchedRef.current = true;
                       setSiteName(text);
                     }}
-                    placeholder="예: 20260609_역삼동 (비우면 기본)"
+                    placeholder="?? 20260609_??궪??(鍮꾩슦硫?湲곕낯)"
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
                   <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                    <Text style={styles.folderPickButtonText}>선택</Text>
+                    <Text style={styles.folderPickButtonText}>?좏깮</Text>
                   </Pressable>
                 </View>
                 {locationLoading ? (
-                  <Text style={styles.locationHint}>위치 확인 중…</Text>
+                  <Text style={styles.locationHint}>?꾩튂 ?뺤씤 以묅?/Text>
                 ) : null}
               </View>
             ) : (
               <View style={styles.siteField}>
-                <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
+                <Text style={styles.siteLabel}>????대뜑(?⑤쾾)</Text>
                 <View style={styles.folderInputRow}>
                   <TextInput
                     style={styles.folderInput}
                     value={groupName}
                     onChangeText={setGroupName}
-                    placeholder="예: 20260608_OO초 (비우면 기본)"
+                    placeholder="?? 20260608_OO珥?(鍮꾩슦硫?湲곕낯)"
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
                   <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                    <Text style={styles.folderPickButtonText}>선택</Text>
+                    <Text style={styles.folderPickButtonText}>?좏깮</Text>
                   </Pressable>
                 </View>
                 <Text style={styles.locationHint}>
-                  선택한 스탬프만 이동합니다. 앱 폴더와 갤러리 앨범이 함께 변경됩니다.
+                  ?좏깮???ㅽ꺃?꾨쭔 ?대룞?⑸땲?? ???대뜑? 媛ㅻ윭由??⑤쾾???④퍡 蹂寃쎈맗?덈떎.
                 </Text>
               </View>
             )}
 
             <View>
               <VoiceInputField
-                label="제목"
+                label="?쒕ぉ"
                 value={title}
                 onChangeText={(text) => {
                   titleTouchedRef.current = true;
@@ -421,7 +423,7 @@ export function StampSaveModal({
             </View>
 
             <VoiceInputField
-              label="메모"
+              label="硫붾え"
               value={memo}
               onChangeText={setMemo}
               onMicPress={() => handleMicPress('memo')}
@@ -437,13 +439,13 @@ export function StampSaveModal({
 
             <View style={styles.actions}>
               <Pressable style={styles.cancelButton} onPress={onClose} disabled={saving}>
-                <Text style={styles.cancelText}>취소</Text>
+                <Text style={styles.cancelText}>痍⑥냼</Text>
               </Pressable>
               <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
                 {saving ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.saveText}>{isEdit ? '수정' : '저장'}</Text>
+                  <Text style={styles.saveText}>{isEdit ? '?섏젙' : '???}</Text>
                 )}
               </Pressable>
             </View>
@@ -462,7 +464,7 @@ export function StampSaveModal({
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={() => setImageViewerVisible(false)}
-          accessibilityLabel="전체 보기 닫기"
+          accessibilityLabel="?꾩껜 蹂닿린 ?リ린"
         />
         {imageUri ? (
           <Image
@@ -482,7 +484,7 @@ export function StampSaveModal({
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.imageViewerDeleteText}>
-                {isEdit ? '휴지통으로 이동' : '사진 버리기'}
+                {isEdit ? '?댁??듭쑝濡??대룞' : '?ъ쭊 踰꾨━湲?}
               </Text>
             )}
           </Pressable>
@@ -498,7 +500,7 @@ export function StampSaveModal({
     >
       <Pressable style={styles.folderPickerOverlay} onPress={() => setFolderPickerVisible(false)}>
         <Pressable style={styles.folderPickerCard} onPress={() => {}}>
-          <Text style={styles.folderPickerTitle}>저장 폴더 선택</Text>
+          <Text style={styles.folderPickerTitle}>????대뜑 ?좏깮</Text>
           {folderOptionsLoading ? (
             <ActivityIndicator style={styles.folderPickerLoading} color="#2563eb" />
           ) : (
@@ -508,7 +510,7 @@ export function StampSaveModal({
               style={styles.folderPickerList}
               keyboardShouldPersistTaps="handled"
               ListEmptyComponent={
-                <Text style={styles.folderPickerEmpty}>저장된 폴더가 없습니다. 직접 입력해 주세요.</Text>
+                <Text style={styles.folderPickerEmpty}>??λ맂 ?대뜑媛 ?놁뒿?덈떎. 吏곸젒 ?낅젰??二쇱꽭??</Text>
               }
               renderItem={({ item }) => (
                 <Pressable
@@ -523,13 +525,13 @@ export function StampSaveModal({
                     setFolderPickerVisible(false);
                   }}
                 >
-                  <Text style={styles.folderPickerItemText}>{item || '(기본 폴더)'}</Text>
+                  <Text style={styles.folderPickerItemText}>{item || '(湲곕낯 ?대뜑)'}</Text>
                 </Pressable>
               )}
             />
           )}
           <Pressable style={styles.folderPickerClose} onPress={() => setFolderPickerVisible(false)}>
-            <Text style={styles.folderPickerCloseText}>닫기</Text>
+            <Text style={styles.folderPickerCloseText}>?リ린</Text>
           </Pressable>
         </Pressable>
       </Pressable>
