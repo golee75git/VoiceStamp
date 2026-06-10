@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-09**  
-최신 커밋 기준: `a4a55d2` (main)
+문서 작성일: **2026-06-10**  
+최신 커밋 기준: `4f56b07` (main)
 
 ---
 
@@ -166,6 +166,8 @@ VoiceStamp/
 | 68 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
 | 69 | 목록 헤더 「설정」·설정 복귀(목록/카메라) | `a4a55d2` | `restore-info-leg04.bat` §69 |
 | 70 | 앱 정보 링크·정책 웹페이지 (LEG-04) | `a4a55d2` | `restore-info-leg04.bat` §69 |
+| 71 | 저장 폴더 기본 현장명 유지 (GPS→제목만) | `4f56b07` | `restore-site-folder-keep.bat` §70 |
+| 72 | `/info` GitHub APK 다운로드 링크 | `3468630` | `restore-apk-download.bat` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
 
@@ -228,7 +230,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260609_183510.apk`** | `a4a55d2` | **권장 최신** — 목록 설정·앱 정보·정책 웹 |
+| **`VoiceStamp_20260610_233157.apk`** | `4f56b07` | **권장 최신** — 저장 폴더 현장명 유지 (GPS→제목만) |
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 설정·앱 정보·정책 웹 |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 스크롤 유지 |
 | `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 휴지통 후 목록 재진입 무한 로딩 수정 |
 | `VoiceStamp_20260609_174552.apk` | `953c2cd` | 앵커 인덱스 되돌림 |
@@ -238,11 +241,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. APK는 git에 포함하지 않으며 로컬 `build-apk.bat` 산출물입니다.
 
+#### 2026-06-10
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더: GPS로 덮어쓰지 않음, `current_site_name`+날짜 유지; 제목만 위치 반영 | **권장** |
+
 #### 2026-06-09
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 헤더 설정, 설정→목록 복귀, 앱 정보(버전·개인정보·라이선스·도움말), `public/*.html` | **권장** |
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 헤더 설정, 설정→목록 복귀, 앱 정보(버전·개인정보·라이선스·도움말), `public/*.html` | OK |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 후 목록 스크롤 유지 | OK |
 | `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 카메라→목록 재진입 무한 로딩 수정 | OK |
 | `VoiceStamp_20260609_174552.apk` | `953c2cd` | scrollToIndex 앵커 되돌림 | OK |
@@ -315,6 +324,16 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 예: `20260606_1815` → `20260606_1815_강남구역삼동래미안`
 
+### 9.1 저장 폴더(앨범) — `4f56b07`
+
+1. 모달 열림 → `current_site_name`이 있으면 `refreshStampGroupDate` (날짜만 오늘로, 현장명 유지)
+2. 없으면 `YYYYMMDD`만 표시
+3. GPS 완료 후 **폴더명은 변경하지 않음** (제목만 §9 규칙 적용)
+4. 저장 시 `setCurrentSiteName` — 다음 촬영 기본 폴더 갱신
+5. 사용자 폴더 입력·**[선택]** 으로 변경 가능
+
+예: `20260610_OO초` 유지, 제목만 `20260610_1430_강남구역삼동` 추가
+
 ---
 
 ## 10. PDF 옵션 (설정)
@@ -355,6 +374,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-10
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`4f56b07` 기준) |
+| `4f56b07` | 저장 폴더 GPS 덮어쓰기 제거 — `current_site_name`+날짜 유지, 제목만 위치 반영 (`restore-site-folder-keep.bat` §70) |
+| `3468630` | `/info` GitHub Releases APK 다운로드 링크 (`restore-apk-download.bat`) |
+| `453e160` | 문서 동기화 (`a4a55d2` 기준) |
 
 ### 2026-06-09
 
@@ -421,6 +449,9 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+4f56b07 Keep save folder on current site name instead of GPS place.
+3468630 Add GitHub APK download link on info page with rollback.
+453e160 Sync PRD, PROJECT, PLAN, and README docs to commit a4a55d2.
 a4a55d2 Add list header settings, app info links, and policy web pages.
 89a9ee2 Sync PRD, PROJECT, PLAN, and README docs to commit b44c469.
 b44c469 Keep list scroll position when trashing stamp from edit modal.
@@ -480,9 +511,9 @@ c05376a Add vertical scroll to settings screen for long content.
 | [README.md](./README.md) | docs 폴더 문서 목록 |
 | [PRD.md](./PRD.md) | 제품 요구사항 정의서 |
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
-| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계 (미구현) |
+| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~69) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~70) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

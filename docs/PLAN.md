@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.4 |
-| 작성일 | 2026-06-09 |
-| 기준 커밋 | `a4a55d2` (main) |
+| 문서 버전 | 1.5 |
+| 작성일 | 2026-06-10 |
+| 기준 커밋 | `4f56b07` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -75,6 +75,8 @@
 | 71 | 수정 모달 휴지통 후 목록 스크롤 유지 | `b44c469` | `restore-edit-trash-scroll.bat` §68 |
 | 72 | 목록 헤더 「설정」·설정 복귀(목록/카메라) | `a4a55d2` | `restore-info-leg04.bat` §69 |
 | 73 | LEG-04 앱 정보·정책 웹 (`public/*.html`) | `a4a55d2` | `restore-info-leg04.bat` §69 |
+| 74 | 저장 폴더 기본 현장명 유지 (GPS→제목만) | `4f56b07` | `restore-site-folder-keep.bat` §70 |
+| 75 | `/info` GitHub APK 다운로드 링크 | `3468630` | `restore-apk-download.bat` |
 
 ### 2.1 문서 동기화 이력
 
@@ -87,7 +89,8 @@
 | `36361b4` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b222581`) |
 | `cc5c3f1` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `6baa947`) |
 | `89a9ee2` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b44c469`) |
-| (본 갱신) | `a4a55d2` 반영 — LEG-04·목록 설정·APK별 이력·날짜별 이력 |
+| `453e160` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `a4a55d2`) |
+| (본 갱신) | `4f56b07` 반영 — 저장 폴더 현장명 유지·APK 다운로드·APK별·날짜별 이력 |
 
 ---
 
@@ -103,6 +106,7 @@
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
 | LEG-04 | 버전·라이선스·개인정보·도움말 (설정 앱 정보 + 웹 `/privacy` 등) | P2 | ✅ `a4a55d2` |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 미구현 (정책 URL: `/privacy` 준비됨) |
+| DEP-04 | `/info` GitHub Releases APK 다운로드 링크 | P2 | ✅ `3468630` |
 
 > **참고:** APK/Web만 배포할 때는 문서(`docs/`)만으로도 내부·테스터 배포는 가능. 스토어 등록 시 LEG-04·05 권장.
 
@@ -167,7 +171,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260609_183510.apk` (`a4a55d2`) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260610_233157.apk` (`4f56b07`) |
+| APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
 
@@ -191,7 +196,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~69 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~70 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 
 ---
@@ -205,6 +210,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-07 | 2 | PDF/JPEG보내기·UI·손잡이·Android 뒤로·아이콘·권한 |
 | 2026-06-08 | 2→3 | 장소·폴더·갤러리 앨범·수정 UX·폴더 선택·문서 동기화 |
 | 2026-06-09 | 2→3 | 폴더 자동 채움·웹 스텁·목록 스크롤·**LEG-04·목록 설정** |
+| 2026-06-10 | 3 | **저장 폴더 현장명 유지**·`/info` APK 링크·문서 동기화 |
 
 ---
 
@@ -212,7 +218,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | **최신** — 설정·앱 정보·정책 웹 |
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` | **최신** — 저장 폴더 현장명 유지 |
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 설정·앱 정보·정책 웹 |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 휴지통 스크롤 |
 | `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
 | `VoiceStamp_20260608_235051.apk` | `6baa947` | 폴더 선택 모달 |

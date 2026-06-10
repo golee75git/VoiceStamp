@@ -21,17 +21,18 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~69) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~70) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-09)
+## 현재 상태 스냅샷 (2026-06-10)
 
-- **최신 커밋:** `a4a55d2` (main)
+- **최신 커밋:** `4f56b07` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info`
-- **권장 APK:** `VoiceStamp_20260609_183510.apk`
+- **권장 APK:** `VoiceStamp_20260610_233157.apk`
+- **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
 
 ### 날짜별 요약
@@ -43,12 +44,14 @@
 | 06-07 | PDF/JPEG·UI·Android 뒤로·아이콘 |
 | 06-08 | 장소·폴더·갤러리·수정 UX |
 | 06-09 | 스크롤 UX·**LEG-04**·목록 헤더 설정 |
+| 06-10 | **저장 폴더 현장명 유지**·`/info` APK 링크 |
 
 ### APK별 (권장만)
 
 | APK | 커밋 |
 |-----|------|
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` ← **설치 권장** |
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` ← **설치 권장** |
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` |
 | `VoiceStamp_20260608_235051.apk` | `6baa947` |
 
