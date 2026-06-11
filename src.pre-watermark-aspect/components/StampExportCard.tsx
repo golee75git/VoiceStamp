@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
@@ -8,62 +7,24 @@ import type { Stamp } from '../types/stamp';
 
 export const STAMP_EXPORT_CARD_WIDTH = 1080;
 
-const PHOTO_WIDTH = STAMP_EXPORT_CARD_WIDTH - 48;
-const FALLBACK_ASPECT_RATIO = PHOTO_WIDTH / 810;
-
 type StampExportCardProps = {
   stamp: Stamp;
   options: StampImageExportOptions;
-  onImageReady?: () => void;
 };
 
-export function StampExportCard({ stamp, options, onImageReady }: StampExportCardProps) {
-  const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
-  const readyNotifiedRef = useRef(false);
+export function StampExportCard({ stamp, options }: StampExportCardProps) {
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const imageUri = resolveImageUri(stamp.imagePath);
-  const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
-
-  useEffect(() => {
-    readyNotifiedRef.current = false;
-    setAspectRatio(FALLBACK_ASPECT_RATIO);
-
-    let cancelled = false;
-    Image.getSize(
-      imageUri,
-      (width, height) => {
-        if (!cancelled && width > 0 && height > 0) {
-          setAspectRatio(width / height);
-        }
-      },
-      () => {
-        // Keep fallback aspect ratio when size lookup fails.
-      },
-    );
-
-    return () => {
-      cancelled = true;
-    };
-  }, [imageUri]);
-
-  const notifyImageReady = () => {
-    if (readyNotifiedRef.current) {
-      return;
-    }
-    readyNotifiedRef.current = true;
-    onImageReady?.();
-  };
+  const photoWidth = STAMP_EXPORT_CARD_WIDTH - 48;
 
   if (options.textLayout === 'watermark') {
     return (
       <View style={styles.card}>
-        <View style={[styles.photoWrap, { width: PHOTO_WIDTH }]}>
+        <View style={[styles.photoWrap, { width: photoWidth }]}>
           <Image
-            source={{ uri: imageUri }}
-            style={photoStyle}
+            source={{ uri: resolveImageUri(stamp.imagePath) }}
+            style={[styles.photo, { width: photoWidth }]}
             resizeMode="cover"
-            onLoadEnd={notifyImageReady}
           />
           <View style={styles.watermarkBar}>
             <Text style={[styles.watermarkTitle, { textAlign: options.titleAlign }]}>{title}</Text>
@@ -79,10 +40,9 @@ export function StampExportCard({ stamp, options, onImageReady }: StampExportCar
   return (
     <View style={styles.card}>
       <Image
-        source={{ uri: imageUri }}
-        style={photoStyle}
+        source={{ uri: resolveImageUri(stamp.imagePath) }}
+        style={styles.photo}
         resizeMode="contain"
-        onLoadEnd={notifyImageReady}
       />
       <Text style={[styles.title, { textAlign: options.titleAlign }]}>{title}</Text>
       {memo ? (
@@ -101,6 +61,12 @@ const styles = StyleSheet.create({
   photoWrap: {
     position: 'relative',
     overflow: 'hidden',
+    backgroundColor: '#f3f4f6',
+  },
+  photo: {
+    width: STAMP_EXPORT_CARD_WIDTH - 48,
+    height: 810,
+    backgroundColor: '#f3f4f6',
   },
   watermarkBar: {
     position: 'absolute',

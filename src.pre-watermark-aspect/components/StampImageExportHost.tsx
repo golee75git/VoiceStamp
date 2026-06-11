@@ -24,7 +24,6 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
 ) {
   const shotRef = useRef<ViewShot>(null);
   const [payload, setPayload] = useState<CapturePayload | null>(null);
-  const [imageReady, setImageReady] = useState(false);
   const resolverRef = useRef<{
     resolve: (uri: string) => void;
     reject: (error: Error) => void;
@@ -34,14 +33,13 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
     captureStamp(stamp, options) {
       return new Promise<string>((resolve, reject) => {
         resolverRef.current = { resolve, reject };
-        setImageReady(false);
         setPayload({ stamp, options });
       });
     },
   }));
 
   useEffect(() => {
-    if (!payload || !imageReady || !resolverRef.current) {
+    if (!payload || !resolverRef.current) {
       return;
     }
 
@@ -58,13 +56,12 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
         reject(error instanceof Error ? error : new Error('스탬프 이미지 캡처에 실패했습니다.'));
       } finally {
         resolverRef.current = null;
-        setImageReady(false);
         setPayload(null);
       }
-    }, 50);
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [payload, imageReady]);
+  }, [payload]);
 
   return (
     <View style={styles.offscreen} pointerEvents="none" collapsable={false}>
@@ -74,11 +71,7 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
         collapsable={false}
       >
         {payload ? (
-          <StampExportCard
-            stamp={payload.stamp}
-            options={payload.options}
-            onImageReady={() => setImageReady(true)}
-          />
+          <StampExportCard stamp={payload.stamp} options={payload.options} />
         ) : (
           <View style={styles.placeholder} />
         )}
