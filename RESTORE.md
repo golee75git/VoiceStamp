@@ -1168,3 +1168,20 @@ restore-intro-layout.bat
 ```powershell
 Copy-Item src.pre-intro-layout\IntroScreen.tsx src\components\ -Force
 ```
+
+## 75. 온보딩 이미지(버튼 제거판) 되돌리기 (선택)
+
+`img/1-1`~`1-4` 수정본으로 교체한 뒤 문제가 생기면 아래로 이전 이미지로 복구합니다.
+
+```bat
+restore-onboarding-images.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-onboarding-images\onboarding-1.png assets\onboarding\ -Force
+Copy-Item src.pre-onboarding-images\onboarding-2.png assets\onboarding\ -Force
+Copy-Item src.pre-onboarding-images\onboarding-3.png assets\onboarding\ -Force
+Copy-Item src.pre-onboarding-images\onboarding-4.png assets\onboarding\ -Force
+```
