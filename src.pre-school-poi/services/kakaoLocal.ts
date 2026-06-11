@@ -21,18 +21,6 @@ type KakaoCoord2AddressResponse = {
   documents?: KakaoCoord2AddressDocument[];
 };
 
-type KakaoCategoryDocument = {
-  place_name?: string;
-  distance?: string;
-};
-
-type KakaoCategorySearchResponse = {
-  documents?: KakaoCategoryDocument[];
-};
-
-const SCHOOL_SEARCH_RADIUS_M = 400;
-const SCHOOL_PREFER_MAX_DISTANCE_M = 500;
-
 function getKakaoRestKey(): string {
   return process.env.EXPO_PUBLIC_KAKAO_REST_KEY?.trim() ?? '';
 }
@@ -65,40 +53,8 @@ function pickBuildingName(documents: KakaoCoord2AddressDocument[]): string | nul
   return null;
 }
 
-function parseDistanceM(doc: KakaoCategoryDocument | null | undefined): number | null {
-  if (!doc?.distance) {
-    return null;
-  }
-  const distance = Number(doc.distance);
-  return Number.isFinite(distance) ? distance : null;
-}
-
-function pickPlaceName(
-  building: string | null,
-  school: KakaoCategoryDocument | null,
-): string | null {
-  const schoolName = school?.place_name?.trim() || null;
-  const distance = parseDistanceM(school);
-
-  if (schoolName && distance !== null && distance <= SCHOOL_SEARCH_RADIUS_M) {
-    return schoolName;
-  }
-
-  if (
-    building &&
-    schoolName &&
-    distance !== null &&
-    distance <= SCHOOL_PREFER_MAX_DISTANCE_M &&
-    building.includes('아파트')
-  ) {
-    return schoolName;
-  }
-
-  return building;
-}
-
-function combinePlaceLabel(region: string | null, placeName: string | null): string | null {
-  const parts = [region, placeName].filter((part): part is string => Boolean(part?.trim()));
+function combinePlaceLabel(region: string | null, building: string | null): string | null {
+  const parts = [region, building].filter((part): part is string => Boolean(part?.trim()));
   if (parts.length === 0) {
     return null;
   }
@@ -168,41 +124,6 @@ async function fetchBuildingName(
   return pickBuildingName(data.documents);
 }
 
-async function fetchNearestSchool(
-  restKey: string,
-  longitude: number,
-  latitude: number,
-): Promise<KakaoCategoryDocument | null> {
-  const params = new URLSearchParams({
-    category_group_code: 'SC4',
-    x: String(longitude),
-    y: String(latitude),
-    radius: String(SCHOOL_PREFER_MAX_DISTANCE_M),
-    sort: 'distance',
-    size: '5',
-  });
-
-  const response = await fetch(
-    `https://dapi.kakao.com/v2/local/search/category.json?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `KakaoAK ${restKey}`,
-      },
-    },
-  );
-
-  if (!response.ok) {
-    return null;
-  }
-
-  const data = (await response.json()) as KakaoCategorySearchResponse;
-  if (!data.documents?.length) {
-    return null;
-  }
-
-  return data.documents[0];
-}
-
 export async function getPlaceLabelFromCoords(
   longitude: number,
   latitude: number,
@@ -212,12 +133,10 @@ export async function getPlaceLabelFromCoords(
     return null;
   }
 
-  const [region, building, school] = await Promise.all([
+  const [region, building] = await Promise.all([
     fetchRegionLabel(restKey, longitude, latitude),
     fetchBuildingName(restKey, longitude, latitude),
-    fetchNearestSchool(restKey, longitude, latitude),
   ]);
 
-  const placeName = pickPlaceName(building, school);
-  return combinePlaceLabel(region, placeName);
+  return combinePlaceLabel(region, building);
 }

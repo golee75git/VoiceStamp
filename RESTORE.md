@@ -1106,3 +1106,17 @@ restore-site-folder-keep.bat
 ```powershell
 Copy-Item src.pre-site-folder-keep\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 71. 학교 POI 우선 위치 제목 되돌리기 (선택)
+
+반경 내 학교(SC4)를 건물명보다 우선하는 `kakaoLocal.ts` 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-school-poi.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-school-poi\services\kakaoLocal.ts src\services\ -Force
+```
