@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.5 |
-| 작성일 | 2026-06-10 |
-| 기준 커밋 | `4f56b07` (main) |
+| 문서 버전 | 1.6 |
+| 작성일 | 2026-06-11 |
+| 기준 커밋 | `0970d3d` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -78,6 +78,16 @@
 | 74 | 저장 폴더 기본 현장명 유지 (GPS→제목만) | `4f56b07` | `restore-site-folder-keep.bat` §70 |
 | 75 | `/info` GitHub APK 다운로드 링크 | `3468630` | `restore-apk-download.bat` |
 
+## 2B. Phase 2 추가 완료 (2026-06-11)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 76 | 시스템 카메라 자동 실행 (줌 지원, CameraView 제거) | `be8bd93` | `restore-system-camera-auto.bat` |
+| 77 | 워터마크 JPEG 비율 보존 (aspectRatio·onLoadEnd) | `3306c3d` | `restore-watermark-aspect.bat` |
+| 78 | 워터마크 픽셀 준비 + ViewShot (`prepareExportPhoto`) | `ef71f5a` | `restore-watermark-pixel.bat` |
+| 79 | 워터마크 네이티브 텍스트 합성 (`react-native-image-marker`) | `f61697d` | `restore-watermark-native.bat` |
+| 80 | 저장 시 갤러리 모드 (원본만 / 캡션만 / 원본+캡션) | `6948a96` | `restore-gallery-save-mode.bat` |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -90,7 +100,8 @@
 | `cc5c3f1` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `6baa947`) |
 | `89a9ee2` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b44c469`) |
 | `453e160` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `a4a55d2`) |
-| (본 갱신) | `4f56b07` 반영 — 저장 폴더 현장명 유지·APK 다운로드·APK별·날짜별 이력 |
+| `876f390` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `4f56b07`) |
+| (본 갱신) | `0970d3d` 반영 — 시스템 카메라·워터마크 JPEG·저장 시 갤러리 모드·APK별·날짜별 이력 |
 
 ---
 
@@ -171,7 +182,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260610_233157.apk` (`4f56b07`) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260611_184601.apk` (`0970d3d`) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -211,6 +222,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-08 | 2→3 | 장소·폴더·갤러리 앨범·수정 UX·폴더 선택·문서 동기화 |
 | 2026-06-09 | 2→3 | 폴더 자동 채움·웹 스텁·목록 스크롤·**LEG-04·목록 설정** |
 | 2026-06-10 | 3 | **저장 폴더 현장명 유지**·`/info` APK 링크·문서 동기화 |
+| 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG 품질·**저장 시 갤러리 모드** |
 
 ---
 
@@ -218,7 +230,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260610_233157.apk` | `4f56b07` | **최신** — 저장 폴더 현장명 유지 |
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | **최신** — 저장 시 갤러리 원본/캡션/둘 다 |
+| `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크 네이티브 합성 |
+| `VoiceStamp_20260611_172409.apk` | `be8bd93` | 시스템 카메라 (줌) |
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 |
 | `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 설정·앱 정보·정책 웹 |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 휴지통 스크롤 |
 | `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |

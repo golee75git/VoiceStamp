@@ -21,17 +21,17 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~70) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~77) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-10)
+## 현재 상태 스냅샷 (2026-06-11)
 
-- **최신 커밋:** `4f56b07` (main)
+- **최신 커밋:** `0970d3d` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info`
-- **권장 APK:** `VoiceStamp_20260610_233157.apk`
+- **권장 APK:** `VoiceStamp_20260611_184601.apk`
 - **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
 
@@ -45,17 +45,20 @@
 | 06-08 | 장소·폴더·갤러리·수정 UX |
 | 06-09 | 스크롤 UX·**LEG-04**·목록 헤더 설정 |
 | 06-10 | **저장 폴더 현장명 유지**·`/info` APK 링크 |
+| 06-11 | **시스템 카메라**(줌)·워터마크 JPEG 품질·**저장 시 갤러리 모드** |
 
-### APK별 (권장만)
+### APK별 (권장·주요)
 
-| APK | 커밋 |
-|-----|------|
-| `VoiceStamp_20260610_233157.apk` | `4f56b07` ← **설치 권장** |
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` |
-| `VoiceStamp_20260609_181249.apk` | `b44c469` |
-| `VoiceStamp_20260608_235051.apk` | `6baa947` |
+| APK | 커밋 | 한 줄 |
+|-----|------|--------|
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | **설치 권장** — 저장 시 갤러리 원본/캡션/둘 다 |
+| `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크 네이티브 합성 |
+| `VoiceStamp_20260611_172409.apk` | `be8bd93` | 시스템 카메라 (줌) |
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 |
+| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 설정·앱 정보·정책 웹 |
+| `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
 
-상세 표: [PROJECT.md](./PROJECT.md) §7.4
+상세 표: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13 · [PLAN.md](./PLAN.md) §11
 
 ### 개선 시 참고
 

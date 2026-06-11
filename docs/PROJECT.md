@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-10**  
-최신 커밋 기준: `4f56b07` (main)
+문서 작성일: **2026-06-11**  
+최신 커밋 기준: `0970d3d` (main)
 
 ---
 
@@ -30,9 +30,9 @@ VoiceStamp/
 │   ├── components/         # CameraScreen, StampListScreen, StampSaveModal,
 │   │                       # SettingsScreen, TrashScreen, VoiceInputField,
 │   │                       # StampExportCard, StampImageExportHost
-│   ├── screens/            # MainScreen
+│   ├── screens/            # MainScreen (공유 StampImageExportHost)
 │   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
-│   │                       # settingsService, kakaoLocal, locationService,
+│   │                       # renderStampWatermarkNative, settingsService, kakaoLocal, locationService,
 │   │                       # pdfImageForExport, galleryService(.web), stampTrash,
 │   │                       # stampRepository, stampFolderService, pickStampImage,
 │   │                       # pdfTitleFormat
@@ -61,13 +61,13 @@ VoiceStamp/
 
 | 화면 | 파일 | 설명 |
 |------|------|------|
-| 카메라 | `CameraScreen.tsx` | 촬영, 설정·목록·앨범, 손잡이별 하단 메뉴 |
+| 카메라 | `CameraScreen.tsx` | 시스템 카메라 자동 실행(줌), 설정·목록, 손잡이별 하단 메뉴 |
 | 저장 모달 | `StampSaveModal.tsx` | 장소명·저장 폴더·제목·메모·음성·전체 보기·폴더 선택 |
 | 목록 | `StampListScreen.tsx` | 목록·선택·PDF·이미지 저장·수정·휴지통·⚙ 설정 |
 | 휴지통 | `TrashScreen.tsx` | 터치 복원 |
 | 설정 | `SettingsScreen.tsx` | 폴더·PDF·내보내기·손잡이·휴지통 비우기 |
-| JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx` | 합성 JPEG (ViewShot) |
-| 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환, Android `BackHandler` |
+| JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx` | 캡션 합성 (ViewShot, MainScreen 공유) |
+| 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환, `BackHandler`, `StampImageExportHost` |
 
 ### 3.1 목록 화면 UI (현재)
 
@@ -168,6 +168,11 @@ VoiceStamp/
 | 70 | 앱 정보 링크·정책 웹페이지 (LEG-04) | `a4a55d2` | `restore-info-leg04.bat` §69 |
 | 71 | 저장 폴더 기본 현장명 유지 (GPS→제목만) | `4f56b07` | `restore-site-folder-keep.bat` §70 |
 | 72 | `/info` GitHub APK 다운로드 링크 | `3468630` | `restore-apk-download.bat` |
+| 73 | 시스템 카메라 자동 실행 (줌, CameraView 제거) | `be8bd93` | `restore-system-camera-auto.bat` |
+| 74 | 워터마크 JPEG 비율 보존 | `3306c3d` | `restore-watermark-aspect.bat` |
+| 75 | 워터마크 픽셀 준비 + ViewShot | `ef71f5a` | `restore-watermark-pixel.bat` |
+| 76 | 워터마크 네이티브 텍스트 합성 (`react-native-image-marker`) | `f61697d` | `restore-watermark-native.bat` |
+| 77 | 저장 시 갤러리 모드 (원본만 / 캡션만 / 원본+캡션) | `6948a96` | `restore-gallery-save-mode.bat` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
 
@@ -188,7 +193,8 @@ VoiceStamp/
 | expo-print / expo-sharing | PDF |
 | expo-image-manipulator | PDF·JPEG 이미지 압축 |
 | expo-image-picker | 앨범·카메라 앱에서 사진 선택 |
-| react-native-view-shot | APK 합성 JPEG 캡처 |
+| react-native-view-shot | APK 캡션 합성 JPEG 캡처 |
+| react-native-image-marker | APK 워터마크 네이티브 텍스트 합성 |
 | react-native-web | 웹 |
 
 ---
@@ -239,7 +245,17 @@ build-apk.bat
 
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
-앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. APK는 git에 포함하지 않으며 로컬 `build-apk.bat` 산출물입니다.
+앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-11
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리: 원본만 / 캡션·워터마크만 / 원본+캡션 (`gallery_save_mode`) | **권장** |
+| `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크: `prepareExportPhoto` + `react-native-image-marker` (ViewShot 재캡처 제거) | OK |
+| `VoiceStamp_20260611_180033.apk` | `ef71f5a` | 워터마크: 픽셀 준비 + ViewShot (중간 단계) | 보관용 |
+| `VoiceStamp_20260611_174204.apk` | `3306c3d` | 워터마크 JPEG 비율 보존 (`aspectRatio`, `onLoadEnd`) | OK |
+| `VoiceStamp_20260611_172409.apk` | `be8bd93` | 시스템 카메라 자동 실행 (줌), 앱 내 CameraView 제거 | OK |
 
 #### 2026-06-10
 
@@ -375,6 +391,21 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-11
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`0970d3d` 기준) |
+| `0970d3d` | APK `VoiceStamp_20260611_184601` — 갤러리 저장 모드 빌드 |
+| `6948a96` | 저장 시 갤러리 `original_only` / `caption_only` / `original_and_caption` (`restore-gallery-save-mode.bat`) |
+| `f61697d` | 워터마크 네이티브 합성 `renderStampWatermarkNative` (`restore-watermark-native.bat`) |
+| `ef71f5a` | 워터마크 `prepareExportPhoto` + ViewShot (`restore-watermark-pixel.bat`) |
+| `74e23f9` | `exportStampImage.ts` UTF-8 복구 |
+| `3306c3d` | 워터마크 aspect ratio (`restore-watermark-aspect.bat`) |
+| `be8bd93` | 시스템 카메라 자동 실행 (`restore-system-camera-auto.bat`) |
+| `876f390` | 문서 동기화 (`4f56b07` 기준) |
+| `b9a9b89` | APK `VoiceStamp_20260610_233157` |
+
 ### 2026-06-10
 
 | 커밋 | 내용 |
@@ -449,6 +480,19 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+0970d3d Add APK VoiceStamp_20260611_184601
+6948a96 Add gallery save mode on stamp save (original, caption, or both).
+ba033c0 Add APK VoiceStamp_20260611_182919
+f61697d Use native text compositing for watermark JPEG export on Android.
+02dc308 Add APK VoiceStamp_20260611_180033
+74e23f9 Fix UTF-8 in exportStampImage after watermark pixel export changes.
+ef71f5a Render watermark JPEG exports from prepared photo pixels on native.
+dc26b92 Add APK VoiceStamp_20260611_174204
+3306c3d Fix watermark JPEG export to preserve photo aspect ratio.
+0214754 Add APK VoiceStamp_20260611_172409
+be8bd93 Open system camera on launch for device zoom support.
+b9a9b89 Add APK VoiceStamp_20260610_233157
+876f390 Sync PRD, PROJECT, PLAN, and README docs to commit 4f56b07.
 4f56b07 Keep save folder on current site name instead of GPS place.
 3468630 Add GitHub APK download link on info page with rollback.
 453e160 Sync PRD, PROJECT, PLAN, and README docs to commit a4a55d2.
