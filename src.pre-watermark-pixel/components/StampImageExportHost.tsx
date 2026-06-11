@@ -2,11 +2,8 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { StyleSheet, View } from 'react-native';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 
-import { resolveImageUri } from '../services/fileService';
 import {
   STAMP_JPEG_COMPRESS,
-  prepareExportPhoto,
-  type PreparedExportPhoto,
   type StampImageExportOptions,
 } from '../services/exportStampImage';
 import type { Stamp } from '../types/stamp';
@@ -19,7 +16,6 @@ export type StampImageExportHostRef = {
 type CapturePayload = {
   stamp: Stamp;
   options: StampImageExportOptions;
-  preparedPhoto: PreparedExportPhoto | null;
 };
 
 export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function StampImageExportHost(
@@ -39,21 +35,7 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
       return new Promise<string>((resolve, reject) => {
         resolverRef.current = { resolve, reject };
         setImageReady(false);
-
-        void (async () => {
-          try {
-            if (options.textLayout === 'watermark') {
-              const preparedPhoto = await prepareExportPhoto(resolveImageUri(stamp.imagePath));
-              setPayload({ stamp, options, preparedPhoto });
-              return;
-            }
-
-            setPayload({ stamp, options, preparedPhoto: null });
-          } catch (error) {
-            resolverRef.current = null;
-            reject(error instanceof Error ? error : new Error('스탬프 이미지 준비에 실패했습니다.'));
-          }
-        })();
+        setPayload({ stamp, options });
       });
     },
   }));
@@ -95,7 +77,6 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
           <StampExportCard
             stamp={payload.stamp}
             options={payload.options}
-            preparedPhoto={payload.preparedPhoto}
             onImageReady={() => setImageReady(true)}
           />
         ) : (
@@ -109,8 +90,9 @@ export const StampImageExportHost = forwardRef<StampImageExportHostRef>(function
 const styles = StyleSheet.create({
   offscreen: {
     position: 'absolute',
-    left: -20000,
+    left: -10000,
     top: 0,
+    opacity: 0,
   },
   placeholder: {
     width: 1,

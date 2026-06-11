@@ -1,4 +1,4 @@
-import { ImageManipulator, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
 import {
@@ -21,28 +21,6 @@ export type StampImageExportOptions = {
   textLayout: StampTextLayout;
 };
 
-export type PreparedExportPhoto = {
-  uri: string;
-  width: number;
-  height: number;
-};
-
-export async function prepareExportPhoto(imageUri: string): Promise<PreparedExportPhoto> {
-  const context = ImageManipulator.manipulate(imageUri);
-  context.resize({ width: STAMP_JPEG_MAX_WIDTH });
-  const image = await context.renderAsync();
-  const saved = await image.saveAsync({
-    format: SaveFormat.JPEG,
-    compress: 1,
-  });
-
-  return {
-    uri: saved.uri,
-    width: image.width,
-    height: image.height,
-  };
-}
-
 export async function compressStampJpeg(sourceUri: string): Promise<string> {
   const result = await manipulateAsync(
     sourceUri,
@@ -56,7 +34,7 @@ function loadWebImage(uri: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('???? ???? ?????.'));
+    img.onerror = () => reject(new Error('이미지를 불러오지 못했습니다.'));
     img.src = uri;
   });
 }
@@ -136,7 +114,7 @@ async function renderStampJpegWatermarkOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   measureCtx.font = '700 32px sans-serif';
@@ -155,7 +133,7 @@ async function renderStampJpegWatermarkOnWeb(
   canvas.height = imgHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
@@ -214,7 +192,7 @@ async function renderStampJpegCaptionOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   measureCtx.font = '700 36px sans-serif';
@@ -236,7 +214,7 @@ async function renderStampJpegCaptionOnWeb(
   canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   ctx.fillStyle = '#ffffff';
@@ -329,15 +307,11 @@ export async function saveStampsAsJpegToGallery(
       }
 
       if (!captureNative) {
-        throw new Error('??? ??? ??? ? ????.');
+        throw new Error('이미지 캡처를 사용할 수 없습니다.');
       }
 
       const capturedUri = await captureNative(stamp, options);
-      if (options.textLayout === 'watermark') {
-        jpegUri = capturedUri;
-      } else {
-        jpegUri = await compressStampJpeg(capturedUri);
-      }
+      jpegUri = await compressStampJpeg(capturedUri);
       const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
       await saveStampPhotoToGallery(jpegUri, fileName, albumName);
       saved += 1;

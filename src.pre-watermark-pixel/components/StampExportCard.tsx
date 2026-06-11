@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
-import type { PreparedExportPhoto } from '../services/exportStampImage';
 import { pdfDisplayTitle } from '../services/pdfTitleFormat';
 import type { StampImageExportOptions } from '../services/exportStampImage';
 import type { Stamp } from '../types/stamp';
@@ -16,15 +15,9 @@ type StampExportCardProps = {
   stamp: Stamp;
   options: StampImageExportOptions;
   onImageReady?: () => void;
-  preparedPhoto?: PreparedExportPhoto | null;
 };
 
-export function StampExportCard({
-  stamp,
-  options,
-  onImageReady,
-  preparedPhoto = null,
-}: StampExportCardProps) {
+export function StampExportCard({ stamp, options, onImageReady }: StampExportCardProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const readyNotifiedRef = useRef(false);
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
@@ -33,10 +26,6 @@ export function StampExportCard({
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
 
   useEffect(() => {
-    if (options.textLayout === 'watermark' && preparedPhoto) {
-      return;
-    }
-
     readyNotifiedRef.current = false;
     setAspectRatio(FALLBACK_ASPECT_RATIO);
 
@@ -56,7 +45,7 @@ export function StampExportCard({
     return () => {
       cancelled = true;
     };
-  }, [imageUri, options.textLayout, preparedPhoto]);
+  }, [imageUri]);
 
   const notifyImageReady = () => {
     if (readyNotifiedRef.current) {
@@ -65,65 +54,6 @@ export function StampExportCard({
     readyNotifiedRef.current = true;
     onImageReady?.();
   };
-
-  if (options.textLayout === 'watermark' && preparedPhoto) {
-    const scale = preparedPhoto.width / PHOTO_WIDTH;
-    const titleSize = Math.max(18, Math.round(32 * scale));
-    const memoSize = Math.max(16, Math.round(26 * scale));
-    const memoLineHeight = Math.max(22, Math.round(34 * scale));
-    const barPaddingX = Math.round(20 * scale);
-    const barPaddingY = Math.round(16 * scale);
-
-    return (
-      <View
-        style={{
-          width: preparedPhoto.width,
-          height: preparedPhoto.height,
-          position: 'relative',
-          overflow: 'hidden',
-          backgroundColor: '#000',
-        }}
-      >
-        <Image
-          source={{ uri: preparedPhoto.uri }}
-          style={{ width: preparedPhoto.width, height: preparedPhoto.height }}
-          onLoadEnd={notifyImageReady}
-        />
-        <View
-          style={[
-            styles.watermarkBar,
-            {
-              paddingHorizontal: barPaddingX,
-              paddingVertical: barPaddingY,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.watermarkTitle,
-              { fontSize: titleSize, textAlign: options.titleAlign },
-            ]}
-          >
-            {title}
-          </Text>
-          {memo ? (
-            <Text
-              style={[
-                styles.watermarkMemo,
-                {
-                  fontSize: memoSize,
-                  lineHeight: memoLineHeight,
-                  textAlign: options.memoAlign,
-                },
-              ]}
-            >
-              {memo}
-            </Text>
-          ) : null}
-        </View>
-      </View>
-    );
-  }
 
   if (options.textLayout === 'watermark') {
     return (
