@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 import { setOnboardingSeen } from '../services/settingsService';
 
@@ -28,15 +28,26 @@ export function IntroScreen({ onComplete }: IntroScreenProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={SLIDES[step]} style={styles.image} resizeMode="cover" accessibilityIgnoresInvertColors />
-      <Pressable
-        style={styles.bottomTap}
-        onPress={() => void handleNext()}
-        accessibilityRole="button"
-        accessibilityLabel={isLast ? '시작하기' : '다음'}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.imageWrap}>
+        <Image
+          source={SLIDES[step]}
+          style={styles.image}
+          resizeMode="contain"
+          accessibilityIgnoresInvertColors
+        />
+      </View>
+      <View style={styles.footer}>
+        <Pressable
+          style={styles.button}
+          onPress={() => void handleNext()}
+          accessibilityRole="button"
+          accessibilityLabel={isLast ? '시작하기' : '다음'}
+        >
+          <Text style={styles.buttonText}>{isLast ? '시작하기' : '다음'}</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -45,16 +56,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E8F4FE',
   },
+  imageWrap: {
+    flex: 1,
+    width: '100%',
+  },
   image: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
     width: '100%',
     height: '100%',
   },
-  bottomTap: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '18%',
+  footer: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'android' ? 20 : 8,
+  },
+  button: {
+    backgroundColor: '#2F80ED',
+    borderRadius: 28,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
 });

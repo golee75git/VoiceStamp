@@ -1154,3 +1154,17 @@ Copy-Item src.pre-intro-4\onboarding-2.png assets\onboarding\ -Force
 Copy-Item src.pre-intro-4\onboarding-3.png assets\onboarding\ -Force
 Remove-Item assets\onboarding\onboarding-4.png -ErrorAction SilentlyContinue
 ```
+
+## 74. 온보딩 반응형 레이아웃 되돌리기 (선택)
+
+`contain`+하단 버튼 레이아웃 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-intro-layout.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-intro-layout\IntroScreen.tsx src\components\ -Force
+```
