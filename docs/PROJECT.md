@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-11**  
-최신 커밋 기준: `0970d3d` (main)
+최신 커밋 기준: `182f4e7` (main)
 
 ---
 
@@ -28,7 +28,7 @@ VoiceStamp/
 ├── app.json                # Expo 설정·플러그인
 ├── src/
 │   ├── components/         # CameraScreen, StampListScreen, StampSaveModal,
-│   │                       # SettingsScreen, TrashScreen, VoiceInputField,
+│   │                       # IntroScreen, SettingsScreen, TrashScreen, VoiceInputField,
 │   │                       # StampExportCard, StampImageExportHost
 │   ├── screens/            # MainScreen (공유 StampImageExportHost)
 │   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
@@ -173,6 +173,11 @@ VoiceStamp/
 | 75 | 워터마크 픽셀 준비 + ViewShot | `ef71f5a` | `restore-watermark-pixel.bat` |
 | 76 | 워터마크 네이티브 텍스트 합성 (`react-native-image-marker`) | `f61697d` | `restore-watermark-native.bat` |
 | 77 | 저장 시 갤러리 모드 (원본만 / 캡션만 / 원본+캡션) | `6948a96` | `restore-gallery-save-mode.bat` |
+| 78 | 학교 POI 우선 위치 제목 (`kakaoLocal` SC4) | `4b4d25d` | `restore-school-poi.bat` §71 |
+| 79 | 온보딩 인트로 (최초 실행 3단계) | `784c163` | `restore-intro.bat` §72 |
+| 80 | 온보딩 4단계 (`img/1-1`~`1-4`) | `db81ef9` | `restore-intro-4.bat` §73 |
+| 81 | 온보딩 반응형 (`contain` + 하단 버튼) | `73ee56f` | `restore-intro-layout.bat` §74 |
+| 82 | 온보딩 이미지 갱신 (이미지 내 버튼 제거) | `fac7734` | `restore-onboarding-images.bat` §75 |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
 
@@ -236,7 +241,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260610_233157.apk`** | `4f56b07` | **권장 최신** — 저장 폴더 현장명 유지 (GPS→제목만) |
+| **`VoiceStamp_20260611_232649.apk`** | `182f4e7` | **권장 최신** — 4단계 온보딩·반응형·이미지 갱신 |
+| `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
+| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 (GPS→제목만) |
 | `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 설정·앱 정보·정책 웹 |
 | `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 스크롤 유지 |
 | `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 휴지통 후 목록 재진입 무한 로딩 수정 |
@@ -251,7 +259,12 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리: 원본만 / 캡션·워터마크만 / 원본+캡션 (`gallery_save_mode`) | **권장** |
+| `VoiceStamp_20260611_232649.apk` | `182f4e7` | 온보딩 이미지 갱신 (`img/1-1`~`1-4`, 이미지 내 버튼 제거) | **권장** |
+| `VoiceStamp_20260611_230629.apk` | `00d55d3` | 온보딩 `contain` + 하단 고정 RN 버튼 (다음/시작하기) | OK |
+| `VoiceStamp_20260611_225542.apk` | `134b1a8` | 온보딩 4단계 슬라이드 | OK |
+| `VoiceStamp_20260611_224610.apk` | `f21c4da` | 최초 온보딩 인트로 (3단계) | OK |
+| `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 (카카오 SC4) | OK |
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리: 원본만 / 캡션·워터마크만 / 원본+캡션 (`gallery_save_mode`) | OK |
 | `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크: `prepareExportPhoto` + `react-native-image-marker` (ViewShot 재캡처 제거) | OK |
 | `VoiceStamp_20260611_180033.apk` | `ef71f5a` | 워터마크: 픽셀 준비 + ViewShot (중간 단계) | 보관용 |
 | `VoiceStamp_20260611_174204.apk` | `3306c3d` | 워터마크 JPEG 비율 보존 (`aspectRatio`, `onLoadEnd`) | OK |
@@ -395,7 +408,18 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`0970d3d` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`182f4e7` 기준) |
+| `182f4e7` | APK `VoiceStamp_20260611_232649` — 온보딩 이미지 갱신 빌드 |
+| `fac7734` | 온보딩 이미지 교체 (이미지 내 버튼 제거, RN 푸터 버튼 유지) (`restore-onboarding-images.bat`) |
+| `00d55d3` | APK `VoiceStamp_20260611_230629` — 온보딩 레이아웃 빌드 |
+| `73ee56f` | 온보딩 `contain` + 하단 고정 버튼 (`restore-intro-layout.bat`) |
+| `134b1a8` | APK `VoiceStamp_20260611_225542` — 4단계 온보딩 빌드 |
+| `db81ef9` | 온보딩 4단계 (`img/1-1`~`1-4`) (`restore-intro-4.bat`) |
+| `f21c4da` | APK `VoiceStamp_20260611_224610` — 온보딩 인트로 빌드 |
+| `784c163` | 최초 실행 온보딩 인트로 (`restore-intro.bat`) |
+| `e14950a` | APK `VoiceStamp_20260611_222640` — 학교 POI 빌드 |
+| `4b4d25d` | 학교 POI 우선 위치 제목 (`restore-school-poi.bat`) |
+| `a45a750` | 문서 동기화 (`0970d3d` 기준) |
 | `0970d3d` | APK `VoiceStamp_20260611_184601` — 갤러리 저장 모드 빌드 |
 | `6948a96` | 저장 시 갤러리 `original_only` / `caption_only` / `original_and_caption` (`restore-gallery-save-mode.bat`) |
 | `f61697d` | 워터마크 네이티브 합성 `renderStampWatermarkNative` (`restore-watermark-native.bat`) |

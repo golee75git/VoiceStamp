@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.6 |
+| 문서 버전 | 1.7 |
 | 작성일 | 2026-06-11 |
-| 기준 커밋 | `0970d3d` (main) |
+| 기준 커밋 | `182f4e7` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -87,6 +87,11 @@
 | 78 | 워터마크 픽셀 준비 + ViewShot (`prepareExportPhoto`) | `ef71f5a` | `restore-watermark-pixel.bat` |
 | 79 | 워터마크 네이티브 텍스트 합성 (`react-native-image-marker`) | `f61697d` | `restore-watermark-native.bat` |
 | 80 | 저장 시 갤러리 모드 (원본만 / 캡션만 / 원본+캡션) | `6948a96` | `restore-gallery-save-mode.bat` |
+| 81 | 학교 POI 우선 위치 제목 | `4b4d25d` | `restore-school-poi.bat` §71 |
+| 82 | 온보딩 인트로 (최초 실행) | `784c163` | `restore-intro.bat` §72 |
+| 83 | 온보딩 4단계 슬라이드 | `db81ef9` | `restore-intro-4.bat` §73 |
+| 84 | 온보딩 반응형 레이아웃 | `73ee56f` | `restore-intro-layout.bat` §74 |
+| 85 | 온보딩 이미지 갱신 (버튼 제거판) | `fac7734` | `restore-onboarding-images.bat` §75 |
 
 ### 2.1 문서 동기화 이력
 
@@ -101,7 +106,8 @@
 | `89a9ee2` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `b44c469`) |
 | `453e160` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `a4a55d2`) |
 | `876f390` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `4f56b07`) |
-| (본 갱신) | `0970d3d` 반영 — 시스템 카메라·워터마크 JPEG·저장 시 갤러리 모드·APK별·날짜별 이력 |
+| `a45a750` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `0970d3d`) |
+| (본 갱신) | `182f4e7` 반영 — 학교 POI·온보딩 4단계·반응형·이미지 갱신·APK별·날짜별 이력 |
 
 ---
 
@@ -182,7 +188,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260611_184601.apk` (`0970d3d`) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260611_232649.apk` (`182f4e7`) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -207,7 +213,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~70 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~75 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 
 ---
@@ -222,7 +228,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-08 | 2→3 | 장소·폴더·갤러리 앨범·수정 UX·폴더 선택·문서 동기화 |
 | 2026-06-09 | 2→3 | 폴더 자동 채움·웹 스텁·목록 스크롤·**LEG-04·목록 설정** |
 | 2026-06-10 | 3 | **저장 폴더 현장명 유지**·`/info` APK 링크·문서 동기화 |
-| 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG 품질·**저장 시 갤러리 모드** |
+| 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG·**저장 시 갤러리 모드**·**학교 POI 위치**·**4단계 온보딩** |
 
 ---
 
@@ -230,7 +236,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260611_184601.apk` | `0970d3d` | **최신** — 저장 시 갤러리 원본/캡션/둘 다 |
+| `VoiceStamp_20260611_232649.apk` | `182f4e7` | **최신** — 온보딩 4단계·반응형·이미지 갱신 |
+| `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
+| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
 | `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크 네이티브 합성 |
 | `VoiceStamp_20260611_172409.apk` | `be8bd93` | 시스템 카메라 (줌) |
 | `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 |
