@@ -7,7 +7,6 @@ const SLIDES = [
   require('../../assets/onboarding/onboarding-1.png'),
   require('../../assets/onboarding/onboarding-2.png'),
   require('../../assets/onboarding/onboarding-3.png'),
-  require('../../assets/onboarding/onboarding-4.png'),
 ] as const;
 
 type IntroScreenProps = {

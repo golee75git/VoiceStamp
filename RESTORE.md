@@ -1136,3 +1136,21 @@ Copy-Item src.pre-intro\App.tsx . -Force
 Copy-Item src.pre-intro\settingsService.ts src\services\ -Force
 Remove-Item src\components\IntroScreen.tsx -ErrorAction SilentlyContinue
 ```
+
+## 73. 온보딩 4단계(1-1~1-4) 되돌리기 (선택)
+
+`img/1-1`~`1-4` 기반 4단계 인트로로 바꾼 뒤 문제가 생기면 아래로 3단계 인트로로 복구합니다.
+
+```bat
+restore-intro-4.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-intro-4\IntroScreen.tsx src\components\ -Force
+Copy-Item src.pre-intro-4\onboarding-1.png assets\onboarding\ -Force
+Copy-Item src.pre-intro-4\onboarding-2.png assets\onboarding\ -Force
+Copy-Item src.pre-intro-4\onboarding-3.png assets\onboarding\ -Force
+Remove-Item assets\onboarding\onboarding-4.png -ErrorAction SilentlyContinue
+```
