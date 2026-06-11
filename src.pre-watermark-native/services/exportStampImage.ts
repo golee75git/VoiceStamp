@@ -7,7 +7,6 @@ import {
   resolveImageUri,
 } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
-import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { pdfDisplayTitle } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -57,7 +56,7 @@ function loadWebImage(uri: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('이미지를 불러오지 못했습니다.'));
+    img.onerror = () => reject(new Error('????? ?????????? ?????????????.'));
     img.src = uri;
   });
 }
@@ -137,7 +136,7 @@ async function renderStampJpegWatermarkOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
+    throw new Error('???? ????????? ????????? ??? ????????????.');
   }
 
   measureCtx.font = '700 32px sans-serif';
@@ -156,7 +155,7 @@ async function renderStampJpegWatermarkOnWeb(
   canvas.height = imgHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
+    throw new Error('???? ????????? ????????? ??? ????????????.');
   }
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
@@ -215,7 +214,7 @@ async function renderStampJpegCaptionOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
+    throw new Error('???? ????????? ????????? ??? ????????????.');
   }
 
   measureCtx.font = '700 36px sans-serif';
@@ -237,7 +236,7 @@ async function renderStampJpegCaptionOnWeb(
   canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
+    throw new Error('???? ????????? ????????? ??? ????????????.');
   }
 
   ctx.fillStyle = '#ffffff';
@@ -329,14 +328,14 @@ export async function saveStampsAsJpegToGallery(
         continue;
       }
 
-      if (options.textLayout === 'watermark') {
-        jpegUri = await renderStampWatermarkNative(stamp, options);
-      } else {
-        if (!captureNative) {
-          throw new Error('이미지 캡처를 사용할 수 없습니다.');
-        }
+      if (!captureNative) {
+        throw new Error('???? ???? ????????? ??? ????????????.');
+      }
 
-        const capturedUri = await captureNative(stamp, options);
+      const capturedUri = await captureNative(stamp, options);
+      if (options.textLayout === 'watermark') {
+        jpegUri = capturedUri;
+      } else {
         jpegUri = await compressStampJpeg(capturedUri);
       }
       const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
