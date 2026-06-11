@@ -4,7 +4,6 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCameraHand, type CameraHand } from '../services/settingsService';
-import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
 type CameraScreenProps = {
@@ -12,16 +11,9 @@ type CameraScreenProps = {
   onOpenList: () => void;
   onOpenSettings: () => void;
   onSaved: () => void;
-  captureStampForExport: CaptureStampForExport;
 };
 
-export function CameraScreen({
-  refreshKey,
-  onOpenList,
-  onOpenSettings,
-  onSaved,
-  captureStampForExport,
-}: CameraScreenProps) {
+export function CameraScreen({ refreshKey, onOpenList, onOpenSettings, onSaved }: CameraScreenProps) {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -172,7 +164,6 @@ export function CameraScreen({
       <StampSaveModal
         visible={modalVisible}
         imageUri={capturedUri}
-        captureStampForExport={captureStampForExport}
         onClose={() => {
           setModalVisible(false);
           setCapturedUri(null);

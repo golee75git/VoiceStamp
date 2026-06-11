@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, BackHandler, Platform, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, BackHandler, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { CameraScreen } from '../components/CameraScreen';
 import { SettingsScreen } from '../components/SettingsScreen';
-import { StampImageExportHost, type StampImageExportHostRef } from '../components/StampImageExportHost';
 import { StampListScreen } from '../components/StampListScreen';
 import { TrashScreen } from '../components/TrashScreen';
-import type { CaptureStampForExport } from '../services/exportStampImage';
 
 type Screen = 'camera' | 'list' | 'settings' | 'trash';
 type SettingsReturn = 'camera' | 'list';
@@ -16,16 +14,8 @@ export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
   const [settingsReturn, setSettingsReturn] = useState<SettingsReturn>('camera');
   const [refreshKey, setRefreshKey] = useState(0);
-  const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
-
-  const captureStampForExport = useCallback<CaptureStampForExport>((stamp, options) => {
-    if (!exportHostRef.current) {
-      return Promise.reject(new Error('이미지 캡처를 사용할 수 없습니다.'));
-    }
-    return exportHostRef.current.captureStamp(stamp, options);
-  }, []);
 
   const openSettings = (returnTo: SettingsReturn) => {
     setSettingsReturn(returnTo);
@@ -76,7 +66,6 @@ export function MainScreen() {
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => openSettings('camera')}
           onSaved={bumpRefresh}
-          captureStampForExport={captureStampForExport}
         />
       ) : screen === 'settings' ? (
         <SettingsScreen
@@ -99,10 +88,8 @@ export function MainScreen() {
           onOpenSettings={() => openSettings('list')}
           refreshKey={refreshKey}
           onChanged={bumpRefresh}
-          captureStampForExport={captureStampForExport}
         />
       )}
-      {Platform.OS !== 'web' ? <StampImageExportHost ref={exportHostRef} /> : null}
     </View>
   );
 }

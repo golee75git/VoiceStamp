@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 
-import type { CaptureStampForExport } from '../services/exportStampImage';
+import { StampImageExportHost, type StampImageExportHostRef } from './StampImageExportHost';
 import { StampSaveModal } from './StampSaveModal';
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
@@ -39,7 +39,6 @@ type StampListScreenProps = {
   onOpenSettings: () => void;
   refreshKey: number;
   onChanged: () => void;
-  captureStampForExport: CaptureStampForExport;
 };
 
 export function StampListScreen({
@@ -48,7 +47,6 @@ export function StampListScreen({
   onOpenSettings,
   refreshKey,
   onChanged,
-  captureStampForExport,
 }: StampListScreenProps) {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,6 +67,7 @@ export function StampListScreen({
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
+  const exportHostRef = useRef<StampImageExportHostRef>(null);
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
@@ -251,7 +250,7 @@ export function StampListScreen({
         selected,
         exportOptions,
         pdfFileName,
-        captureStampForExport,
+        (stamp, options) => exportHostRef.current!.captureStamp(stamp, options),
       );
 
       if (saved === 0) {
@@ -554,7 +553,6 @@ export function StampListScreen({
         visible={editingStamp != null}
         stamp={editingStamp}
         imageUri={editingStamp ? resolveImageUri(editingStamp.imagePath) : null}
-        captureStampForExport={captureStampForExport}
         onClose={() => setEditingStamp(null)}
         onSaved={load}
         onTrashed={(id) => removeStampsKeepScroll([id])}
@@ -563,7 +561,6 @@ export function StampListScreen({
       <StampSaveModal
         visible={importModalVisible}
         imageUri={importUri}
-        captureStampForExport={captureStampForExport}
         onClose={() => {
           setImportModalVisible(false);
           setImportUri(null);
@@ -573,6 +570,8 @@ export function StampListScreen({
           load();
         }}
       />
+
+      {Platform.OS !== 'web' ? <StampImageExportHost ref={exportHostRef} /> : null}
     </View>
   );
 }

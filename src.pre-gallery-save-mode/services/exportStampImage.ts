@@ -22,11 +22,6 @@ export type StampImageExportOptions = {
   textLayout: StampTextLayout;
 };
 
-export type CaptureStampForExport = (
-  stamp: Stamp,
-  options: StampImageExportOptions,
-) => Promise<string>;
-
 export type PreparedExportPhoto = {
   uri: string;
   width: number;
@@ -62,7 +57,7 @@ function loadWebImage(uri: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('???? ???? ?????.'));
+    img.onerror = () => reject(new Error('이미지를 불러오지 못했습니다.'));
     img.src = uri;
   });
 }
@@ -142,7 +137,7 @@ async function renderStampJpegWatermarkOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   measureCtx.font = '700 32px sans-serif';
@@ -161,7 +156,7 @@ async function renderStampJpegWatermarkOnWeb(
   canvas.height = imgHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
@@ -220,7 +215,7 @@ async function renderStampJpegCaptionOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   measureCtx.font = '700 36px sans-serif';
@@ -242,7 +237,7 @@ async function renderStampJpegCaptionOnWeb(
   canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('이미지 내보내기를 사용할 수 없습니다.');
   }
 
   ctx.fillStyle = '#ffffff';
@@ -311,29 +306,6 @@ export function buildExportJpegFileName(
   return `${base}_${index + 1}.jpg`;
 }
 
-
-
-export function buildCaptionGalleryFileName(title: string): string {
-  return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}-caption.jpg`;
-}
-
-export async function renderStampJpegUri(
-  stamp: Stamp,
-  options: StampImageExportOptions,
-  captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
-): Promise<string> {
-  if (options.textLayout === 'watermark') {
-    return renderStampWatermarkNative(stamp, options);
-  }
-
-  if (!captureNative) {
-    throw new Error('??? ??? ??? ? ????.');
-  }
-
-  const capturedUri = await captureNative(stamp, options);
-  return compressStampJpeg(capturedUri);
-}
-
 export async function saveStampsAsJpegToGallery(
   stamps: Stamp[],
   options: StampImageExportOptions,
@@ -357,7 +329,16 @@ export async function saveStampsAsJpegToGallery(
         continue;
       }
 
-      jpegUri = await renderStampJpegUri(stamp, options, captureNative);
+      if (options.textLayout === 'watermark') {
+        jpegUri = await renderStampWatermarkNative(stamp, options);
+      } else {
+        if (!captureNative) {
+          throw new Error('이미지 캡처를 사용할 수 없습니다.');
+        }
+
+        const capturedUri = await captureNative(stamp, options);
+        jpegUri = await compressStampJpeg(capturedUri);
+      }
       const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
       await saveStampPhotoToGallery(jpegUri, fileName, albumName);
       saved += 1;

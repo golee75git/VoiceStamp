@@ -1,11 +1,6 @@
 import { Platform } from 'react-native';
 
 import {
-  buildCaptionGalleryFileName,
-  renderStampJpegUri,
-  type StampImageExportOptions,
-} from './exportStampImage';
-import {
   extractStampGroupFromImagePath,
   formatDefaultStampTitle,
   formatStampGroupName,
@@ -16,15 +11,7 @@ import {
   resolveImageUri,
 } from './fileService';
 import { moveStampGalleryAlbum, saveStampPhotoToGallery } from './galleryService';
-import {
-  getCurrentSiteName,
-  getGallerySaveMode,
-  getMemoTextAlign,
-  getPdfShowDatetime,
-  getStampTextLayout,
-  getTitleTextAlign,
-  type GallerySaveMode,
-} from './settingsService';
+import { getCurrentSiteName } from './settingsService';
 import {
   getStampById,
   insertStamp,
@@ -39,58 +26,11 @@ type SaveStampInput = {
   title: string;
   memo: string;
   groupName?: string;
-  captureForExport?: (
-    stamp: Stamp,
-    options: StampImageExportOptions,
-  ) => Promise<string>;
 };
 
 function resolveStampTitle(title: string, fallbackTimestamp: number): string {
   const trimmed = title.trim();
   return trimmed || formatDefaultStampTitle(fallbackTimestamp);
-}
-
-async function loadExportOptions(): Promise<StampImageExportOptions> {
-  const [titleAlign, memoAlign, showDatetime, textLayout] = await Promise.all([
-    getTitleTextAlign(),
-    getMemoTextAlign(),
-    getPdfShowDatetime(),
-    getStampTextLayout(),
-  ]);
-
-  return { titleAlign, memoAlign, showDatetime, textLayout };
-}
-
-async function saveNewStampToGallery(
-  stamp: Stamp,
-  groupName: string,
-  originalUri: string,
-  mode: GallerySaveMode,
-  captureForExport?: SaveStampInput['captureForExport'],
-): Promise<string | null> {
-  if (mode === 'original_only') {
-    return saveStampPhotoToGallery(originalUri, undefined, groupName);
-  }
-
-  const options = await loadExportOptions();
-  const captionFileName = buildCaptionGalleryFileName(stamp.title);
-
-  try {
-    const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
-
-    if (mode === 'caption_only') {
-      return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
-    }
-
-    await saveStampPhotoToGallery(originalUri, undefined, groupName);
-    return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
-  } catch {
-    if (mode === 'caption_only') {
-      return null;
-    }
-
-    return saveStampPhotoToGallery(originalUri, undefined, groupName);
-  }
 }
 
 export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
@@ -103,6 +43,15 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       : formatStampGroupName(now, await getCurrentSiteName());
   const imagePath = await persistImage(input.tempImageUri, title, id, groupName);
 
+  let galleryAssetId: string | null = null;
+  if (Platform.OS !== 'web') {
+    try {
+      galleryAssetId = await saveStampPhotoToGallery(resolveImageUri(imagePath), undefined, groupName);
+    } catch {
+      // 앱 내부 저장은 완료됨. 갤러리 저장·권한 거부는 저장 실패로 처리하지 않음.
+    }
+  }
+
   const stamp: Stamp = {
     id,
     title,
@@ -110,26 +59,9 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     imagePath,
     createdAt: now,
     updatedAt: now,
-    galleryAssetId: null,
+    galleryAssetId,
   };
 
-  let galleryAssetId: string | null = null;
-  if (Platform.OS !== 'web') {
-    try {
-      const mode = await getGallerySaveMode();
-      galleryAssetId = await saveNewStampToGallery(
-        stamp,
-        groupName,
-        resolveImageUri(imagePath),
-        mode,
-        input.captureForExport,
-      );
-    } catch {
-      // 앱 내부 저장은 완료됨. 갤러리 저장·권한 거부는 저장 실패로 처리하지 않음.
-    }
-  }
-
-  stamp.galleryAssetId = galleryAssetId;
   await insertStamp(stamp);
   return stamp;
 }

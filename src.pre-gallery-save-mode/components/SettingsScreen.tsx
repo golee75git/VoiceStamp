@@ -22,12 +22,9 @@ import {
   DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_PDF_SHOW_DATETIME,
   DEFAULT_STAMPS_FOLDER,
-  DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_TITLE_TEXT_ALIGN,
-  gallerySaveModeLabel,
   getCameraHand,
-  getGallerySaveMode,
   getMemoTextAlign,
   getPdfFilenameIncludeDatetime,
   getPdfImageQuality,
@@ -40,7 +37,6 @@ import {
   type PdfImageQuality,
   type PdfPhotosPerPage,
   setCameraHand,
-  setGallerySaveMode,
   setMemoTextAlign,
   setPdfFilenameIncludeDatetime,
   setPdfImageQuality,
@@ -51,7 +47,6 @@ import {
   setTitleTextAlign,
   stampTextLayoutLabel,
   TEXT_ALIGN_OPTIONS,
-  type GallerySaveMode,
   type StampTextLayout,
   type TextAlign,
   textAlignLabel,
@@ -100,9 +95,6 @@ export function SettingsScreen({
   const [stampTextLayout, setStampTextLayoutState] = useState<StampTextLayout>(
     DEFAULT_STAMP_TEXT_LAYOUT,
   );
-  const [gallerySaveMode, setGallerySaveModeState] = useState<GallerySaveMode>(
-    DEFAULT_GALLERY_SAVE_MODE,
-  );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -114,7 +106,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, hand, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -124,7 +116,6 @@ export function SettingsScreen({
           getPdfShowDatetime(),
           getPdfFilenameIncludeDatetime(),
           getStampTextLayout(),
-          getGallerySaveMode(),
           getCameraHand(),
           getTrashedStampCount(),
         ]);
@@ -136,7 +127,6 @@ export function SettingsScreen({
         setPdfShowDatetimeState(showDatetime);
         setPdfFilenameIncludeDatetimeState(filenameDatetime);
         setStampTextLayoutState(textLayout);
-        setGallerySaveModeState(galleryMode);
         setCameraHandState(hand);
         setTrashCount(trashed);
       } finally {
@@ -192,7 +182,6 @@ export function SettingsScreen({
         savedShowDatetime,
         savedFilenameDatetime,
         savedTextLayout,
-        savedGalleryMode,
         savedCameraHand,
       ] = await Promise.all([
           setStampsFolderName(folderName),
@@ -203,7 +192,6 @@ export function SettingsScreen({
           setPdfShowDatetime(pdfShowDatetime),
           setPdfFilenameIncludeDatetime(pdfFilenameIncludeDatetime),
           setStampTextLayout(stampTextLayout),
-          setGallerySaveMode(gallerySaveMode),
           setCameraHand(cameraHand),
         ]);
       setFolderName(savedFolder);
@@ -214,12 +202,11 @@ export function SettingsScreen({
       setPdfShowDatetimeState(savedShowDatetime);
       setPdfFilenameIncludeDatetimeState(savedFilenameDatetime);
       setStampTextLayoutState(savedTextLayout);
-      setGallerySaveModeState(savedGalleryMode);
       setCameraHandState(savedCameraHand);
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.`,
       );
     } catch (e) {
       Alert.alert(
@@ -240,7 +227,6 @@ export function SettingsScreen({
     setPdfShowDatetimeState(DEFAULT_PDF_SHOW_DATETIME);
     setPdfFilenameIncludeDatetimeState(DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
     setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
-    setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
     setCameraHandState(DEFAULT_CAMERA_HAND);
   };
 
@@ -444,32 +430,6 @@ export function SettingsScreen({
                 워터마크
               </Text>
             </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
-          <Text style={styles.hint}>
-            스탬프 저장 시 갤러리 앨범에 넣을 사진입니다. 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
-          </Text>
-          <View style={styles.optionRow}>
-            {(['original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(
-              (option) => {
-                const selected = gallerySaveMode === option;
-                return (
-                  <Pressable
-                    key={option}
-                    style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                    onPress={() => setGallerySaveModeState(option)}
-                    disabled={saving}
-                  >
-                    <Text
-                      style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
-                    >
-                      {gallerySaveModeLabel(option)}
-                    </Text>
-                  </Pressable>
-                );
-              },
-            )}
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>

@@ -9,7 +9,6 @@ const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
-const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 
@@ -22,35 +21,15 @@ export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
-export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
-export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 
 export function stampTextLayoutLabel(layout: StampTextLayout): string {
   return layout === 'watermark' ? '워터마크' : '별도 영역';
-}
-
-export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
-  if (value === 'caption_only' || value === 'original_and_caption') {
-    return value;
-  }
-  return 'original_only';
-}
-
-export function gallerySaveModeLabel(mode: GallerySaveMode): string {
-  switch (mode) {
-    case 'caption_only':
-      return '캡션만';
-    case 'original_and_caption':
-      return '원본+캡션';
-    default:
-      return '원본만';
-  }
 }
 
 export function sanitizeStampTextLayout(value: string): StampTextLayout {
@@ -257,20 +236,6 @@ export async function setStampTextLayout(layout: StampTextLayout): Promise<Stamp
   const safeLayout = sanitizeStampTextLayout(layout);
   await writeSetting(STAMP_TEXT_LAYOUT_KEY, safeLayout);
   return safeLayout;
-}
-
-export async function getGallerySaveMode(): Promise<GallerySaveMode> {
-  const value = await readSetting(GALLERY_SAVE_MODE_KEY);
-  if (!value) {
-    return DEFAULT_GALLERY_SAVE_MODE;
-  }
-  return sanitizeGallerySaveMode(value);
-}
-
-export async function setGallerySaveMode(mode: GallerySaveMode): Promise<GallerySaveMode> {
-  const safeMode = sanitizeGallerySaveMode(mode);
-  await writeSetting(GALLERY_SAVE_MODE_KEY, safeMode);
-  return safeMode;
 }
 
 export function sanitizeSiteName(name: string): string {

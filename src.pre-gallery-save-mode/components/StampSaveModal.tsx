@@ -32,7 +32,6 @@ import {
   type CameraHand,
   type TextAlign,
 } from '../services/settingsService';
-import type { CaptureStampForExport } from '../services/exportStampImage';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
@@ -56,7 +55,6 @@ type StampSaveModalProps = {
   visible: boolean;
   imageUri: string | null;
   stamp?: Stamp | null;
-  captureStampForExport?: CaptureStampForExport;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -66,7 +64,6 @@ export function StampSaveModal({
   visible,
   imageUri,
   stamp = null,
-  captureStampForExport,
   onClose,
   onSaved,
   onTrashed,
@@ -321,7 +318,6 @@ export function StampSaveModal({
           title,
           memo,
           groupName: siteName,
-          captureForExport: captureStampForExport,
         });
       }
       onSaved();
