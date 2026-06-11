@@ -326,11 +326,3 @@ export async function listKnownGalleryAlbumNames(): Promise<string[]> {
   const map = await readGalleryAlbumIdMap();
   return Object.keys(map).sort((a, b) => b.localeCompare(a));
 }
-
-export async function hasSeenOnboarding(): Promise<boolean> {
-  return (await readSetting(ONBOARDING_SEEN_KEY)) === 'true';
-}
-
-export async function setOnboardingSeen(): Promise<void> {
-  await writeSetting(ONBOARDING_SEEN_KEY, 'true');
-}

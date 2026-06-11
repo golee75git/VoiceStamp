@@ -1120,3 +1120,19 @@ restore-school-poi.bat
 ```powershell
 Copy-Item src.pre-school-poi\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 72. 온보딩 인트로 화면 되돌리기 (선택)
+
+앱 시작 시 3단계 인트로(온보딩) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-intro.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-intro\App.tsx . -Force
+Copy-Item src.pre-intro\settingsService.ts src\services\ -Force
+Remove-Item src\components\IntroScreen.tsx -ErrorAction SilentlyContinue
+```
