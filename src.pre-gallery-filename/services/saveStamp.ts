@@ -1,8 +1,7 @@
-import { Platform } from 'react-native';
+﻿import { Platform } from 'react-native';
 
 import {
   buildCaptionGalleryFileName,
-  buildOriginalGalleryFileName,
   renderStampJpegUri,
   type StampImageExportOptions,
 } from './exportStampImage';
@@ -69,10 +68,8 @@ async function saveNewStampToGallery(
   mode: GallerySaveMode,
   captureForExport?: SaveStampInput['captureForExport'],
 ): Promise<string | null> {
-  const originalFileName = buildOriginalGalleryFileName(stamp.title);
-
   if (mode === 'original_only') {
-    return saveStampPhotoToGallery(originalUri, originalFileName, groupName);
+    return saveStampPhotoToGallery(originalUri, undefined, groupName);
   }
 
   const options = await loadExportOptions();
@@ -85,14 +82,14 @@ async function saveNewStampToGallery(
       return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
     }
 
-    await saveStampPhotoToGallery(originalUri, originalFileName, groupName);
+    await saveStampPhotoToGallery(originalUri, undefined, groupName);
     return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
   } catch {
     if (mode === 'caption_only') {
       return null;
     }
 
-    return saveStampPhotoToGallery(originalUri, originalFileName, groupName);
+    return saveStampPhotoToGallery(originalUri, undefined, groupName);
   }
 }
 
@@ -128,7 +125,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
         input.captureForExport,
       );
     } catch {
-      // 앱 내부 저장은 완료됨. 갤러리 저장·권한 거부는 저장 실패로 처리하지 않음.
+      // ???대? ??μ? ?꾨즺?? 媛ㅻ윭由???Β룰텒??嫄곕???????ㅽ뙣濡?泥섎━?섏? ?딆쓬.
     }
   }
 
@@ -145,7 +142,7 @@ export async function updateStamp(input: {
 }): Promise<void> {
   const stamp = await getStampById(input.id);
   if (!stamp) {
-    throw new Error('스탬프를 찾을 수 없습니다.');
+    throw new Error('?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
   }
 
   const title = resolveStampTitle(input.title, stamp.createdAt);
@@ -168,7 +165,7 @@ export async function updateStamp(input: {
           resolveImageUri(imagePath),
         );
       } catch {
-        // 앱 폴더 이동은 완료됨.
+        // ???대뜑 ?대룞? ?꾨즺??
       }
     }
   } else if (titleChanged) {

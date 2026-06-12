@@ -1,8 +1,8 @@
-import * as FileSystem from 'expo-file-system/legacy';
+﻿import * as FileSystem from 'expo-file-system/legacy';
 import { Album, Asset, requestPermissionsAsync } from 'expo-media-library';
 import { Platform } from 'react-native';
 
-import { normalizeStampGroupName, sanitizeStampFileBaseName } from './fileService';
+import { normalizeStampGroupName } from './fileService';
 import { getGalleryAlbumId, setGalleryAlbumId } from './settingsService';
 
 const LEGACY_GALLERY_ALBUM = 'VoiceStamp';
@@ -19,29 +19,19 @@ function resolveGalleryAlbumName(groupName: string): string {
   return normalized || LEGACY_GALLERY_ALBUM;
 }
 
-function sanitizeGalleryFileName(preferredFileName?: string): string {
-  const fallback = `voicestamp_${Date.now()}.jpg`;
-  const rawName = preferredFileName?.trim();
-  if (!rawName) {
-    return fallback;
-  }
-
-  const dotIndex = rawName.lastIndexOf('.');
-  const hasExt = dotIndex > 0;
-  const ext = hasExt ? rawName.slice(dotIndex + 1).toLowerCase() : 'jpg';
-  const base = hasExt ? rawName.slice(0, dotIndex) : rawName;
-  const safeBase = sanitizeStampFileBaseName(base);
-  const safeExt = ext.replace(/[^a-z0-9]/g, '') || 'jpg';
-  return `${safeBase}.${safeExt}`;
-}
-
 async function copyToGalleryCache(localUri: string, preferredFileName?: string): Promise<string> {
   const cacheDir = FileSystem.cacheDirectory;
   if (!cacheDir) {
     return toFileUri(localUri);
   }
 
-  const fileName = sanitizeGalleryFileName(preferredFileName);
+  const rawName = preferredFileName?.trim() || `voicestamp_${Date.now()}.jpg`;
+  const safeName =
+    rawName
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^\.+/, '') || `voicestamp_${Date.now()}.jpg`;
+  const fileName = safeName.includes('.') ? safeName : `${safeName}.jpg`;
   const dest = `${cacheDir}${fileName}`;
 
   await FileSystem.copyAsync({ from: localUri, to: dest });

@@ -1246,3 +1246,19 @@ restore-caption-white.bat
 ```powershell
 Copy-Item src.pre-caption-white\services\renderStampCaptionNative.ts src\services\ -Force
 ```
+
+## 80. 갤러리 한글 파일명 되돌리기 (선택)
+
+갤러리 저장 파일명에 한글 제목 포함 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-filename.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-filename\services\galleryService.ts src\services\ -Force
+Copy-Item src.pre-gallery-filename\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-gallery-filename\services\exportStampImage.ts src\services\ -Force
+```

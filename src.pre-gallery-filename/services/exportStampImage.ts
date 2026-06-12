@@ -1,4 +1,4 @@
-import { ImageManipulator, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
+﻿import { ImageManipulator, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
 import {
@@ -316,10 +316,6 @@ export function buildExportJpegFileName(
 
 export function buildCaptionGalleryFileName(title: string): string {
   return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}-caption.jpg`;
-}
-
-export function buildOriginalGalleryFileName(title: string): string {
-  return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}.jpg`;
 }
 
 export async function renderStampJpegUri(
