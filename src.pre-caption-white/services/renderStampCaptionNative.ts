@@ -1,18 +1,16 @@
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+﻿import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system/legacy';
-import Marker, { ImageFormat, TextBackgroundType } from 'react-native-image-marker';
+import Marker, { ImageFormat } from 'react-native-image-marker';
 
 import { buildCaptionLayout, captionTextX } from './captionLayout';
 import {
   prepareExportPhoto,
+  STAMP_JPEG_COMPRESS,
   type StampImageExportOptions,
 } from './exportStampImage';
 import { resolveImageUri } from './fileService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
-
-const CAPTION_JPEG_COMPRESS = 0.95;
 
 const WHITE_1X1_PNG_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
@@ -39,27 +37,6 @@ async function createWhiteCanvas(width: number, height: number): Promise<string>
   return resized.uri;
 }
 
-function captionTextStyle(
-  color: string,
-  fontSize: number,
-  align: TextAlign,
-  bold: boolean,
-  paddingY: number,
-) {
-  return {
-    color,
-    fontSize,
-    bold,
-    textAlign: align,
-    textBackgroundStyle: {
-      type: TextBackgroundType.stretchX,
-      color: '#FFFFFF',
-      paddingX: 0,
-      paddingY,
-    },
-  };
-}
-
 export async function renderStampCaptionNative(
   stamp: Stamp,
   options: StampImageExportOptions,
@@ -75,7 +52,6 @@ export async function renderStampCaptionNative(
     options.titleAlign,
     options.memoAlign,
   );
-  const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 
   const canvasUri = await createWhiteCanvas(layout.canvasWidth, layout.canvasHeight);
   const withPhoto = await Marker.markImage({
@@ -101,13 +77,12 @@ export async function renderStampCaptionNative(
         X: captionTextX(layout.titleAlign, layout.padding, layout.canvasWidth),
         Y: layout.titleY,
       },
-      style: captionTextStyle(
-        '#111827',
-        layout.titleSize,
-        layout.titleAlign,
-        true,
-        textBackgroundPaddingY,
-      ),
+      style: {
+        color: '#111827',
+        fontSize: layout.titleSize,
+        bold: true,
+        textAlign: layout.titleAlign,
+      },
     },
   ];
 
@@ -118,28 +93,20 @@ export async function renderStampCaptionNative(
         X: captionTextX(layout.memoAlign, layout.padding, layout.canvasWidth),
         Y: layout.memoY,
       },
-      style: captionTextStyle(
-        '#374151',
-        layout.memoSize,
-        layout.memoAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
+      style: {
+        color: '#374151',
+        fontSize: layout.memoSize,
+        textAlign: layout.memoAlign,
+      },
     });
   }
 
-  const pngUri = await Marker.markText({
+  const markedUri = await Marker.markText({
     backgroundImage: { src: normalizeMarkedUri(withPhoto), scale: 1 },
     watermarkTexts,
-    quality: 100,
-    saveFormat: ImageFormat.png,
+    quality: Math.round(STAMP_JPEG_COMPRESS * 100),
+    saveFormat: ImageFormat.jpg,
   });
 
-  const jpeg = await manipulateAsync(
-    normalizeMarkedUri(pngUri),
-    [],
-    { compress: CAPTION_JPEG_COMPRESS, format: SaveFormat.JPEG },
-  );
-
-  return jpeg.uri;
+  return normalizeMarkedUri(markedUri);
 }

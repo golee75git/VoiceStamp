@@ -1232,3 +1232,17 @@ Copy-Item src.pre-caption-native\services\exportStampImage.ts src\services\ -For
 Remove-Item src\services\renderStampCaptionNative.ts -ErrorAction SilentlyContinue
 Remove-Item src\services\captionLayout.ts -ErrorAction SilentlyContinue
 ```
+
+## 79. 별도 영역 흰 배경 강화 되돌리기 (선택)
+
+별도 영역 전체 여백 흰색 강화(PNG→JPEG 1회, quality 0.95) 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-caption-white.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-caption-white\services\renderStampCaptionNative.ts src\services\ -Force
+```
