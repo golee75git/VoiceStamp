@@ -1,4 +1,4 @@
-import { ImageManipulator, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
+﻿import { ImageManipulator, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
 import {
@@ -7,7 +7,6 @@ import {
   resolveImageUri,
 } from './fileService';
 import { saveStampPhotoToGallery } from './galleryService';
-import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { pdfDisplayTitle } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign } from './settingsService';
@@ -321,13 +320,18 @@ export function buildCaptionGalleryFileName(title: string): string {
 export async function renderStampJpegUri(
   stamp: Stamp,
   options: StampImageExportOptions,
-  _captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
+  captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
 ): Promise<string> {
   if (options.textLayout === 'watermark') {
     return renderStampWatermarkNative(stamp, options);
   }
 
-  return renderStampCaptionNative(stamp, options);
+  if (!captureNative) {
+    throw new Error('??? ??? ??? ? ????.');
+  }
+
+  const capturedUri = await captureNative(stamp, options);
+  return compressStampJpeg(capturedUri);
 }
 
 export async function saveStampsAsJpegToGallery(

@@ -1216,3 +1216,19 @@ Copy-Item src.pre-onboarding-replay\MainScreen.tsx src\screens\ -Force
 Copy-Item src.pre-onboarding-replay\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-onboarding-replay\IntroScreen.tsx src\components\ -Force
 ```
+
+## 78. 별도 영역 네이티브 합성 되돌리기 (선택)
+
+별도 영역(caption) 저장을 ViewShot 대신 네이티브 합성으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-caption-native.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-caption-native\services\exportStampImage.ts src\services\ -Force
+Remove-Item src\services\renderStampCaptionNative.ts -ErrorAction SilentlyContinue
+Remove-Item src\services\captionLayout.ts -ErrorAction SilentlyContinue
+```
