@@ -1185,3 +1185,18 @@ Copy-Item src.pre-onboarding-images\onboarding-2.png assets\onboarding\ -Force
 Copy-Item src.pre-onboarding-images\onboarding-3.png assets\onboarding\ -Force
 Copy-Item src.pre-onboarding-images\onboarding-4.png assets\onboarding\ -Force
 ```
+
+## 76. 온보딩 idle 재표시(30일) 되돌리기 (선택)
+
+30일 미사용 시 온보딩 재표시(`last_app_open_at`) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-onboarding-idle.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-onboarding-idle\App.tsx . -Force
+Copy-Item src.pre-onboarding-idle\settingsService.ts src\services\ -Force
+```

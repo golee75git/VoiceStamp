@@ -1,4 +1,4 @@
-import { getDatabase } from '../db/database';
+﻿import { getDatabase } from '../db/database';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
@@ -13,9 +13,6 @@ const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 const ONBOARDING_SEEN_KEY = 'onboarding_seen';
-const LAST_APP_OPEN_AT_KEY = 'last_app_open_at';
-
-export const ONBOARDING_IDLE_RESHOW_DAYS = 30;
 
 export const DEFAULT_STAMPS_FOLDER = 'stamps';
 export const DEFAULT_PDF_PHOTOS_PER_PAGE = 1;
@@ -36,7 +33,7 @@ export type StampTextLayout = 'caption' | 'watermark';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 
 export function stampTextLayoutLabel(layout: StampTextLayout): string {
-  return layout === 'watermark' ? '워터마크' : '별도 영역';
+  return layout === 'watermark' ? '?뚰꽣留덊겕' : '蹂꾨룄 ?곸뿭';
 }
 
 export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
@@ -49,11 +46,11 @@ export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
 export function gallerySaveModeLabel(mode: GallerySaveMode): string {
   switch (mode) {
     case 'caption_only':
-      return '캡션만';
+      return '罹≪뀡留?;
     case 'original_and_caption':
-      return '원본+캡션';
+      return '?먮낯+罹≪뀡';
     default:
-      return '원본만';
+      return '?먮낯留?;
   }
 }
 
@@ -66,11 +63,11 @@ export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
 export function textAlignLabel(align: TextAlign): string {
   switch (align) {
     case 'center':
-      return '가운데';
+      return '媛?대뜲';
     case 'right':
-      return '오른쪽';
+      return '?ㅻⅨ履?;
     default:
-      return '왼쪽';
+      return '?쇱そ';
   }
 }
 
@@ -336,32 +333,4 @@ export async function hasSeenOnboarding(): Promise<boolean> {
 
 export async function setOnboardingSeen(): Promise<void> {
   await writeSetting(ONBOARDING_SEEN_KEY, 'true');
-}
-
-export async function getLastAppOpenAt(): Promise<number | null> {
-  const raw = await readSetting(LAST_APP_OPEN_AT_KEY);
-  if (!raw) {
-    return null;
-  }
-  const parsed = Number.parseInt(raw, 10);
-  return Number.isNaN(parsed) ? null : parsed;
-}
-
-export async function setLastAppOpenAt(ms: number): Promise<void> {
-  await writeSetting(LAST_APP_OPEN_AT_KEY, String(ms));
-}
-
-export async function shouldShowOnboarding(): Promise<boolean> {
-  const seen = await hasSeenOnboarding();
-  if (!seen) {
-    return true;
-  }
-
-  const lastOpen = await getLastAppOpenAt();
-  if (lastOpen === null) {
-    return false;
-  }
-
-  const idleMs = ONBOARDING_IDLE_RESHOW_DAYS * 24 * 60 * 60 * 1000;
-  return Date.now() - lastOpen >= idleMs;
 }

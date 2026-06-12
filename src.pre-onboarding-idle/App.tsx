@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { IntroScreen } from './src/components/IntroScreen';
 import { MainScreen } from './src/screens/MainScreen';
-import { setLastAppOpenAt, shouldShowOnboarding } from './src/services/settingsService';
+import { hasSeenOnboarding } from './src/services/settingsService';
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -13,15 +13,12 @@ export default function App() {
     let cancelled = false;
 
     (async () => {
-      const show = await shouldShowOnboarding();
+      const seen = await hasSeenOnboarding();
       if (cancelled) {
         return;
       }
-      setShowIntro(show);
+      setShowIntro(!seen);
       setReady(true);
-      if (!show) {
-        await setLastAppOpenAt(Date.now());
-      }
     })();
 
     return () => {
@@ -34,14 +31,7 @@ export default function App() {
   }
 
   if (showIntro) {
-    return (
-      <IntroScreen
-        onComplete={async () => {
-          await setLastAppOpenAt(Date.now());
-          setShowIntro(false);
-        }}
-      />
-    );
+    return <IntroScreen onComplete={() => setShowIntro(false)} />;
   }
 
   return <MainScreen />;
