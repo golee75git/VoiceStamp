@@ -1200,3 +1200,19 @@ restore-onboarding-idle.bat
 Copy-Item src.pre-onboarding-idle\App.tsx . -Force
 Copy-Item src.pre-onboarding-idle\settingsService.ts src\services\ -Force
 ```
+
+## 77. 설정 온보딩 다시 보기 되돌리기 (선택)
+
+설정 > 「온보딩 다시 보기」 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-onboarding-replay.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-onboarding-replay\MainScreen.tsx src\screens\ -Force
+Copy-Item src.pre-onboarding-replay\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-onboarding-replay\IntroScreen.tsx src\components\ -Force
+```

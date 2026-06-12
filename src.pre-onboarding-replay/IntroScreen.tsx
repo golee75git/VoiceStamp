@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Image, Platform, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 import { setOnboardingSeen } from '../services/settingsService';
@@ -12,18 +12,15 @@ const SLIDES = [
 
 type IntroScreenProps = {
   onComplete: () => void;
-  markSeenOnComplete?: boolean;
 };
 
-export function IntroScreen({ onComplete, markSeenOnComplete = true }: IntroScreenProps) {
+export function IntroScreen({ onComplete }: IntroScreenProps) {
   const [step, setStep] = useState(0);
   const isLast = step === SLIDES.length - 1;
 
   const handleNext = async () => {
     if (isLast) {
-      if (markSeenOnComplete) {
-        await setOnboardingSeen();
-      }
+      await setOnboardingSeen();
       onComplete();
       return;
     }
@@ -45,9 +42,9 @@ export function IntroScreen({ onComplete, markSeenOnComplete = true }: IntroScre
           style={styles.button}
           onPress={() => void handleNext()}
           accessibilityRole="button"
-          accessibilityLabel={isLast ? '시작하기' : '다음'}
+          accessibilityLabel={isLast ? '?쒖옉?섍린' : '?ㅼ쓬'}
         >
-          <Text style={styles.buttonText}>{isLast ? '시작하기' : '다음'}</Text>
+          <Text style={styles.buttonText}>{isLast ? '?쒖옉?섍린' : '?ㅼ쓬'}</Text>
         </Pressable>
       </View>
     </SafeAreaView>

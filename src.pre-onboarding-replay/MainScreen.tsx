@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, BackHandler, Platform, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { CameraScreen } from '../components/CameraScreen';
-import { IntroScreen } from '../components/IntroScreen';
 import { SettingsScreen } from '../components/SettingsScreen';
 import { StampImageExportHost, type StampImageExportHostRef } from '../components/StampImageExportHost';
 import { StampListScreen } from '../components/StampListScreen';
@@ -17,14 +16,13 @@ export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
   const [settingsReturn, setSettingsReturn] = useState<SettingsReturn>('camera');
   const [refreshKey, setRefreshKey] = useState(0);
-  const [showIntroOverlay, setShowIntroOverlay] = useState(false);
   const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
 
   const captureStampForExport = useCallback<CaptureStampForExport>((stamp, options) => {
     if (!exportHostRef.current) {
-      return Promise.reject(new Error('이미지 캡처를 사용할 수 없습니다.'));
+      return Promise.reject(new Error('?대?吏 罹≪쿂瑜??ъ슜?????놁뒿?덈떎.'));
     }
     return exportHostRef.current.captureStamp(stamp, options);
   }, []);
@@ -36,10 +34,6 @@ export function MainScreen() {
 
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (showIntroOverlay) {
-        setShowIntroOverlay(false);
-        return true;
-      }
       switch (screen) {
         case 'list':
           setScreen('camera');
@@ -52,12 +46,12 @@ export function MainScreen() {
           return true;
         case 'camera':
           Alert.alert(
-            '앱 종료',
-            '앱을 종료하시겠습니까?',
+            '??醫낅즺',
+            '?깆쓣 醫낅즺?섏떆寃좎뒿?덇퉴?',
             [
-              { text: '아니오', style: 'cancel' },
+              { text: '?꾨땲??, style: 'cancel' },
               {
-                text: '종료',
+                text: '醫낅즺',
                 style: 'destructive',
                 onPress: () => BackHandler.exitApp(),
               },
@@ -71,16 +65,7 @@ export function MainScreen() {
     });
 
     return () => sub.remove();
-  }, [screen, settingsReturn, showIntroOverlay]);
-
-  if (showIntroOverlay) {
-    return (
-      <IntroScreen
-        markSeenOnComplete={false}
-        onComplete={() => setShowIntroOverlay(false)}
-      />
-    );
-  }
+  }, [screen, settingsReturn]);
 
   return (
     <View style={styles.container}>
@@ -96,11 +81,10 @@ export function MainScreen() {
       ) : screen === 'settings' ? (
         <SettingsScreen
           onBack={() => setScreen(settingsReturn)}
-          backLabel={settingsReturn === 'list' ? '목록' : '카메라'}
+          backLabel={settingsReturn === 'list' ? '紐⑸줉' : '移대찓??}
           refreshKey={refreshKey}
           onTrashEmptied={bumpRefresh}
           onSettingsSaved={bumpRefresh}
-          onShowOnboarding={() => setShowIntroOverlay(true)}
         />
       ) : screen === 'trash' ? (
         <TrashScreen
