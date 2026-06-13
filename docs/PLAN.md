@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.7 |
-| 작성일 | 2026-06-11 |
-| 기준 커밋 | `182f4e7` (main) |
+| 문서 버전 | 1.8 |
+| 작성일 | 2026-06-13 |
+| 기준 커밋 | `9260376` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -93,6 +93,32 @@
 | 84 | 온보딩 반응형 레이아웃 | `73ee56f` | `restore-intro-layout.bat` §74 |
 | 85 | 온보딩 이미지 갱신 (버튼 제거판) | `fac7734` | `restore-onboarding-images.bat` §75 |
 
+## 2C. Phase 2 추가 완료 (2026-06-12)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 86 | 온보딩 30일 미사용 시 재표시 | `c92ed84` | `restore-onboarding-30d.bat` §76 |
+| 87 | 설정 → 온보딩 다시 보기 | `84a2447` | `restore-onboarding-replay.bat` §77 |
+| 88 | 캡션·워터마크 네이티브 레이아웃 | `2844213` | `restore-caption-native.bat` §78 |
+| 89 | 캡션 흰 여백·PNG 내보내기 | `5b1e3f4` | `restore-caption-white-png.bat` §79 |
+| 90 | 갤러리 한글 파일명 (시도 후 되돌림) | `69a2246`, `023118d` | — |
+
+## 2D. Phase 2 추가 완료 (2026-06-13)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 91 | GPS 좌표 캡션·워터마크·PDF | `2196ece` | `restore-gps-caption.bat` §80 |
+| 92 | 저장 모달 제목·메모 미리보기 | `3ece91f` | `restore-save-preview-text.bat` §81 |
+| 93 | 전체 화면 핀치 줌·이동 | `8e269a8`, `00a521d` | `restore-save-zoom.bat` §82 |
+| 94 | 크롭 적용 vs 닫기·`_orig` 보존 | `4a85cc8`, `ece0865` | `restore-save-viewer-actions.bat` §87 |
+| 95 | 저장 후 갤러리 백그라운드 | `fc2423d` | `restore-save-fast-gallery.bat` §89 |
+| 96 | 마이크 `(눌러서 말하기)` | `01f0f9e` | `restore-mic-hint.bat` §88 |
+| 97 | 수정 모달 크롭·적용 | `7d908fd` | `restore-edit-crop.bat` §90 |
+| 98 | 목록 PDF·이미지 내보내기 안내 | `fbcc872` | `restore-list-export-hint.bat` §91 |
+| 99 | Intro 후 StartScreen (`start.png`, 7일 숨김) | `56898a7` | `restore-start-screen.bat` §92 |
+| 100 | GitHub APK `releases/VoiceStamp_20260613_114227.apk` | `b697025` | — |
+| 101 | 웹 브라우저 카메라 (Vercel) | `9260376` | `restore-web-camera.bat` §93 |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -108,6 +134,7 @@
 | `876f390` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `4f56b07`) |
 | `a45a750` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `0970d3d`) |
 | (본 갱신) | `182f4e7` 반영 — 학교 POI·온보딩 4단계·반응형·이미지 갱신·APK별·날짜별 이력 |
+| (본 갱신) | `9260376` 반영 — Phase 2C/2D·크롭·start·웹 카메라·APK `114227`·날짜별 이력 |
 
 ---
 
@@ -188,7 +215,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260611_232649.apk` (`182f4e7`) |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260613_114227.apk` (`b697025`) |
+| 최신 소스 (웹) | `9260376` — 웹 카메라 포함 (APK 미재빌드) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -213,7 +241,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~75 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~93 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 
 ---
@@ -229,6 +257,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-09 | 2→3 | 폴더 자동 채움·웹 스텁·목록 스크롤·**LEG-04·목록 설정** |
 | 2026-06-10 | 3 | **저장 폴더 현장명 유지**·`/info` APK 링크·문서 동기화 |
 | 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG·**저장 시 갤러리 모드**·**학교 POI 위치**·**4단계 온보딩** |
+| 2026-06-12 | 2C | **캡션 네이티브**·흰 여백 PNG·온보딩 30일·설정 재생 |
+| 2026-06-13 | 2D | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라** |
 
 ---
 
@@ -236,7 +266,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260611_232649.apk` | `182f4e7` | **최신** — 온보딩 4단계·반응형·이미지 갱신 |
+| `VoiceStamp_20260613_114227.apk` | `b697025` | **GitHub 최신** — start·크롭·GPS·목록 안내 (웹 카메라는 `9260376` 소스만) |
+| `VoiceStamp_20260611_232649.apk` | `182f4e7` | 온보딩 4단계·반응형·이미지 갱신 |
 | `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
 | `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
 | `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크 네이티브 합성 |

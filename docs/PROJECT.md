@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-11**  
-최신 커밋 기준: `182f4e7` (main)
+문서 작성일: **2026-06-13**  
+최신 커밋 기준: `9260376` (main)
 
 ---
 
@@ -241,7 +241,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260611_232649.apk`** | `182f4e7` | **권장 최신** — 4단계 온보딩·반응형·이미지 갱신 |
+| **`releases/VoiceStamp_20260613_114227.apk`** | `b697025` | **GitHub 권장** — start·크롭·GPS·목록 안내 (`9260376` 웹 카메라는 소스만) |
+| `VoiceStamp_20260611_232649.apk` | `182f4e7` | 4단계 온보딩·반응형·이미지 갱신 |
 | `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
 | `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
 | `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 (GPS→제목만) |
@@ -254,6 +255,21 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-13
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start 배너·목록 안내·수정 크롭·저장 속도·줌/크롭·GPS·마이크 안내 | **GitHub 권장** |
+| `VoiceStamp_20260613_11xxxx.apk` 등 | `56898a7`~`9260376` | 동일 기능군 로컬 빌드 (GitHub에는 `114227`만 커밋) | 로컬 |
+
+> **웹만 갱신:** `9260376` — Vercel 브라우저 카메라. APK 재빌드 전까지 GitHub APK에는 미포함.
+
+#### 2026-06-12
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| (문서·소스만) | `c92ed84`~`023118d` | 캡션 네이티브·흰 여백 PNG·온보딩 30일·설정 재생·한글 파일명 되돌림 | 소스만 (별도 APK 커밋 없음) |
 
 #### 2026-06-11
 
@@ -404,6 +420,39 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-13
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`9260376` 기준) |
+| `9260376` | 웹: `launchCameraAsync` 브라우저 카메라, 런처 차단 제거 (`restore-web-camera.bat` §93) |
+| `b697025` | GitHub `releases/VoiceStamp_20260613_114227.apk` |
+| `56898a7` | Intro 후 `StartScreen` (`assets/start.png`, 7일 숨김) (`restore-start-screen.bat` §92) |
+| `fbcc872` | 목록 PDF·이미지 내보내기 안내 (`restore-list-export-hint.bat` §91) |
+| `7d908fd` | 수정 모달 크롭·적용, `_orig` 유지 (`restore-edit-crop.bat` §90) |
+| `fc2423d` | `insertStamp` 후 갤러리 백그라운드 (`restore-save-fast-gallery.bat` §89) |
+| `01f0f9e` | 마이크 `(눌러서 말하기)` (`restore-mic-hint.bat` §88) |
+| `ece0865` | 저장 미리보기 **닫기** vs **적용**(크롭) (`restore-save-viewer-actions.bat` §87) |
+| `00a521d` | 줌 후 팬 제스처 수정 |
+| `4a85cc8` | 저장 시 크롭 + `_orig` 내부 보관 |
+| `00a1979` | Modal `GestureHandlerRootView` — 핀치 줌 수정 |
+| `b7f0dec` | Vercel 웹 빌드 `babel-preset-expo` |
+| `8e269a8` | 저장 전체 화면 핀치 줌 뷰어 |
+| `3ece91f` | 저장 모달 썸네일 제목·메모 오버레이 |
+| `2196ece` | 캡션·워터마크·PDF GPS 좌표 표시 |
+
+### 2026-06-12
+
+| 커밋 | 내용 |
+|------|------|
+| `023118d` | 갤러리 한글 파일명 되돌림 (저장 안정성) |
+| `69a2246` | (되돌림됨) 갤러리 한글 파일명 시도 |
+| `5b1e3f4` | 캡션 흰 여백·PNG·JPEG 품질 |
+| `2844213` | 캡션 네이티브 합성 (`react-native-image-marker`) |
+| `84a2447` | 설정 → 온보딩 다시 보기 |
+| `c92ed84` | 30일 미사용 시 온보딩 재표시 |
+| `4afd538` | 문서 동기화 (`182f4e7` 기준) |
+
 ### 2026-06-11
 
 | 커밋 | 내용 |
@@ -504,70 +553,30 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
-0970d3d Add APK VoiceStamp_20260611_184601
-6948a96 Add gallery save mode on stamp save (original, caption, or both).
-ba033c0 Add APK VoiceStamp_20260611_182919
-f61697d Use native text compositing for watermark JPEG export on Android.
-02dc308 Add APK VoiceStamp_20260611_180033
-74e23f9 Fix UTF-8 in exportStampImage after watermark pixel export changes.
-ef71f5a Render watermark JPEG exports from prepared photo pixels on native.
-dc26b92 Add APK VoiceStamp_20260611_174204
-3306c3d Fix watermark JPEG export to preserve photo aspect ratio.
-0214754 Add APK VoiceStamp_20260611_172409
-be8bd93 Open system camera on launch for device zoom support.
-b9a9b89 Add APK VoiceStamp_20260610_233157
-876f390 Sync PRD, PROJECT, PLAN, and README docs to commit 4f56b07.
-4f56b07 Keep save folder on current site name instead of GPS place.
-3468630 Add GitHub APK download link on info page with rollback.
-453e160 Sync PRD, PROJECT, PLAN, and README docs to commit a4a55d2.
-a4a55d2 Add list header settings, app info links, and policy web pages.
-89a9ee2 Sync PRD, PROJECT, PLAN, and README docs to commit b44c469.
-b44c469 Keep list scroll position when trashing stamp from edit modal.
-bfb77d8 Fix infinite loading when re-opening list after trash delete.
-953c2cd Revert anchor-index trash scroll fix that crashed the app.
-6cf82f5 Keep list scroll at deleted item anchor on repeated trash moves.
-5831512 Fix list scroll reset after trash move by skipping redundant reload.
-eef0891 Keep list scroll position after moving stamps to trash.
-59c7007 Fix web crash by stubbing galleryService on web platform.
-a3d4351 Auto-fill full save folder name with date and location on new stamps.
-cc5c3f1 Sync PRD, PROJECT, PLAN, and README docs to commit 6baa947.
-6baa947 Add folder picker modal on stamp edit for save location.
-2f2385b Add editable save folder and gallery album move on stamp edit.
-cd7ed89 Add delete from full-screen photo preview on save and edit.
-27e5f6e Add full-screen photo preview on save and edit modals.
-3b88fe9 Rename site name label to clarify album folder grouping.
-3076dc6 Fix gallery album grouping without photo picker modal.
-204ba88 Fix gallery album save via cache copy and MediaLibrary Next API.
-bbec4aa Fix Android gallery album grouping for date-site folders.
-ebda9cc Move site name input from camera to save modal.
-9ae5725 Add site name with date-based folder and gallery album grouping.
-36361b4 Sync PRD, PROJECT, PLAN, and README docs to commit b222581.
-b222581 Fix APK mic permission stripped by expo-image-picker config.
-3eb9fd9 Sync PRD, PROJECT, PLAN, and RESTORE docs to commit 591666e.
-591666e Add padding to app icon assets for adaptive icon safe zone.
-919dbf2 Add .vercelignore to avoid local file lock during Vercel deploy.
-565e4b3 Update app icon assets to the new VoiceStamp frame design.
-ffa77bf Sync PRD, PROJECT, PLAN, and RESTORE docs to commit 3b6201a.
-3b6201a Handle Android back: confirm exit on camera, navigate on sub-screens.
-470606d Update PRD, PROJECT, and PLAN docs to commit 31332dc.
-31332dc Use shared export filename for PDF and JPEG image saves.
-f125897 Sync PRD, PROJECT, and PLAN docs to commit 539c4c4.
-539c4c4 Add caption vs watermark layout setting for PDF and image export.
-e4eada2 Treat gallery save as success when album grouping fails.
-db111b3 Add JPEG export for selected stamps with title and memo.
-b0086c0 Unify list and settings nav pill size with camera menu.
-4d4e68b Show dot indicator while mic is listening.
-5c7b1de Replace mic emoji with PNG icon in voice input.
-86e06e5 Place mic button on left when left-hand mode is set.
-111bc3c Add left/right hand camera menu placement setting.
-c7d4925 Move camera side menu to bottom-right corner.
-ecf2823 Reorganize camera and list navigation menus.
-ab897ba Add separate PDF report title on first page.
-6989370 Add PDF datetime settings and omit empty memo in exports.
-354a942 Enlarge PDF stamp images in exported layout.
-a32eff6 Align PDF images with title text alignment setting.
-c05376a Add vertical scroll to settings screen for long content.
-9f4a525 Show centered gear icon for settings on the stamp list footer.
+9260376 Enable browser camera capture on web via ImagePicker.
+b697025 Add release APK VoiceStamp_20260613_114227 (start banner build).
+56898a7 Show start banner after intro and before camera.
+fbcc872 Add persistent export hint on stamp list screen.
+7d908fd Enable crop apply on stamp edit while keeping _orig unchanged.
+fc2423d Return from save immediately; defer gallery export to background.
+01f0f9e Show tap-to-speak hint next to mic on save and edit forms.
+ece0865 Split save preview close vs apply crop before final save.
+00a521d Fix pan gesture after zoom in save preview viewer.
+4a85cc8 Crop zoomed photo region on save and keep original in app storage.
+00a1979 Fix pinch zoom in save preview by wrapping Modal with gesture root.
+b7f0dec Add babel-preset-expo for Vercel web build with reanimated.
+8e269a8 Add pinch-zoom composite preview on stamp save full-screen viewer.
+3ece91f Show title and memo on save modal preview using stamp text layout.
+2196ece Show capture GPS coordinates on caption and watermark overlays.
+023118d Revert Korean gallery filenames to restore reliable photo saving.
+69a2246 Keep Korean titles in gallery save filenames.
+5b1e3f4 Keep caption margins pure white with PNG export and higher JPEG quality.
+2844213 Render caption layout natively to preserve photo sharpness.
+84a2447 Add onboarding replay entry in settings with restore backup.
+c92ed84 Re-show onboarding after 30 days idle with restore backup.
+4afd538 Sync PRD, PROJECT, PLAN, and README docs to commit 182f4e7.
+182f4e7 Add APK VoiceStamp_20260611_232649 (onboarding images without footer buttons).
+… (이전 커밋은 `git log` 참고)
 ```
 
 ---
@@ -581,7 +590,7 @@ c05376a Add vertical scroll to settings screen for long content.
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§8~70) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~93) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
