@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -26,12 +27,9 @@ import {
   getCameraHand,
   getCurrentSiteName,
   getMemoTextAlign,
-  getPdfShowDatetime,
-  getStampTextLayout,
   getTitleTextAlign,
   setCurrentSiteName,
   type CameraHand,
-  type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
@@ -39,7 +37,6 @@ import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
-import { StampSavePreview } from './StampSavePreview';
 import { VoiceInputField } from './VoiceInputField';
 
 type SpeechTarget = 'title' | 'memo' | null;
@@ -85,11 +82,6 @@ export function StampSaveModal({
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
-  const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
-  const [showDatetime, setShowDatetime] = useState(true);
-  const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
-    null,
-  );
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -134,19 +126,15 @@ export function StampSaveModal({
 
     let cancelled = false;
     (async () => {
-      const [titleAlign, memoAlign, hand, textLayout, datetimeVisible] = await Promise.all([
+      const [titleAlign, memoAlign, hand] = await Promise.all([
         getTitleTextAlign(),
         getMemoTextAlign(),
         getCameraHand(),
-        getStampTextLayout(),
-        getPdfShowDatetime(),
       ]);
       if (!cancelled) {
         setTitleTextAlign(titleAlign);
         setMemoTextAlign(memoAlign);
         setCameraHand(hand);
-        setStampTextLayout(textLayout);
-        setShowDatetime(datetimeVisible);
       }
     })();
 
@@ -173,7 +161,6 @@ export function StampSaveModal({
       titleTouchedRef.current = false;
       siteNameTouchedRef.current = false;
       captureCoordsRef.current = null;
-      setCaptureCoords(null);
       stop();
     } else if (stamp) {
       setTitle(stamp.title);
@@ -213,12 +200,10 @@ export function StampSaveModal({
           return;
         }
         if (snapshot) {
-          const coords = {
+          captureCoordsRef.current = {
             latitude: snapshot.latitude,
             longitude: snapshot.longitude,
           };
-          captureCoordsRef.current = coords;
-          setCaptureCoords(coords);
         }
         if (!titleTouchedRef.current) {
           setTitle(formatDefaultStampTitle(capturedAt, snapshot?.placeLabel ?? undefined));
@@ -383,18 +368,7 @@ export function StampSaveModal({
 
             {imageUri ? (
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
-                <StampSavePreview
-                  imageUri={imageUri}
-                  title={title}
-                  memo={memo}
-                  titleAlign={titleTextAlign}
-                  memoAlign={memoTextAlign}
-                  textLayout={stampTextLayout}
-                  showDatetime={showDatetime}
-                  latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
-                  longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
-                  variant="thumbnail"
-                />
+                <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
               </Pressable>
             ) : null}
 
@@ -505,20 +479,12 @@ export function StampSaveModal({
           accessibilityLabel="전체 보기 닫기"
         />
         {imageUri ? (
-          <View style={styles.imageViewerContent} pointerEvents="none">
-            <StampSavePreview
-              imageUri={imageUri}
-              title={title}
-              memo={memo}
-              titleAlign={titleTextAlign}
-              memoAlign={memoTextAlign}
-              textLayout={stampTextLayout}
-              showDatetime={showDatetime}
-              latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
-              longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
-              variant="fullscreen"
-            />
-          </View>
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.imageViewerImage}
+            resizeMode="contain"
+            pointerEvents="none"
+          />
         ) : null}
         <View style={styles.imageViewerDeleteBar}>
           <Pressable
@@ -612,14 +578,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
+  preview: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+    backgroundColor: '#f3f4f6',
+  },
   imageViewerOverlay: {
     flex: 1,
     backgroundColor: '#000',
     justifyContent: 'center',
   },
-  imageViewerContent: {
-    flex: 1,
+  imageViewerImage: {
     width: '100%',
+    height: '100%',
   },
   imageViewerDeleteBar: {
     position: 'absolute',

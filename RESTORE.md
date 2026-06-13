@@ -1289,3 +1289,18 @@ Copy-Item src.pre-stamp-coords\services\stampRepository.ts src\services\ -Force
 Copy-Item src.pre-stamp-coords\types\stamp.ts src\types\ -Force
 Remove-Item src\services\stampCoords.ts -ErrorAction SilentlyContinue
 ```
+
+## 82. 저장 화면 미리보기(제목·메모) 되돌리기 (선택)
+
+저장·전체 보기 미리보기에 워터마크/별도 영역 표시 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-preview.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-preview\components\StampSaveModal.tsx src\components\ -Force
+Remove-Item src\components\StampSavePreview.tsx -ErrorAction SilentlyContinue
+```
