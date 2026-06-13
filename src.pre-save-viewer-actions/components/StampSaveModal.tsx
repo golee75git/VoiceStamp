@@ -355,36 +355,8 @@ export function StampSaveModal({
     }
   };
 
-  const handleCloseViewer = () => {
-    setImageViewerVisible(false);
-  };
-
-  const handleApplyCrop = async () => {
-    if (!workingImageUri || applyingCrop || saving || isEdit) {
-      handleCloseViewer();
-      return;
-    }
-
-    setApplyingCrop(true);
-    setError(null);
-    try {
-      const cropState = cropViewportRef.current;
-      if (isStampCropActive(cropState)) {
-        const croppedUri = await cropStampImage(workingImageUri, cropState);
-        setWorkingImageUri(croppedUri);
-      }
-      cropViewportRef.current = null;
-      setImageViewerVisible(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '크기 적용에 실패했습니다.');
-    } finally {
-      setApplyingCrop(false);
-    }
-  };
-
   const handleSave = async () => {
-    const photoUri = workingImageUri ?? imageUri;
-    if (!photoUri || saving) {
+    if (!imageUri || saving) {
       return;
     }
 
@@ -396,12 +368,15 @@ export function StampSaveModal({
         await updateStamp({ id: stamp.id, title, memo, groupName });
       } else {
         await setCurrentSiteName(siteName);
-        const originalTempUri =
-          originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
-            ? originalCameraUriRef.current
-            : undefined;
+        let saveUri = imageUri;
+        let originalTempUri: string | undefined;
+        const cropState = cropViewportRef.current;
+        if (isStampCropActive(cropState)) {
+          saveUri = await cropStampImage(imageUri, cropState);
+          originalTempUri = imageUri;
+        }
         await saveStamp({
-          tempImageUri: photoUri,
+          tempImageUri: saveUri,
           originalTempUri,
           title,
           memo,
@@ -426,8 +401,6 @@ export function StampSaveModal({
     }
   };
 
-  const photoUri = workingImageUri ?? imageUri;
-
   return (
     <>
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -445,10 +418,10 @@ export function StampSaveModal({
           <View style={styles.card}>
             <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
-            {photoUri ? (
+            {imageUri ? (
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
                 <StampSavePreview
-                  imageUri={photoUri}
+                  imageUri={imageUri}
                   title={title}
                   memo={memo}
                   titleAlign={titleTextAlign}
@@ -557,42 +530,25 @@ export function StampSaveModal({
     </Modal>
 
     <Modal
-      visible={imageViewerVisible && (workingImageUri ?? imageUri) != null}
+      visible={imageViewerVisible && imageUri != null}
       transparent
       animationType="fade"
-      onRequestClose={handleCloseViewer}
+      onRequestClose={() => setImageViewerVisible(false)}
     >
       <GestureHandlerRootView style={styles.imageViewerRoot}>
         <View style={styles.imageViewerOverlay}>
           <View style={styles.imageViewerTopBar}>
             <Pressable
               style={styles.imageViewerCloseButton}
-              onPress={handleCloseViewer}
-              accessibilityLabel="저장 화면으로 돌아가기"
+              onPress={() => setImageViewerVisible(false)}
+              accessibilityLabel="전체 보기 닫기"
             >
               <Text style={styles.imageViewerCloseText}>닫기</Text>
             </Pressable>
-            {!isEdit ? (
-              <Pressable
-                style={[styles.imageViewerApplyButton, applyingCrop && styles.imageViewerApplyButtonDisabled]}
-                onPress={() => void handleApplyCrop()}
-                disabled={applyingCrop || saving}
-                accessibilityLabel="크기 적용"
-              >
-                {applyingCrop ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text style={styles.imageViewerApplyText}>적용</Text>
-                )}
-              </Pressable>
-            ) : null}
           </View>
-          {workingImageUri ?? imageUri ? (
+          {imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                imageUri={workingImageUri ?? imageUri!}
-                onCropChange={handleCropChange}
-              />
+              <StampSaveZoomViewer imageUri={imageUri} onCropChange={handleCropChange} />
             </View>
           ) : null}
           <View style={styles.imageViewerDeleteBar}>
@@ -704,29 +660,12 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingHorizontal: 16,
     alignItems: 'flex-end',
-    gap: 8,
   },
   imageViewerCloseButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 8,
-  },
-  imageViewerApplyButton: {
-    backgroundColor: 'rgba(37, 99, 235, 0.92)',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    minWidth: 56,
-    alignItems: 'center',
-  },
-  imageViewerApplyButtonDisabled: {
-    opacity: 0.7,
-  },
-  imageViewerApplyText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
   },
   imageViewerCloseText: {
     color: '#fff',

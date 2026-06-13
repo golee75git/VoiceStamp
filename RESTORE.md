@@ -1377,3 +1377,18 @@ restore-zoom-pan-fix.bat
 ```powershell
 Copy-Item src.pre-zoom-pan-fix\components\ZoomableImage.tsx src\components\ -Force
 ```
+
+## 87. 전체 보기 닫기·적용 버튼 되돌리기 (선택)
+
+전체 보기에서 「닫기」/「적용」 분리 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-viewer-actions.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-viewer-actions\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-viewer-actions\components\StampSaveZoomViewer.tsx src\components\ -Force
+```
