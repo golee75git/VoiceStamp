@@ -1,50 +1,69 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { IntroScreen } from './src/components/IntroScreen';
+import { StartScreen } from './src/components/StartScreen';
 import { MainScreen } from './src/screens/MainScreen';
-import { setLastAppOpenAt, shouldShowOnboarding } from './src/services/settingsService';
+import {
+  setLastAppOpenAt,
+  shouldShowOnboarding,
+  shouldShowStartScreen,
+} from './src/services/settingsService';
+
+type AppPhase = 'boot' | 'intro' | 'start' | 'main';
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-  const [showIntro, setShowIntro] = useState(false);
+  const [phase, setPhase] = useState<AppPhase>('boot');
+
+  const enterMain = useCallback(async () => {
+    await setLastAppOpenAt(Date.now());
+    setPhase('main');
+  }, []);
+
+  const goToStartOrMain = useCallback(async () => {
+    const showStart = await shouldShowStartScreen();
+    if (showStart) {
+      setPhase('start');
+      return;
+    }
+    await enterMain();
+  }, [enterMain]);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const show = await shouldShowOnboarding();
+      const showIntro = await shouldShowOnboarding();
       if (cancelled) {
         return;
       }
-      setShowIntro(show);
-      setReady(true);
-      if (!show) {
-        await setLastAppOpenAt(Date.now());
+      if (showIntro) {
+        setPhase('intro');
+        return;
       }
+      await goToStartOrMain();
     })();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [goToStartOrMain]);
 
   let content: ReactNode = <View style={styles.boot} />;
 
-  if (ready) {
-    if (showIntro) {
-      content = (
-        <IntroScreen
-          onComplete={async () => {
-            await setLastAppOpenAt(Date.now());
-            setShowIntro(false);
-          }}
-        />
-      );
-    } else {
-      content = <MainScreen />;
-    }
+  if (phase === 'intro') {
+    content = (
+      <IntroScreen
+        onComplete={async () => {
+          await goToStartOrMain();
+        }}
+      />
+    );
+  } else if (phase === 'start') {
+    content = <StartScreen onComplete={() => void enterMain()} />;
+  } else if (phase === 'main') {
+    content = <MainScreen />;
   }
 
   return <GestureHandlerRootView style={styles.root}>{content}</GestureHandlerRootView>;

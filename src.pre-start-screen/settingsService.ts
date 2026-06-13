@@ -14,9 +14,6 @@ const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 const ONBOARDING_SEEN_KEY = 'onboarding_seen';
 const LAST_APP_OPEN_AT_KEY = 'last_app_open_at';
-const START_SCREEN_HIDDEN_UNTIL_KEY = 'start_screen_hidden_until';
-
-export const START_SCREEN_SNOOZE_DAYS = 7;
 
 export const ONBOARDING_IDLE_RESHOW_DAYS = 30;
 
@@ -367,21 +364,4 @@ export async function shouldShowOnboarding(): Promise<boolean> {
 
   const idleMs = ONBOARDING_IDLE_RESHOW_DAYS * 24 * 60 * 60 * 1000;
   return Date.now() - lastOpen >= idleMs;
-}
-
-export async function shouldShowStartScreen(): Promise<boolean> {
-  const raw = await readSetting(START_SCREEN_HIDDEN_UNTIL_KEY);
-  if (!raw) {
-    return true;
-  }
-  const hiddenUntil = Number.parseInt(raw, 10);
-  if (Number.isNaN(hiddenUntil)) {
-    return true;
-  }
-  return Date.now() >= hiddenUntil;
-}
-
-export async function snoozeStartScreenForWeek(): Promise<void> {
-  const hiddenUntil = Date.now() + START_SCREEN_SNOOZE_DAYS * 24 * 60 * 60 * 1000;
-  await writeSetting(START_SCREEN_HIDDEN_UNTIL_KEY, String(hiddenUntil));
 }

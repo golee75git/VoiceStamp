@@ -1451,3 +1451,19 @@ restore-list-export-hint.bat
 ```powershell
 Copy-Item src.pre-list-export-hint\components\StampListScreen.tsx src\components\ -Force
 ```
+
+## 92. 시작 배너(start.png) 되돌리기 (선택)
+
+Intro 다음 start.png 배너 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-start-screen.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-start-screen\App.tsx . -Force
+Copy-Item src.pre-start-screen\services\settingsService.ts src\services\ -Force
+Remove-Item src\components\StartScreen.tsx -ErrorAction SilentlyContinue
+```
