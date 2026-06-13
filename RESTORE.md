@@ -1437,3 +1437,17 @@ restore-save-fast-gallery.bat
 Copy-Item src.pre-save-fast-gallery\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-save-fast-gallery\services\stampRepository.ts src\services\ -Force
 ```
+
+## 91. 저장 목록 PDF·이미지 안내 문구 되돌리기 (선택)
+
+저장 목록 상단 안내 문구 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-export-hint.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-export-hint\components\StampListScreen.tsx src\components\ -Force
+```
