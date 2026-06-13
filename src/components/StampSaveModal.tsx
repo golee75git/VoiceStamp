@@ -44,7 +44,15 @@ import {
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
+import { FLOOR_OPTIONS, isSchoolPlaceLabel } from '../services/stampFloor';
+import {
+  getFloorPickerMode,
+  getLastFloor,
+  setLastFloor,
+  type FloorPickerMode,
+} from '../services/settingsService';
 import type { Stamp } from '../types/stamp';
+import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
@@ -97,6 +105,9 @@ export function StampSaveModal({
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
   );
+  const [floor, setFloor] = useState<StampFloor | null>(null);
+  const [placeLabel, setPlaceLabel] = useState<string | null>(null);
+  const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>('school_only');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -109,6 +120,7 @@ export function StampSaveModal({
   const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
+  const floorTouchedRef = useRef(false);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
   const cropViewportRef = useRef<StampCropViewport | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
@@ -187,18 +199,23 @@ export function StampSaveModal({
       setDeleting(false);
       titleTouchedRef.current = false;
       siteNameTouchedRef.current = false;
+      floorTouchedRef.current = false;
       captureCoordsRef.current = null;
       cropViewportRef.current = null;
       originalCameraUriRef.current = null;
       setWorkingImageUri(null);
       setApplyingCrop(false);
       setCaptureCoords(null);
+      setFloor(null);
+      setPlaceLabel(null);
       stop();
     } else if (stamp) {
       setTitle(stamp.title);
       setMemo(stamp.memo);
+      setFloor(stamp.floor ?? null);
       setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
       titleTouchedRef.current = true;
+      floorTouchedRef.current = Boolean(stamp.floor);
     }
   }, [visible, stamp, stop]);
 
@@ -231,7 +248,17 @@ export function StampSaveModal({
     setLocationLoading(true);
 
     (async () => {
-      const savedSiteName = await getCurrentSiteName();
+      const [savedSiteName, pickerMode, lastFloor] = await Promise.all([
+        getCurrentSiteName(),
+        getFloorPickerMode(),
+        getLastFloor(),
+      ]);
+      if (!cancelled) {
+        setFloorPickerModeState(pickerMode);
+        if (!floorTouchedRef.current && lastFloor) {
+          setFloor(lastFloor);
+        }
+      }
       if (!cancelled && !siteNameTouchedRef.current) {
         setSiteName(savedSiteName ? refreshStampGroupDate(savedSiteName, capturedAt) : formatStampGroupName(capturedAt));
       }
@@ -242,6 +269,7 @@ export function StampSaveModal({
           return;
         }
         if (snapshot) {
+          setPlaceLabel(snapshot.placeLabel);
           const coords = {
             latitude: snapshot.latitude,
             longitude: snapshot.longitude,
@@ -264,7 +292,23 @@ export function StampSaveModal({
     return () => {
       cancelled = true;
     };
-  }, [visible, isEdit, imageUri]);
+  }, [visible, imageUri, isEdit]);
+
+  useEffect(() => {
+    if (!visible || !isEdit) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const pickerMode = await getFloorPickerMode();
+      if (!cancelled) {
+        setFloorPickerModeState(pickerMode);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, isEdit]);
 
   const handleMicPress = async (target: SpeechTarget) => {
     if (listening && speechTarget === target) {
@@ -401,11 +445,15 @@ export function StampSaveModal({
           title,
           memo,
           groupName,
+          floor,
           croppedImageUri,
           captureForExport: captureStampForExport,
         });
       } else {
         await setCurrentSiteName(siteName);
+        if (floor) {
+          await setLastFloor(floor);
+        }
         const originalTempUri =
           originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
             ? originalCameraUriRef.current
@@ -418,6 +466,7 @@ export function StampSaveModal({
           groupName: siteName,
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
+          floor,
           captureForExport: captureStampForExport,
         });
       }
@@ -437,6 +486,13 @@ export function StampSaveModal({
   };
 
   const photoUri = workingImageUri ?? imageUri;
+  const showFloorPicker =
+    floorPickerMode !== 'off' &&
+    (floorPickerMode === 'always' ||
+      isSchoolPlaceLabel(placeLabel) ||
+      isSchoolPlaceLabel(siteName) ||
+      isSchoolPlaceLabel(groupName) ||
+      Boolean(isEdit && stamp?.floor));
 
   return (
     <>
@@ -465,6 +521,7 @@ export function StampSaveModal({
                   memoAlign={memoTextAlign}
                   textLayout={stampTextLayout}
                   showDatetime={showDatetime}
+                  floor={floor}
                   latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                   longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
                   variant="thumbnail"
@@ -516,6 +573,33 @@ export function StampSaveModal({
                 </Text>
               </View>
             )}
+
+            {showFloorPicker ? (
+              <View style={styles.siteField}>
+                <Text style={styles.siteLabel}>층</Text>
+                <View style={styles.floorRow}>
+                  {FLOOR_OPTIONS.map((option) => {
+                    const selected = floor === option.value;
+                    return (
+                      <Pressable
+                        key={option.label}
+                        style={[styles.floorChip, selected && styles.floorChipSelected]}
+                        onPress={() => {
+                          floorTouchedRef.current = true;
+                          setFloor(option.value);
+                        }}
+                      >
+                        <Text
+                          style={[styles.floorChipText, selected && styles.floorChipTextSelected]}
+                        >
+                          {option.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
 
             <View>
               <VoiceInputField
@@ -774,6 +858,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#222',
+  },
+  floorRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  floorChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+  },
+  floorChipSelected: {
+    backgroundColor: '#2563eb',
+  },
+  floorChipText: {
+    fontSize: 13,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  floorChipTextSelected: {
+    color: '#fff',
   },
   siteInput: {
     borderWidth: 1,

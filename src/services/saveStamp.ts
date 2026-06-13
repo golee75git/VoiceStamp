@@ -48,6 +48,7 @@ type SaveStampInput = {
   groupName?: string;
   latitude?: number | null;
   longitude?: number | null;
+  floor?: Stamp['floor'];
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -194,6 +195,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     galleryAssetId: null,
     latitude: input.latitude ?? null,
     longitude: input.longitude ?? null,
+    floor: input.floor ?? null,
   };
 
   await insertStamp(stamp);
@@ -214,6 +216,7 @@ export async function updateStamp(input: {
   title: string;
   memo: string;
   groupName?: string;
+  floor?: Stamp['floor'];
   croppedImageUri?: string;
   captureForExport?: SaveStampInput['captureForExport'];
 }): Promise<void> {
@@ -266,12 +269,16 @@ export async function updateStamp(input: {
   }
 
   const metadataChanged =
-    groupChanged || titleChanged || memo !== stamp.memo || imageCropped;
+    groupChanged ||
+    titleChanged ||
+    memo !== stamp.memo ||
+    imageCropped ||
+    (input.floor ?? null) !== (stamp.floor ?? null);
 
   if (metadataChanged) {
-    await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId);
+    await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId, input.floor ?? null);
   } else {
-    await updateStampMetadata(stamp.id, title, memo);
+    await updateStampMetadata(stamp.id, title, memo, input.floor ?? null);
   }
 
   if (imageCropped && Platform.OS !== 'web') {
@@ -281,6 +288,7 @@ export async function updateStamp(input: {
       memo,
       imagePath,
       galleryAssetId,
+      floor: input.floor ?? null,
       updatedAt: Date.now(),
     };
     scheduleEditStampCaptionGallerySave(

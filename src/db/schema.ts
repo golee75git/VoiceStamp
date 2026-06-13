@@ -33,6 +33,10 @@ export const ALTER_STAMPS_ADD_LONGITUDE = `
   ALTER TABLE stamps ADD COLUMN longitude REAL;
 `;
 
+export const ALTER_STAMPS_ADD_FLOOR = `
+  ALTER TABLE stamps ADD COLUMN floor TEXT;
+`;
+
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,

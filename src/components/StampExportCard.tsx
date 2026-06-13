@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
 import type { PreparedExportPhoto } from '../services/exportStampImage';
-import { pdfDisplayTitle } from '../services/pdfTitleFormat';
+import { stampDisplayTitle } from '../services/stampFloor';
 import { stampCoordinatesLine } from '../services/stampCoords';
 import type { StampImageExportOptions } from '../services/exportStampImage';
 import type { Stamp } from '../types/stamp';
@@ -28,7 +28,7 @@ export function StampExportCard({
 }: StampExportCardProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const readyNotifiedRef = useRef(false);
-  const title = pdfDisplayTitle(stamp.title, options.showDatetime);
+  const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
   const imageUri = resolveImageUri(stamp.imagePath);

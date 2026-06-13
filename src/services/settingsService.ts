@@ -1,4 +1,6 @@
 import { getDatabase } from '../db/database';
+import { sanitizeStampFloor } from './stampFloor';
+import type { StampFloor } from '../types/stamp';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
@@ -15,6 +17,8 @@ const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 const ONBOARDING_SEEN_KEY = 'onboarding_seen';
 const LAST_APP_OPEN_AT_KEY = 'last_app_open_at';
 const START_SCREEN_HIDDEN_UNTIL_KEY = 'start_screen_hidden_until';
+const FLOOR_PICKER_MODE_KEY = 'floor_picker_mode';
+const LAST_FLOOR_KEY = 'last_floor';
 
 export const START_SCREEN_SNOOZE_DAYS = 7;
 
@@ -30,6 +34,7 @@ export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
+export const DEFAULT_FLOOR_PICKER_MODE = 'school_only' as const;
 
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
@@ -37,6 +42,25 @@ export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
+export type FloorPickerMode = 'off' | 'school_only' | 'always';
+
+export function floorPickerModeLabel(mode: FloorPickerMode): string {
+  switch (mode) {
+    case 'off':
+      return '사용 안 함';
+    case 'always':
+      return '항상 표시';
+    default:
+      return '학교일 때만';
+  }
+}
+
+export function sanitizeFloorPickerMode(value: string): FloorPickerMode {
+  if (value === 'off' || value === 'always') {
+    return value;
+  }
+  return 'school_only';
+}
 
 export function stampTextLayoutLabel(layout: StampTextLayout): string {
   return layout === 'watermark' ? '워터마크' : '별도 영역';
@@ -384,4 +408,28 @@ export async function shouldShowStartScreen(): Promise<boolean> {
 export async function snoozeStartScreenForWeek(): Promise<void> {
   const hiddenUntil = Date.now() + START_SCREEN_SNOOZE_DAYS * 24 * 60 * 60 * 1000;
   await writeSetting(START_SCREEN_HIDDEN_UNTIL_KEY, String(hiddenUntil));
+}
+
+export async function getFloorPickerMode(): Promise<FloorPickerMode> {
+  const raw = await readSetting(FLOOR_PICKER_MODE_KEY);
+  return raw ? sanitizeFloorPickerMode(raw) : DEFAULT_FLOOR_PICKER_MODE;
+}
+
+export async function setFloorPickerMode(mode: FloorPickerMode): Promise<FloorPickerMode> {
+  const sanitized = sanitizeFloorPickerMode(mode);
+  await writeSetting(FLOOR_PICKER_MODE_KEY, sanitized);
+  return sanitized;
+}
+
+export async function getLastFloor(): Promise<StampFloor | null> {
+  const raw = await readSetting(LAST_FLOOR_KEY);
+  return sanitizeStampFloor(raw);
+}
+
+export async function setLastFloor(floor: StampFloor | null): Promise<void> {
+  if (floor) {
+    await writeSetting(LAST_FLOOR_KEY, floor);
+  } else {
+    await writeSetting(LAST_FLOOR_KEY, '');
+  }
 }

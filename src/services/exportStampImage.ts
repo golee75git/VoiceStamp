@@ -9,7 +9,7 @@ import {
 import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
-import { pdfDisplayTitle } from './pdfTitleFormat';
+import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import type { StampTextLayout, TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -146,7 +146,7 @@ async function renderStampJpegWatermarkOnWeb(
   const imgWidth = Math.max(1, Math.round(img.width * scale));
   const imgHeight = Math.max(1, Math.round(img.height * scale));
 
-  const title = pdfDisplayTitle(stamp.title, options.showDatetime);
+  const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
   const barPaddingX = 20;
@@ -246,7 +246,7 @@ async function renderStampJpegCaptionOnWeb(
 
   const padding = 24;
   const contentWidth = imgWidth;
-  const title = pdfDisplayTitle(stamp.title, options.showDatetime);
+  const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
 

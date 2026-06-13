@@ -3,6 +3,7 @@ import * as SQLite from 'expo-sqlite';
 import {
   ALTER_STAMPS_ADD_DELETED_AT,
   ALTER_STAMPS_ADD_GALLERY_ASSET_ID,
+  ALTER_STAMPS_ADD_FLOOR,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_SETTINGS_TABLE,
@@ -30,6 +31,10 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasLongitude = columns.some((column) => column.name === 'longitude');
   if (!hasLongitude) {
     await db.execAsync(ALTER_STAMPS_ADD_LONGITUDE);
+  }
+  const hasFloor = columns.some((column) => column.name === 'floor');
+  if (!hasFloor) {
+    await db.execAsync(ALTER_STAMPS_ADD_FLOOR);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }

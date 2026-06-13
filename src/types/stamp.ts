@@ -1,3 +1,5 @@
+export type StampFloor = '1' | '2' | '3' | '4' | '5';
+
 export type Stamp = {
   id: string;
   title: string;
@@ -9,6 +11,7 @@ export type Stamp = {
   galleryAssetId?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  floor?: StampFloor | null;
 };
 
 export type StampRow = {
@@ -22,4 +25,5 @@ export type StampRow = {
   gallery_asset_id?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  floor?: string | null;
 };

@@ -7,7 +7,7 @@ import {
   type StampImageExportOptions,
   type StampRenderParams,
 } from './exportStampImage';
-import { pdfDisplayTitle } from './pdfTitleFormat';
+import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -33,7 +33,7 @@ export async function renderStampWatermarkNative(
   const maxWidth = renderParams?.maxWidth;
   const jpegCompress = renderParams?.jpegCompress ?? STAMP_JPEG_COMPRESS;
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
-  const title = pdfDisplayTitle(stamp.title, options.showDatetime);
+  const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;

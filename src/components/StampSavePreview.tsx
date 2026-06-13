@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View, type ImageResizeMode } from 'react-native';
 
-import { pdfDisplayTitle } from '../services/pdfTitleFormat';
 import { formatStampCoordinates } from '../services/stampCoords';
+import { stampDisplayTitle } from '../services/stampFloor';
 import type { StampTextLayout, TextAlign } from '../services/settingsService';
+import type { StampFloor } from '../types/stamp';
 
 const FALLBACK_ASPECT_RATIO = 4 / 3;
 
@@ -15,6 +16,7 @@ type StampSavePreviewProps = {
   memoAlign: TextAlign;
   textLayout: StampTextLayout;
   showDatetime: boolean;
+  floor?: StampFloor | null;
   latitude?: number | null;
   longitude?: number | null;
   variant: 'thumbnail' | 'fullscreen';
@@ -28,12 +30,13 @@ export function StampSavePreview({
   memoAlign,
   textLayout,
   showDatetime,
+  floor,
   latitude,
   longitude,
   variant,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
-  const displayTitle = pdfDisplayTitle(title, showDatetime);
+  const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
   const displayMemo = memo.trim();
   const coords = formatStampCoordinates(latitude, longitude);
   const isThumbnail = variant === 'thumbnail';

@@ -28,6 +28,7 @@ import {
   type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
+import { stampDisplayTitle } from '../services/stampFloor';
 import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
@@ -538,7 +539,7 @@ export function StampListScreen({
                   />
                   <View style={styles.meta}>
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
-                      {item.title || '(제목 없음)'}
+                      {stampDisplayTitle(item, pdfShowDatetime) || '(제목 없음)'}
                     </Text>
                     <Text
                       style={[styles.cardMemo, { textAlign: memoTextAlign }]}

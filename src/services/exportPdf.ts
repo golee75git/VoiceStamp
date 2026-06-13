@@ -4,7 +4,7 @@ import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
-import { pdfDisplayTitle } from './pdfTitleFormat';
+import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import {
   getMemoTextAlign,
@@ -71,7 +71,7 @@ function buildStampItem(
   shrinkForReportHeader: boolean,
   textLayout: StampTextLayout,
 ): string {
-  const title = escapeHtml(pdfDisplayTitle(stamp.title, showDatetime));
+  const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
   const coordsBlock = coords

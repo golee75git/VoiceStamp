@@ -1,8 +1,9 @@
 import { getDatabase } from '../db/database';
+import { sanitizeStampFloor } from './stampFloor';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor';
 
 function mapRow(row: StampRow): Stamp {
   return {
@@ -16,14 +17,15 @@ function mapRow(row: StampRow): Stamp {
     galleryAssetId: row.gallery_asset_id ?? null,
     latitude: row.latitude ?? null,
     longitude: row.longitude ?? null,
+    floor: sanitizeStampFloor(row.floor),
   };
 }
 
 export async function insertStamp(stamp: Stamp): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -34,6 +36,7 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     stamp.galleryAssetId ?? null,
     stamp.latitude ?? null,
     stamp.longitude ?? null,
+    stamp.floor ?? null,
   );
 }
 
@@ -113,12 +116,18 @@ export async function deleteTrashedStampRows(): Promise<Stamp[]> {
   return trashed;
 }
 
-export async function updateStampMetadata(id: string, title: string, memo: string): Promise<void> {
+export async function updateStampMetadata(
+  id: string,
+  title: string,
+  memo: string,
+  floor?: Stamp['floor'],
+): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    'UPDATE stamps SET title = ?, memo = ?, updated_at = ? WHERE id = ?',
+    'UPDATE stamps SET title = ?, memo = ?, floor = ?, updated_at = ? WHERE id = ?',
     title,
     memo,
+    floor ?? null,
     Date.now(),
     id,
   );
@@ -147,16 +156,18 @@ export async function updateStampRecord(
   memo: string,
   imagePath: string,
   galleryAssetId?: string | null,
+  floor?: Stamp['floor'],
 ): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
     `UPDATE stamps
-     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, updated_at = ?
+     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, updated_at = ?
      WHERE id = ?`,
     title,
     memo,
     imagePath,
     galleryAssetId ?? null,
+    floor ?? null,
     Date.now(),
     id,
   );

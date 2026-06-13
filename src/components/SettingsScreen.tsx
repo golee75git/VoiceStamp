@@ -23,9 +23,12 @@ import {
   DEFAULT_PDF_SHOW_DATETIME,
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
+  DEFAULT_FLOOR_PICKER_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_TITLE_TEXT_ALIGN,
   gallerySaveModeLabel,
+  floorPickerModeLabel,
+  getFloorPickerMode,
   getCameraHand,
   getGallerySaveMode,
   getMemoTextAlign,
@@ -40,6 +43,7 @@ import {
   type PdfImageQuality,
   type PdfPhotosPerPage,
   setCameraHand,
+  setFloorPickerMode,
   setGallerySaveMode,
   setMemoTextAlign,
   setPdfFilenameIncludeDatetime,
@@ -51,12 +55,15 @@ import {
   setTitleTextAlign,
   stampTextLayoutLabel,
   TEXT_ALIGN_OPTIONS,
+  type FloorPickerMode,
   type GallerySaveMode,
   type StampTextLayout,
   type TextAlign,
   textAlignLabel,
 } from '../services/settingsService';
 import { emptyTrash, getTrashedStampCount } from '../services/stampTrash';
+
+const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
@@ -106,6 +113,9 @@ export function SettingsScreen({
     DEFAULT_GALLERY_SAVE_MODE,
   );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
+  const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
+    DEFAULT_FLOOR_PICKER_MODE,
+  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
@@ -116,7 +126,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, floorMode, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -128,6 +138,7 @@ export function SettingsScreen({
           getStampTextLayout(),
           getGallerySaveMode(),
           getCameraHand(),
+          getFloorPickerMode(),
           getTrashedStampCount(),
         ]);
         setFolderName(name);
@@ -140,6 +151,7 @@ export function SettingsScreen({
         setStampTextLayoutState(textLayout);
         setGallerySaveModeState(galleryMode);
         setCameraHandState(hand);
+        setFloorPickerModeState(floorMode);
         setTrashCount(trashed);
       } finally {
         setLoading(false);
@@ -196,6 +208,7 @@ export function SettingsScreen({
         savedTextLayout,
         savedGalleryMode,
         savedCameraHand,
+        savedFloorPickerMode,
       ] = await Promise.all([
           setStampsFolderName(folderName),
           setPdfPhotosPerPage(pdfPhotosPerPage),
@@ -207,6 +220,7 @@ export function SettingsScreen({
           setStampTextLayout(stampTextLayout),
           setGallerySaveMode(gallerySaveMode),
           setCameraHand(cameraHand),
+          setFloorPickerMode(floorPickerMode),
         ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
@@ -218,10 +232,11 @@ export function SettingsScreen({
       setStampTextLayoutState(savedTextLayout);
       setGallerySaveModeState(savedGalleryMode);
       setCameraHandState(savedCameraHand);
+      setFloorPickerModeState(savedFloorPickerMode);
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -446,6 +461,30 @@ export function SettingsScreen({
                 워터마크
               </Text>
             </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>층 선택</Text>
+          <Text style={styles.hint}>
+            학교 근처 촬영 시 저장 모달에 1~5층 칩을 표시합니다. 제목 뒤에 층이 붙어 PDF·이미지에도 반영됩니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {FLOOR_PICKER_OPTIONS.map((option) => {
+              const selected = floorPickerMode === option;
+              return (
+                <Pressable
+                  key={option}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setFloorPickerModeState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {floorPickerModeLabel(option)}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
