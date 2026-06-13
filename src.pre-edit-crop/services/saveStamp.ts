@@ -6,7 +6,6 @@ import {
   type StampImageExportOptions,
 } from './exportStampImage';
 import {
-  ensureStampOriginalCopy,
   extractStampGroupFromImagePath,
   formatDefaultStampTitle,
   formatStampGroupName,
@@ -15,9 +14,7 @@ import {
   persistImage,
   persistOriginalImageCopy,
   renameStampImage,
-  replaceStampMainImage,
   resolveImageUri,
-  syncStampOriginalPath,
 } from './fileService';
 import { moveStampGalleryAlbum, saveStampPhotoToGallery } from './galleryService';
 import {
@@ -127,44 +124,6 @@ function scheduleNewStampGallerySave(
   })();
 }
 
-async function saveEditStampCaptionToGallery(
-  stamp: Stamp,
-  groupName: string,
-  captureForExport?: SaveStampInput['captureForExport'],
-): Promise<string | null> {
-  const mode = await getGallerySaveMode();
-  if (mode === 'original_only') {
-    return stamp.galleryAssetId ?? null;
-  }
-
-  const options = await loadExportOptions();
-  const captionFileName = buildCaptionGalleryFileName(stamp.title);
-
-  try {
-    const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
-    return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
-  } catch {
-    return stamp.galleryAssetId ?? null;
-  }
-}
-
-function scheduleEditStampCaptionGallerySave(
-  stamp: Stamp,
-  groupName: string,
-  captureForExport?: SaveStampInput['captureForExport'],
-): void {
-  void (async () => {
-    try {
-      const galleryAssetId = await saveEditStampCaptionToGallery(stamp, groupName, captureForExport);
-      if (galleryAssetId) {
-        await updateStampGalleryAssetId(stamp.id, galleryAssetId);
-      }
-    } catch {
-      // App stamp is already updated; gallery failure is non-fatal.
-    }
-  })();
-}
-
 export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   const id = generateId();
   const now = Date.now();
@@ -214,12 +173,10 @@ export async function updateStamp(input: {
   title: string;
   memo: string;
   groupName?: string;
-  croppedImageUri?: string;
-  captureForExport?: SaveStampInput['captureForExport'];
 }): Promise<void> {
   const stamp = await getStampById(input.id);
   if (!stamp) {
-    throw new Error('스탬프를 찾을 수 없습니다.');
+    throw new Error('?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
   }
 
   const title = resolveStampTitle(input.title, stamp.createdAt);
@@ -228,14 +185,6 @@ export async function updateStamp(input: {
   const currentGroup = extractStampGroupFromImagePath(stamp.imagePath) ?? '';
   const groupChanged = nextGroup !== currentGroup;
   const titleChanged = title !== stamp.title;
-  const imageCropped = Boolean(input.croppedImageUri);
-
-  const oldMainPath = stamp.imagePath;
-  const oldTitle = stamp.title;
-
-  if (imageCropped && input.croppedImageUri) {
-    await ensureStampOriginalCopy(stamp.imagePath, stamp.title, stamp.id);
-  }
 
   let imagePath = stamp.imagePath;
   let galleryAssetId = stamp.galleryAssetId ?? null;
@@ -250,43 +199,17 @@ export async function updateStamp(input: {
           resolveImageUri(imagePath),
         );
       } catch {
-        // Folder move in app is done.
+        // ???대뜑 ?대룞? ?꾨즺??
       }
     }
   } else if (titleChanged) {
     imagePath = await renameStampImage(imagePath, title, stamp.id);
   }
 
-  if (oldMainPath !== imagePath || oldTitle !== title) {
-    await syncStampOriginalPath(oldMainPath, imagePath, oldTitle, title, stamp.id);
-  }
-
-  if (imageCropped && input.croppedImageUri) {
-    await replaceStampMainImage(input.croppedImageUri, imagePath);
-  }
-
-  const metadataChanged =
-    groupChanged || titleChanged || memo !== stamp.memo || imageCropped;
-
-  if (metadataChanged) {
+  if (groupChanged || titleChanged || memo !== stamp.memo) {
     await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId);
-  } else {
-    await updateStampMetadata(stamp.id, title, memo);
+    return;
   }
 
-  if (imageCropped && Platform.OS !== 'web') {
-    const updatedStamp: Stamp = {
-      ...stamp,
-      title,
-      memo,
-      imagePath,
-      galleryAssetId,
-      updatedAt: Date.now(),
-    };
-    scheduleEditStampCaptionGallerySave(
-      updatedStamp,
-      nextGroup || currentGroup,
-      input.captureForExport,
-    );
-  }
+  await updateStampMetadata(stamp.id, title, memo);
 }

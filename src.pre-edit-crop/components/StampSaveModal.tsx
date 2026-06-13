@@ -360,10 +360,8 @@ export function StampSaveModal({
   };
 
   const handleApplyCrop = async () => {
-    if (!workingImageUri || applyingCrop || saving) {
-      if (!applyingCrop && !saving) {
-        handleCloseViewer();
-      }
+    if (!workingImageUri || applyingCrop || saving || isEdit) {
+      handleCloseViewer();
       return;
     }
 
@@ -395,15 +393,7 @@ export function StampSaveModal({
 
     try {
       if (isEdit && stamp) {
-        const croppedImageUri = photoUri !== imageUri ? photoUri : undefined;
-        await updateStamp({
-          id: stamp.id,
-          title,
-          memo,
-          groupName,
-          croppedImageUri,
-          captureForExport: captureStampForExport,
-        });
+        await updateStamp({ id: stamp.id, title, memo, groupName });
       } else {
         await setCurrentSiteName(siteName);
         const originalTempUri =
@@ -582,18 +572,20 @@ export function StampSaveModal({
             >
               <Text style={styles.imageViewerCloseText}>닫기</Text>
             </Pressable>
-            <Pressable
-              style={[styles.imageViewerApplyButton, applyingCrop && styles.imageViewerApplyButtonDisabled]}
-              onPress={() => void handleApplyCrop()}
-              disabled={applyingCrop || saving}
-              accessibilityLabel="크기 적용"
-            >
-              {applyingCrop ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.imageViewerApplyText}>적용</Text>
-              )}
-            </Pressable>
+            {!isEdit ? (
+              <Pressable
+                style={[styles.imageViewerApplyButton, applyingCrop && styles.imageViewerApplyButtonDisabled]}
+                onPress={() => void handleApplyCrop()}
+                disabled={applyingCrop || saving}
+                accessibilityLabel="크기 적용"
+              >
+                {applyingCrop ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <Text style={styles.imageViewerApplyText}>적용</Text>
+                )}
+              </Pressable>
+            ) : null}
           </View>
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
