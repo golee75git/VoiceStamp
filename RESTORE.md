@@ -1329,3 +1329,18 @@ Remove-Item src\components\ZoomableImage.tsx -ErrorAction SilentlyContinue
 Remove-Item babel.config.js -ErrorAction SilentlyContinue
 npm install
 ```
+
+## 84. 저장 전체 보기 줌 제스처(Modal) 되돌리기 (선택)
+
+전체 보기 Modal 안 `GestureHandlerRootView` 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-zoom-modal-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-zoom-modal-fix\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-zoom-modal-fix\components\ZoomableImage.tsx src\components\ -Force
+```

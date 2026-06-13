@@ -500,49 +500,47 @@ export function StampSaveModal({
       animationType="fade"
       onRequestClose={() => setImageViewerVisible(false)}
     >
-      <GestureHandlerRootView style={styles.imageViewerRoot}>
-        <View style={styles.imageViewerOverlay}>
-          <View style={styles.imageViewerTopBar}>
-            <Pressable
-              style={styles.imageViewerCloseButton}
-              onPress={() => setImageViewerVisible(false)}
-              accessibilityLabel="전체 보기 닫기"
-            >
-              <Text style={styles.imageViewerCloseText}>닫기</Text>
-            </Pressable>
-          </View>
-          {imageUri ? (
-            <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                imageUri={imageUri}
-                title={title}
-                memo={memo}
-                titleAlign={titleTextAlign}
-                memoAlign={memoTextAlign}
-                textLayout={stampTextLayout}
-                showDatetime={showDatetime}
-                latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
-                longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
-              />
-            </View>
-          ) : null}
-          <View style={styles.imageViewerDeleteBar}>
-            <Pressable
-              style={[styles.imageViewerDeleteButton, deleting && styles.imageViewerDeleteButtonDisabled]}
-              onPress={handleImageDeletePress}
-              disabled={deleting || saving}
-            >
-              {deleting ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.imageViewerDeleteText}>
-                  {isEdit ? '휴지통으로 이동' : '사진 버리기'}
-                </Text>
-              )}
-            </Pressable>
-          </View>
+      <View style={styles.imageViewerOverlay}>
+        <View style={styles.imageViewerTopBar}>
+          <Pressable
+            style={styles.imageViewerCloseButton}
+            onPress={() => setImageViewerVisible(false)}
+            accessibilityLabel="전체 보기 닫기"
+          >
+            <Text style={styles.imageViewerCloseText}>닫기</Text>
+          </Pressable>
         </View>
-      </GestureHandlerRootView>
+        {imageUri ? (
+          <View style={styles.imageViewerContent}>
+            <StampSaveZoomViewer
+              imageUri={imageUri}
+              title={title}
+              memo={memo}
+              titleAlign={titleTextAlign}
+              memoAlign={memoTextAlign}
+              textLayout={stampTextLayout}
+              showDatetime={showDatetime}
+              latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
+              longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+            />
+          </View>
+        ) : null}
+        <View style={styles.imageViewerDeleteBar}>
+          <Pressable
+            style={[styles.imageViewerDeleteButton, deleting && styles.imageViewerDeleteButtonDisabled]}
+            onPress={handleImageDeletePress}
+            disabled={deleting || saving}
+          >
+            {deleting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.imageViewerDeleteText}>
+                {isEdit ? '휴지통으로 이동' : '사진 버리기'}
+              </Text>
+            )}
+          </Pressable>
+        </View>
+      </View>
     </Modal>
 
     <Modal
@@ -618,9 +616,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#111',
-  },
-  imageViewerRoot: {
-    flex: 1,
   },
   imageViewerOverlay: {
     flex: 1,

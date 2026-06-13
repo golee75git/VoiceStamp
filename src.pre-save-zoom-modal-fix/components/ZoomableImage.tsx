@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -32,9 +32,6 @@ export function ZoomableImage({ uri }: ZoomableImageProps) {
   };
 
   const pinch = Gesture.Pinch()
-    .onBegin(() => {
-      savedScale.value = scale.value;
-    })
     .onUpdate((event) => {
       const nextScale = savedScale.value * event.scale;
       scale.value = Math.min(MAX_SCALE, Math.max(MIN_SCALE * 0.5, nextScale));
@@ -53,8 +50,6 @@ export function ZoomableImage({ uri }: ZoomableImageProps) {
     });
 
   const pan = Gesture.Pan()
-    .minPointers(1)
-    .maxPointers(1)
     .onUpdate((event) => {
       if (savedScale.value <= MIN_SCALE) {
         return;
@@ -78,7 +73,7 @@ export function ZoomableImage({ uri }: ZoomableImageProps) {
       savedScale.value = 2;
     });
 
-  const gesture = Gesture.Simultaneous(pinch, Gesture.Exclusive(doubleTap, pan));
+  const gesture = Gesture.Simultaneous(pinch, pan, doubleTap);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -91,8 +86,8 @@ export function ZoomableImage({ uri }: ZoomableImageProps) {
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={styles.container}>
-        <Animated.View style={[styles.imageWrap, animatedStyle]} collapsable={false}>
-          <Animated.Image source={{ uri }} style={styles.image} resizeMode="contain" />
+        <Animated.View style={[styles.imageWrap, animatedStyle]}>
+          <Image source={{ uri }} style={styles.image} resizeMode="contain" />
         </Animated.View>
       </Animated.View>
     </GestureDetector>
