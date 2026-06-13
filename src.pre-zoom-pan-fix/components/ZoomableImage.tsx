@@ -119,24 +119,18 @@ export function ZoomableImage({ uri, onCropChange }: ZoomableImageProps) {
       if (scale.value > MAX_SCALE) {
         scale.value = withTiming(MAX_SCALE);
         savedScale.value = MAX_SCALE;
-        notifyCrop(MAX_SCALE, translateX.value, translateY.value);
+        notifyCrop(MAX_SCALE, savedTranslateX.value, savedTranslateY.value);
         return;
       }
       savedScale.value = scale.value;
-      notifyCrop(scale.value, translateX.value, translateY.value);
+      notifyCrop(savedScale.value, savedTranslateX.value, savedTranslateY.value);
     });
 
   const pan = Gesture.Pan()
     .minPointers(1)
     .maxPointers(1)
-    .activeOffsetX([-8, 8])
-    .activeOffsetY([-8, 8])
-    .onBegin(() => {
-      savedTranslateX.value = translateX.value;
-      savedTranslateY.value = translateY.value;
-    })
     .onUpdate((event) => {
-      if (scale.value <= MIN_SCALE + 0.01) {
+      if (savedScale.value <= MIN_SCALE) {
         return;
       }
       translateX.value = savedTranslateX.value + event.translationX;
@@ -145,8 +139,7 @@ export function ZoomableImage({ uri, onCropChange }: ZoomableImageProps) {
     .onEnd(() => {
       savedTranslateX.value = translateX.value;
       savedTranslateY.value = translateY.value;
-      savedScale.value = scale.value;
-      notifyCrop(scale.value, savedTranslateX.value, savedTranslateY.value);
+      notifyCrop(savedScale.value, savedTranslateX.value, savedTranslateY.value);
     });
 
   const doubleTap = Gesture.Tap()
@@ -159,10 +152,10 @@ export function ZoomableImage({ uri, onCropChange }: ZoomableImageProps) {
       }
       scale.value = withTiming(2);
       savedScale.value = 2;
-      notifyCrop(2, translateX.value, translateY.value);
+      notifyCrop(2, savedTranslateX.value, savedTranslateY.value);
     });
 
-  const gesture = Gesture.Simultaneous(pinch, pan, doubleTap);
+  const gesture = Gesture.Simultaneous(pinch, Gesture.Exclusive(doubleTap, pan));
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [

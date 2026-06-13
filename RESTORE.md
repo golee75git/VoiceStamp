@@ -1363,3 +1363,17 @@ Copy-Item src.pre-stamp-crop\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-stamp-crop\services\fileService.ts src\services\ -Force
 Remove-Item src\services\stampImageCrop.ts -ErrorAction SilentlyContinue
 ```
+
+## 86. 확대 후 이미지 이동(팬) 되돌리기 (선택)
+
+확대 후 드래그 이동 개선 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-zoom-pan-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-zoom-pan-fix\components\ZoomableImage.tsx src\components\ -Force
+```
