@@ -53,6 +53,12 @@ export function CameraScreen({
     }
 
     launchingRef.current = true;
+
+    if (Platform.OS === 'web') {
+      Alert.alert('카메라', '웹에서는 목록의 앨범을 이용해 주세요.');
+      return;
+    }
+
     setCameraBusy(true);
     try {
       const uri = await takePhotoWithSystemCamera();
@@ -117,7 +123,7 @@ export function CameraScreen({
     );
   }
 
-  if (!isWeb && !permission.granted) {
+  if (!permission.granted) {
     return (
       <View style={styles.centered}>
         <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
@@ -137,18 +143,12 @@ export function CameraScreen({
         {cameraBusy ? (
           <>
             <ActivityIndicator size="large" color="#fff" />
-            <Text style={styles.launcherHint}>
-              {isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…'}
-            </Text>
+            <Text style={styles.launcherHint}>시스템 카메라 여는 중…</Text>
           </>
         ) : (
           <>
             <Text style={styles.launcherTitle}>VoiceStamp</Text>
-            <Text style={styles.launcherHint}>
-              {isWeb
-                ? '촬영 버튼을 누르면 브라우저 카메라로 사진을 찍을 수 있습니다. 앨범은 목록에서 이용하세요.'
-                : '촬영 버튼을 누르면 줌 가능한 시스템 카메라가 열립니다.'}
-            </Text>
+            <Text style={styles.launcherHint}>촬영 버튼을 누르면 줌 가능한 시스템 카메라가 열립니다.</Text>
             <Pressable style={styles.launchCaptureButton} onPress={() => void openSystemCamera()}>
               <View style={styles.launchCaptureInner} />
             </Pressable>

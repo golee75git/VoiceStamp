@@ -1467,3 +1467,17 @@ Copy-Item src.pre-start-screen\App.tsx . -Force
 Copy-Item src.pre-start-screen\services\settingsService.ts src\services\ -Force
 Remove-Item src\components\StartScreen.tsx -ErrorAction SilentlyContinue
 ```
+
+## 93. 웹 브라우저 카메라 촬영 되돌리기 (선택)
+
+Vercel 웹에서 브라우저 카메라 연동 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-web-camera.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-web-camera\components\CameraScreen.tsx src\components\ -Force
+```
