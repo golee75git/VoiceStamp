@@ -40,7 +40,6 @@ import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
-import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
 
 type SpeechTarget = 'title' | 'memo' | null;
@@ -500,18 +499,14 @@ export function StampSaveModal({
       onRequestClose={() => setImageViewerVisible(false)}
     >
       <View style={styles.imageViewerOverlay}>
-        <View style={styles.imageViewerTopBar}>
-          <Pressable
-            style={styles.imageViewerCloseButton}
-            onPress={() => setImageViewerVisible(false)}
-            accessibilityLabel="전체 보기 닫기"
-          >
-            <Text style={styles.imageViewerCloseText}>닫기</Text>
-          </Pressable>
-        </View>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => setImageViewerVisible(false)}
+          accessibilityLabel="전체 보기 닫기"
+        />
         {imageUri ? (
-          <View style={styles.imageViewerContent}>
-            <StampSaveZoomViewer
+          <View style={styles.imageViewerContent} pointerEvents="none">
+            <StampSavePreview
               imageUri={imageUri}
               title={title}
               memo={memo}
@@ -521,6 +516,7 @@ export function StampSaveModal({
               showDatetime={showDatetime}
               latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
               longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+              variant="fullscreen"
             />
           </View>
         ) : null}
@@ -619,33 +615,11 @@ const styles = StyleSheet.create({
   imageViewerOverlay: {
     flex: 1,
     backgroundColor: '#000',
-  },
-  imageViewerTopBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 2,
-    paddingTop: 48,
-    paddingHorizontal: 16,
-    alignItems: 'flex-end',
-  },
-  imageViewerCloseButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  imageViewerCloseText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
+    justifyContent: 'center',
   },
   imageViewerContent: {
     flex: 1,
     width: '100%',
-    paddingTop: 96,
-    paddingBottom: 96,
   },
   imageViewerDeleteBar: {
     position: 'absolute',

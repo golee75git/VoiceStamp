@@ -5,7 +5,6 @@ import {
   prepareExportPhoto,
   STAMP_JPEG_COMPRESS,
   type StampImageExportOptions,
-  type StampRenderParams,
 } from './exportStampImage';
 import { pdfDisplayTitle } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
@@ -27,12 +26,8 @@ function watermarkPosition(align: TextAlign): Position {
 export async function renderStampWatermarkNative(
   stamp: Stamp,
   options: StampImageExportOptions,
-  renderParams?: StampRenderParams,
 ): Promise<string> {
-  const photoUri = renderParams?.sourceUri ?? resolveImageUri(stamp.imagePath);
-  const maxWidth = renderParams?.maxWidth;
-  const jpegCompress = renderParams?.jpegCompress ?? STAMP_JPEG_COMPRESS;
-  const prepared = await prepareExportPhoto(photoUri, maxWidth);
+  const prepared = await prepareExportPhoto(resolveImageUri(stamp.imagePath));
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
@@ -69,7 +64,7 @@ export async function renderStampWatermarkNative(
         },
       },
     ],
-    quality: Math.round(jpegCompress * 100),
+    quality: Math.round(STAMP_JPEG_COMPRESS * 100),
     saveFormat: ImageFormat.jpg,
   });
 

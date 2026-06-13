@@ -6,7 +6,6 @@ import { buildCaptionLayout, captionTextX } from './captionLayout';
 import {
   prepareExportPhoto,
   type StampImageExportOptions,
-  type StampRenderParams,
 } from './exportStampImage';
 import { resolveImageUri } from './fileService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
@@ -65,12 +64,8 @@ function captionTextStyle(
 export async function renderStampCaptionNative(
   stamp: Stamp,
   options: StampImageExportOptions,
-  renderParams?: StampRenderParams,
 ): Promise<string> {
-  const photoUri = renderParams?.sourceUri ?? resolveImageUri(stamp.imagePath);
-  const maxWidth = renderParams?.maxWidth;
-  const jpegCompress = renderParams?.jpegCompress ?? CAPTION_JPEG_COMPRESS;
-  const prepared = await prepareExportPhoto(photoUri, maxWidth);
+  const prepared = await prepareExportPhoto(resolveImageUri(stamp.imagePath));
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp);
@@ -163,7 +158,7 @@ export async function renderStampCaptionNative(
   const jpeg = await manipulateAsync(
     normalizeMarkedUri(pngUri),
     [],
-    { compress: jpegCompress, format: SaveFormat.JPEG },
+    { compress: CAPTION_JPEG_COMPRESS, format: SaveFormat.JPEG },
   );
 
   return jpeg.uri;

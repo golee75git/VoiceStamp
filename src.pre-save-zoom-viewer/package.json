@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "voicestamp",
   "version": "1.0.0",
   "main": "index.ts",
@@ -18,9 +18,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",
-    "react-native-gesture-handler": "~2.31.1",
     "react-native-image-marker": "^1.2.11",
-    "react-native-reanimated": "4.3.1",
     "react-native-view-shot": "5.1.0",
     "react-native-web": "^0.21.2"
   },

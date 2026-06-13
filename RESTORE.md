@@ -1304,3 +1304,28 @@ restore-save-preview.bat
 Copy-Item src.pre-save-preview\components\StampSaveModal.tsx src\components\ -Force
 Remove-Item src\components\StampSavePreview.tsx -ErrorAction SilentlyContinue
 ```
+
+## 83. 저장 전체 보기(줌·합성 미리보기) 되돌리기 (선택)
+
+저장 화면 전체 보기의 핀치 줌·저화질 합성 미리보기 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-zoom-viewer.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-zoom-viewer\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-zoom-viewer\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-save-zoom-viewer\services\renderStampCaptionNative.ts src\services\ -Force
+Copy-Item src.pre-save-zoom-viewer\services\renderStampWatermarkNative.ts src\services\ -Force
+Copy-Item src.pre-save-zoom-viewer\App.tsx . -Force
+Copy-Item src.pre-save-zoom-viewer\index.ts . -Force
+Copy-Item src.pre-save-zoom-viewer\package.json . -Force
+Copy-Item src.pre-save-zoom-viewer\package-lock.json . -Force
+Remove-Item src\components\StampSaveZoomViewer.tsx -ErrorAction SilentlyContinue
+Remove-Item src\components\ZoomableImage.tsx -ErrorAction SilentlyContinue
+Remove-Item babel.config.js -ErrorAction SilentlyContinue
+npm install
+```

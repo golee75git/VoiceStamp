@@ -1,6 +1,5 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { IntroScreen } from './src/components/IntroScreen';
 import { MainScreen } from './src/screens/MainScreen';
@@ -30,30 +29,25 @@ export default function App() {
     };
   }, []);
 
-  let content: ReactNode = <View style={styles.boot} />;
-
-  if (ready) {
-    if (showIntro) {
-      content = (
-        <IntroScreen
-          onComplete={async () => {
-            await setLastAppOpenAt(Date.now());
-            setShowIntro(false);
-          }}
-        />
-      );
-    } else {
-      content = <MainScreen />;
-    }
+  if (!ready) {
+    return <View style={styles.boot} />;
   }
 
-  return <GestureHandlerRootView style={styles.root}>{content}</GestureHandlerRootView>;
+  if (showIntro) {
+    return (
+      <IntroScreen
+        onComplete={async () => {
+          await setLastAppOpenAt(Date.now());
+          setShowIntro(false);
+        }}
+      />
+    );
+  }
+
+  return <MainScreen />;
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   boot: {
     flex: 1,
     backgroundColor: '#E8F4FE',

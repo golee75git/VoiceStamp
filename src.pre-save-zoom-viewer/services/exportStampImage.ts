@@ -16,14 +16,6 @@ import type { Stamp } from '../types/stamp';
 
 export const STAMP_JPEG_MAX_WIDTH = 2048;
 export const STAMP_JPEG_COMPRESS = 0.85;
-export const STAMP_PREVIEW_MAX_WIDTH = 720;
-export const STAMP_PREVIEW_JPEG_COMPRESS = 0.72;
-
-export type StampRenderParams = {
-  sourceUri?: string;
-  maxWidth?: number;
-  jpegCompress?: number;
-};
 
 export type StampImageExportOptions = {
   titleAlign: TextAlign;
@@ -43,12 +35,9 @@ export type PreparedExportPhoto = {
   height: number;
 };
 
-export async function prepareExportPhoto(
-  imageUri: string,
-  maxWidth: number = STAMP_JPEG_MAX_WIDTH,
-): Promise<PreparedExportPhoto> {
+export async function prepareExportPhoto(imageUri: string): Promise<PreparedExportPhoto> {
   const context = ImageManipulator.manipulate(imageUri);
-  context.resize({ width: maxWidth });
+  context.resize({ width: STAMP_JPEG_MAX_WIDTH });
   const image = await context.renderAsync();
   const saved = await image.saveAsync({
     format: SaveFormat.JPEG,
@@ -371,26 +360,13 @@ export function buildCaptionGalleryFileName(title: string): string {
 export async function renderStampJpegUri(
   stamp: Stamp,
   options: StampImageExportOptions,
-  _captureNative?: CaptureStampForExport,
-  renderParams?: StampRenderParams,
+  _captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
 ): Promise<string> {
   if (options.textLayout === 'watermark') {
-    return renderStampWatermarkNative(stamp, options, renderParams);
+    return renderStampWatermarkNative(stamp, options);
   }
 
-  return renderStampCaptionNative(stamp, options, renderParams);
-}
-
-export async function renderStampPreviewJpegUri(
-  stamp: Stamp,
-  options: StampImageExportOptions,
-  sourceUri: string,
-): Promise<string> {
-  return renderStampJpegUri(stamp, options, undefined, {
-    sourceUri,
-    maxWidth: STAMP_PREVIEW_MAX_WIDTH,
-    jpegCompress: STAMP_PREVIEW_JPEG_COMPRESS,
-  });
+  return renderStampCaptionNative(stamp, options);
 }
 
 export async function saveStampsAsJpegToGallery(
