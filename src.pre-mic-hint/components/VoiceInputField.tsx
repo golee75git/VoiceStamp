@@ -33,22 +33,17 @@ export function VoiceInputField({
     <View style={styles.field}>
       <View style={[styles.labelRow, cameraHand === 'left' && styles.labelRowLeft]}>
         <Text style={styles.label}>{label}</Text>
-        <View style={[styles.micGroup, cameraHand === 'left' && styles.micGroupLeft]}>
-          {speechAvailable ? (
-            <Text style={styles.micHint}>(눌러서 말하기)</Text>
-          ) : null}
-          <Pressable
-            style={[styles.micButton, listening && styles.micButtonActive]}
-            onPress={onMicPress}
-            disabled={!speechAvailable}
-          >
-            {listening ? (
-              <Text style={styles.micDot}>●</Text>
-            ) : (
-              <Image source={micIcon} style={styles.micIcon} resizeMode="contain" />
-            )}
-          </Pressable>
-        </View>
+        <Pressable
+          style={[styles.micButton, listening && styles.micButtonActive]}
+          onPress={onMicPress}
+          disabled={!speechAvailable}
+        >
+          {listening ? (
+            <Text style={styles.micDot}>●</Text>
+          ) : (
+            <Image source={micIcon} style={styles.micIcon} resizeMode="contain" />
+          )}
+        </Pressable>
       </View>
       <TextInput
         style={[styles.input, multiline && styles.inputMultiline, { textAlign }]}
@@ -82,18 +77,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#222',
-  },
-  micGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  micGroupLeft: {
-    flexDirection: 'row-reverse',
-  },
-  micHint: {
-    fontSize: 12,
-    color: '#6b7280',
   },
   micButton: {
     width: 36,

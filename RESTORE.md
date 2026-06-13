@@ -1392,3 +1392,17 @@ restore-save-viewer-actions.bat
 Copy-Item src.pre-save-viewer-actions\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-save-viewer-actions\components\StampSaveZoomViewer.tsx src\components\ -Force
 ```
+
+## 88. 마이크 옆 안내 문구 되돌리기 (선택)
+
+「(눌러서 말하기)」 표시 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-mic-hint.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-mic-hint\components\VoiceInputField.tsx src\components\ -Force
+```
