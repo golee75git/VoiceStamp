@@ -29,7 +29,6 @@ import {
 import {
   getStampById,
   insertStamp,
-  updateStampGalleryAssetId,
   updateStampMetadata,
   updateStampRecord,
 } from './stampRepository';
@@ -99,31 +98,6 @@ async function saveNewStampToGallery(
   }
 }
 
-function scheduleNewStampGallerySave(
-  stamp: Stamp,
-  groupName: string,
-  galleryOriginalUri: string,
-  captureForExport?: SaveStampInput['captureForExport'],
-): void {
-  void (async () => {
-    try {
-      const mode = await getGallerySaveMode();
-      const galleryAssetId = await saveNewStampToGallery(
-        stamp,
-        groupName,
-        galleryOriginalUri,
-        mode,
-        captureForExport,
-      );
-      if (galleryAssetId) {
-        await updateStampGalleryAssetId(stamp.id, galleryAssetId);
-      }
-    } catch {
-      // App stamp is already saved; gallery failure is non-fatal.
-    }
-  })();
-}
-
 export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   const id = generateId();
   const now = Date.now();
@@ -132,16 +106,15 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     input.groupName !== undefined
       ? normalizeStampGroupName(input.groupName)
       : formatStampGroupName(now, await getCurrentSiteName());
+  const imagePath = await persistImage(input.tempImageUri, title, id, groupName);
 
-  const copyOriginal =
-    input.originalTempUri && input.originalTempUri !== input.tempImageUri
-      ? persistOriginalImageCopy(input.originalTempUri, title, id, groupName).catch(() => {})
-      : Promise.resolve();
-
-  const imagePath = await Promise.all([
-    persistImage(input.tempImageUri, title, id, groupName),
-    copyOriginal,
-  ]).then(([path]) => path);
+  if (input.originalTempUri && input.originalTempUri !== input.tempImageUri) {
+    try {
+      await persistOriginalImageCopy(input.originalTempUri, title, id, groupName);
+    } catch {
+      // Cropped stamp saved; original copy is optional.
+    }
+  }
 
   const stamp: Stamp = {
     id,
@@ -155,16 +128,28 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     longitude: input.longitude ?? null,
   };
 
-  await insertStamp(stamp);
-
+  let galleryAssetId: string | null = null;
   if (Platform.OS !== 'web') {
-    const galleryOriginalUri =
-      input.originalTempUri && input.originalTempUri !== input.tempImageUri
-        ? input.originalTempUri
-        : resolveImageUri(imagePath);
-    scheduleNewStampGallerySave(stamp, groupName, galleryOriginalUri, input.captureForExport);
+    try {
+      const mode = await getGallerySaveMode();
+      const galleryOriginalUri =
+        input.originalTempUri && input.originalTempUri !== input.tempImageUri
+          ? input.originalTempUri
+          : resolveImageUri(imagePath);
+      galleryAssetId = await saveNewStampToGallery(
+        stamp,
+        groupName,
+        galleryOriginalUri,
+        mode,
+        input.captureForExport,
+      );
+    } catch {
+      // ???대? ??μ? ?꾨즺?? 媛ㅻ윭由???Β룰텒??嫄곕???????ㅽ뙣濡?泥섎━?섏? ?딆쓬.
+    }
   }
 
+  stamp.galleryAssetId = galleryAssetId;
+  await insertStamp(stamp);
   return stamp;
 }
 

@@ -1406,3 +1406,18 @@ restore-mic-hint.bat
 ```powershell
 Copy-Item src.pre-mic-hint\components\VoiceInputField.tsx src\components\ -Force
 ```
+
+## 89. 저장 시 갤러리 백그라운드 처리 되돌리기 (선택)
+
+저장 버튼 반응 속도 개선(갤러리 비동기) 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-fast-gallery.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-fast-gallery\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-save-fast-gallery\services\stampRepository.ts src\services\ -Force
+```

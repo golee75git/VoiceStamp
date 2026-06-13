@@ -161,13 +161,3 @@ export async function updateStampRecord(
     id,
   );
 }
-
-export async function updateStampGalleryAssetId(id: string, galleryAssetId: string): Promise<void> {
-  const db = await getDatabase();
-  await db.runAsync(
-    'UPDATE stamps SET gallery_asset_id = ?, updated_at = ? WHERE id = ?',
-    galleryAssetId,
-    Date.now(),
-    id,
-  );
-}
