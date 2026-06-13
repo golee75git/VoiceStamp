@@ -10,7 +10,6 @@ import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import { stampCoordinatesLine } from './stampCoords';
 import type { StampTextLayout, TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -137,7 +136,6 @@ async function renderStampJpegWatermarkOnWeb(
 
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
   const barPaddingX = 20;
   const barPaddingY = 16;
   const textWidth = imgWidth - barPaddingX * 2;
@@ -152,14 +150,11 @@ async function renderStampJpegWatermarkOnWeb(
   const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
   measureCtx.font = '400 26px sans-serif';
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
-  measureCtx.font = '400 22px sans-serif';
-  const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
 
   const barHeight =
     barPaddingY +
     titleLines.length * 38 +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
-    (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
     barPaddingY;
 
   const canvas = document.createElement('canvas');
@@ -190,7 +185,7 @@ async function renderStampJpegWatermarkOnWeb(
     ) + 4;
 
   if (memo) {
-    textY = drawAlignedText(
+    drawAlignedText(
       ctx,
       memo,
       barPaddingX,
@@ -201,21 +196,6 @@ async function renderStampJpegWatermarkOnWeb(
       '400',
       '#f3f4f6',
       32,
-    );
-  }
-
-  if (coords) {
-    drawAlignedText(
-      ctx,
-      coords,
-      barPaddingX,
-      textY + 4,
-      textWidth,
-      options.memoAlign,
-      22,
-      '400',
-      '#e5e7eb',
-      28,
     );
   }
 
@@ -237,7 +217,6 @@ async function renderStampJpegCaptionOnWeb(
   const contentWidth = imgWidth;
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
 
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
@@ -249,8 +228,6 @@ async function renderStampJpegCaptionOnWeb(
   const titleLines = wrapCanvasLines(measureCtx, title, contentWidth);
   measureCtx.font = '400 28px sans-serif';
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
-  measureCtx.font = '400 24px sans-serif';
-  const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
 
   const canvasWidth = contentWidth + padding * 2;
   const canvasHeight =
@@ -259,7 +236,6 @@ async function renderStampJpegCaptionOnWeb(
     16 +
     titleLines.length * 44 +
     (memoLines.length > 0 ? 12 + memoLines.length * 36 : 0) +
-    (coordsLines.length > 0 ? 8 + coordsLines.length * 32 : 0) +
     padding;
 
   const canvas = document.createElement('canvas');
@@ -290,7 +266,7 @@ async function renderStampJpegCaptionOnWeb(
     ) + 4;
 
   if (memo) {
-    textY = drawAlignedText(
+    drawAlignedText(
       ctx,
       memo,
       padding,
@@ -301,21 +277,6 @@ async function renderStampJpegCaptionOnWeb(
       '400',
       '#374151',
       36,
-    );
-  }
-
-  if (coords) {
-    drawAlignedText(
-      ctx,
-      coords,
-      padding,
-      textY + 8,
-      contentWidth,
-      options.memoAlign,
-      24,
-      '400',
-      '#6b7280',
-      32,
     );
   }
 

@@ -1,4 +1,4 @@
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+﻿import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system/legacy';
 import Marker, { ImageFormat, TextBackgroundType } from 'react-native-image-marker';
 
@@ -9,7 +9,6 @@ import {
 } from './exportStampImage';
 import { resolveImageUri } from './fileService';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import { stampCoordinatesLine } from './stampCoords';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -68,7 +67,6 @@ export async function renderStampCaptionNative(
   const prepared = await prepareExportPhoto(resolveImageUri(stamp.imagePath));
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
   const layout = buildCaptionLayout(
     prepared.width,
     prepared.height,
@@ -76,7 +74,6 @@ export async function renderStampCaptionNative(
     memo,
     options.titleAlign,
     options.memoAlign,
-    coords,
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 
@@ -125,23 +122,6 @@ export async function renderStampCaptionNative(
         '#374151',
         layout.memoSize,
         layout.memoAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.coordsY !== null && layout.coordsText) {
-    watermarkTexts.push({
-      text: layout.coordsText,
-      positionOptions: {
-        X: captionTextX(layout.coordsAlign, layout.padding, layout.canvasWidth),
-        Y: layout.coordsY,
-      },
-      style: captionTextStyle(
-        '#6b7280',
-        layout.coordsSize,
-        layout.coordsAlign,
         false,
         textBackgroundPaddingY,
       ),

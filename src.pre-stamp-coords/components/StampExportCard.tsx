@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
 import type { PreparedExportPhoto } from '../services/exportStampImage';
 import { pdfDisplayTitle } from '../services/pdfTitleFormat';
-import { stampCoordinatesLine } from '../services/stampCoords';
 import type { StampImageExportOptions } from '../services/exportStampImage';
 import type { Stamp } from '../types/stamp';
 
@@ -30,7 +29,6 @@ export function StampExportCard({
   const readyNotifiedRef = useRef(false);
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
   const imageUri = resolveImageUri(stamp.imagePath);
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
 
@@ -122,20 +120,6 @@ export function StampExportCard({
               {memo}
             </Text>
           ) : null}
-          {coords ? (
-            <Text
-              style={[
-                styles.watermarkCoords,
-                {
-                  fontSize: Math.max(14, Math.round(22 * scale)),
-                  lineHeight: Math.max(18, Math.round(28 * scale)),
-                  textAlign: options.memoAlign,
-                },
-              ]}
-            >
-              {coords}
-            </Text>
-          ) : null}
         </View>
       </View>
     );
@@ -156,9 +140,6 @@ export function StampExportCard({
             {memo ? (
               <Text style={[styles.watermarkMemo, { textAlign: options.memoAlign }]}>{memo}</Text>
             ) : null}
-            {coords ? (
-              <Text style={[styles.watermarkCoords, { textAlign: options.memoAlign }]}>{coords}</Text>
-            ) : null}
           </View>
         </View>
       </View>
@@ -176,9 +157,6 @@ export function StampExportCard({
       <Text style={[styles.title, { textAlign: options.titleAlign }]}>{title}</Text>
       {memo ? (
         <Text style={[styles.memo, { textAlign: options.memoAlign }]}>{memo}</Text>
-      ) : null}
-      {coords ? (
-        <Text style={[styles.coords, { textAlign: options.memoAlign }]}>{coords}</Text>
       ) : null}
     </View>
   );
@@ -214,12 +192,6 @@ const styles = StyleSheet.create({
     color: '#f3f4f6',
     lineHeight: 34,
   },
-  watermarkCoords: {
-    marginTop: 6,
-    fontSize: 22,
-    color: '#e5e7eb',
-    lineHeight: 28,
-  },
   title: {
     marginTop: 16,
     fontSize: 36,
@@ -231,11 +203,5 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#374151',
     lineHeight: 38,
-  },
-  coords: {
-    marginTop: 8,
-    fontSize: 24,
-    color: '#6b7280',
-    lineHeight: 32,
   },
 });

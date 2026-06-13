@@ -39,8 +39,6 @@ type SaveStampInput = {
   title: string;
   memo: string;
   groupName?: string;
-  latitude?: number | null;
-  longitude?: number | null;
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -113,8 +111,6 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     createdAt: now,
     updatedAt: now,
     galleryAssetId: null,
-    latitude: input.latitude ?? null,
-    longitude: input.longitude ?? null,
   };
 
   let galleryAssetId: string | null = null;

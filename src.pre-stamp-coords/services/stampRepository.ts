@@ -1,8 +1,8 @@
-import { getDatabase } from '../db/database';
+﻿import { getDatabase } from '../db/database';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id';
 
 function mapRow(row: StampRow): Stamp {
   return {
@@ -14,16 +14,14 @@ function mapRow(row: StampRow): Stamp {
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at ?? null,
     galleryAssetId: row.gallery_asset_id ?? null,
-    latitude: row.latitude ?? null,
-    longitude: row.longitude ?? null,
   };
 }
 
 export async function insertStamp(stamp: Stamp): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -32,8 +30,6 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     stamp.updatedAt,
     stamp.deletedAt ?? null,
     stamp.galleryAssetId ?? null,
-    stamp.latitude ?? null,
-    stamp.longitude ?? null,
   );
 }
 

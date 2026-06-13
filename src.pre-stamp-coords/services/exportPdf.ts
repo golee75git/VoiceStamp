@@ -1,11 +1,10 @@
-import * as FileSystem from 'expo-file-system/legacy';
+﻿import * as FileSystem from 'expo-file-system/legacy';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import { stampCoordinatesLine } from './stampCoords';
 import {
   getMemoTextAlign,
   getPdfImageQuality,
@@ -73,10 +72,6 @@ function buildStampItem(
 ): string {
   const title = escapeHtml(pdfDisplayTitle(stamp.title, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
-  const coordsBlock = coords
-    ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
-    : '';
   const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
   const imageMargin = imageMarginStyle(titleAlign);
 
@@ -91,7 +86,6 @@ function buildStampItem(
           <div class="watermark-bar">
             <div class="watermark-title" style="text-align: ${titleAlign};">${title}</div>
             ${memoBlock}
-            ${coordsBlock}
           </div>
         </div>
       </div>`;
@@ -110,7 +104,6 @@ function buildStampItem(
         <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
         <h1 style="text-align: ${titleAlign};">${title}</h1>
         ${memoBlock}
-        ${coordsBlock}
         ${dateBlock}
       </div>`;
 }
@@ -198,8 +191,6 @@ function buildHtml(
   }
   .watermark-title { font-size: 14px; font-weight: 700; }
   .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
-  .stamp-coords { font-size: 11px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
-  .item-watermark .stamp-coords { color: #e5e7eb; opacity: 0.95; }
 </style>
 </head>
 <body>${pages}</body>
@@ -240,7 +231,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
   try {
     const doc = iframe.contentDocument ?? iframe.contentWindow?.document;
     if (!doc) {
-      throw new Error('인쇄 프레임을 열 수 없습니다.');
+      throw new Error('?몄뇙 ?꾨젅?꾩쓣 ?????놁뒿?덈떎.');
     }
 
     doc.open();
@@ -261,7 +252,7 @@ async function printHtmlInIframe(html: string, documentTitle: string): Promise<v
 
 async function printWebPdf(fileName: string): Promise<void> {
   if (!lastWebPrintHtml) {
-    throw new Error('PDF가 준비되지 않았습니다.');
+    throw new Error('PDF媛 以鍮꾨릺吏 ?딆븯?듬땲??');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -314,7 +305,7 @@ export async function createStampsPdf(
   reportTitle = '',
 ): Promise<string> {
   if (stamps.length === 0) {
-    throw new Error('보낼 스탬프가 없습니다.');
+    throw new Error('蹂대궪 ?ㅽ꺃?꾧? ?놁뒿?덈떎.');
   }
 
   const safeName = sanitizePdfFileName(fileName);
@@ -361,7 +352,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('저장 기능을 사용할 수 없습니다.');
+    throw new Error('???湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -369,7 +360,7 @@ export async function savePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 저장',
+    dialogTitle: 'PDF ???,
   });
 }
 
@@ -381,7 +372,7 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
 
   const available = await Sharing.isAvailableAsync();
   if (!available) {
-    throw new Error('공유 기능을 사용할 수 없습니다.');
+    throw new Error('怨듭쑀 湲곕뒫???ъ슜?????놁뒿?덈떎.');
   }
 
   const shareUri = await namePdfFile(uri, fileName);
@@ -389,6 +380,6 @@ export async function sharePdf(uri: string, fileName: string): Promise<void> {
   await Sharing.shareAsync(shareUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
-    dialogTitle: 'PDF 공유',
+    dialogTitle: 'PDF 怨듭쑀',
   });
 }

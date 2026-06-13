@@ -1262,3 +1262,30 @@ Copy-Item src.pre-gallery-filename\services\galleryService.ts src\services\ -For
 Copy-Item src.pre-gallery-filename\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-gallery-filename\services\exportStampImage.ts src\services\ -Force
 ```
+
+## 81. 캡처 좌표(위도·경도) 표시 되돌리기 (선택)
+
+캡션/워터마크에 GPS 좌표 표시 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-coords.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-coords\components\StampExportCard.tsx src\components\ -Force
+Copy-Item src.pre-stamp-coords\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-stamp-coords\db\database.ts src\db\ -Force
+Copy-Item src.pre-stamp-coords\db\schema.ts src\db\ -Force
+Copy-Item src.pre-stamp-coords\services\captionLayout.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\locationService.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\renderStampCaptionNative.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\renderStampWatermarkNative.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\services\stampRepository.ts src\services\ -Force
+Copy-Item src.pre-stamp-coords\types\stamp.ts src\types\ -Force
+Remove-Item src\services\stampCoords.ts -ErrorAction SilentlyContinue
+```

@@ -1,4 +1,4 @@
-export type Stamp = {
+﻿export type Stamp = {
   id: string;
   title: string;
   memo: string;
@@ -7,8 +7,6 @@ export type Stamp = {
   updatedAt: number;
   deletedAt?: number | null;
   galleryAssetId?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
 };
 
 export type StampRow = {
@@ -20,6 +18,4 @@ export type StampRow = {
   updated_at: number;
   deleted_at?: number | null;
   gallery_asset_id?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
 };

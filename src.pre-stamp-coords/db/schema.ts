@@ -1,4 +1,4 @@
-export const CREATE_STAMPS_TABLE = `
+﻿export const CREATE_STAMPS_TABLE = `
   CREATE TABLE IF NOT EXISTS stamps (
     id TEXT PRIMARY KEY NOT NULL,
     title TEXT NOT NULL DEFAULT '',
@@ -23,14 +23,6 @@ export const ALTER_STAMPS_ADD_DELETED_AT = `
 
 export const ALTER_STAMPS_ADD_GALLERY_ASSET_ID = `
   ALTER TABLE stamps ADD COLUMN gallery_asset_id TEXT;
-`;
-
-export const ALTER_STAMPS_ADD_LATITUDE = `
-  ALTER TABLE stamps ADD COLUMN latitude REAL;
-`;
-
-export const ALTER_STAMPS_ADD_LONGITUDE = `
-  ALTER TABLE stamps ADD COLUMN longitude REAL;
 `;
 
 export const CREATE_SETTINGS_TABLE = `

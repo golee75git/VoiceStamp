@@ -1,10 +1,8 @@
-import * as SQLite from 'expo-sqlite';
+﻿import * as SQLite from 'expo-sqlite';
 
 import {
   ALTER_STAMPS_ADD_DELETED_AT,
   ALTER_STAMPS_ADD_GALLERY_ASSET_ID,
-  ALTER_STAMPS_ADD_LATITUDE,
-  ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_SETTINGS_TABLE,
   CREATE_STAMPS_INDEX,
   CREATE_STAMPS_TABLE,
@@ -22,14 +20,6 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasGalleryAssetId = columns.some((column) => column.name === 'gallery_asset_id');
   if (!hasGalleryAssetId) {
     await db.execAsync(ALTER_STAMPS_ADD_GALLERY_ASSET_ID);
-  }
-  const hasLatitude = columns.some((column) => column.name === 'latitude');
-  if (!hasLatitude) {
-    await db.execAsync(ALTER_STAMPS_ADD_LATITUDE);
-  }
-  const hasLongitude = columns.some((column) => column.name === 'longitude');
-  if (!hasLongitude) {
-    await db.execAsync(ALTER_STAMPS_ADD_LONGITUDE);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }

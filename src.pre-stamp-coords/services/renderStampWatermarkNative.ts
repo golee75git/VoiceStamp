@@ -1,4 +1,4 @@
-import Marker, { ImageFormat, Position, TextBackgroundType } from 'react-native-image-marker';
+﻿import Marker, { ImageFormat, Position, TextBackgroundType } from 'react-native-image-marker';
 
 import { resolveImageUri } from './fileService';
 import {
@@ -7,7 +7,6 @@ import {
   type StampImageExportOptions,
 } from './exportStampImage';
 import { pdfDisplayTitle } from './pdfTitleFormat';
-import { stampCoordinatesLine } from './stampCoords';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -30,19 +29,11 @@ export async function renderStampWatermarkNative(
   const prepared = await prepareExportPhoto(resolveImageUri(stamp.imagePath));
   const title = pdfDisplayTitle(stamp.title, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;
   const titleSize = Math.max(18, Math.round(32 * scale));
   const paddingX = Math.round(20 * scale);
   const paddingY = Math.round(16 * scale);
-  const overlayLines = [title];
-  if (memo) {
-    overlayLines.push(memo);
-  }
-  if (coords) {
-    overlayLines.push(coords);
-  }
-  const text = overlayLines.join('\n');
+  const text = memo ? `${title}\n${memo}` : title;
 
   const markedUri = await Marker.markText({
     backgroundImage: { src: prepared.uri, scale: 1 },
