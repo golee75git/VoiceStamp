@@ -52,11 +52,6 @@ export function buildStampImageFileName(title: string, id: string, ext: string):
   return `${base}_${shortIdFromStampId(id)}.${ext}`;
 }
 
-export function buildStampOriginalFileName(title: string, id: string, ext: string): string {
-  const base = sanitizeStampFileBaseName(title);
-  return `${base}_${shortIdFromStampId(id)}_orig.${ext}`;
-}
-
 export function formatStampGroupName(timestamp: number, siteName?: string): string {
   const date = new Date(timestamp);
   const pad = (value: number) => String(value).padStart(2, '0');
@@ -168,34 +163,6 @@ export async function persistImage(
   const folderName = await getStampsFolderName();
   const ext = tempUri.toLowerCase().includes('.png') ? 'png' : 'jpg';
   const fileName = buildStampImageFileName(title, id, ext);
-  const safeGroup = groupName?.trim() ? sanitizeStampFileBaseName(groupName) : '';
-
-  if (safeGroup) {
-    const dir = await ensureStampGroupDir(safeGroup);
-    const dest = `${dir}${fileName}`;
-    await FileSystem.copyAsync({ from: tempUri, to: dest });
-    return `${folderName}/${safeGroup}/${fileName}`;
-  }
-
-  const dir = await ensureStampsDir();
-  const dest = `${dir}${fileName}`;
-  await FileSystem.copyAsync({ from: tempUri, to: dest });
-  return `${folderName}/${fileName}`;
-}
-
-export async function persistOriginalImageCopy(
-  tempUri: string,
-  title: string,
-  id: string,
-  groupName?: string,
-): Promise<string | null> {
-  if (Platform.OS === 'web') {
-    return null;
-  }
-
-  const folderName = await getStampsFolderName();
-  const ext = tempUri.toLowerCase().includes('.png') ? 'png' : 'jpg';
-  const fileName = buildStampOriginalFileName(title, id, ext);
   const safeGroup = groupName?.trim() ? sanitizeStampFileBaseName(groupName) : '';
 
   if (safeGroup) {

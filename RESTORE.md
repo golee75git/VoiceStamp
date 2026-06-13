@@ -1344,3 +1344,22 @@ restore-save-zoom-modal-fix.bat
 Copy-Item src.pre-save-zoom-modal-fix\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-save-zoom-modal-fix\components\ZoomableImage.tsx src\components\ -Force
 ```
+
+## 85. 저장 시 사진 자르기(크롭) 되돌리기 (선택)
+
+확대·이동 후 잘라 저장 기능 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-crop.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-crop\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-stamp-crop\components\StampSaveZoomViewer.tsx src\components\ -Force
+Copy-Item src.pre-stamp-crop\components\ZoomableImage.tsx src\components\ -Force
+Copy-Item src.pre-stamp-crop\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-stamp-crop\services\fileService.ts src\services\ -Force
+Remove-Item src\services\stampImageCrop.ts -ErrorAction SilentlyContinue
+```

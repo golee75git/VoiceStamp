@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -36,11 +36,6 @@ import {
   type TextAlign,
 } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
-import {
-  cropStampImage,
-  isStampCropActive,
-  type StampCropViewport,
-} from '../services/stampImageCrop';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
@@ -108,12 +103,7 @@ export function StampSaveModal({
   const titleTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
-  const cropViewportRef = useRef<StampCropViewport | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-
-  const handleCropChange = useCallback((viewport: StampCropViewport) => {
-    cropViewportRef.current = viewport;
-  }, []);
 
   const scrollFieldIntoView = () => {
     requestAnimationFrame(() => {
@@ -185,7 +175,6 @@ export function StampSaveModal({
       titleTouchedRef.current = false;
       siteNameTouchedRef.current = false;
       captureCoordsRef.current = null;
-      cropViewportRef.current = null;
       setCaptureCoords(null);
       stop();
     } else if (stamp) {
@@ -352,16 +341,8 @@ export function StampSaveModal({
         await updateStamp({ id: stamp.id, title, memo, groupName });
       } else {
         await setCurrentSiteName(siteName);
-        let saveUri = imageUri;
-        let originalTempUri: string | undefined;
-        const cropState = cropViewportRef.current;
-        if (isStampCropActive(cropState)) {
-          saveUri = await cropStampImage(imageUri, cropState);
-          originalTempUri = imageUri;
-        }
         await saveStamp({
-          tempImageUri: saveUri,
-          originalTempUri,
+          tempImageUri: imageUri,
           title,
           memo,
           groupName: siteName,
@@ -532,7 +513,17 @@ export function StampSaveModal({
           </View>
           {imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer imageUri={imageUri} onCropChange={handleCropChange} />
+              <StampSaveZoomViewer
+                imageUri={imageUri}
+                title={title}
+                memo={memo}
+                titleAlign={titleTextAlign}
+                memoAlign={memoTextAlign}
+                textLayout={stampTextLayout}
+                showDatetime={showDatetime}
+                latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
+                longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+              />
             </View>
           ) : null}
           <View style={styles.imageViewerDeleteBar}>

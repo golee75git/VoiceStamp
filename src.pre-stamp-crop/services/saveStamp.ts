@@ -12,7 +12,6 @@ import {
   moveStampImageToGroup,
   normalizeStampGroupName,
   persistImage,
-  persistOriginalImageCopy,
   renameStampImage,
   resolveImageUri,
 } from './fileService';
@@ -37,8 +36,6 @@ import { generateId } from '../utils/id';
 
 type SaveStampInput = {
   tempImageUri: string;
-  /** Camera/source original kept in app folder and used for gallery "original" modes when cropped. */
-  originalTempUri?: string;
   title: string;
   memo: string;
   groupName?: string;
@@ -108,14 +105,6 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       : formatStampGroupName(now, await getCurrentSiteName());
   const imagePath = await persistImage(input.tempImageUri, title, id, groupName);
 
-  if (input.originalTempUri && input.originalTempUri !== input.tempImageUri) {
-    try {
-      await persistOriginalImageCopy(input.originalTempUri, title, id, groupName);
-    } catch {
-      // Cropped stamp saved; original copy is optional.
-    }
-  }
-
   const stamp: Stamp = {
     id,
     title,
@@ -132,14 +121,10 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   if (Platform.OS !== 'web') {
     try {
       const mode = await getGallerySaveMode();
-      const galleryOriginalUri =
-        input.originalTempUri && input.originalTempUri !== input.tempImageUri
-          ? input.originalTempUri
-          : resolveImageUri(imagePath);
       galleryAssetId = await saveNewStampToGallery(
         stamp,
         groupName,
-        galleryOriginalUri,
+        resolveImageUri(imagePath),
         mode,
         input.captureForExport,
       );
