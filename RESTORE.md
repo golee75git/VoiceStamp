@@ -1650,3 +1650,22 @@ Copy-Item src.pre-floor-display-mode\components\SettingsScreen.tsx src\component
 Copy-Item src.pre-floor-display-mode\App.tsx . -Force
 Remove-Item src\services\floorDisplayMode.ts -ErrorAction SilentlyContinue
 ```
+
+## 105. 자동 제목(날짜/시간) 설정 되돌리기 (선택)
+
+설정「자동 제목」(없음 / 날짜 / 날짜+시간) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-title-datetime-mode.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-title-datetime-mode\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-title-datetime-mode\services\fileService.ts src\services\ -Force
+Copy-Item src.pre-title-datetime-mode\services\pdfTitleFormat.ts src\services\ -Force
+Copy-Item src.pre-title-datetime-mode\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-title-datetime-mode\App.tsx . -Force
+Remove-Item src\services\titleDatetimeMode.ts -ErrorAction SilentlyContinue
+```
