@@ -1542,3 +1542,17 @@ restore-save-modal-footer.bat
 ```powershell
 Copy-Item src.pre-save-modal-footer\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 98. 저장·수정 화면 내비게이션 바 여백 되돌리기 (선택)
+
+하단 취소·저장 버튼 `paddingBottom`(Android 56) 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-modal-nav-padding.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-modal-nav-padding\components\StampSaveModal.tsx src\components\ -Force
+```
