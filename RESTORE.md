@@ -1631,3 +1631,22 @@ restore-watermark-preview-caption-slot.bat
 ```powershell
 Copy-Item src.pre-watermark-preview-caption-slot\components\StampSavePreview.tsx src\components\ -Force
 ```
+
+## 104. 층 표기 설정 되돌리기 (선택)
+
+설정「층 표기」(제목 뒤에 붙이기 / 제목 커서에 삽입) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-floor-display-mode.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-floor-display-mode\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-floor-display-mode\services\stampFloor.ts src\services\ -Force
+Copy-Item src.pre-floor-display-mode\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-floor-display-mode\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-floor-display-mode\App.tsx . -Force
+Remove-Item src\services\floorDisplayMode.ts -ErrorAction SilentlyContinue
+```
