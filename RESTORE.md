@@ -1617,3 +1617,17 @@ restore-watermark-preview-v2.bat
 Copy-Item src.pre-watermark-preview-v2\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-watermark-preview-v2\components\StampSavePreview.tsx src\components\ -Force
 ```
+
+## 103. 워터마크 미리보기 캡션 슬롯 되돌리기 (선택)
+
+워터마크 썸네일을 별도 영역과 동일한 120px 사진 슬롯으로 통일한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-watermark-preview-caption-slot.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-watermark-preview-caption-slot\components\StampSavePreview.tsx src\components\ -Force
+```
