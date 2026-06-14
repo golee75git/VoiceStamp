@@ -220,10 +220,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  thumbnailWatermarkPhoto: {
-    width: '100%',
-    height: 180,
-  },
   previewPhotoImage: {
     width: '100%',
     height: '100%',

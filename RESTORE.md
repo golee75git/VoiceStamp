@@ -1588,3 +1588,17 @@ Copy-Item src.pre-save-preview-android-fix\components\StampSaveModal.tsx src\com
 Copy-Item src.pre-save-preview-android-fix\components\StampSavePreview.tsx src\components\ -Force
 Copy-Item src.pre-save-preview-android-fix\services\exportStampImage.ts src\services\ -Force
 ```
+
+## 101. 워터마크 미리보기 레이아웃 되돌리기 (선택)
+
+워터마크 모드 미리보기 사진 높이 고정(180px) 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-watermark-preview-layout.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-watermark-preview-layout\components\StampSavePreview.tsx src\components\ -Force
+```
