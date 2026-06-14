@@ -20,49 +20,6 @@ export const STAMP_JPEG_COMPRESS = 0.85;
 export const STAMP_PREVIEW_MAX_WIDTH = 720;
 export const STAMP_PREVIEW_JPEG_COMPRESS = 0.72;
 
-export function normalizeDisplayUri(uri: string): string {
-  if (Platform.OS === 'web') {
-    return uri;
-  }
-  if (
-    uri.startsWith('file://') ||
-    uri.startsWith('content://') ||
-    uri.startsWith('http://') ||
-    uri.startsWith('https://')
-  ) {
-    return uri;
-  }
-  if (uri.startsWith('/')) {
-    return `file://${uri}`;
-  }
-  return uri;
-}
-
-async function copyToPreviewCache(sourceUri: string): Promise<string> {
-  if (Platform.OS === 'web') {
-    return sourceUri;
-  }
-
-  const cacheDir = FileSystem.cacheDirectory;
-  if (!cacheDir) {
-    return normalizeDisplayUri(sourceUri);
-  }
-
-  const from = normalizeDisplayUri(sourceUri);
-  const dest = `${cacheDir}preview-src-${Date.now()}.jpg`;
-  await FileSystem.copyAsync({ from, to: dest });
-  return normalizeDisplayUri(dest);
-}
-
-async function resizePreviewThumb(inputUri: string): Promise<string> {
-  const result = await manipulateAsync(
-    inputUri,
-    [{ resize: { width: STAMP_PREVIEW_MAX_WIDTH } }],
-    { compress: STAMP_PREVIEW_JPEG_COMPRESS, format: SaveFormat.JPEG },
-  );
-  return normalizeDisplayUri(result.uri);
-}
-
 export type StampRenderParams = {
   sourceUri?: string;
   maxWidth?: number;
@@ -117,16 +74,12 @@ export async function compressStampJpeg(sourceUri: string): Promise<string> {
 }
 
 export async function prepareStampPreviewThumb(sourceUri: string): Promise<string> {
-  if (Platform.OS === 'web') {
-    return resizePreviewThumb(sourceUri);
-  }
-
-  const cachedUri = await copyToPreviewCache(sourceUri);
-  try {
-    return await resizePreviewThumb(cachedUri);
-  } catch {
-    return cachedUri;
-  }
+  const result = await manipulateAsync(
+    sourceUri,
+    [{ resize: { width: STAMP_PREVIEW_MAX_WIDTH } }],
+    { compress: STAMP_PREVIEW_JPEG_COMPRESS, format: SaveFormat.JPEG },
+  );
+  return result.uri;
 }
 
 function loadWebImage(uri: string): Promise<HTMLImageElement> {

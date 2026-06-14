@@ -1572,3 +1572,19 @@ Copy-Item src.pre-save-preview-thumb\components\StampSaveModal.tsx src\component
 Copy-Item src.pre-save-preview-thumb\components\StampSavePreview.tsx src\components\ -Force
 Copy-Item src.pre-save-preview-thumb\services\exportStampImage.ts src\services\ -Force
 ```
+
+## 100. Android 미리보기 표시 수정 되돌리기 (선택)
+
+Android에서 미리보기 URI 캐시 복사·경로 정규화 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-preview-android-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-preview-android-fix\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-android-fix\components\StampSavePreview.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-android-fix\services\exportStampImage.ts src\services\ -Force
+```

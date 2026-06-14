@@ -38,7 +38,7 @@ import {
   type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
-import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
+import { prepareStampPreviewThumb, type CaptureStampForExport } from '../services/exportStampImage';
 import {
   cropStampImage,
   isStampCropActive,
@@ -279,7 +279,7 @@ export function StampSaveModal({
       })
       .catch(() => {
         if (!cancelled) {
-          setPreviewThumbUri(normalizeDisplayUri(sourceUri));
+          setPreviewThumbUri(sourceUri);
         }
       });
 

@@ -10,8 +10,6 @@ import {
   type StyleProp,
 } from 'react-native';
 
-import { normalizeDisplayUri } from '../services/exportStampImage';
-
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
 import type { StampTextLayout, TextAlign, CoordsLabelMode } from '../services/settingsService';
@@ -28,27 +26,7 @@ const PreviewPhoto = memo(function PreviewPhoto({
   style: StyleProp<ImageStyle>;
   resizeMode: ImageResizeMode;
 }) {
-  const [displayUri, setDisplayUri] = useState(() => normalizeDisplayUri(uri));
-
-  useEffect(() => {
-    setDisplayUri(normalizeDisplayUri(uri));
-  }, [uri]);
-
-  return (
-    <View style={style} collapsable={false}>
-      <Image
-        source={{ uri: displayUri }}
-        style={styles.previewPhotoImage}
-        resizeMode={resizeMode}
-        onError={() => {
-          const fallback = normalizeDisplayUri(uri);
-          if (fallback !== displayUri) {
-            setDisplayUri(fallback);
-          }
-        }}
-      />
-    </View>
-  );
+  return <Image source={{ uri }} style={style} resizeMode={resizeMode} />;
 });
 
 type StampSavePreviewProps = {
@@ -115,7 +93,7 @@ export function StampSavePreview({
   const watermarkCoordsStyle = isThumbnail ? styles.thumbnailWatermarkCoords : styles.fullscreenWatermarkCoords;
 
   const renderThumbnailPhoto = (photoStyle: StyleProp<ImageStyle>, resizeMode: ImageResizeMode) => {
-    if (imageLoading || !imageUri) {
+    if (imageLoading) {
       return (
         <View style={[photoStyle, styles.thumbnailPhotoLoading]}>
           <ActivityIndicator color="#6b7280" />
@@ -217,10 +195,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   thumbnailPhoto: {
-    width: '100%',
-    height: '100%',
-  },
-  previewPhotoImage: {
     width: '100%',
     height: '100%',
   },
