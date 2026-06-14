@@ -29,12 +29,10 @@ import {
   getMemoTextAlign,
   getPdfShowDatetime,
   getStampTextLayout,
-  getCoordsLabelMode,
   getTitleTextAlign,
   setCurrentSiteName,
   setLastCapturePlaceCache,
   type CameraHand,
-  type CoordsLabelMode,
   type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
@@ -104,7 +102,6 @@ export function StampSaveModal({
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
-  const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [showDatetime, setShowDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
@@ -165,13 +162,12 @@ export function StampSaveModal({
 
     let cancelled = false;
     (async () => {
-      const [titleAlign, memoAlign, hand, textLayout, datetimeVisible, coordsLabelMode] = await Promise.all([
+      const [titleAlign, memoAlign, hand, textLayout, datetimeVisible] = await Promise.all([
         getTitleTextAlign(),
         getMemoTextAlign(),
         getCameraHand(),
         getStampTextLayout(),
         getPdfShowDatetime(),
-        getCoordsLabelMode(),
       ]);
       if (!cancelled) {
         setTitleTextAlign(titleAlign);
@@ -179,7 +175,6 @@ export function StampSaveModal({
         setCameraHand(hand);
         setStampTextLayout(textLayout);
         setShowDatetime(datetimeVisible);
-        setCoordsLabel(coordsLabelMode);
       }
     })();
 
@@ -543,7 +538,6 @@ export function StampSaveModal({
                   titleAlign={titleTextAlign}
                   memoAlign={memoTextAlign}
                   textLayout={stampTextLayout}
-                  coordsLabel={coordsLabel}
                   showDatetime={showDatetime}
                   floor={floor}
                   latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}

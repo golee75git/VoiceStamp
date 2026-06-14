@@ -30,7 +30,7 @@ export function StampExportCard({
   const readyNotifiedRef = useRef(false);
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
   const imageUri = resolveImageUri(stamp.imagePath);
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
 

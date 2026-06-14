@@ -11,7 +11,7 @@ import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
-import type { StampTextLayout, TextAlign, CoordsLabelMode } from './settingsService';
+import type { StampTextLayout, TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 export const STAMP_JPEG_MAX_WIDTH = 2048;
@@ -30,7 +30,6 @@ export type StampImageExportOptions = {
   memoAlign: TextAlign;
   showDatetime: boolean;
   textLayout: StampTextLayout;
-  coordsLabel: CoordsLabelMode;
 };
 
 export type CaptureStampForExport = (
@@ -149,7 +148,7 @@ async function renderStampJpegWatermarkOnWeb(
 
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
   const barPaddingX = 20;
   const barPaddingY = 16;
   const textWidth = imgWidth - barPaddingX * 2;
@@ -249,7 +248,7 @@ async function renderStampJpegCaptionOnWeb(
   const contentWidth = imgWidth;
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
 
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');

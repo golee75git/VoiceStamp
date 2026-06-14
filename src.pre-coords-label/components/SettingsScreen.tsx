@@ -23,14 +23,11 @@ import {
   DEFAULT_PDF_SHOW_DATETIME,
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
-  DEFAULT_COORDS_LABEL_MODE,
   DEFAULT_FLOOR_PICKER_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_TITLE_TEXT_ALIGN,
   gallerySaveModeLabel,
   floorPickerModeLabel,
-  coordsLabelModeLabel,
-  getCoordsLabelMode,
   getFloorPickerMode,
   getCameraHand,
   getGallerySaveMode,
@@ -43,11 +40,9 @@ import {
   getStampsFolderName,
   getTitleTextAlign,
   type CameraHand,
-  type CoordsLabelMode,
   type PdfImageQuality,
   type PdfPhotosPerPage,
   setCameraHand,
-  setCoordsLabelMode,
   setFloorPickerMode,
   setGallerySaveMode,
   setMemoTextAlign,
@@ -69,7 +64,6 @@ import {
 import { emptyTrash, getTrashedStampCount } from '../services/stampTrash';
 
 const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
-const COORDS_LABEL_OPTIONS: CoordsLabelMode[] = ['gps', 'coords', 'off'];
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
@@ -122,9 +116,6 @@ export function SettingsScreen({
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
   );
-  const [coordsLabelMode, setCoordsLabelModeState] = useState<CoordsLabelMode>(
-    DEFAULT_COORDS_LABEL_MODE,
-  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
@@ -135,7 +126,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, floorMode, coordsMode, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, floorMode, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -148,7 +139,6 @@ export function SettingsScreen({
           getGallerySaveMode(),
           getCameraHand(),
           getFloorPickerMode(),
-          getCoordsLabelMode(),
           getTrashedStampCount(),
         ]);
         setFolderName(name);
@@ -162,7 +152,6 @@ export function SettingsScreen({
         setGallerySaveModeState(galleryMode);
         setCameraHandState(hand);
         setFloorPickerModeState(floorMode);
-        setCoordsLabelModeState(coordsMode);
         setTrashCount(trashed);
       } finally {
         setLoading(false);
@@ -220,7 +209,6 @@ export function SettingsScreen({
         savedGalleryMode,
         savedCameraHand,
         savedFloorPickerMode,
-        savedCoordsLabelMode,
       ] = await Promise.all([
           setStampsFolderName(folderName),
           setPdfPhotosPerPage(pdfPhotosPerPage),
@@ -233,7 +221,6 @@ export function SettingsScreen({
           setGallerySaveMode(gallerySaveMode),
           setCameraHand(cameraHand),
           setFloorPickerMode(floorPickerMode),
-          setCoordsLabelMode(coordsLabelMode),
         ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
@@ -246,11 +233,10 @@ export function SettingsScreen({
       setGallerySaveModeState(savedGalleryMode);
       setCameraHandState(savedCameraHand);
       setFloorPickerModeState(savedFloorPickerMode);
-      setCoordsLabelModeState(savedCoordsLabelMode);
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -475,30 +461,6 @@ export function SettingsScreen({
                 워터마크
               </Text>
             </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>좌표 표기</Text>
-          <Text style={styles.hint}>
-            캡션·PDF·이미지에 GPS 좌표를 넣을 때 앞에 붙는 말입니다. 없음은 숫자만 표시합니다.
-          </Text>
-          <View style={styles.optionRow}>
-            {COORDS_LABEL_OPTIONS.map((option) => {
-              const selected = coordsLabelMode === option;
-              return (
-                <Pressable
-                  key={option}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setCoordsLabelModeState(option)}
-                  disabled={saving}
-                >
-                  <Text
-                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
-                  >
-                    {coordsLabelModeLabel(option)}
-                  </Text>
-                </Pressable>
-              );
-            })}
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>층 선택</Text>

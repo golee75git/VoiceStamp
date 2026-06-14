@@ -24,9 +24,7 @@ import {
   getPdfFilenameIncludeDatetime,
   getPdfShowDatetime,
   getStampTextLayout,
-  getCoordsLabelMode,
   getTitleTextAlign,
-  type CoordsLabelMode,
   type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
@@ -69,7 +67,6 @@ export function StampListScreen({
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
-  const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
@@ -104,14 +101,13 @@ export function StampListScreen({
       setLoading(true);
     }
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, coordsLabelMode] = await Promise.all([
+      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout] = await Promise.all([
         listStamps(),
         getTitleTextAlign(),
         getMemoTextAlign(),
         getPdfFilenameIncludeDatetime(),
         getPdfShowDatetime(),
         getStampTextLayout(),
-        getCoordsLabelMode(),
       ]);
       setStamps(rows);
       setTitleTextAlign(titleAlign);
@@ -119,7 +115,6 @@ export function StampListScreen({
       setPdfFilenameIncludeDatetime(filenameDatetime);
       setPdfShowDatetime(showDatetime);
       setStampTextLayout(textLayout);
-      setCoordsLabel(coordsLabelMode);
     } finally {
       setLoading(false);
     }
@@ -252,7 +247,6 @@ export function StampListScreen({
         memoAlign: memoTextAlign,
         showDatetime: pdfShowDatetime,
         textLayout: stampTextLayout,
-        coordsLabel,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,

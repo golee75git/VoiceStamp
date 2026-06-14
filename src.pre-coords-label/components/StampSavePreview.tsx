@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View, type ImageResizeMode } from 'react-nativ
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
-import type { StampTextLayout, TextAlign, CoordsLabelMode } from '../services/settingsService';
+import type { StampTextLayout, TextAlign } from '../services/settingsService';
 import type { StampFloor } from '../types/stamp';
 
 const FALLBACK_ASPECT_RATIO = 4 / 3;
@@ -15,7 +15,6 @@ type StampSavePreviewProps = {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   textLayout: StampTextLayout;
-  coordsLabel: CoordsLabelMode;
   showDatetime: boolean;
   floor?: StampFloor | null;
   latitude?: number | null;
@@ -30,7 +29,6 @@ export function StampSavePreview({
   titleAlign,
   memoAlign,
   textLayout,
-  coordsLabel,
   showDatetime,
   floor,
   latitude,
@@ -40,7 +38,7 @@ export function StampSavePreview({
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
   const displayMemo = memo.trim();
-  const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
+  const coords = formatStampCoordinates(latitude, longitude);
   const isThumbnail = variant === 'thumbnail';
   const imageResizeMode: ImageResizeMode = textLayout === 'watermark' ? 'cover' : 'contain';
 

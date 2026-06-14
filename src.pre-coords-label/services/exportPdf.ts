@@ -12,11 +12,9 @@ import {
   getPdfPhotosPerPage,
   getPdfShowDatetime,
   getStampTextLayout,
-  getCoordsLabelMode,
   getTitleTextAlign,
   type PdfPhotosPerPage,
   type StampTextLayout,
-  type CoordsLabelMode,
   type TextAlign,
 } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -72,11 +70,10 @@ function buildStampItem(
   showDatetime: boolean,
   shrinkForReportHeader: boolean,
   textLayout: StampTextLayout,
-  coordsLabel: CoordsLabelMode,
 ): string {
   const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
   const coordsBlock = coords
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
     : '';
@@ -136,7 +133,6 @@ function buildHtml(
   showDatetime: boolean,
   reportTitle: string,
   textLayout: StampTextLayout,
-  coordsLabel: CoordsLabelMode,
 ): string {
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
@@ -158,7 +154,6 @@ function buildHtml(
             showDatetime,
             shrinkImages,
             textLayout,
-            coordsLabel,
           ),
         )
         .join('');
@@ -323,14 +318,13 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
-    getCoordsLabelMode(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -346,7 +340,6 @@ export async function createStampsPdf(
     showDatetime,
     reportTitle,
     textLayout,
-    coordsLabel,
   );
 
   if (Platform.OS === 'web') {

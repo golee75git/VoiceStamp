@@ -35,7 +35,7 @@ export async function renderStampWatermarkNative(
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;
   const titleSize = Math.max(18, Math.round(32 * scale));
   const paddingX = Math.round(20 * scale);

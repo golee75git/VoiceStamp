@@ -73,7 +73,7 @@ export async function renderStampCaptionNative(
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const coords = stampCoordinatesLine(stamp);
   const layout = buildCaptionLayout(
     prepared.width,
     prepared.height,

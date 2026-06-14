@@ -1498,3 +1498,18 @@ Copy-Item src.pre-location-place-cache\services\settingsService.ts src\services\
 Copy-Item src.pre-location-place-cache\components\StampSaveModal.tsx src\components\ -Force
 Remove-Item src\utils\geoDistance.ts -ErrorAction SilentlyContinue
 ```
+
+## 95. 좌표 표기 설정 되돌리기 (선택)
+
+설정「좌표 표기」(GPS/좌표/없음) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-coords-label.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-coords-label\services\*.ts src\services\ -Force
+Copy-Item src.pre-coords-label\components\*.tsx src\components\ -Force
+```
