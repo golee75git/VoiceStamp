@@ -2,8 +2,8 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.8 |
-| 작성일 | 2026-06-13 |
+| 문서 버전 | 1.9 |
+| 작성일 | 2026-06-14 |
 | 기준 커밋 | `9260376` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
@@ -17,7 +17,7 @@
 | **Phase 1** | 설정·위치 제목·휴지통·갤러리·웹 배포 | ✅ 완료 |
 | **Phase 2** | PDF 고도화·UI/UX·손잡이·내보내기 확장 | ✅ 완료 |
 | **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 (LEG-04 ✅) |
-| **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 | 📋 계획 |
+| **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 (**NCP 우선**, §12) | 📋 계획 |
 
 ---
 
@@ -135,6 +135,7 @@
 | `a45a750` | PRD·PROJECT·PLAN·README 문서 정리 (기준 `0970d3d`) |
 | (본 갱신) | `182f4e7` 반영 — 학교 POI·온보딩 4단계·반응형·이미지 갱신·APK별·날짜별 이력 |
 | (본 갱신) | `9260376` 반영 — Phase 2C/2D·크롭·start·웹 카메라·APK `114227`·날짜별 이력 |
+| (본 갱신) | §12 로컬 저장 + **NCP Object Storage** 백업 설계 추가 (`FEAT-03-NCP`) |
 
 ---
 
@@ -174,6 +175,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | ID | 내용 | 비고 |
 |----|------|------|
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 | 재설치 복구 |
+| **FEAT-03-NCP** | **NCP Object Storage 백업·복원** (이미지+메타+PDF) | **§12 설계 완료**, 구현 대기 |
 | FEAT-03b | 갤러리 사진 ↔ SQLite 메타 연동 | Out of Scope에 가까움 |
 
 ### 4.3 보고서·서식 (장기)
@@ -204,7 +206,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
 | 3 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
 | 4 | UX-PURPOSE 목적별 필드 라벨 | 기획 메모 반영 |
-| 5 | FEAT-03 백업/복원 | 재설치 시나리오 |
+| 5 | FEAT-03 로컬 JSON 백업/복원 | 재설치 시나리오 (오프라인) |
+| 5b | **FEAT-03-NCP** NCP 백업/복원 | §12 설계 기준, NCP 인프라 선행 |
 | 6 | RPT-01 보고서 서식 | 별도 PDCA·POC 필요 |
 
 ---
@@ -243,6 +246,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [README.md](./README.md) | docs 목록 |
 | [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~93 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
+| NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
 
 ---
 
@@ -259,6 +263,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG·**저장 시 갤러리 모드**·**학교 POI 위치**·**4단계 온보딩** |
 | 2026-06-12 | 2C | **캡션 네이티브**·흰 여백 PNG·온보딩 30일·설정 재생 |
 | 2026-06-13 | 2D | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라** |
+| 2026-06-14 | 4 (설계) | **§12 NCP 백업** 아키텍처 문서화 (`FEAT-03-NCP`) |
 
 ---
 
@@ -280,3 +285,199 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | `VoiceStamp_20260607_145955.apk` | `3b6201a` | Android 뒤로가기 |
 
 전체: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13
+
+---
+
+## 12. 로컬 저장 + NCP 백업 설계 (`FEAT-03-NCP`)
+
+> **상태:** 설계 문서만 반영 (소스 미구현). 클라우드 스택은 **네이버 클라우드 플랫폼(NCP) 우선**. Vercel Serverless는 대안으로만 고려.
+
+### 12.1 배경·목표
+
+#### 현재 저장 구조
+
+```mermaid
+flowchart LR
+  CameraScreen --> saveStamp
+  saveStamp --> persistImage["fileService.persistImage"]
+  saveStamp --> insertStamp["stampRepository.insertStamp"]
+  persistImage --> LocalFS["documentDirectory/stamps/YYYYMMDD_장소/"]
+  insertStamp --> SQLite["SQLite stamps 테이블"]
+  saveStamp --> Gallery["galleryService 비동기 실패무시"]
+```
+
+| 계층 | 구현 | 한계 |
+|------|------|------|
+| 로컬 1차 | `saveStamp` → `persistImage` → `stamps/{groupName}/{title}_{id}.jpg` | 앱 삭제 시 소실 |
+| 메타 | SQLite `stamps` (제목·메모·GPS·층 등) | 갤러리에 없음 |
+| 갤러리 | `scheduleNewStampGallerySave` (비동기·비치명적) | **사진만** 백업, 메타·PDF 없음 |
+
+**목표:** 로컬 저장을 **그대로 유지**하면서, 사용자가 선택 시 **NCP Object Storage**에 이미지·메타 JSON·PDF를 백업·복원한다.
+
+### 12.2 NCP 우선 아키텍처
+
+```mermaid
+sequenceDiagram
+  participant App as VoiceStamp_APK
+  participant API as NCP_API_Gateway
+  participant Fn as NCP_Cloud_Function
+  participant OS as NCP_Object_Storage
+
+  App->>API: POST /backup/presign
+  API->>Fn: invoke
+  Fn->>Fn: NCP_AccessKey SigV4 서명
+  Fn-->>App: presignedPutUrl 15분
+  App->>OS: HTTP PUT 이미지 또는 PDF
+  OS-->>App: 200 OK
+  App->>App: SQLite backup_status 갱신
+```
+
+| NCP 서비스 | 역할 |
+|-----------|------|
+| **Object Storage** (`kr-standard`, `https://kr.object.ncloudstorage.com`) | 이미지·PDF·manifest JSON 저장 (S3 호환 API) |
+| **API Gateway** | HTTPS 엔드포인트, rate limit |
+| **Cloud Functions** (Node.js) | Presigned URL 발급, manifest 조회, 삭제 |
+| **Sub Account** + API 인증키 | Cloud Functions 환경변수에만 보관 |
+| Cloud Log Analytics (선택) | 업로드 실패·403 모니터링 |
+
+> **대안:** Presigned URL 발급을 Vercel Serverless로 둘 수 있으나, 스토리지·API를 NCP에 통일하는 것을 **기본안**으로 한다.
+
+**공식 문서:** [Object Storage API](https://api.ncloud-docs.com/docs/storage-objectstorage) · [Object Storage 제품](https://www.ncloud.com/product/storage/objectStorage)
+
+### 12.3 보안 원칙
+
+[KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md)와 동일한 패턴:
+
+| 항목 | 규칙 |
+|------|------|
+| NCP Access Key / Secret Key | **NCP Cloud Functions 환경변수만**, git·앱 번들 금지 |
+| 앱에 노출 가능 | `EXPO_PUBLIC_NCP_BACKUP_API_URL` (API Gateway URL) |
+| 업로드 방식 | **Presigned URL** — 앱이 Object Storage에 직접 PUT |
+| 버킷 ACL | **Private** 기본, 조회·복원은 Presigned GET |
+| 구현 시 법무 | [PRIVACY.md](./PRIVACY.md) §3「클라우드 백업 옵션」문구 추가 |
+
+### 12.4 사용자 인증 (로그인 없음)
+
+현재 앱에 계정 로그인이 없으므로 v1은 **기기 단위** 식별:
+
+| 항목 | 방식 |
+|------|------|
+| 기기 식별 | 최초 실행 시 `deviceId` (UUID) → SQLite `app_settings` |
+| 백업 경로 prefix | `voicestamp/{deviceId}/` |
+| 복원 | 동일 `deviceId` + (선택) **복원 PIN** 4~6자리 (API Gateway에서 검증) |
+| 멀티 기기 | v1: PIN 공유 + 수동 복원 / v2: 계정 로그인 검토 |
+
+### 12.5 NCP 버킷·오브젝트 키 규칙
+
+로컬 `fileService` 경로와 **1:1 대응** (`groupName`, 파일명 재사용):
+
+```
+버킷: voicestamp-backup (예시, Private)
+
+voicestamp/{deviceId}/
+  stamps/{groupName}/
+    {title}_{shortId}.jpg
+    {title}_{shortId}_orig.jpg     # 크롭 전 원본 (있을 때)
+  meta/
+    stamps.json                    # 전체 메타 스냅샷
+    stamps/{stampId}.json          # 개별 메타 (증분 백업)
+  pdf/
+    {reportTitle}_{timestamp}.pdf  # 목록 PDF보내기 (설정 ON 시)
+  manifest.json                    # 마지막 백업 시각·버전·체크섬
+```
+
+**Content-Type:**
+
+| 파일 | Content-Type |
+|------|--------------|
+| JPEG | `image/jpeg` |
+| PNG | `image/png` |
+| PDF | `application/pdf` |
+| JSON | `application/json` |
+
+### 12.6 백업 트리거·동작
+
+| 시점 | 업로드 대상 | 우선순위 |
+|------|------------|----------|
+| 스탬프 저장 직후 | 메인 JPG + `meta/stamps/{id}.json` | P0 |
+| 수정·크롭 후 | 변경 JPG + 메타 갱신 | P0 |
+| 휴지통 이동/복원 | 메타 + (선택) 오브젝트 삭제 마킹 | P1 |
+| 목록 PDF 생성 | `pdf/*.pdf` (설정 ON) | P2 |
+| 설정「지금 백업」 | `meta/stamps.json` + 미동기화 파일 일괄 | P1 |
+| Wi-Fi 전용 (설정) | 위와 동일, 셀룰러 차단 | P2 |
+
+**실패 처리:** 갤러리 백업과 동일 — 로컬 저장 성공 후 **비동기·비치명적** (`scheduleNewStampGallerySave` 패턴). SQLite에 `backup_status: pending | synced | failed` 로 재시도 큐 관리.
+
+### 12.7 NCP Cloud Function API 스펙 (초안)
+
+| Method | Path | 요청 body / query | 응답 |
+|--------|------|-------------------|------|
+| POST | `/backup/presign` | `{ deviceId, objectKey, contentType, pin? }` | `{ putUrl, expiresIn }` |
+| POST | `/backup/presign-get` | `{ deviceId, objectKey, pin? }` | `{ getUrl, expiresIn }` |
+| GET | `/backup/manifest` | `?deviceId=` | `{ lastBackupAt, objects[] }` |
+| DELETE | `/backup/object` | `{ deviceId, objectKey }` | `{ ok }` |
+
+**Cloud Function SDK:** `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`  
+- endpoint: `https://kr.object.ncloudstorage.com`  
+- region: `kr-standard`
+
+### 12.8 앱 측 구현 참고 (미구현)
+
+| 파일 (예정) | 역할 |
+|-------------|------|
+| `src/services/ncpBackupService.ts` | presign 요청, PUT 업로드, 상태 갱신 |
+| `src/services/backupQueue.ts` | 오프라인·실패 재시도 |
+| `src/db/schema.ts` | `cloud_object_key`, `backup_status`, `backed_up_at` 컬럼 추가 |
+| `src/types/stamp.ts` | Stamp 타입 확장 |
+| 설정 화면 | NCP 백업 ON/OFF, Wi-Fi only, 수동 백업, 마지막 동기화 시각 |
+
+**업로드 예시 (Expo):**
+
+```typescript
+const { putUrl, objectKey } = await fetch(NCP_API + '/backup/presign', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ deviceId, objectKey, contentType: 'image/jpeg' }),
+}).then((r) => r.json());
+
+await FileSystem.uploadAsync(putUrl, localUri, {
+  httpMethod: 'PUT',
+  headers: { 'Content-Type': 'image/jpeg' },
+});
+```
+
+### 12.9 복원 플로우
+
+```mermaid
+flowchart TD
+  A["설정 - NCP에서 복원"] --> B["manifest.json Presigned GET"]
+  B --> C["meta/stamps.json 또는 개별 JSON"]
+  C --> D["Presigned GET으로 이미지 다운로드"]
+  D --> E["persistImage 동일 경로로 저장"]
+  E --> F["insertStamp / 충돌 시 확인 다이얼로그"]
+```
+
+| 정책 | 내용 |
+|------|------|
+| 충돌 | `id` 동일 + 클라우드 `updatedAt`이 더 최신 → 덮어쓰기 확인 |
+| 병행 | FEAT-03 로컬 JSON export = 오프라인/USB, NCP = 원격 백업 |
+
+### 12.10 NCP 콘솔 설정 체크리스트
+
+- [ ] Object Storage 버킷 생성 (Private, `kr-standard`)
+- [ ] Sub Account 생성 → Object Storage 읽기/쓰기 권한만 부여
+- [ ] API Gateway + Cloud Functions 연결 (환경변수에 Access Key)
+- [ ] CORS: APK는 직접 PUT으로 불필요; **웹 백업** 시 Vercel origin 추가
+- [ ] (선택) Lifecycle: 90일 미접근 → 저비용 스토리지 클래스
+- [ ] 비용: 저장 GB + PUT/GET 요청 수 (소규모 팀 수 GB 수준 예상)
+
+### 12.11 구현 단계 (PDCA)
+
+| 단계 | 작업 | 산출물 |
+|------|------|--------|
+| P0 문서 | 본 §12 | PLAN.md (완료) |
+| P1 인프라 | NCP 버킷·Function·Gateway | `docs/NCP-BACKUP-SETUP.md` (별도) |
+| P2 앱 | presign + PUT + DB 컬럼 | `ncpBackupService.ts` |
+| P3 UX | 설정 토글·수동 백업·상태 표시 | 설정 화면 |
+| P4 복원 | manifest 기반 가져오기 | 복원 마법사 |
+| P5 법무 | PRIVACY.md §3·§4, `NCP-KEY-SECURITY.md` | 정책 웹 반영 |
