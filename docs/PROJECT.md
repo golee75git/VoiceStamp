@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-13**  
-최신 커밋 기준: `9260376` (main)
+문서 작성일: **2026-06-14**  
+최신 커밋 기준: `69c0b66` (main)
 
 ---
 
@@ -27,24 +27,24 @@ VoiceStamp/
 ├── App.tsx                 # 앱 진입
 ├── app.json                # Expo 설정·플러그인
 ├── src/
-│   ├── components/         # CameraScreen, StampListScreen, StampSaveModal,
+│   ├── components/         # CameraScreen, StampListScreen, StampSaveModal, StampSavePreview,
 │   │                       # IntroScreen, SettingsScreen, TrashScreen, VoiceInputField,
 │   │                       # StampExportCard, StampImageExportHost
 │   ├── screens/            # MainScreen (공유 StampImageExportHost)
 │   ├── services/           # saveStamp, fileService, exportPdf, exportStampImage,
 │   │                       # renderStampWatermarkNative, settingsService, kakaoLocal, locationService,
-│   │                       # pdfImageForExport, galleryService(.web), stampTrash,
+│   │                       # stampFloor, pdfImageForExport, galleryService(.web), stampTrash,
 │   │                       # stampRepository, stampFolderService, pickStampImage,
 │   │                       # pdfTitleFormat
 │   ├── hooks/              # useSpeechInput
 │   ├── db/                 # database, schema
 │   ├── types/              # stamp
-│   └── utils/              # id, cameraPictureSize
+│   └── utils/              # id, cameraPictureSize, geoDistance
 ├── android/                # 네이티브 Android (로컬 빌드용)
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
 ├── public/                 # 정책 정적 HTML (info, privacy, license, help)
-├── RESTORE.md              # 기능별 되돌리기 (§8~69)
+├── RESTORE.md              # 기능별 되돌리기 (§8~103)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -178,8 +178,31 @@ VoiceStamp/
 | 80 | 온보딩 4단계 (`img/1-1`~`1-4`) | `db81ef9` | `restore-intro-4.bat` §73 |
 | 81 | 온보딩 반응형 (`contain` + 하단 버튼) | `73ee56f` | `restore-intro-layout.bat` §74 |
 | 82 | 온보딩 이미지 갱신 (이미지 내 버튼 제거) | `fac7734` | `restore-onboarding-images.bat` §75 |
-
-> **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨.
+| 83 | 온보딩 30일 미사용 재표시 | `c92ed84` | `restore-onboarding-30d.bat` §76 |
+| 84 | 설정 → 온보딩 다시 보기 | `84a2447` | `restore-onboarding-replay.bat` §77 |
+| 85 | 캡션 네이티브 합성 | `2844213` | `restore-caption-native.bat` §78 |
+| 86 | 캡션 흰 여백·PNG | `5b1e3f4` | `restore-caption-white-png.bat` §79 |
+| 87 | GPS 좌표 캡션·워터마크·PDF | `2196ece` | `restore-gps-caption.bat` §80 |
+| 88 | 저장 모달 제목·메모 미리보기 | `3ece91f` | `restore-save-preview-text.bat` §81 |
+| 89 | 저장 전체 화면 핀치 줌·이동 | `8e269a8` | `restore-save-zoom.bat` §82 |
+| 90 | 크롭 적용 vs 닫기·`_orig` 보존 | `4a85cc8`, `ece0865` | `restore-save-viewer-actions.bat` §87 |
+| 91 | 저장 후 갤러리 백그라운드 | `fc2423d` | `restore-save-fast-gallery.bat` §89 |
+| 92 | 마이크 `(눌러서 말하기)` | `01f0f9e` | `restore-mic-hint.bat` §88 |
+| 93 | 수정 모달 크롭·적용 | `7d908fd` | `restore-edit-crop.bat` §90 |
+| 94 | 목록 PDF·이미지보내기 안내 | `fbcc872` | `restore-list-export-hint.bat` §91 |
+| 95 | Intro 후 StartScreen (`start.png`) | `56898a7` | `restore-start-screen.bat` §92 |
+| 96 | 웹 브라우저 카메라 | `9260376` | `restore-web-camera.bat` §93 |
+| 97 | 학교 층 선택 (1~5, `school_only` 기본) | `f4201a7` | — |
+| 98 | GPS 조회 전 300m 이전 장소 캐시 표시 | `e7e6147` | `restore-location-place-cache.bat` §94 |
+| 99 | 좌표 표기 설정 (GPS/좌표/없음) | `f36601e` | `restore-coords-label.bat` §95 |
+| 100 | 음성 입력 커서 위치 삽입 | `fb053f7` | `restore-speech-cursor.bat` §96 |
+| 101 | 저장 모달 하단 취소·저장 고정 (키보드·내비) | `6b6e70a` | `restore-save-modal-footer.bat` §97 |
+| 102 | 저장 모달 Android 내비 바 여백 | `4912535` | `restore-save-modal-nav-padding.bat` §98 |
+| 103 | 저장 모달 720px 미리보기 썸네일 | `41dce4f` | `restore-save-preview-thumb.bat` §99 |
+| 104 | Android 미리보기 URI 정규화 | `3cc3845` | `restore-save-preview-android-fix.bat` §100 |
+| 105 | 워터마크 미리보기 180px 높이 (미해결) | `b72f0a2` | `restore-watermark-preview-layout.bat` §101 |
+| 106 | 워터마크 미리보기 absoluteFill (미해결) | `19684c5` | `restore-watermark-preview-v2.bat` §102 |
+| 107 | 워터마크 미리보기 캡션 슬롯 재사용 (**해결**) | `69c0b66` | `restore-watermark-preview-caption-slot.bat` §103 |
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -241,7 +264,9 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260613_114227.apk`** | `b697025` | **GitHub 권장** — start·크롭·GPS·목록 안내 (`9260376` 웹 카메라는 소스만) |
+| **`VoiceStamp_20260614_110346.apk`** | `69c0b66` | **설치 권장 (로컬)** — 워터마크 미리보기·층·좌표·커서·하단 버튼·이전 장소 캐시 |
+| `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신 커밋 APK** — 층 선택 (`f4201a7`), 06-14 수정 미포함 |
+| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS·목록 안내 |
 | `VoiceStamp_20260611_232649.apk` | `182f4e7` | 4단계 온보딩·반응형·이미지 갱신 |
 | `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
 | `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
@@ -256,14 +281,32 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
-#### 2026-06-13
+#### 2026-06-14
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start 배너·목록 안내·수정 크롭·저장 속도·줌/크롭·GPS·마이크 안내 | **GitHub 권장** |
-| `VoiceStamp_20260613_11xxxx.apk` 등 | `56898a7`~`9260376` | 동일 기능군 로컬 빌드 (GitHub에는 `114227`만 커밋) | 로컬 |
+| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기: 캡션 120px 슬롯 재사용 + 텍스트 오버레이 (Android 수정 완료) | **권장** |
+| `VoiceStamp_20260614_105426.apk` | `19684c5` | 워터마크 미리보기 v2 (`absoluteFill` Image) — 사진 미표시 | 보관용 |
+| `VoiceStamp_20260614_104508.apk` | `b72f0a2` | 워터마크 미리보기 180px 고정 높이 — 사진 미표시 | 보관용 |
+| `VoiceStamp_20260614_103920.apk` | `3cc3845` | Android 미리보기 URI 캐시 복사·`normalizeDisplayUri` | OK |
+| `VoiceStamp_20260614_102657.apk` | `41dce4f` | 720px `prepareStampPreviewThumb`·로딩 스피너 | OK |
+| `VoiceStamp_20260614_101510.apk` | `4912535` | 저장 모달 하단 `paddingBottom` 56 (내비 바) | OK |
+| `VoiceStamp_20260614_100718.apk` | `6b6e70a` | 취소·저장을 ScrollView 밖 고정 (키보드·내비) | OK |
+| `VoiceStamp_20260614_095801.apk` | `fb053f7` | 음성 입력 커서 위치 삽입 | OK |
+| `VoiceStamp_20260614_095037.apk` | `f36601e` | 설정「좌표 표기」(GPS/좌표/없음) | OK |
+| `VoiceStamp_20260614_093720.apk` | `e7e6147` | 300m 이내 이전 `placeLabel` 즉시 표시 | OK |
 
-> **웹만 갱신:** `9260376` — Vercel 브라우저 카메라. APK 재빌드 전까지 GitHub APK에는 미포함.
+#### 2026-06-13 (후반)
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | 학교 층 선택 칩 (1~5), 기본 `school_only` | **GitHub** |
+| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start 배너·목록 안내·수정 크롭·저장 속도·줌/크롭·GPS | OK |
+| `VoiceStamp_20260613_11xxxx.apk` 등 | `56898a7`~`9260376` | 동일 기능군 로컬 빌드 | 로컬 |
+
+> **웹:** `9260376` 브라우저 카메라 — Vercel 반영. APK는 `234943` 이후 빌드에 포함.
+
+#### 2026-06-13 (전반)
 
 #### 2026-06-12
 
@@ -420,6 +463,31 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-14
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`69c0b66` 기준) |
+| `69c0b66` | 워터마크 썸네일: 별도 영역과 동일 120px 사진 슬롯 + 텍스트 오버레이 (`restore-watermark-preview-caption-slot.bat` §103) |
+| `19684c5` | 워터마크 미리보기 `absoluteFill` Image + `layoutSettingsLoaded` 게이트 (§102, 미해결) |
+| `b72f0a2` | 워터마크 미리보기 180px 고정 높이 (§101, 미해결) |
+| `3cc3845` | Android 미리보기 URI 캐시·`normalizeDisplayUri` (`restore-save-preview-android-fix.bat` §100) |
+| `41dce4f` | 720px `prepareStampPreviewThumb`·로딩 스피너 (`restore-save-preview-thumb.bat` §99) |
+| `4912535` | 저장 모달 `paddingBottom: 56` (`restore-save-modal-nav-padding.bat` §98) |
+| `6b6e70a` | 취소·저장 버튼 ScrollView 밖 고정 (`restore-save-modal-footer.bat` §97) |
+| `fb053f7` | 음성 입력 커서 위치 삽입 (`restore-speech-cursor.bat` §96) |
+| `f36601e` | 설정「좌표 표기」(`coords_label`: gps/coords/off) (`restore-coords-label.bat` §95) |
+| `e7e6147` | 300m 이내 이전 `placeLabel` 즉시 표시 (`restore-location-place-cache.bat` §94) |
+| `b646e84` | PLAN §12 NCP Object Storage 백업 설계 (문서만) |
+
+### 2026-06-13 (후반)
+
+| 커밋 | 내용 |
+|------|------|
+| `484ac4c` | GitHub `releases/VoiceStamp_20260613_234943.apk` |
+| `f4201a7` | 학교 층 선택 (1~5), `floor_picker_mode` 기본 `school_only`, DB `floor` 컬럼 |
+| `76f575c` | PRD·PROJECT·PLAN·README 문서 동기화 (`9260376` 기준) |
+
 ### 2026-06-13
 
 | 커밋 | 내용 |
@@ -553,29 +621,21 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+69c0b66 Use caption photo slot for watermark thumbnail preview.
+19684c5 Render watermark preview with direct Image fill on Android.
+b72f0a2 Fix watermark preview photo height on Android.
+3cc3845 Fix Android save modal preview image URI handling.
+41dce4f Load save modal preview from a lightweight 720px thumbnail.
+4912535 Increase save modal footer padding above Android nav bar.
+6b6e70a Pin save modal actions above keyboard and system nav bar.
+fb053f7 Insert speech recognition text at the text field cursor.
+f36601e Add coords label setting (GPS, coords prefix, or none default).
+e7e6147 Show cached nearby place label while GPS resolves on save modal.
+b646e84 docs: add NCP Object Storage backup design to PLAN §12
+484ac4c Add release APK VoiceStamp_20260613_234943 (floor picker build).
+f4201a7 Add school floor picker (1-5) with school_only default.
+76f575c Sync PRD, PROJECT, PLAN, and README docs to commit 9260376.
 9260376 Enable browser camera capture on web via ImagePicker.
-b697025 Add release APK VoiceStamp_20260613_114227 (start banner build).
-56898a7 Show start banner after intro and before camera.
-fbcc872 Add persistent export hint on stamp list screen.
-7d908fd Enable crop apply on stamp edit while keeping _orig unchanged.
-fc2423d Return from save immediately; defer gallery export to background.
-01f0f9e Show tap-to-speak hint next to mic on save and edit forms.
-ece0865 Split save preview close vs apply crop before final save.
-00a521d Fix pan gesture after zoom in save preview viewer.
-4a85cc8 Crop zoomed photo region on save and keep original in app storage.
-00a1979 Fix pinch zoom in save preview by wrapping Modal with gesture root.
-b7f0dec Add babel-preset-expo for Vercel web build with reanimated.
-8e269a8 Add pinch-zoom composite preview on stamp save full-screen viewer.
-3ece91f Show title and memo on save modal preview using stamp text layout.
-2196ece Show capture GPS coordinates on caption and watermark overlays.
-023118d Revert Korean gallery filenames to restore reliable photo saving.
-69a2246 Keep Korean titles in gallery save filenames.
-5b1e3f4 Keep caption margins pure white with PNG export and higher JPEG quality.
-2844213 Render caption layout natively to preserve photo sharpness.
-84a2447 Add onboarding replay entry in settings with restore backup.
-c92ed84 Re-show onboarding after 30 days idle with restore backup.
-4afd538 Sync PRD, PROJECT, PLAN, and README docs to commit 182f4e7.
-182f4e7 Add APK VoiceStamp_20260611_232649 (onboarding images without footer buttons).
 … (이전 커밋은 `git log` 참고)
 ```
 
@@ -590,7 +650,7 @@ c92ed84 Re-show onboarding after 30 days idle with restore backup.
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~93) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~103) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

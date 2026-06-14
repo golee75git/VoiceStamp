@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 1.9 |
+| 문서 버전 | 2.0 |
 | 작성일 | 2026-06-14 |
-| 기준 커밋 | `9260376` (main) |
+| 기준 커밋 | `69c0b66` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -119,6 +119,24 @@
 | 100 | GitHub APK `releases/VoiceStamp_20260613_114227.apk` | `b697025` | — |
 | 101 | 웹 브라우저 카메라 (Vercel) | `9260376` | `restore-web-camera.bat` §93 |
 
+## 2E. Phase 2 추가 완료 (2026-06-13 후반 ~ 2026-06-14)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 102 | 학교 층 선택 (1~5, `school_only` 기본) | `f4201a7` | — |
+| 103 | GitHub APK `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | — |
+| 104 | PLAN §12 NCP Object Storage 백업 설계 (문서) | `b646e84` | — |
+| 105 | GPS 조회 전 300m 이전 `placeLabel` 즉시 표시 | `e7e6147` | `restore-location-place-cache.bat` §94 |
+| 106 | 좌표 표기 설정 (`coords_label`) | `f36601e` | `restore-coords-label.bat` §95 |
+| 107 | 음성 입력 커서 위치 삽입 | `fb053f7` | `restore-speech-cursor.bat` §96 |
+| 108 | 저장 모달 하단 취소·저장 고정 | `6b6e70a` | `restore-save-modal-footer.bat` §97 |
+| 109 | 저장 모달 Android 내비 바 여백 | `4912535` | `restore-save-modal-nav-padding.bat` §98 |
+| 110 | 저장 모달 720px 미리보기 썸네일 | `41dce4f` | `restore-save-preview-thumb.bat` §99 |
+| 111 | Android 미리보기 URI 정규화 | `3cc3845` | `restore-save-preview-android-fix.bat` §100 |
+| 112 | 워터마크 미리보기 180px (시도, 미해결) | `b72f0a2` | `restore-watermark-preview-layout.bat` §101 |
+| 113 | 워터마크 미리보기 absoluteFill (시도, 미해결) | `19684c5` | `restore-watermark-preview-v2.bat` §102 |
+| 114 | 워터마크 미리보기 캡션 슬롯 (**Android 해결**) | `69c0b66` | `restore-watermark-preview-caption-slot.bat` §103 |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -136,6 +154,7 @@
 | (본 갱신) | `182f4e7` 반영 — 학교 POI·온보딩 4단계·반응형·이미지 갱신·APK별·날짜별 이력 |
 | (본 갱신) | `9260376` 반영 — Phase 2C/2D·크롭·start·웹 카메라·APK `114227`·날짜별 이력 |
 | (본 갱신) | §12 로컬 저장 + **NCP Object Storage** 백업 설계 추가 (`FEAT-03-NCP`) |
+| (본 갱신) | `69c0b66` 반영 — 층·좌표·커서·저장 모달 UX·워터마크 미리보기·APK·날짜별 이력 |
 
 ---
 
@@ -218,8 +237,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260613_114227.apk` (`b697025`) |
-| 최신 소스 (웹) | `9260376` — 웹 카메라 포함 (APK 미재빌드) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260614_110346.apk` (`69c0b66`, 로컬) |
+| GitHub APK | `releases/VoiceStamp_20260613_234943.apk` (`484ac4c`) |
+| 최신 소스 | `69c0b66` — 웹·APK 동기화 (워터마크 미리보기 포함) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -244,7 +264,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~93 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~103 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
 
@@ -262,8 +282,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-10 | 3 | **저장 폴더 현장명 유지**·`/info` APK 링크·문서 동기화 |
 | 2026-06-11 | 2→3 | **시스템 카메라**(줌)·워터마크 JPEG·**저장 시 갤러리 모드**·**학교 POI 위치**·**4단계 온보딩** |
 | 2026-06-12 | 2C | **캡션 네이티브**·흰 여백 PNG·온보딩 30일·설정 재생 |
-| 2026-06-13 | 2D | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라** |
-| 2026-06-14 | 4 (설계) | **§12 NCP 백업** 아키텍처 문서화 (`FEAT-03-NCP`) |
+| 2026-06-13 | 2D | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라**·**층 선택** |
+| 2026-06-14 | 2E | **이전 장소 캐시**·**좌표 표기**·음성 커서·저장 모달 UX·**워터마크 미리보기 수정** |
+| 2026-06-14 | 4 (설계) | **§12 NCP 백업** 아키텍처 문서화 (`FEAT-03-NCP`, `b646e84`) |
 
 ---
 
@@ -271,7 +292,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260613_114227.apk` | `b697025` | **GitHub 최신** — start·크롭·GPS·목록 안내 (웹 카메라는 `9260376` 소스만) |
+| `VoiceStamp_20260614_110346.apk` | `69c0b66` | **설치 권장** — 워터마크 미리보기·층·좌표·커서·하단 버튼 |
+| `VoiceStamp_20260614_105426.apk` | `19684c5` | 워터마크 미리보기 v2 (미해결) |
+| `VoiceStamp_20260614_102657.apk` | `41dce4f` | 720px 미리보기 썸네일 |
+| `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신** — 층 선택 |
+| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS |
 | `VoiceStamp_20260611_232649.apk` | `182f4e7` | 온보딩 4단계·반응형·이미지 갱신 |
 | `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
 | `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
