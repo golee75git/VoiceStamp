@@ -1528,3 +1528,17 @@ restore-speech-cursor.bat
 Copy-Item src.pre-speech-cursor\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-speech-cursor\components\VoiceInputField.tsx src\components\ -Force
 ```
+
+## 97. 저장·수정 화면 하단 버튼 레이아웃 되돌리기 (선택)
+
+취소·저장 버튼을 스크롤 밖 고정 푸터로 옮긴 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-modal-footer.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-modal-footer\components\StampSaveModal.tsx src\components\ -Force
+```
