@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-14**  
-최신 커밋 기준: `69c0b66` (main)
+최신 커밋 기준: `100e123` (main)
 
 ---
 
@@ -44,7 +44,7 @@ VoiceStamp/
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
 ├── public/                 # 정책 정적 HTML (info, privacy, license, help)
-├── RESTORE.md              # 기능별 되돌리기 (§8~103)
+├── RESTORE.md              # 기능별 되돌리기 (§8~105)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -203,6 +203,10 @@ VoiceStamp/
 | 105 | 워터마크 미리보기 180px 높이 (미해결) | `b72f0a2` | `restore-watermark-preview-layout.bat` §101 |
 | 106 | 워터마크 미리보기 absoluteFill (미해결) | `19684c5` | `restore-watermark-preview-v2.bat` §102 |
 | 107 | 워터마크 미리보기 캡션 슬롯 재사용 (**해결**) | `69c0b66` | `restore-watermark-preview-caption-slot.bat` §103 |
+| 108 | 층 표기 설정 (`floor_display_mode`: suffix/cursor) | `0f5c7c2` | `restore-floor-display-mode.bat` §104 |
+| 109 | 자동 제목 설정 (`title_datetime_mode`, 기본 `date`) | `100e123` | `restore-title-datetime-mode.bat` §105 |
+
+> **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -264,7 +268,9 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260614_110346.apk`** | `69c0b66` | **설치 권장 (로컬)** — 워터마크 미리보기·층·좌표·커서·하단 버튼·이전 장소 캐시 |
+| **`VoiceStamp_20260614_114256.apk`** | `100e123` | **설치 권장 (로컬)** — 자동 제목(기본 날짜)·층 표기·전체 06-14 기능 |
+| `VoiceStamp_20260614_113244.apk` | `0f5c7c2` | 층 표기(커서 삽입) |
+| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기 수정 |
 | `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신 커밋 APK** — 층 선택 (`f4201a7`), 06-14 수정 미포함 |
 | `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS·목록 안내 |
 | `VoiceStamp_20260611_232649.apk` | `182f4e7` | 4단계 온보딩·반응형·이미지 갱신 |
@@ -285,7 +291,9 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기: 캡션 120px 슬롯 재사용 + 텍스트 오버레이 (Android 수정 완료) | **권장** |
+| `VoiceStamp_20260614_114256.apk` | `100e123` | 설정「자동 제목」(없음/날짜/날짜+시간, **기본 날짜**) | **권장** |
+| `VoiceStamp_20260614_113244.apk` | `0f5c7c2` | 설정「층 표기」(제목 뒤 붙이기 / 제목 커서 삽입) | OK |
+| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기: 캡션 120px 슬롯 재사용 + 텍스트 오버레이 (Android 수정 완료) | OK |
 | `VoiceStamp_20260614_105426.apk` | `19684c5` | 워터마크 미리보기 v2 (`absoluteFill` Image) — 사진 미표시 | 보관용 |
 | `VoiceStamp_20260614_104508.apk` | `b72f0a2` | 워터마크 미리보기 180px 고정 높이 — 사진 미표시 | 보관용 |
 | `VoiceStamp_20260614_103920.apk` | `3cc3845` | Android 미리보기 URI 캐시 복사·`normalizeDisplayUri` | OK |
@@ -403,14 +411,23 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 9. 제목 자동 생성 규칙 (현재)
 
-1. 저장 모달 열림 → **즉시** `formatDefaultStampTitle(capturedAt)` (날짜·시간만)
+설정 **「자동 제목」** (`title_datetime_mode`, 기본 `date`):
+
+| 모드 | 접두 형식 | 예 (장소 없음) |
+|------|-----------|----------------|
+| `none` | 없음 | (빈 제목) |
+| `date` | `YYYYMMDD` | `20260614` |
+| `datetime` | `YYYYMMDD_HHmm` | `20260614_1142` |
+
+1. 저장 모달 열림 → **즉시** `formatDefaultStampTitle(capturedAt)` (위 모드 적용)
 2. 동시에 「위치 확인 중…」 표시
 3. `getCurrentPlaceLabel()`: `getLastKnownPositionAsync`(5분) → `getCurrentPositionAsync`(6초 타임아웃) → 카카오 API
 4. 성공 시 같은 `capturedAt`으로 `formatDefaultStampTitle(capturedAt, 장소)` 갱신
 5. 실패 시 날짜·시간 제목 유지
 6. 사용자 제목 수정·제목 마이크 시작 시 자동 덮어쓰기 중단
 
-예: `20260606_1815` → `20260606_1815_강남구역삼동래미안`
+예 (`date`): `20260614` → `20260614_강남구역삼동래미안`  
+예 (`datetime`): `20260614_1815` → `20260614_1815_강남구역삼동래미안`
 
 ### 9.1 저장 폴더(앨범) — `4f56b07`
 
@@ -467,7 +484,10 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`69c0b66` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`100e123` 기준) |
+| `100e123` | 설정「자동 제목」(`title_datetime_mode`: none/date/datetime, **기본 date**) (`restore-title-datetime-mode.bat` §105) |
+| `0f5c7c2` | 설정「층 표기」(`floor_display_mode`: suffix/cursor) (`restore-floor-display-mode.bat` §104) |
+| `481b418` | PRD·PROJECT·PLAN·README 문서 동기화 (`69c0b66` 기준) |
 | `69c0b66` | 워터마크 썸네일: 별도 영역과 동일 120px 사진 슬롯 + 텍스트 오버레이 (`restore-watermark-preview-caption-slot.bat` §103) |
 | `19684c5` | 워터마크 미리보기 `absoluteFill` Image + `layoutSettingsLoaded` 게이트 (§102, 미해결) |
 | `b72f0a2` | 워터마크 미리보기 180px 고정 높이 (§101, 미해결) |
@@ -621,21 +641,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+100e123 Add auto title datetime mode setting with date default.
+0f5c7c2 Add floor display mode setting for cursor insert.
+481b418 Sync PRD, PROJECT, PLAN, and README docs to commit 69c0b66.
 69c0b66 Use caption photo slot for watermark thumbnail preview.
 19684c5 Render watermark preview with direct Image fill on Android.
-b72f0a2 Fix watermark preview photo height on Android.
-3cc3845 Fix Android save modal preview image URI handling.
-41dce4f Load save modal preview from a lightweight 720px thumbnail.
-4912535 Increase save modal footer padding above Android nav bar.
-6b6e70a Pin save modal actions above keyboard and system nav bar.
-fb053f7 Insert speech recognition text at the text field cursor.
-f36601e Add coords label setting (GPS, coords prefix, or none default).
-e7e6147 Show cached nearby place label while GPS resolves on save modal.
-b646e84 docs: add NCP Object Storage backup design to PLAN §12
-484ac4c Add release APK VoiceStamp_20260613_234943 (floor picker build).
-f4201a7 Add school floor picker (1-5) with school_only default.
-76f575c Sync PRD, PROJECT, PLAN, and README docs to commit 9260376.
-9260376 Enable browser camera capture on web via ImagePicker.
 … (이전 커밋은 `git log` 참고)
 ```
 
@@ -650,7 +660,7 @@ f4201a7 Add school floor picker (1-5) with school_only default.
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~103) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~105) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

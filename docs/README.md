@@ -21,18 +21,18 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~103) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~105) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
 ## 현재 상태 스냅샷 (2026-06-14)
 
-- **최신 커밋:** `69c0b66` (main)
+- **최신 커밋:** `100e123` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info`
-- **권장 APK (로컬):** `VoiceStamp_20260614_110346.apk` — 워터마크 미리보기·층·좌표·커서·하단 버튼
-- **GitHub APK:** `releases/VoiceStamp_20260613_234943.apk` (`484ac4c`, 층 선택 — 06-14 수정 미포함)
+- **권장 APK (로컬):** `VoiceStamp_20260614_114256.apk` — 자동 제목(기본 날짜)·층 표기·워터마크 미리보기·좌표·커서
+- **GitHub APK:** `releases/VoiceStamp_20260613_234943.apk` (`484ac4c`, 층 선택 — 06-14 후반 수정 미포함)
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260613_234943.apk
 - **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
@@ -50,13 +50,15 @@
 | 06-11 | **시스템 카메라**(줌)·워터마크 JPEG·**저장 시 갤러리 모드**·**학교 POI 위치**·**4단계 온보딩** |
 | 06-12 | **캡션 네이티브**·흰 여백 PNG·온보딩 30일·설정 재생 |
 | 06-13 | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라**·**층 선택** |
-| 06-14 | **이전 장소 캐시**·**좌표 표기**·음성 커서·저장 모달 UX·**워터마크 미리보기 수정**·NCP 백업 설계 |
+| 06-14 | **이전 장소 캐시**·**좌표 표기**·음성 커서·저장 모달 UX·**워터마크 미리보기**·**층 표기·자동 제목(기본 날짜)**·NCP 백업 설계 |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260614_110346.apk` | `69c0b66` | **설치 권장** — 워터마크 미리보기·층·좌표·커서 |
+| `VoiceStamp_20260614_114256.apk` | `100e123` | **설치 권장** — 자동 제목(기본 날짜)·층 표기·전체 06-14 |
+| `VoiceStamp_20260614_113244.apk` | `0f5c7c2` | 층 표기(커서 삽입) |
+| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기 수정 |
 | `VoiceStamp_20260614_102657.apk` | `41dce4f` | 720px 미리보기 썸네일 |
 | `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신** — 층 선택 |
 | `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS |
