@@ -22,7 +22,7 @@ import {
   formatStampGroupName,
   refreshStampGroupDate,
 } from '../services/fileService';
-import { getCurrentLocationSnapshot, getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from '../services/locationService';
+import { getCurrentLocationSnapshot } from '../services/locationService';
 import {
   getCameraHand,
   getCurrentSiteName,
@@ -31,7 +31,6 @@ import {
   getStampTextLayout,
   getTitleTextAlign,
   setCurrentSiteName,
-  setLastCapturePlaceCache,
   type CameraHand,
   type StampTextLayout,
   type TextAlign,
@@ -265,15 +264,6 @@ export function StampSaveModal({
       }
 
       try {
-        const quickCoords = await getQuickLastKnownCoords();
-        if (!cancelled && quickCoords && !titleTouchedRef.current) {
-          const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-          if (cachedPlace) {
-            setPlaceLabel(cachedPlace);
-            setTitle(formatDefaultStampTitle(capturedAt, cachedPlace));
-          }
-        }
-
         const snapshot = await getCurrentLocationSnapshot();
         if (cancelled) {
           return;
@@ -479,14 +469,6 @@ export function StampSaveModal({
           floor,
           captureForExport: captureStampForExport,
         });
-        const coords = captureCoordsRef.current;
-        if (coords && placeLabel) {
-          await setLastCapturePlaceCache({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            placeLabel,
-          });
-        }
       }
       onSaved();
       onClose();
@@ -567,9 +549,7 @@ export function StampSaveModal({
                   </Pressable>
                 </View>
                 {locationLoading ? (
-                  <Text style={styles.locationHint}>
-                    {placeLabel ? '이전 장소 표시 · 위치 확인 중…' : '위치 확인 중…'}
-                  </Text>
+                  <Text style={styles.locationHint}>위치 확인 중…</Text>
                 ) : null}
               </View>
             ) : (

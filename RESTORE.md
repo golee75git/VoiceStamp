@@ -1481,3 +1481,20 @@ restore-web-camera.bat
 ```powershell
 Copy-Item src.pre-web-camera\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 94. 근처 이전 장소 즉시 표시 되돌리기 (선택)
+
+저장 모달에서 300m 이내 이전 장소명 즉시 표시 후 GPS 갱신 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-place-cache.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-place-cache\services\locationService.ts src\services\ -Force
+Copy-Item src.pre-location-place-cache\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-location-place-cache\components\StampSaveModal.tsx src\components\ -Force
+Remove-Item src\utils\geoDistance.ts -ErrorAction SilentlyContinue
+```

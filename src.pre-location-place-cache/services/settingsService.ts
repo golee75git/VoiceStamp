@@ -19,12 +19,6 @@ const LAST_APP_OPEN_AT_KEY = 'last_app_open_at';
 const START_SCREEN_HIDDEN_UNTIL_KEY = 'start_screen_hidden_until';
 const FLOOR_PICKER_MODE_KEY = 'floor_picker_mode';
 const LAST_FLOOR_KEY = 'last_floor';
-const LAST_CAPTURE_LAT_KEY = 'last_capture_lat';
-const LAST_CAPTURE_LON_KEY = 'last_capture_lon';
-const LAST_PLACE_LABEL_KEY = 'last_place_label';
-
-/** Reuse nearby previous place label when still within this distance (m). */
-export const PLACE_CACHE_NEARBY_METERS = 300;
 
 export const START_SCREEN_SNOOZE_DAYS = 7;
 
@@ -438,39 +432,4 @@ export async function setLastFloor(floor: StampFloor | null): Promise<void> {
   } else {
     await writeSetting(LAST_FLOOR_KEY, '');
   }
-}
-
-export type LastCapturePlaceCache = {
-  latitude: number;
-  longitude: number;
-  placeLabel: string;
-};
-
-export async function getLastCapturePlaceCache(): Promise<LastCapturePlaceCache | null> {
-  const [latRaw, lonRaw, placeLabel] = await Promise.all([
-    readSetting(LAST_CAPTURE_LAT_KEY),
-    readSetting(LAST_CAPTURE_LON_KEY),
-    readSetting(LAST_PLACE_LABEL_KEY),
-  ]);
-  if (!latRaw || !lonRaw || !placeLabel?.trim()) {
-    return null;
-  }
-  const latitude = Number.parseFloat(latRaw);
-  const longitude = Number.parseFloat(lonRaw);
-  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-    return null;
-  }
-  return {
-    latitude,
-    longitude,
-    placeLabel: placeLabel.trim(),
-  };
-}
-
-export async function setLastCapturePlaceCache(cache: LastCapturePlaceCache): Promise<void> {
-  await Promise.all([
-    writeSetting(LAST_CAPTURE_LAT_KEY, String(cache.latitude)),
-    writeSetting(LAST_CAPTURE_LON_KEY, String(cache.longitude)),
-    writeSetting(LAST_PLACE_LABEL_KEY, cache.placeLabel.trim()),
-  ]);
 }
