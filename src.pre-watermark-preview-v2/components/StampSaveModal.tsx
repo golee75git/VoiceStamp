@@ -187,7 +187,6 @@ export function StampSaveModal({
     }
 
     let cancelled = false;
-    setLayoutSettingsLoaded(false);
     (async () => {
       const [titleAlign, memoAlign, hand, textLayout, datetimeVisible, coordsLabelMode] = await Promise.all([
         getTitleTextAlign(),
@@ -204,7 +203,6 @@ export function StampSaveModal({
         setStampTextLayout(textLayout);
         setShowDatetime(datetimeVisible);
         setCoordsLabel(coordsLabelMode);
-        setLayoutSettingsLoaded(true);
       }
     })();
 
@@ -604,7 +602,7 @@ export function StampSaveModal({
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
                 <StampSavePreview
                   imageUri={previewThumbUri ?? ''}
-                  imageLoading={!layoutSettingsLoaded || !previewThumbUri}
+                  imageLoading={!previewThumbUri}
                   title={title}
                   memo={memo}
                   titleAlign={titleTextAlign}

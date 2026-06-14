@@ -1602,3 +1602,18 @@ restore-watermark-preview-layout.bat
 ```powershell
 Copy-Item src.pre-watermark-preview-layout\components\StampSavePreview.tsx src\components\ -Force
 ```
+
+## 102. 워터마크 미리보기 v2 되돌리기 (선택)
+
+워터마크 썸네일 direct Image + 설정 로드 후 표시 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-watermark-preview-v2.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-watermark-preview-v2\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-watermark-preview-v2\components\StampSavePreview.tsx src\components\ -Force
+```

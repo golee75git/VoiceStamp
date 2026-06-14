@@ -147,29 +147,18 @@ export function StampSavePreview({
     return <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={resizeMode} />;
   };
 
-  const renderWatermarkThumbnailPhoto = () => {
-    if (imageLoading || !imageUri) {
-      return (
-        <View style={[StyleSheet.absoluteFillObject, styles.thumbnailPhotoLoading]}>
-          <ActivityIndicator color="#6b7280" />
-        </View>
-      );
-    }
-    return <WatermarkThumbnailPhoto uri={imageUri} />;
-  };
-
   if (textLayout === 'watermark') {
+    const photoStyle = isThumbnail
+      ? styles.thumbnailWatermarkPhoto
+      : [styles.fullscreenPhoto, { aspectRatio }];
+
     return (
       <View style={isThumbnail ? styles.thumbnailWrap : styles.fullscreenWrap}>
         <View style={isThumbnail ? styles.thumbnailPhotoWrap : styles.fullscreenPhotoWrap}>
           {isThumbnail ? (
-            renderWatermarkThumbnailPhoto()
+            renderThumbnailPhoto(photoStyle, imageResizeMode)
           ) : (
-            <PreviewPhoto
-              uri={imageUri}
-              style={[styles.fullscreenPhoto, { aspectRatio }]}
-              resizeMode={imageResizeMode}
-            />
+            <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={imageResizeMode} />
           )}
           <View style={isThumbnail ? styles.thumbnailWatermarkBar : styles.fullscreenWatermarkBar}>
             <Text style={[watermarkTitleStyle, { textAlign: titleAlign }]} numberOfLines={isThumbnail ? 2 : undefined}>
@@ -252,6 +241,10 @@ const styles = StyleSheet.create({
   thumbnailPhoto: {
     width: '100%',
     height: '100%',
+  },
+  thumbnailWatermarkPhoto: {
+    width: '100%',
+    height: 180,
   },
   previewPhotoImage: {
     width: '100%',
