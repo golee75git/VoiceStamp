@@ -72,15 +72,6 @@ export async function compressStampJpeg(sourceUri: string): Promise<string> {
   return result.uri;
 }
 
-export async function prepareStampPreviewThumb(sourceUri: string): Promise<string> {
-  const result = await manipulateAsync(
-    sourceUri,
-    [{ resize: { width: STAMP_PREVIEW_MAX_WIDTH } }],
-    { compress: STAMP_PREVIEW_JPEG_COMPRESS, format: SaveFormat.JPEG },
-  );
-  return result.uri;
-}
-
 function loadWebImage(uri: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();

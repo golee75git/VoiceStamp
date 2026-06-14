@@ -1,14 +1,5 @@
-import { memo, useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  type ImageResizeMode,
-  type ImageStyle,
-  type StyleProp,
-} from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View, type ImageResizeMode } from 'react-native';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
@@ -17,21 +8,8 @@ import type { StampFloor } from '../types/stamp';
 
 const FALLBACK_ASPECT_RATIO = 4 / 3;
 
-const PreviewPhoto = memo(function PreviewPhoto({
-  uri,
-  style,
-  resizeMode,
-}: {
-  uri: string;
-  style: StyleProp<ImageStyle>;
-  resizeMode: ImageResizeMode;
-}) {
-  return <Image source={{ uri }} style={style} resizeMode={resizeMode} />;
-});
-
 type StampSavePreviewProps = {
   imageUri: string;
-  imageLoading?: boolean;
   title: string;
   memo: string;
   titleAlign: TextAlign;
@@ -47,7 +25,6 @@ type StampSavePreviewProps = {
 
 export function StampSavePreview({
   imageUri,
-  imageLoading = false,
   title,
   memo,
   titleAlign,
@@ -92,17 +69,6 @@ export function StampSavePreview({
   const watermarkMemoStyle = isThumbnail ? styles.thumbnailWatermarkMemo : styles.fullscreenWatermarkMemo;
   const watermarkCoordsStyle = isThumbnail ? styles.thumbnailWatermarkCoords : styles.fullscreenWatermarkCoords;
 
-  const renderThumbnailPhoto = (photoStyle: StyleProp<ImageStyle>, resizeMode: ImageResizeMode) => {
-    if (imageLoading) {
-      return (
-        <View style={[photoStyle, styles.thumbnailPhotoLoading]}>
-          <ActivityIndicator color="#6b7280" />
-        </View>
-      );
-    }
-    return <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={resizeMode} />;
-  };
-
   if (textLayout === 'watermark') {
     const photoStyle = isThumbnail
       ? styles.thumbnailPhoto
@@ -111,11 +77,7 @@ export function StampSavePreview({
     return (
       <View style={isThumbnail ? styles.thumbnailWrap : styles.fullscreenWrap}>
         <View style={isThumbnail ? styles.thumbnailPhotoWrap : styles.fullscreenPhotoWrap}>
-          {isThumbnail ? (
-            renderThumbnailPhoto(photoStyle, imageResizeMode)
-          ) : (
-            <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={imageResizeMode} />
-          )}
+          <Image source={{ uri: imageUri }} style={photoStyle} resizeMode={imageResizeMode} />
           <View style={isThumbnail ? styles.thumbnailWatermarkBar : styles.fullscreenWatermarkBar}>
             <Text style={[watermarkTitleStyle, { textAlign: titleAlign }]} numberOfLines={isThumbnail ? 2 : undefined}>
               {displayTitle}
@@ -139,7 +101,7 @@ export function StampSavePreview({
   if (isThumbnail) {
     return (
       <View style={styles.thumbnailCaptionCard}>
-        {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
+        <Image source={{ uri: imageUri }} style={styles.thumbnailCaptionPhoto} resizeMode="cover" />
         <View style={styles.thumbnailCaptionText}>
           <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
             {displayTitle}
@@ -162,8 +124,8 @@ export function StampSavePreview({
   return (
     <View style={styles.fullscreenCaptionCard}>
       <View style={[styles.fullscreenPhotoWrap, { width: '100%' }]}>
-        <PreviewPhoto
-          uri={imageUri}
+        <Image
+          source={{ uri: imageUri }}
           style={[styles.fullscreenPhoto, { aspectRatio }]}
           resizeMode="contain"
         />
@@ -197,11 +159,6 @@ const styles = StyleSheet.create({
   thumbnailPhoto: {
     width: '100%',
     height: '100%',
-  },
-  thumbnailPhotoLoading: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f3f4f6',
   },
   thumbnailWatermarkBar: {
     position: 'absolute',

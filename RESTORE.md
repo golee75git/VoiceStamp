@@ -1556,3 +1556,19 @@ restore-save-modal-nav-padding.bat
 ```powershell
 Copy-Item src.pre-save-modal-nav-padding\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 99. 저장·수정 미리보기 썸네일 되돌리기 (선택)
+
+작은 미리보기용 720px 썸네일 생성 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-preview-thumb.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-preview-thumb\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-thumb\components\StampSavePreview.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-thumb\services\exportStampImage.ts src\services\ -Force
+```

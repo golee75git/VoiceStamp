@@ -38,7 +38,7 @@ import {
   type StampTextLayout,
   type TextAlign,
 } from '../services/settingsService';
-import { prepareStampPreviewThumb, type CaptureStampForExport } from '../services/exportStampImage';
+import type { CaptureStampForExport } from '../services/exportStampImage';
 import {
   cropStampImage,
   isStampCropActive,
@@ -133,7 +133,6 @@ export function StampSaveModal({
   const [folderOptions, setFolderOptions] = useState<string[]>([]);
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
-  const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
   const [applyingCrop, setApplyingCrop] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{ title: SpeechInsertSlice; memo: SpeechInsertSlice }>({
@@ -232,7 +231,6 @@ export function StampSaveModal({
       cropViewportRef.current = null;
       originalCameraUriRef.current = null;
       setWorkingImageUri(null);
-      setPreviewThumbUri(null);
       setApplyingCrop(false);
       setCaptureCoords(null);
       setFloor(null);
@@ -257,36 +255,6 @@ export function StampSaveModal({
       originalCameraUriRef.current = imageUri;
     }
   }, [visible, imageUri, isEdit]);
-
-  useEffect(() => {
-    if (!visible) {
-      return;
-    }
-    const sourceUri = workingImageUri ?? imageUri;
-    if (!sourceUri) {
-      setPreviewThumbUri(null);
-      return;
-    }
-
-    let cancelled = false;
-    setPreviewThumbUri(null);
-
-    prepareStampPreviewThumb(sourceUri)
-      .then((uri) => {
-        if (!cancelled) {
-          setPreviewThumbUri(uri);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPreviewThumbUri(sourceUri);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [visible, workingImageUri, imageUri]);
 
   useEffect(() => {
     if (!visible || isEdit || !imageUri) {
@@ -599,8 +567,7 @@ export function StampSaveModal({
             {photoUri ? (
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
                 <StampSavePreview
-                  imageUri={previewThumbUri ?? ''}
-                  imageLoading={!previewThumbUri}
+                  imageUri={photoUri}
                   title={title}
                   memo={memo}
                   titleAlign={titleTextAlign}
