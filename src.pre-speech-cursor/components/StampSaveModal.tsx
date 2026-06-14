@@ -135,12 +135,7 @@ export function StampSaveModal({
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [applyingCrop, setApplyingCrop] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
-  const speechInsertRef = useRef<{ title: SpeechInsertSlice; memo: SpeechInsertSlice }>({
-    title: { prefix: '', suffix: '' },
-    memo: { prefix: '', suffix: '' },
-  });
-  const titleSelectionRef = useRef({ start: 0, end: 0 });
-  const memoSelectionRef = useRef({ start: 0, end: 0 });
+  const speechBaseRef = useRef({ title: '', memo: '' });
   const titleTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
@@ -355,17 +350,9 @@ export function StampSaveModal({
 
     if (target === 'title') {
       titleTouchedRef.current = true;
-      speechInsertRef.current.title = speechSliceAtSelection(
-        title,
-        titleSelectionRef.current.start,
-        titleSelectionRef.current.end,
-      );
+      speechBaseRef.current.title = title;
     } else if (target === 'memo') {
-      speechInsertRef.current.memo = speechSliceAtSelection(
-        memo,
-        memoSelectionRef.current.start,
-        memoSelectionRef.current.end,
-      );
+      speechBaseRef.current.memo = memo;
     }
 
     setSpeechTarget(target);
@@ -668,9 +655,6 @@ export function StampSaveModal({
                 listening={listening && speechTarget === 'title'}
                 speechAvailable={available}
                 onFocus={scrollFieldIntoView}
-                onSelectionChange={(selection) => {
-                  titleSelectionRef.current = selection;
-                }}
                 textAlign={titleTextAlign}
                 cameraHand={cameraHand}
               />
@@ -685,9 +669,6 @@ export function StampSaveModal({
               speechAvailable={available}
               multiline
               onFocus={scrollFieldIntoView}
-              onSelectionChange={(selection) => {
-                memoSelectionRef.current = selection;
-              }}
               textAlign={memoTextAlign}
               cameraHand={cameraHand}
             />

@@ -1513,3 +1513,18 @@ restore-coords-label.bat
 Copy-Item src.pre-coords-label\services\*.ts src\services\ -Force
 Copy-Item src.pre-coords-label\components\*.tsx src\components\ -Force
 ```
+
+## 96. 음성 입력 커서 삽입 되돌리기 (선택)
+
+저장·수정 화면에서 음성 입력이 커서 위치에 삽입되도록 변경한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-speech-cursor.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-speech-cursor\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-speech-cursor\components\VoiceInputField.tsx src\components\ -Force
+```

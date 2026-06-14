@@ -27,7 +27,6 @@ export function VoiceInputField({
   multiline = false,
   speechAvailable = true,
   onFocus,
-  onSelectionChange,
   textAlign = 'left',
   cameraHand = 'right',
 }: VoiceInputFieldProps) {
@@ -57,7 +56,6 @@ export function VoiceInputField({
         value={value}
         onChangeText={onChangeText}
         onFocus={onFocus}
-        onSelectionChange={(event) => onSelectionChange?.(event.nativeEvent.selection)}
         placeholder={`${label} 입력`}
         multiline={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}
