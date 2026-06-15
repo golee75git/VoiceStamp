@@ -9,8 +9,6 @@ import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const settingsIcon = require('../../assets/settings-icon.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const cameraHomeImage = require('../../assets/camera-home.png');
 
 type CameraScreenProps = {
   refreshKey: number;
@@ -138,28 +136,28 @@ export function CameraScreen({
 
   return (
     <View style={styles.container}>
-      <Pressable
-        style={styles.launcher}
-        onPress={() => void openSystemCamera()}
-        disabled={cameraBusy}
-        accessibilityRole="button"
-        accessibilityLabel="사진 촬영"
-      >
-        <Image
-          source={cameraHomeImage}
-          style={styles.launcherImage}
-          resizeMode="contain"
-          accessibilityIgnoresInvertColors
-        />
+      <View style={styles.launcher}>
         {cameraBusy ? (
-          <View style={styles.busyOverlay}>
+          <>
             <ActivityIndicator size="large" color="#fff" />
             <Text style={styles.launcherHint}>
               {isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…'}
             </Text>
-          </View>
-        ) : null}
-      </Pressable>
+          </>
+        ) : (
+          <>
+            <Text style={styles.launcherTitle}>VoiceStamp</Text>
+            <Text style={styles.launcherHint}>
+              {isWeb
+                ? '촬영 버튼을 누르면 브라우저 카메라로 사진을 찍을 수 있습니다. 앨범은 목록에서 이용하세요.'
+                : '촬영 버튼을 누르면 줌 가능한 시스템 카메라가 열립니다.'}
+            </Text>
+            <Pressable style={styles.launchCaptureButton} onPress={() => void openSystemCamera()}>
+              <View style={styles.launchCaptureInner} />
+            </Pressable>
+          </>
+        )}
+      </View>
 
       <View
         style={[
@@ -210,25 +208,37 @@ const styles = StyleSheet.create({
   },
   launcher: {
     flex: 1,
-    width: '100%',
-  },
-  launcherImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  busyOverlay: {
-    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 24,
+    gap: 20,
+  },
+  launcherTitle: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
   },
   launcherHint: {
     color: '#d1d5db',
     fontSize: 15,
     textAlign: 'center',
     lineHeight: 22,
+  },
+  launchCaptureButton: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 4,
+    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  launchCaptureInner: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: '#fff',
   },
   centered: {
     flex: 1,
