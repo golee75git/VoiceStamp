@@ -15,9 +15,6 @@ import {
 
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const cameraBackIcon = require('../../assets/camera-back-icon.png');
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
 import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
@@ -446,12 +443,8 @@ export function StampListScreen({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={onBack}
-          accessibilityLabel="카메라로 돌아가기"
-        >
-          <Image source={cameraBackIcon} style={styles.backIcon} resizeMode="contain" />
+        <Pressable style={styles.backButton} onPress={onBack}>
+          <Text style={styles.backText}>← 카메라</Text>
         </Pressable>
         <Pressable
           style={[styles.albumNavButton, albumBusy && styles.albumNavButtonDisabled]}
@@ -834,14 +827,15 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     minHeight: 44,
     justifyContent: 'center',
   },
-  backIcon: {
-    width: 44,
-    height: 44,
+  backText: {
+    color: '#2563eb',
+    fontWeight: '700',
+    fontSize: 17,
   },
   albumNavButton: {
     alignSelf: 'flex-start',
