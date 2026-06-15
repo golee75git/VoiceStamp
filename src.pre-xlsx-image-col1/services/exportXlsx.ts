@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
-import { resolveImageUri } from './fileService';
+import { resolveImageUri, sanitizeStampFileBaseName } from './fileService';
 import { stampCoordinatesLine } from './stampCoords';
 import { getCoordsLabelMode } from './settingsService';
 import type { ExportFileResult } from './exportProject';
@@ -11,7 +11,7 @@ import type { Stamp } from '../types/stamp';
 
 const THUMB_WIDTH = 120;
 const THUMB_HEIGHT = 90;
-const THUMB_COL = 0;
+const THUMB_COL = 7;
 
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
@@ -76,13 +76,14 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
   });
 
   sheet.columns = [
-    { header: '미리보기', key: 'preview', width: 18 },
     { header: '순번', key: 'index', width: 8 },
     { header: '제목', key: 'title', width: 28 },
     { header: '메모', key: 'memo', width: 36 },
     { header: '층', key: 'floor', width: 10 },
     { header: '좌표', key: 'coords', width: 24 },
     { header: '촬영일시', key: 'createdAt', width: 22 },
+    { header: '이미지파일', key: 'imageFile', width: 28 },
+    { header: '미리보기', key: 'preview', width: 18 },
   ];
 
   const headerRow = sheet.getRow(1);
@@ -92,15 +93,17 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
   for (let i = 0; i < stamps.length; i++) {
     const stamp = stamps[i];
     const rowIndex = i + 2;
+    const imageFile = `${sanitizeStampFileBaseName(stamp.title.trim() || 'VoiceStamp')}_${i + 1}.jpg`;
     const coords = stampCoordinatesLine(stamp, coordsLabel) ?? '';
 
     sheet.getRow(rowIndex).height = 72;
-    sheet.getCell(rowIndex, 2).value = i + 1;
-    sheet.getCell(rowIndex, 3).value = stamp.title;
-    sheet.getCell(rowIndex, 4).value = stamp.memo;
-    sheet.getCell(rowIndex, 5).value = formatFloor(stamp.floor);
-    sheet.getCell(rowIndex, 6).value = coords;
-    sheet.getCell(rowIndex, 7).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
+    sheet.getCell(rowIndex, 1).value = i + 1;
+    sheet.getCell(rowIndex, 2).value = stamp.title;
+    sheet.getCell(rowIndex, 3).value = stamp.memo;
+    sheet.getCell(rowIndex, 4).value = formatFloor(stamp.floor);
+    sheet.getCell(rowIndex, 5).value = coords;
+    sheet.getCell(rowIndex, 6).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
+    sheet.getCell(rowIndex, 7).value = imageFile;
 
     try {
       const { base64, extension } = await readImageBase64(stamp.imagePath);
@@ -113,7 +116,7 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
         ext: { width: THUMB_WIDTH, height: THUMB_HEIGHT },
       });
     } catch {
-      sheet.getCell(rowIndex, 1).value = '(이미지 없음)';
+      sheet.getCell(rowIndex, THUMB_COL + 1).value = '(이미지 없음)';
     }
   }
 
