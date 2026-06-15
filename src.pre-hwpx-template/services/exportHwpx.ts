@@ -1,16 +1,16 @@
+import { HWPXBuilder, write } from 'hwpx-js';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { Image, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import { resolveImageUri } from './fileService';
-import { renderHwpxFromTemplate } from './hwpxTemplate';
 import { stampCoordinatesLine } from './stampCoords';
 import { getCoordsLabelMode } from './settingsService';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const reportTemplateAsset = require('../../assets/templates/report.hwpx');
+const IMAGE_WIDTH_MM = 140;
+const IMAGE_HEIGHT_MM = 105;
 
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
@@ -44,36 +44,6 @@ function downloadBlobOnWeb(blob: Blob, fileName: string): void {
   URL.revokeObjectURL(url);
 }
 
-async function loadReportTemplateBytes(): Promise<ArrayBuffer> {
-  if (Platform.OS === 'web') {
-    const response = await fetch('/templates/report.hwpx');
-    if (!response.ok) {
-      throw new Error('HWPX 템플릿을 불러오지 못했습니다.');
-    }
-    return response.arrayBuffer();
-  }
-
-  const source = Image.resolveAssetSource(reportTemplateAsset);
-  const uri = source?.uri;
-  if (!uri) {
-    throw new Error('HWPX 템플릿 경로를 찾지 못했습니다.');
-  }
-
-  if (uri.startsWith('http://') || uri.startsWith('https://')) {
-    const response = await fetch(uri);
-    if (!response.ok) {
-      throw new Error('HWPX 템플릿을 불러오지 못했습니다.');
-    }
-    return response.arrayBuffer();
-  }
-
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-  const bytes = base64ToUint8Array(base64);
-  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-}
-
 async function readImageBytes(
   imagePath: string,
 ): Promise<{ data: Uint8Array; format: 'jpg' | 'png' }> {
@@ -102,10 +72,15 @@ function formatFloor(floor: string | null | undefined): string {
 
 async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uint8Array> {
   const coordsLabel = await getCoordsLabelMode();
-  const templateBytes = await loadReportTemplateBytes();
-  const stampFills: import('./hwpxTemplate').HwpxStampFill[] = [];
+  const builder = new HWPXBuilder();
+  const title = reportTitle.trim() || 'VoiceStamp 보고서';
 
-  for (const stamp of stamps) {
+  builder.addParagraph(title, { fontSize: 18, bold: true });
+  builder.addParagraph(`생성: ${new Date().toLocaleString('ko-KR')}`, { fontSize: 10 });
+  builder.addEmptyParagraph();
+
+  for (let i = 0; i < stamps.length; i++) {
+    const stamp = stamps[i];
     const coords = stampCoordinatesLine(stamp, coordsLabel) ?? '';
     const floorText = formatFloor(stamp.floor);
     const metaParts = [
@@ -114,22 +89,30 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
       new Date(stamp.createdAt).toLocaleString('ko-KR'),
     ].filter(Boolean);
 
-    const { data, format } = await readImageBytes(stamp.imagePath);
-    stampFills.push({
-      title: stamp.title,
-      memo: stamp.memo,
-      meta: metaParts.join(' · '),
-      imageBytes: data,
-      imageExt: format,
-    });
+    builder.addParagraph(`${i + 1}. ${stamp.title}`, { fontSize: 14, bold: true });
+
+    if (stamp.memo.trim()) {
+      builder.addParagraph(stamp.memo);
+    }
+
+    if (metaParts.length > 0) {
+      builder.addParagraph(metaParts.join(' · '), { fontSize: 10 });
+    }
+
+    try {
+      const { data, format } = await readImageBytes(stamp.imagePath);
+      builder.addImage(data, format, {
+        width: IMAGE_WIDTH_MM,
+        height: IMAGE_HEIGHT_MM,
+      });
+    } catch {
+      builder.addParagraph('(이미지 없음)', { fontSize: 10 });
+    }
+
+    builder.addEmptyParagraph();
   }
 
-  return renderHwpxFromTemplate(
-    templateBytes,
-    reportTitle.trim() || 'VoiceStamp 보고서',
-    new Date().toLocaleString('ko-KR'),
-    stampFills,
-  );
+  return write(builder.build());
 }
 
 export async function createStampsHwpx(
