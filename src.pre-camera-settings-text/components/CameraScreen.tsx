@@ -8,6 +8,8 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
+const settingsIcon = require('../../assets/settings-icon.png');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeImage = require('../../assets/camera-home.png');
 
 type CameraScreenProps = {
@@ -168,8 +170,13 @@ export function CameraScreen({
         <Pressable style={styles.navButton} onPress={onOpenList} disabled={cameraBusy}>
           <Text style={styles.navButtonText}>목록</Text>
         </Pressable>
-        <Pressable style={styles.navButton} onPress={onOpenSettings} disabled={cameraBusy}>
-          <Text style={styles.navButtonText}>설정</Text>
+        <Pressable
+          style={[styles.navButton, styles.navSettingsButton]}
+          onPress={onOpenSettings}
+          disabled={cameraBusy}
+          accessibilityLabel="설정"
+        >
+          <Image source={settingsIcon} style={styles.navSettingsIcon} resizeMode="contain" />
         </Pressable>
       </View>
 
@@ -283,5 +290,14 @@ const styles = StyleSheet.create({
   navButtonText: {
     color: '#fff',
     fontWeight: '600',
+  },
+  navSettingsButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  navSettingsIcon: {
+    width: 36,
+    height: 36,
   },
 });
