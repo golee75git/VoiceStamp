@@ -54,11 +54,18 @@ async function loadReportTemplateBytes(): Promise<ArrayBuffer> {
     return response.arrayBuffer();
   }
 
-  const asset = Asset.fromModule(reportTemplateAsset);
-  await asset.downloadAsync();
-  const uri = asset.localUri;
+  const source = Image.resolveAssetSource(reportTemplateAsset);
+  const uri = source?.uri;
   if (!uri) {
     throw new Error('HWPX 템플릿 경로를 찾지 못했습니다.');
+  }
+
+  if (uri.startsWith('http://') || uri.startsWith('https://')) {
+    const response = await fetch(uri);
+    if (!response.ok) {
+      throw new Error('HWPX 템플릿을 불러오지 못했습니다.');
+    }
+    return response.arrayBuffer();
   }
 
   const base64 = await FileSystem.readAsStringAsync(uri, {

@@ -55,7 +55,8 @@
           "cameraPermission": "기본 카메라 앱으로 사진을 촬영합니다."
         }
       ],
-      "react-native-image-marker"
+      "react-native-image-marker",
+      "expo-asset"
     ]
   }
 }
