@@ -18,7 +18,6 @@ import { StampSaveModal } from './StampSaveModal';
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
 import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
-import { createStampsHwpx, shareStampsHwpx } from '../services/exportHwpx';
 import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
@@ -68,7 +67,6 @@ export function StampListScreen({
   const [imageBusy, setImageBusy] = useState(false);
   const [projectBusy, setProjectBusy] = useState(false);
   const [xlsxBusy, setXlsxBusy] = useState(false);
-  const [hwpxBusy, setHwpxBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
@@ -289,7 +287,7 @@ export function StampListScreen({
     }
   };
 
-  const exportBusy = pdfBusy || imageBusy || projectBusy || xlsxBusy || hwpxBusy;
+  const exportBusy = pdfBusy || imageBusy || projectBusy || xlsxBusy;
 
   const handleShareProject = async () => {
     const selected = getSelectedStamps();
@@ -345,32 +343,6 @@ export function StampListScreen({
       );
     } finally {
       setXlsxBusy(false);
-    }
-  };
-
-  const handleShareHwpx = async () => {
-    const selected = getSelectedStamps();
-    if (selected.length === 0) {
-      return;
-    }
-
-    setHwpxBusy(true);
-    try {
-      const result = await createStampsHwpx(selected, pdfFileName, pdfReportTitle);
-      await shareStampsHwpx(result);
-      Alert.alert(
-        'HWPX 저장 완료',
-        Platform.OS === 'web'
-          ? 'HWPX 파일을 다운로드했습니다. PC에서 한컴오피스 등으로 열어 편집할 수 있습니다.'
-          : 'HWPX 파일을 공유했습니다. PC로 보낸 뒤 한컴오피스 등에서 편집할 수 있습니다.',
-      );
-    } catch (e) {
-      Alert.alert(
-        'HWPX 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setHwpxBusy(false);
     }
   };
 
@@ -569,17 +541,6 @@ export function StampListScreen({
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
                 <Text style={styles.pdfBarButtonText}>엑셀</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareHwpx}
-              disabled={exportBusy}
-            >
-              {hwpxBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>HWPX</Text>
               )}
             </Pressable>
           </View>
