@@ -17,8 +17,6 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
-import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
-import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
@@ -65,8 +63,6 @@ export function StampListScreen({
   const [pdfReportTitle, setPdfReportTitle] = useState('');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [imageBusy, setImageBusy] = useState(false);
-  const [projectBusy, setProjectBusy] = useState(false);
-  const [xlsxBusy, setXlsxBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
@@ -287,65 +283,6 @@ export function StampListScreen({
     }
   };
 
-  const exportBusy = pdfBusy || imageBusy || projectBusy || xlsxBusy;
-
-  const handleShareProject = async () => {
-    const selected = getSelectedStamps();
-    if (selected.length === 0) {
-      return;
-    }
-
-    setProjectBusy(true);
-    try {
-      const result = await createStampsProjectZip(
-        selected,
-        pdfFileName,
-        pdfReportTitle,
-        { includePdf: true },
-      );
-      await shareProjectZip(result);
-      Alert.alert(
-        '프로젝트 저장 완료',
-        Platform.OS === 'web'
-          ? 'ZIP 파일을 다운로드했습니다. PC에서 압축을 풀거나 /report 페이지에서 편집할 수 있습니다.'
-          : '프로젝트 ZIP을 공유했습니다. PC로 보낸 뒤 압축을 풀거나 voicestamp-gilt.vercel.app/report 에서 편집할 수 있습니다.',
-      );
-    } catch (e) {
-      Alert.alert(
-        '프로젝트 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setProjectBusy(false);
-    }
-  };
-
-  const handleShareXlsx = async () => {
-    const selected = getSelectedStamps();
-    if (selected.length === 0) {
-      return;
-    }
-
-    setXlsxBusy(true);
-    try {
-      const result = await createStampsXlsx(selected, pdfFileName);
-      await shareStampsXlsx(result);
-      Alert.alert(
-        '엑셀 저장 완료',
-        Platform.OS === 'web'
-          ? 'XLSX 파일을 다운로드했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.'
-          : '엑셀 파일을 공유했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.',
-      );
-    } catch (e) {
-      Alert.alert(
-        '엑셀 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-      );
-    } finally {
-      setXlsxBusy(false);
-    }
-  };
-
   const handlePickFromLibrary = async () => {
     if (albumBusy || selecting) {
       return;
@@ -458,16 +395,16 @@ export function StampListScreen({
         <Text style={styles.hint}>
           {selecting
             ? selectedCount > 0
-              ? '탭으로 추가 선택 · PDF / 이미지 / 프로젝트 / 엑셀 저장'
+              ? '탭으로 추가 선택 · PDF 만들기 / 이미지 저장'
               : '사진을 탭하거나 길게 눌러 선택하세요.'
-            : '사진을 길게 누르거나 「선택」으로 고른 뒤 PDF·이미지·프로젝트·엑셀로 저장할 수 있습니다.'}
+            : '사진을 길게 누르거나 「선택」으로 고른 뒤 PDF·이미지로 저장할 수 있습니다.'}
         </Text>
         {selecting && selectedCount > 0 && (
           <View style={styles.pdfBar}>
             <Pressable
               style={styles.pdfBarButton}
               onPress={handleCreatePdf}
-              disabled={exportBusy}
+              disabled={pdfBusy || imageBusy}
             >
               {pdfBusy && !pdfUri ? (
                 <ActivityIndicator size="small" color="#2563eb" />
@@ -478,7 +415,7 @@ export function StampListScreen({
             <Pressable
               style={[styles.pdfBarButton, !pdfUri && styles.pdfBarButtonDisabled]}
               onPress={handleSavePdf}
-              disabled={!pdfUri || exportBusy}
+              disabled={!pdfUri || pdfBusy || imageBusy}
             >
               <Text
                 style={[
@@ -490,9 +427,9 @@ export function StampListScreen({
               </Text>
             </Pressable>
             <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+              style={[styles.pdfBarButton, (pdfBusy || imageBusy) && styles.pdfBarButtonDisabled]}
               onPress={handleSaveImages}
-              disabled={exportBusy}
+              disabled={pdfBusy || imageBusy}
             >
               {imageBusy ? (
                 <ActivityIndicator size="small" color="#2563eb" />
@@ -506,7 +443,7 @@ export function StampListScreen({
                 !pdfUri && styles.pdfBarButtonDisabled,
               ]}
               onPress={handleSharePdf}
-              disabled={!pdfUri || exportBusy}
+              disabled={!pdfUri || pdfBusy || imageBusy}
             >
               <Text
                 style={[
@@ -520,32 +457,6 @@ export function StampListScreen({
           </View>
         )}
         {selecting && selectedCount > 0 && (
-          <View style={styles.exportBar}>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareProject}
-              disabled={exportBusy}
-            >
-              {projectBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>프로젝트</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareXlsx}
-              disabled={exportBusy}
-            >
-              {xlsxBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>엑셀</Text>
-              )}
-            </Pressable>
-          </View>
-        )}
-        {selecting && selectedCount > 0 && (
           <View style={styles.pdfNameRow}>
             <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
             <TextInput
@@ -553,7 +464,7 @@ export function StampListScreen({
               value={pdfFileName}
               onChangeText={setPdfFileName}
               placeholder="VoiceStamp"
-              editable={!exportBusy}
+              editable={!pdfBusy && !imageBusy}
             />
             <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
             <TextInput
@@ -561,15 +472,15 @@ export function StampListScreen({
               value={pdfReportTitle}
               onChangeText={setPdfReportTitle}
               placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
-              editable={!exportBusy}
+              editable={!pdfBusy && !imageBusy}
             />
           </View>
         )}
         {selecting && selectedCount > 0 && (
           <Pressable
-            style={[styles.deleteButton, exportBusy && styles.pdfBarButtonDisabled]}
+            style={[styles.deleteButton, (pdfBusy || deleteBusy || imageBusy) && styles.pdfBarButtonDisabled]}
             onPress={handleDeleteSelected}
-            disabled={exportBusy || deleteBusy}
+            disabled={pdfBusy || deleteBusy || imageBusy}
           >
             {deleteBusy ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -711,11 +622,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   pdfBar: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
-  exportBar: {
     flexDirection: 'row',
     gap: 8,
     marginTop: 4,
