@@ -8,8 +8,6 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const listIcon = require('../../assets/list-icon.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const settingsIcon = require('../../assets/settings-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeImage = require('../../assets/camera-home.png');
@@ -34,7 +32,7 @@ export function CameraScreen({
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
-  const [autoLaunch, setAutoLaunch] = useState(false);
+  const [autoLaunch, setAutoLaunch] = useState(true);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
   const launchingRef = useRef(false);
@@ -140,22 +138,19 @@ export function CameraScreen({
 
   return (
     <View style={styles.container}>
-      <View style={styles.launcher}>
+      <Pressable
+        style={styles.launcher}
+        onPress={() => void openSystemCamera()}
+        disabled={cameraBusy}
+        accessibilityRole="button"
+        accessibilityLabel="사진 촬영"
+      >
         <Image
           source={cameraHomeImage}
           style={styles.launcherImage}
           resizeMode="contain"
           accessibilityIgnoresInvertColors
         />
-        <Pressable
-          style={styles.launchCaptureButton}
-          onPress={() => void openSystemCamera()}
-          disabled={cameraBusy}
-          accessibilityRole="button"
-          accessibilityLabel="사진 촬영"
-        >
-          <View style={styles.launchCaptureInner} />
-        </Pressable>
         {cameraBusy ? (
           <View style={styles.busyOverlay}>
             <ActivityIndicator size="large" color="#fff" />
@@ -164,7 +159,7 @@ export function CameraScreen({
             </Text>
           </View>
         ) : null}
-      </View>
+      </Pressable>
 
       <View
         style={[
@@ -172,21 +167,16 @@ export function CameraScreen({
           cameraHand === 'left' ? styles.sideNavLeft : styles.sideNavRight,
         ]}
       >
-        <Pressable
-          style={[styles.navButton, styles.navIconButton]}
-          onPress={onOpenList}
-          disabled={cameraBusy}
-          accessibilityLabel="목록"
-        >
-          <Image source={listIcon} style={styles.navIcon} resizeMode="contain" />
+        <Pressable style={styles.navButton} onPress={onOpenList} disabled={cameraBusy}>
+          <Text style={styles.navButtonText}>목록</Text>
         </Pressable>
         <Pressable
-          style={[styles.navButton, styles.navIconButton]}
+          style={[styles.navButton, styles.navSettingsButton]}
           onPress={onOpenSettings}
           disabled={cameraBusy}
           accessibilityLabel="설정"
         >
-          <Image source={settingsIcon} style={styles.navIcon} resizeMode="contain" />
+          <Image source={settingsIcon} style={styles.navSettingsIcon} resizeMode="contain" />
         </Pressable>
       </View>
 
@@ -197,8 +187,12 @@ export function CameraScreen({
         onClose={() => {
           setModalVisible(false);
           setCapturedUri(null);
-          savedAndClosingRef.current = false;
-          setAutoLaunch(false);
+          if (savedAndClosingRef.current) {
+            savedAndClosingRef.current = false;
+            setAutoLaunch(true);
+          } else {
+            setAutoLaunch(false);
+          }
         }}
         onSaved={() => {
           savedAndClosingRef.current = true;
@@ -220,27 +214,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 120,
-    gap: 20,
   },
   launcherImage: {
-    width: '88%',
-    height: '50%',
-  },
-  launchCaptureButton: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 4,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  launchCaptureInner: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#fff',
+    width: '82%',
+    height: '58%',
   },
   busyOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -310,13 +287,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  navIconButton: {
+  navButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  navSettingsButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
     backgroundColor: 'transparent',
   },
-  navIcon: {
+  navSettingsIcon: {
     width: 40,
     height: 40,
   },
