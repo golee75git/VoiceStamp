@@ -211,13 +211,11 @@ const styles = StyleSheet.create({
   launcher: {
     flex: 1,
     width: '100%',
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   launcherImage: {
-    width: '82%',
-    height: '58%',
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   busyOverlay: {
     ...StyleSheet.absoluteFillObject,
