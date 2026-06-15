@@ -44,7 +44,7 @@
     .report-title-input { width: 100%; max-width: 28rem; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 1rem; }
     .status { margin-top: 0.75rem; color: #374151; font-size: 0.9rem; }
     @media print {
-      nav, .panel.upload, .toolbar, .status, .lightbox { display: none !important; }
+      nav, .panel.upload, .toolbar, .status { display: none !important; }
       body { background: #fff; padding: 0; }
       .panel { border: none; padding: 0; }
       td input, td textarea { border: none; padding: 0; }
@@ -98,10 +98,6 @@
     <div id="printItems"></div>
   </section>
 
-  <div id="lightbox" class="lightbox" hidden>
-    <img id="lightboxImg" alt="원본 미리보기" />
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
     const zipInput = document.getElementById('zipInput');
@@ -115,8 +111,6 @@
     const printPanel = document.getElementById('printPanel');
     const printReportTitle = document.getElementById('printReportTitle');
     const printItems = document.getElementById('printItems');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
 
     let loadedZip = null;
     let manifest = null;
@@ -145,22 +139,6 @@
     function floorLabel(floor) {
       if (!floor) return '';
       return `${floor}층`;
-    }
-
-    function openLightbox(src) {
-      lightboxImg.src = src;
-      lightbox.hidden = false;
-    }
-
-    function closeLightbox() {
-      lightbox.hidden = true;
-      lightboxImg.removeAttribute('src');
-    }
-
-    function bindThumbClicks() {
-      stampRows.querySelectorAll('.thumb').forEach((img) => {
-        img.addEventListener('click', () => openLightbox(img.src));
-      });
     }
 
     function readManifestFromEditor() {
@@ -197,7 +175,6 @@
         `;
         stampRows.appendChild(tr);
       });
-      bindThumbClicks();
       reportTitleInput.value = manifest.reportTitle || '';
       editorPanel.hidden = false;
       saveManifestBtn.disabled = false;
@@ -325,13 +302,6 @@
         await loadZip(file);
       } catch (error) {
         setStatus(error instanceof Error ? error.message : 'ZIP을 열지 못했습니다.');
-      }
-    });
-
-    lightbox.addEventListener('click', closeLightbox);
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeLightbox();
       }
     });
   </script>
