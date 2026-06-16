@@ -1003,22 +1003,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
   },
-  bottomGalleryButton: {
-    flex: 1,
-    minHeight: 52,
-    borderRadius: 14,
-    overflow: 'hidden',
-  },
-  bottomGalleryButtonImage: {
-    width: '100%',
-    height: 52,
-  },
-  bottomGalleryButtonBusy: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.35)',
-  },
   bottomAttachButton: {
     flex: 1,
     flexDirection: 'row',
