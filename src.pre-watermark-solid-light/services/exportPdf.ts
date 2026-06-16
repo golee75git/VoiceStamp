@@ -21,7 +21,7 @@ import {
   type TextAlign,
   type WatermarkStyle,
 } from './settingsService';
-import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
+import { watermarkBarCss } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -88,21 +88,17 @@ function buildStampItem(
   const imageMargin = imageMarginStyle(titleAlign);
 
   if (textLayout === 'watermark') {
-    const theme = getWatermarkTheme(watermarkStyle);
     const memoBlock = memoTrimmed
-      ? `<div class="watermark-memo" style="text-align: ${memoAlign}; color: ${theme.memoColor};">${escapeHtml(memoTrimmed)}</div>`
-      : '';
-    const watermarkCoordsBlock = coords
-      ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
+      ? `<div class="watermark-memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</div>`
       : '';
     return `
       <div class="item item-watermark">
         <div class="photo-wrap">
           <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
-            <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
+            <div class="watermark-title" style="text-align: ${titleAlign};">${title}</div>
             ${memoBlock}
-            ${watermarkCoordsBlock}
+            ${coordsBlock}
           </div>
         </div>
       </div>`;

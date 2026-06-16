@@ -9,7 +9,11 @@ import {
 } from './exportStampImage';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
-import { getWatermarkTheme } from './watermarkStyle';
+import {
+  computeWatermarkBarHeight,
+  createNativeWatermarkBarUri,
+  getWatermarkTheme,
+} from './watermarkStyle';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -61,24 +65,63 @@ export async function renderStampWatermarkNative(
   }
   const text = overlayLines.join('\n');
 
+  let backgroundUri = prepared.uri;
+
+  if (options.watermarkStyle === 'red_stripes') {
+    const barHeight = computeWatermarkBarHeight(prepared.width, title, memo, coords);
+    const barUri = await createNativeWatermarkBarUri(prepared.width, barHeight, options.watermarkStyle);
+    const withBar = await Marker.markImage({
+      backgroundImage: { src: prepared.uri, scale: 1 },
+      watermarkImages: [
+        {
+          src: barUri,
+          scale: 1,
+          position: {
+            X: 0,
+            Y: Math.max(0, prepared.height - barHeight),
+          },
+        },
+      ],
+      quality: 100,
+      saveFormat: ImageFormat.jpg,
+    });
+    backgroundUri = normalizeMarkedUri(withBar);
+  }
+
+  const textStyle: {
+    color: string;
+    fontSize: number;
+    bold: boolean;
+    textAlign: TextAlign;
+    textBackgroundStyle?: {
+      type: TextBackgroundType;
+      color: string;
+      paddingX: number;
+      paddingY: number;
+    };
+  } = {
+    color: theme.titleColor,
+    fontSize: titleSize,
+    bold: true,
+    textAlign: options.titleAlign,
+  };
+
+  if (options.watermarkStyle === 'solid_dark') {
+    textStyle.textBackgroundStyle = {
+      type: TextBackgroundType.stretchX,
+      color: theme.nativeBarColor,
+      paddingX,
+      paddingY,
+    };
+  }
+
   const markedUri = await Marker.markText({
-    backgroundImage: { src: prepared.uri, scale: 1 },
+    backgroundImage: { src: backgroundUri, scale: 1 },
     watermarkTexts: [
       {
         text,
         positionOptions: { position: watermarkPosition(options.titleAlign) },
-        style: {
-          color: theme.titleColor,
-          fontSize: titleSize,
-          bold: true,
-          textAlign: options.titleAlign,
-          textBackgroundStyle: {
-            type: TextBackgroundType.stretchX,
-            color: theme.nativeBarColor,
-            paddingX,
-            paddingY,
-          },
-        },
+        style: textStyle,
       },
     ],
     quality: Math.round(jpegCompress * 100),

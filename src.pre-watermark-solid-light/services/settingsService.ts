@@ -73,7 +73,7 @@ export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
-export type WatermarkStyle = 'solid_dark' | 'solid_light';
+export type WatermarkStyle = 'solid_dark' | 'red_stripes';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
@@ -100,14 +100,14 @@ export function stampTextLayoutLabel(layout: StampTextLayout): string {
   return layout === 'watermark' ? '워터마크' : '별도 영역';
 }
 
-export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = ['solid_dark', 'solid_light'];
+export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = ['solid_dark', 'red_stripes'];
 
 export function watermarkStyleLabel(style: WatermarkStyle): string {
-  return style === 'solid_light' ? '흰색 반투명' : '검은 반투명';
+  return style === 'red_stripes' ? '빨간 세로줄' : '검은 반투명';
 }
 
 export function sanitizeWatermarkStyle(value: string): WatermarkStyle {
-  return value === 'solid_light' ? 'solid_light' : 'solid_dark';
+  return value === 'red_stripes' ? 'red_stripes' : 'solid_dark';
 }
 
 export function coordsLabelModeLabel(mode: CoordsLabelMode): string {

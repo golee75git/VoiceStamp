@@ -1695,3 +1695,21 @@ Copy-Item src.pre-watermark-style\components\StampListScreen.tsx src\components\
 Remove-Item src\services\watermarkStyle.ts -ErrorAction SilentlyContinue
 Remove-Item src\components\WatermarkBarBackground.tsx -ErrorAction SilentlyContinue
 ```
+
+## 107. 워터마크 흰색 반투명 되돌리기 (선택)
+
+워터마크 스타일을 검은/흰 반투명으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-watermark-solid-light.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-watermark-solid-light\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-watermark-solid-light\services\watermarkStyle.ts src\services\ -Force
+Copy-Item src.pre-watermark-solid-light\services\renderStampWatermarkNative.ts src\services\ -Force
+Copy-Item src.pre-watermark-solid-light\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-watermark-solid-light\components\WatermarkBarBackground.tsx src\components\ -Force
+```
