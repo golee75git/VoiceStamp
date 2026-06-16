@@ -13,11 +13,12 @@ import {
   View,
 } from 'react-native';
 
+import { openInfoPage } from '../constants/infoUrls';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const cameraBackIcon = require('../../assets/camera-back-icon.png');
+const micIcon = require('../../assets/mic-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const attachIcon = require('../../assets/attach-icon.png');
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
@@ -84,6 +85,7 @@ export function StampListScreen({
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
@@ -445,41 +447,20 @@ export function StampListScreen({
   const numColumns = width >= 600 ? 2 : 1;
   const isGrid = numColumns > 1;
 
+  const closeMenu = () => setMenuVisible(false);
+
   return (
     <View style={styles.container}>
+      {menuVisible ? (
+        <Pressable style={styles.menuBackdrop} onPress={closeMenu} accessibilityLabel="메뉴 닫기" />
+      ) : null}
       <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={onBack}
-          accessibilityLabel="카메라로 돌아가기"
-        >
-          <Image source={cameraBackIcon} style={styles.backIcon} resizeMode="contain" />
-        </Pressable>
-        <Pressable
-          style={[styles.albumNavButton, albumBusy && styles.albumNavButtonDisabled]}
-          onPress={handlePickFromLibrary}
-          disabled={albumBusy || selecting}
-          accessibilityLabel="사진 첨부"
-        >
-          {albumBusy ? (
-            <ActivityIndicator size="small" color="#2563eb" />
-          ) : (
-            <Image source={attachIcon} style={styles.albumNavIcon} resizeMode="contain" />
-          )}
-        </Pressable>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>저장 목록</Text>
+          <View style={styles.headerTitleGroup}>
+            <Image source={micIcon} style={styles.headerMicIcon} resizeMode="contain" />
+            <Text style={styles.title}>저장 목록</Text>
+          </View>
           <View style={styles.headerActions}>
-            {!selecting && (
-              <>
-                <Pressable onPress={onOpenTrash}>
-                  <Text style={styles.actionText}>휴지통</Text>
-                </Pressable>
-                <Pressable onPress={onOpenSettings}>
-                  <Text style={styles.actionText}>설정</Text>
-                </Pressable>
-              </>
-            )}
             {selecting ? (
               <Pressable onPress={exitSelection}>
                 <Text style={styles.actionText}>취소</Text>
@@ -491,15 +472,59 @@ export function StampListScreen({
                 </Pressable>
               )
             )}
+            <Pressable
+              style={styles.menuButton}
+              onPress={() => setMenuVisible((visible) => !visible)}
+              accessibilityLabel="더보기 메뉴"
+            >
+              <Text style={styles.menuButtonText}>⋮</Text>
+            </Pressable>
           </View>
         </View>
-        <Text style={styles.hint}>
-          {selecting
-            ? selectedCount > 0
-              ? '탭으로 추가 선택 · PDF / 이미지 / 프로젝트 / 엑셀 저장'
-              : '사진을 탭하거나 길게 눌러 선택하세요.'
-            : '사진을 길게 누르거나 「선택」으로 고른 뒤 PDF·이미지·프로젝트·엑셀로 저장할 수 있습니다.'}
+        {menuVisible ? (
+          <View style={styles.menuCard}>
+            <Pressable
+              style={styles.menuItem}
+              onPress={() => {
+                closeMenu();
+                onOpenTrash();
+              }}
+            >
+              <Text style={styles.menuItemText}>휴지통</Text>
+            </Pressable>
+            <Pressable
+              style={styles.menuItem}
+              onPress={() => {
+                closeMenu();
+                onOpenSettings();
+              }}
+            >
+              <Text style={styles.menuItemText}>설정</Text>
+            </Pressable>
+            <Pressable
+              style={styles.menuItem}
+              onPress={() => {
+                closeMenu();
+                void openInfoPage('/help');
+              }}
+            >
+              <Text style={styles.menuItemText}>도움말</Text>
+            </Pressable>
+          </View>
+        ) : null}
+        <Text style={styles.countLine}>
+          전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
         </Text>
+        <View style={styles.hintRow}>
+          <Text style={styles.hintIcon}>ⓘ</Text>
+          <Text style={styles.hint}>
+            {selecting
+              ? selectedCount > 0
+                ? '탭으로 추가 선택 · PDF / 이미지 / 프로젝트 / 엑셀 저장'
+                : '사진을 탭하거나 길게 눌러 선택하세요.'
+              : '항목을 길게 눌러 선택하거나 내보낼 수 있습니다.'}
+          </Text>
+        </View>
         {selecting && selectedCount > 0 && (
           <View style={styles.pdfBar}>
             <Pressable
@@ -629,7 +654,7 @@ export function StampListScreen({
         )}
       </View>
 
-      <View style={styles.listArea}>
+      <View style={[styles.listArea, !selecting && styles.listAreaWithBottomBar]}>
         {loading ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" />
@@ -646,7 +671,7 @@ export function StampListScreen({
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
-            contentContainerStyle={styles.list}
+            contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
             onScroll={(event) => {
               scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
@@ -702,6 +727,36 @@ export function StampListScreen({
         )}
       </View>
 
+      {!selecting ? (
+        <View style={styles.bottomBar}>
+          <Pressable
+            style={[styles.bottomAttachButton, albumBusy && styles.bottomButtonDisabled]}
+            onPress={handlePickFromLibrary}
+            disabled={albumBusy}
+            accessibilityLabel="사진 첨부"
+          >
+            {albumBusy ? (
+              <ActivityIndicator size="small" color="#2563eb" />
+            ) : (
+              <>
+                <View style={styles.bottomAttachIconWrap}>
+                  <Image source={attachIcon} style={styles.bottomAttachIcon} resizeMode="contain" />
+                </View>
+                <Text style={styles.bottomAttachText}>첨부</Text>
+              </>
+            )}
+          </Pressable>
+          <Pressable
+            style={styles.bottomCaptureButton}
+            onPress={onBack}
+            accessibilityLabel="사진 촬영"
+          >
+            <Text style={styles.bottomCaptureIcon}>📷</Text>
+            <Text style={styles.bottomCaptureText}>촬영</Text>
+          </Pressable>
+        </View>
+      ) : null}
+
       <StampSaveModal
         visible={editingStamp != null}
         stamp={editingStamp}
@@ -742,6 +797,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
     gap: 8,
+    zIndex: 2,
+  },
+  headerTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  headerMicIcon: {
+    width: 28,
+    height: 28,
   },
   headerRow: {
     flexDirection: 'row',
@@ -752,9 +818,70 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
+  },
+  menuButton: {
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuButtonText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#374151',
+    lineHeight: 24,
+  },
+  menuBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
+  },
+  menuCard: {
+    position: 'absolute',
+    top: 88,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    minWidth: 140,
+    paddingVertical: 4,
+    zIndex: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  menuItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  menuItemText: {
+    fontSize: 15,
+    color: '#111827',
+    fontWeight: '500',
+  },
+  countLine: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  countNumber: {
+    color: '#2563eb',
+    fontWeight: '700',
+  },
+  hintRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+  },
+  hintIcon: {
+    fontSize: 14,
+    color: '#9ca3af',
+    lineHeight: 18,
   },
   hint: {
+    flex: 1,
     fontSize: 13,
     color: '#6b7280',
     lineHeight: 18,
@@ -835,36 +962,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
-  backButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    minHeight: 44,
-    justifyContent: 'center',
-  },
-  backIcon: {
-    width: 44,
-    height: 44,
-  },
-  albumNavButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    minHeight: 44,
-    justifyContent: 'center',
-  },
-  albumNavButtonDisabled: {
-    opacity: 0.6,
-  },
-  albumNavIcon: {
-    width: 40,
-    height: 40,
-  },
   title: {
     fontSize: 20,
     fontWeight: '700',
     color: '#111',
-    flex: 1,
   },
   actionText: {
     color: '#2563eb',
@@ -873,6 +974,9 @@ const styles = StyleSheet.create({
   },
   listArea: {
     flex: 1,
+  },
+  listAreaWithBottomBar: {
+    paddingBottom: 80,
   },
   centered: {
     flex: 1,
@@ -886,6 +990,73 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
   },
+  listWithBottomBar: {
+    paddingBottom: 96,
+  },
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  bottomAttachButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    minHeight: 52,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#2563eb',
+    backgroundColor: '#fff',
+  },
+  bottomCaptureButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    minHeight: 52,
+    borderRadius: 14,
+    backgroundColor: '#2563eb',
+  },
+  bottomButtonDisabled: {
+    opacity: 0.6,
+  },
+  bottomAttachIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#2563eb',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomAttachIcon: {
+    width: 18,
+    height: 18,
+  },
+  bottomAttachText: {
+    color: '#2563eb',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  bottomCaptureIcon: {
+    fontSize: 18,
+  },
+  bottomCaptureText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
   columnWrapper: {
     gap: 12,
     marginBottom: 12,
@@ -893,12 +1064,17 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#e5e7eb',
     marginBottom: 12,
-    alignItems: 'center',
+    alignItems: 'stretch',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardGrid: {
     flex: 1,
@@ -939,17 +1115,24 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 96,
     height: 96,
+    margin: 12,
+    borderRadius: 12,
     backgroundColor: '#e5e7eb',
   },
   thumbnailGrid: {
     width: '100%',
     height: 140,
+    margin: 0,
+    borderRadius: 0,
     backgroundColor: '#e5e7eb',
   },
   meta: {
     flex: 1,
-    padding: 12,
-    gap: 4,
+    paddingVertical: 14,
+    paddingRight: 14,
+    paddingLeft: 0,
+    gap: 6,
+    justifyContent: 'center',
   },
   cardTitle: {
     fontSize: 16,
@@ -958,11 +1141,20 @@ const styles = StyleSheet.create({
   },
   cardMemo: {
     fontSize: 14,
-    color: '#4b5563',
+    color: '#6b7280',
+    lineHeight: 20,
+  },
+  cardDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  cardDateIcon: {
+    fontSize: 12,
   },
   cardDate: {
     fontSize: 12,
     color: '#9ca3af',
-    marginTop: 4,
   },
 });
