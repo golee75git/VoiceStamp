@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-14**  
-최신 커밋 기준: `100e123` (main)
+최신 커밋 기준: `7e453ea` (main)
 
 ---
 
@@ -73,10 +73,10 @@ VoiceStamp/
 
 | 영역 | 요소 |
 |------|------|
-| 상단 | 「← 카메라」(큰 버튼) · 「앨범」 |
-| 헤더 | 저장 목록 · 휴지통 · **설정** · 선택/취소 |
+| 헤더 | 마이크 아이콘 · 저장 목록 · 선택/취소 · ⋮ 메뉴 (휴지통·설정·앱 정보) |
 | 본문 | 스탬프 카드 (600px+ 2열) |
-| 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 |
+| 하단 | **갤러리** 캡슐 이미지 (`gallery.png`) · **촬영** 캡슐 이미지 (`capture.png`) — 시스템 내비 위 31px |
+| 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 · 프로젝트·엑셀·HWPX |
 
 ### 3.2 Android 하드웨어 뒤로 (`MainScreen`)
 
@@ -217,6 +217,11 @@ VoiceStamp/
 | 119 | 목록 카메라-back 아이콘 | `3fca65b` | — |
 | 120 | 목록 **첨부(클립) 아이콘** | `f110256` | — |
 | 121 | 목록 UI (마이크 헤더·⋮ 메뉴·전체 N개·하단 첨부·촬영·카드) | `7c127aa` | — |
+| 122 | 목록 하단바 시스템 내비 여백 (31px 상향) | `109bfa3` | `restore-list-bottom-lift.bat` |
+| 123 | 목록 첨부 아이콘 28px 꽉 참 | `9ceb325` | `restore-list-attach-icon-full.bat` |
+| 124 | 목록 갤러리 아이콘+「갤러리」라벨 | `72ccc32` | `restore-list-gallery-button.bat` |
+| 125 | 목록 **갤러리 캡슐** 버튼 (`gallery.png`) | `0d7e72d` | `restore-list-gallery-pill.bat` |
+| 126 | 목록 **촬영 캡슐** 버튼 (`capture.png`) | `7e453ea` | `restore-list-capture-pill.bat` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -282,11 +287,15 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260616_094515.apk`** | `7c127aa` | **설치 권장 (로컬)** — 목록 UI·첨부 아이콘·카메라 홈·HWPX/XLSX/ZIP |
+| **`VoiceStamp_20260616_173518.apk`** | `7e453ea` | **설치 권장 (로컬)** — 갤러리·촬영 캡슐 버튼·내비 여백·HWPX/XLSX/ZIP |
+| `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘+라벨 (캡슐 **미포함**) |
+| `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 28px 꽉 참 |
+| `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 31px 상향 |
+| `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI·첨부 아이콘·카메라 홈 |
 | `VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 카메라-back 아이콘 — 첨부·목록 리디자인 미포함 |
 | `VoiceStamp_20260616_081011.apk` | `ce59962` | 카메라 홈 리디자인 |
 | `VoiceStamp_20260616_075840.apk` | `c8221ca` | 설정 톱니 PNG |
-| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신 커밋 APK** — `7c127aa` 미포함 |
+| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신 커밋 APK** — `7e453ea` 미포함 |
 | `releases/VoiceStamp_20260615_153600.apk` | `c6aff3c` | HWPX APK 템플릿 로드 수정 |
 | `VoiceStamp_20260614_114256.apk` | `100e123` | 자동 제목(기본 날짜)·층 표기·전체 06-14 기능 |
 
@@ -298,7 +307,11 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI(헤더·⋮ 메뉴·하단 첨부·촬영·카드)·첨부 아이콘·카메라 홈·HWPX/XLSX/ZIP | **권장 (로컬)** |
+| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 목록 하단 **촬영 캡슐** (`capture.png`) | **권장 (로컬)** |
+| `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘+「갤러리」 (중간) | 로컬 |
+| `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 28px `cover` | 로컬 |
+| `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 `bottom: 31` (내비 바 회피) | 로컬 |
+| `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI(헤더·⋮·하단 첨부·촬영·카드)·첨부 아이콘 | 로컬 |
 | `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 카메라-back 아이콘 (`3fca65b`) | **GitHub** |
 | `releases/VoiceStamp_20260616_081011.apk` | `ce59962` | 카메라 홈 스플래시·촬영·하단 내비 (`7bf21fc`) | GitHub |
 | `releases/VoiceStamp_20260616_075840.apk` | `c8221ca` | 설정 톱니 PNG (`ae0695f`) | GitHub |
@@ -511,7 +524,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`7c127aa` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`7e453ea` 기준) |
+| `7e453ea` | APK `VoiceStamp_20260616_173518` — 목록 **촬영 캡슐** (`capture.png`) |
+| `0d7e72d` | 목록 **갤러리 캡슐** (`gallery.png`) (`restore-list-gallery-pill.bat`) |
+| `72ccc32` | 갤러리 아이콘+「갤러리」 (`restore-list-gallery-button.bat`) |
+| `9ceb325` | 첨부 아이콘 28px 꽉 참 (`restore-list-attach-icon-full.bat`) |
+| `109bfa3` | 하단바 31px 상향 (`restore-list-bottom-lift.bat`) |
+| `285f2d0` | 문서 동기화 (`7c127aa` 기준) |
 | `7c127aa` | 목록 UI: 마이크+제목 헤더, ⋮ 메뉴, 전체 N개, 하단 첨부·촬영, 카드 스타일 |
 | `f110256` | 목록 「앨범」→ **첨부(클립) 아이콘** (`attach-icon.png`) |
 | `f74012f` | GitHub APK `VoiceStamp_20260616_082006` |
@@ -704,11 +723,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
-100e123 Add auto title datetime mode setting with date default.
-0f5c7c2 Add floor display mode setting for cursor insert.
-481b418 Sync PRD, PROJECT, PLAN, and README docs to commit 69c0b66.
-69c0b66 Use caption photo slot for watermark thumbnail preview.
-19684c5 Render watermark preview with direct Image fill on Android.
+7e453ea Use full capture pill image for the list screen bottom capture button.
+0d7e72d Use full gallery pill image for the list screen bottom gallery button.
+72ccc32 Replace list bottom attach button with full-size gallery icon and 갤러리 label.
+9ceb325 Fill list screen attach icon to the full 28px circle in the bottom bar.
+109bfa3 Raise list screen bottom bar by 0.6x button height so attach/capture buttons clear the system navigation area.
+285f2d0 Sync PRD, PROJECT, PLAN, and README docs to commit 7c127aa.
+7c127aa Restyle list screen header, cards, and bottom action bar.
 … (이전 커밋은 `git log` 참고)
 ```
 
