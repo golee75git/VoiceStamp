@@ -29,7 +29,6 @@ import {
   getMemoTextAlign,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getCoordsLabelMode,
   getTitleTextAlign,
   setCurrentSiteName,
@@ -37,7 +36,6 @@ import {
   type CameraHand,
   type CoordsLabelMode,
   type StampTextLayout,
-  type WatermarkStyle,
   type TextAlign,
 } from '../services/settingsService';
 import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
@@ -122,7 +120,6 @@ export function StampSaveModal({
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
-  const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [showDatetime, setShowDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
@@ -195,13 +192,12 @@ export function StampSaveModal({
     let cancelled = false;
     setLayoutSettingsLoaded(false);
     (async () => {
-      const [titleAlign, memoAlign, hand, textLayout, wmStyle, datetimeVisible, coordsLabelMode, displayMode] =
+      const [titleAlign, memoAlign, hand, textLayout, datetimeVisible, coordsLabelMode, displayMode] =
         await Promise.all([
         getTitleTextAlign(),
         getMemoTextAlign(),
         getCameraHand(),
         getStampTextLayout(),
-        getWatermarkStyle(),
         getPdfShowDatetime(),
         getCoordsLabelMode(),
         getFloorDisplayMode(),
@@ -211,7 +207,6 @@ export function StampSaveModal({
         setMemoTextAlign(memoAlign);
         setCameraHand(hand);
         setStampTextLayout(textLayout);
-        setWatermarkStyle(wmStyle);
         setShowDatetime(datetimeVisible);
         setCoordsLabel(coordsLabelMode);
         setFloorDisplayModeState(displayMode);
@@ -639,7 +634,6 @@ export function StampSaveModal({
                   titleAlign={titleTextAlign}
                   memoAlign={memoTextAlign}
                   textLayout={stampTextLayout}
-                  watermarkStyle={watermarkStyle}
                   coordsLabel={coordsLabel}
                   showDatetime={showDatetime}
                   floor={floor}

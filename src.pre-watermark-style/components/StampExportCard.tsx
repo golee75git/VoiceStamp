@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
-import type { PreparedExportPhoto, StampImageExportOptions } from '../services/exportStampImage';
+import type { PreparedExportPhoto } from '../services/exportStampImage';
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampCoordinatesLine } from '../services/stampCoords';
-import { getWatermarkTheme } from '../services/watermarkStyle';
-import { WatermarkBarBackground } from './WatermarkBarBackground';
+import type { StampImageExportOptions } from '../services/exportStampImage';
 import type { Stamp } from '../types/stamp';
 
 export const STAMP_EXPORT_CARD_WIDTH = 1080;
@@ -32,7 +31,6 @@ export function StampExportCard({
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
-  const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
 
@@ -93,9 +91,8 @@ export function StampExportCard({
           style={{ width: preparedPhoto.width, height: preparedPhoto.height }}
           onLoadEnd={notifyImageReady}
         />
-        <WatermarkBarBackground
-          style={options.watermarkStyle}
-          barStyle={[
+        <View
+          style={[
             styles.watermarkBar,
             {
               paddingHorizontal: barPaddingX,
@@ -106,7 +103,7 @@ export function StampExportCard({
           <Text
             style={[
               styles.watermarkTitle,
-              { fontSize: titleSize, textAlign: options.titleAlign, color: watermarkTheme.titleColor },
+              { fontSize: titleSize, textAlign: options.titleAlign },
             ]}
           >
             {title}
@@ -119,7 +116,6 @@ export function StampExportCard({
                   fontSize: memoSize,
                   lineHeight: memoLineHeight,
                   textAlign: options.memoAlign,
-                  color: watermarkTheme.memoColor,
                 },
               ]}
             >
@@ -134,14 +130,13 @@ export function StampExportCard({
                   fontSize: Math.max(14, Math.round(22 * scale)),
                   lineHeight: Math.max(18, Math.round(28 * scale)),
                   textAlign: options.memoAlign,
-                  color: watermarkTheme.coordsColor,
                 },
               ]}
             >
               {coords}
             </Text>
           ) : null}
-        </WatermarkBarBackground>
+        </View>
       </View>
     );
   }
@@ -156,36 +151,15 @@ export function StampExportCard({
             resizeMode="cover"
             onLoadEnd={notifyImageReady}
           />
-          <WatermarkBarBackground style={options.watermarkStyle} barStyle={styles.watermarkBar}>
-            <Text
-              style={[
-                styles.watermarkTitle,
-                { textAlign: options.titleAlign, color: watermarkTheme.titleColor },
-              ]}
-            >
-              {title}
-            </Text>
+          <View style={styles.watermarkBar}>
+            <Text style={[styles.watermarkTitle, { textAlign: options.titleAlign }]}>{title}</Text>
             {memo ? (
-              <Text
-                style={[
-                  styles.watermarkMemo,
-                  { textAlign: options.memoAlign, color: watermarkTheme.memoColor },
-                ]}
-              >
-                {memo}
-              </Text>
+              <Text style={[styles.watermarkMemo, { textAlign: options.memoAlign }]}>{memo}</Text>
             ) : null}
             {coords ? (
-              <Text
-                style={[
-                  styles.watermarkCoords,
-                  { textAlign: options.memoAlign, color: watermarkTheme.coordsColor },
-                ]}
-              >
-                {coords}
-              </Text>
+              <Text style={[styles.watermarkCoords, { textAlign: options.memoAlign }]}>{coords}</Text>
             ) : null}
-          </WatermarkBarBackground>
+          </View>
         </View>
       </View>
     );
@@ -225,6 +199,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },

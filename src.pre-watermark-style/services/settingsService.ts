@@ -25,7 +25,6 @@ const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
-const WATERMARK_STYLE_KEY = 'watermark_style';
 const COORDS_LABEL_KEY = 'coords_label';
 const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
@@ -57,7 +56,6 @@ export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
-export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 export const DEFAULT_FLOOR_PICKER_MODE = 'school_only' as const;
@@ -73,7 +71,6 @@ export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
-export type WatermarkStyle = 'solid_dark' | 'red_stripes';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
@@ -98,16 +95,6 @@ export function sanitizeFloorPickerMode(value: string): FloorPickerMode {
 
 export function stampTextLayoutLabel(layout: StampTextLayout): string {
   return layout === 'watermark' ? '워터마크' : '별도 영역';
-}
-
-export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = ['solid_dark', 'red_stripes'];
-
-export function watermarkStyleLabel(style: WatermarkStyle): string {
-  return style === 'red_stripes' ? '빨간 세로줄' : '검은 반투명';
-}
-
-export function sanitizeWatermarkStyle(value: string): WatermarkStyle {
-  return value === 'red_stripes' ? 'red_stripes' : 'solid_dark';
 }
 
 export function coordsLabelModeLabel(mode: CoordsLabelMode): string {
@@ -350,20 +337,6 @@ export async function setStampTextLayout(layout: StampTextLayout): Promise<Stamp
   const safeLayout = sanitizeStampTextLayout(layout);
   await writeSetting(STAMP_TEXT_LAYOUT_KEY, safeLayout);
   return safeLayout;
-}
-
-export async function getWatermarkStyle(): Promise<WatermarkStyle> {
-  const value = await readSetting(WATERMARK_STYLE_KEY);
-  if (!value) {
-    return DEFAULT_WATERMARK_STYLE;
-  }
-  return sanitizeWatermarkStyle(value);
-}
-
-export async function setWatermarkStyle(style: WatermarkStyle): Promise<WatermarkStyle> {
-  const safeStyle = sanitizeWatermarkStyle(style);
-  await writeSetting(WATERMARK_STYLE_KEY, safeStyle);
-  return safeStyle;
 }
 
 export async function getCoordsLabelMode(): Promise<CoordsLabelMode> {

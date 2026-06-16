@@ -14,9 +14,7 @@ import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
-import { WatermarkBarBackground } from './WatermarkBarBackground';
-import { getWatermarkTheme } from '../services/watermarkStyle';
-import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
+import type { StampTextLayout, TextAlign, CoordsLabelMode } from '../services/settingsService';
 import type { StampFloor } from '../types/stamp';
 
 const FALLBACK_ASPECT_RATIO = 4 / 3;
@@ -61,7 +59,6 @@ type StampSavePreviewProps = {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   textLayout: StampTextLayout;
-  watermarkStyle: WatermarkStyle;
   coordsLabel: CoordsLabelMode;
   showDatetime: boolean;
   floor?: StampFloor | null;
@@ -78,7 +75,6 @@ export function StampSavePreview({
   titleAlign,
   memoAlign,
   textLayout,
-  watermarkStyle,
   coordsLabel,
   showDatetime,
   floor,
@@ -117,7 +113,6 @@ export function StampSavePreview({
   const watermarkTitleStyle = isThumbnail ? styles.thumbnailWatermarkTitle : styles.fullscreenWatermarkTitle;
   const watermarkMemoStyle = isThumbnail ? styles.thumbnailWatermarkMemo : styles.fullscreenWatermarkMemo;
   const watermarkCoordsStyle = isThumbnail ? styles.thumbnailWatermarkCoords : styles.fullscreenWatermarkCoords;
-  const watermarkTheme = getWatermarkTheme(watermarkStyle);
 
   const renderThumbnailPhoto = (photoStyle: StyleProp<ImageStyle>, resizeMode: ImageResizeMode) => {
     if (imageLoading || !imageUri) {
@@ -131,30 +126,21 @@ export function StampSavePreview({
   };
 
   const renderThumbnailWatermarkBar = () => (
-    <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkBar}>
-      <Text
-        style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}
-        numberOfLines={2}
-      >
+    <View style={styles.thumbnailWatermarkBar}>
+      <Text style={[watermarkTitleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
         {displayTitle}
       </Text>
       {displayMemo ? (
-        <Text
-          style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}
-          numberOfLines={3}
-        >
+        <Text style={[watermarkMemoStyle, { textAlign: memoAlign }]} numberOfLines={3}>
           {displayMemo}
         </Text>
       ) : null}
       {coords ? (
-        <Text
-          style={[watermarkCoordsStyle, { textAlign: memoAlign, color: watermarkTheme.coordsColor }]}
-          numberOfLines={1}
-        >
+        <Text style={[watermarkCoordsStyle, { textAlign: memoAlign }]} numberOfLines={1}>
           {coords}
         </Text>
       ) : null}
-    </WatermarkBarBackground>
+    </View>
   );
 
   if (textLayout === 'watermark' && isThumbnail) {
@@ -177,21 +163,15 @@ export function StampSavePreview({
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode={imageResizeMode}
           />
-          <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
-            <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
-              {displayTitle}
-            </Text>
+          <View style={styles.fullscreenWatermarkBar}>
+            <Text style={[watermarkTitleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
             {displayMemo ? (
-              <Text style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}>
-                {displayMemo}
-              </Text>
+              <Text style={[watermarkMemoStyle, { textAlign: memoAlign }]}>{displayMemo}</Text>
             ) : null}
             {coords ? (
-              <Text style={[watermarkCoordsStyle, { textAlign: memoAlign, color: watermarkTheme.coordsColor }]}>
-                {coords}
-              </Text>
+              <Text style={[watermarkCoordsStyle, { textAlign: memoAlign }]}>{coords}</Text>
             ) : null}
-          </WatermarkBarBackground>
+          </View>
         </View>
       </View>
     );
@@ -263,6 +243,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
@@ -333,6 +314,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },

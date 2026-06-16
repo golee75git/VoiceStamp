@@ -9,11 +9,6 @@ import {
 } from './exportStampImage';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
-import {
-  computeWatermarkBarHeight,
-  createNativeWatermarkBarUri,
-  getWatermarkTheme,
-} from './watermarkStyle';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -29,16 +24,6 @@ function watermarkPosition(align: TextAlign): Position {
   return Position.bottomLeft;
 }
 
-function normalizeMarkedUri(markedUri: string): string {
-  if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
-    return markedUri;
-  }
-  if (markedUri.startsWith('/')) {
-    return `file://${markedUri}`;
-  }
-  return markedUri;
-}
-
 export async function renderStampWatermarkNative(
   stamp: Stamp,
   options: StampImageExportOptions,
@@ -51,7 +36,6 @@ export async function renderStampWatermarkNative(
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
-  const theme = getWatermarkTheme(options.watermarkStyle);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;
   const titleSize = Math.max(18, Math.round(32 * scale));
   const paddingX = Math.round(20 * scale);
@@ -65,68 +49,35 @@ export async function renderStampWatermarkNative(
   }
   const text = overlayLines.join('\n');
 
-  let backgroundUri = prepared.uri;
-
-  if (options.watermarkStyle === 'red_stripes') {
-    const barHeight = computeWatermarkBarHeight(prepared.width, title, memo, coords);
-    const barUri = await createNativeWatermarkBarUri(prepared.width, barHeight, options.watermarkStyle);
-    const withBar = await Marker.markImage({
-      backgroundImage: { src: prepared.uri, scale: 1 },
-      watermarkImages: [
-        {
-          src: barUri,
-          scale: 1,
-          position: {
-            X: 0,
-            Y: Math.max(0, prepared.height - barHeight),
-          },
-        },
-      ],
-      quality: 100,
-      saveFormat: ImageFormat.jpg,
-    });
-    backgroundUri = normalizeMarkedUri(withBar);
-  }
-
-  const textStyle: {
-    color: string;
-    fontSize: number;
-    bold: boolean;
-    textAlign: TextAlign;
-    textBackgroundStyle?: {
-      type: TextBackgroundType;
-      color: string;
-      paddingX: number;
-      paddingY: number;
-    };
-  } = {
-    color: theme.titleColor,
-    fontSize: titleSize,
-    bold: true,
-    textAlign: options.titleAlign,
-  };
-
-  if (options.watermarkStyle === 'solid_dark') {
-    textStyle.textBackgroundStyle = {
-      type: TextBackgroundType.stretchX,
-      color: theme.nativeBarColor,
-      paddingX,
-      paddingY,
-    };
-  }
-
   const markedUri = await Marker.markText({
-    backgroundImage: { src: backgroundUri, scale: 1 },
+    backgroundImage: { src: prepared.uri, scale: 1 },
     watermarkTexts: [
       {
         text,
         positionOptions: { position: watermarkPosition(options.titleAlign) },
-        style: textStyle,
+        style: {
+          color: '#FFFFFF',
+          fontSize: titleSize,
+          bold: true,
+          textAlign: options.titleAlign,
+          textBackgroundStyle: {
+            type: TextBackgroundType.stretchX,
+            color: '#0000008C',
+            paddingX,
+            paddingY,
+          },
+        },
       },
     ],
     quality: Math.round(jpegCompress * 100),
     saveFormat: ImageFormat.jpg,
   });
 
-  return normalizeMarkedUri(markedUri);
+  if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
+    return markedUri;
+  }
+  if (markedUri.startsWith('/')) {
+    return `file://${markedUri}`;
+  }
+  return markedUri;
 }

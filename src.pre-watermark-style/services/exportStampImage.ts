@@ -12,8 +12,7 @@ import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
-import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from './settingsService';
-import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
+import type { StampTextLayout, TextAlign, CoordsLabelMode } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 export const STAMP_JPEG_MAX_WIDTH = 2048;
@@ -76,7 +75,6 @@ export type StampImageExportOptions = {
   showDatetime: boolean;
   textLayout: StampTextLayout;
   coordsLabel: CoordsLabelMode;
-  watermarkStyle: WatermarkStyle;
 };
 
 export type CaptureStampForExport = (
@@ -242,9 +240,9 @@ async function renderStampJpegWatermarkOnWeb(
   }
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-  drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  ctx.fillRect(0, imgHeight - barHeight, imgWidth, barHeight);
 
-  const theme = getWatermarkTheme(options.watermarkStyle);
   let textY = imgHeight - barHeight + barPaddingY + 28;
   textY =
     drawAlignedText(
@@ -256,7 +254,7 @@ async function renderStampJpegWatermarkOnWeb(
       options.titleAlign,
       32,
       '700',
-      theme.titleColor,
+      '#ffffff',
       38,
     ) + 4;
 
@@ -270,7 +268,7 @@ async function renderStampJpegWatermarkOnWeb(
       options.memoAlign,
       26,
       '400',
-      theme.memoColor,
+      '#f3f4f6',
       32,
     );
   }
@@ -285,7 +283,7 @@ async function renderStampJpegWatermarkOnWeb(
       options.memoAlign,
       22,
       '400',
-      theme.coordsColor,
+      '#e5e7eb',
       28,
     );
   }

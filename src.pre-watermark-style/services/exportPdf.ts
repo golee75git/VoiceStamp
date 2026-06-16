@@ -12,16 +12,13 @@ import {
   getPdfPhotosPerPage,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getCoordsLabelMode,
   getTitleTextAlign,
   type PdfPhotosPerPage,
   type StampTextLayout,
   type CoordsLabelMode,
   type TextAlign,
-  type WatermarkStyle,
 } from './settingsService';
-import { watermarkBarCss } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
 const WEB_PDF_URI = 'web:print-ready';
@@ -76,7 +73,6 @@ function buildStampItem(
   shrinkForReportHeader: boolean,
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
-  watermarkStyle: WatermarkStyle,
 ): string {
   const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
@@ -95,7 +91,7 @@ function buildStampItem(
       <div class="item item-watermark">
         <div class="photo-wrap">
           <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
-          <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
+          <div class="watermark-bar">
             <div class="watermark-title" style="text-align: ${titleAlign};">${title}</div>
             ${memoBlock}
             ${coordsBlock}
@@ -141,7 +137,6 @@ function buildHtml(
   reportTitle: string,
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
-  watermarkStyle: WatermarkStyle,
 ): string {
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
@@ -164,7 +159,6 @@ function buildHtml(
             shrinkImages,
             textLayout,
             coordsLabel,
-            watermarkStyle,
           ),
         )
         .join('');
@@ -329,7 +323,7 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
@@ -337,7 +331,6 @@ export async function createStampsPdf(
     getPdfShowDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
-    getWatermarkStyle(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -354,7 +347,6 @@ export async function createStampsPdf(
     reportTitle,
     textLayout,
     coordsLabel,
-    watermarkStyle,
   );
 
   if (Platform.OS === 'web') {

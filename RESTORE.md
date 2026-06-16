@@ -1669,3 +1669,29 @@ Copy-Item src.pre-title-datetime-mode\components\SettingsScreen.tsx src\componen
 Copy-Item src.pre-title-datetime-mode\App.tsx . -Force
 Remove-Item src\services\titleDatetimeMode.ts -ErrorAction SilentlyContinue
 ```
+
+## 106. 워터마크 스타일 설정 되돌리기 (선택)
+
+설정「워터마크 스타일」(검은 반투명 / 빨간 세로줄) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-watermark-style.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-watermark-style\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\services\exportStampImage.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\services\exportPdf.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\services\renderStampWatermarkNative.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\services\exportProject.ts src\services\ -Force
+Copy-Item src.pre-watermark-style\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-watermark-style\components\StampSavePreview.tsx src\components\ -Force
+Copy-Item src.pre-watermark-style\components\StampExportCard.tsx src\components\ -Force
+Copy-Item src.pre-watermark-style\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-watermark-style\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\services\watermarkStyle.ts -ErrorAction SilentlyContinue
+Remove-Item src\components\WatermarkBarBackground.tsx -ErrorAction SilentlyContinue
+```

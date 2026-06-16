@@ -28,7 +28,6 @@ import {
   DEFAULT_FLOOR_DISPLAY_MODE,
   DEFAULT_TITLE_DATETIME_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
-  DEFAULT_WATERMARK_STYLE,
   DEFAULT_TITLE_TEXT_ALIGN,
   gallerySaveModeLabel,
   floorPickerModeLabel,
@@ -47,7 +46,6 @@ import {
   getPdfPhotosPerPage,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getStampsFolderName,
   getTitleTextAlign,
   type CameraHand,
@@ -66,19 +64,15 @@ import {
   setPdfPhotosPerPage,
   setPdfShowDatetime,
   setStampTextLayout,
-  setWatermarkStyle,
   setStampsFolderName,
   setTitleTextAlign,
   stampTextLayoutLabel,
-  watermarkStyleLabel,
-  WATERMARK_STYLE_OPTIONS,
   TEXT_ALIGN_OPTIONS,
   type FloorPickerMode,
   type FloorDisplayMode,
   type TitleDatetimeMode,
   type GallerySaveMode,
   type StampTextLayout,
-  type WatermarkStyle,
   type TextAlign,
   textAlignLabel,
 } from '../services/settingsService';
@@ -133,9 +127,6 @@ export function SettingsScreen({
   const [stampTextLayout, setStampTextLayoutState] = useState<StampTextLayout>(
     DEFAULT_STAMP_TEXT_LAYOUT,
   );
-  const [watermarkStyle, setWatermarkStyleState] = useState<WatermarkStyle>(
-    DEFAULT_WATERMARK_STYLE,
-  );
   const [gallerySaveMode, setGallerySaveModeState] = useState<GallerySaveMode>(
     DEFAULT_GALLERY_SAVE_MODE,
   );
@@ -162,7 +153,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -172,7 +163,6 @@ export function SettingsScreen({
           getPdfShowDatetime(),
           getPdfFilenameIncludeDatetime(),
           getStampTextLayout(),
-          getWatermarkStyle(),
           getGallerySaveMode(),
           getCameraHand(),
           getFloorPickerMode(),
@@ -189,7 +179,6 @@ export function SettingsScreen({
         setPdfShowDatetimeState(showDatetime);
         setPdfFilenameIncludeDatetimeState(filenameDatetime);
         setStampTextLayoutState(textLayout);
-        setWatermarkStyleState(wmStyle);
         setGallerySaveModeState(galleryMode);
         setCameraHandState(hand);
         setFloorPickerModeState(floorMode);
@@ -250,7 +239,6 @@ export function SettingsScreen({
         savedShowDatetime,
         savedFilenameDatetime,
         savedTextLayout,
-        savedWatermarkStyle,
         savedGalleryMode,
         savedCameraHand,
         savedFloorPickerMode,
@@ -266,7 +254,6 @@ export function SettingsScreen({
           setPdfShowDatetime(pdfShowDatetime),
           setPdfFilenameIncludeDatetime(pdfFilenameIncludeDatetime),
           setStampTextLayout(stampTextLayout),
-          setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
           setCameraHand(cameraHand),
           setFloorPickerMode(floorPickerMode),
@@ -282,7 +269,6 @@ export function SettingsScreen({
       setPdfShowDatetimeState(savedShowDatetime);
       setPdfFilenameIncludeDatetimeState(savedFilenameDatetime);
       setStampTextLayoutState(savedTextLayout);
-      setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
       setCameraHandState(savedCameraHand);
       setFloorPickerModeState(savedFloorPickerMode);
@@ -292,7 +278,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -313,7 +299,6 @@ export function SettingsScreen({
     setPdfShowDatetimeState(DEFAULT_PDF_SHOW_DATETIME);
     setPdfFilenameIncludeDatetimeState(DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
     setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
-    setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
     setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
     setCameraHandState(DEFAULT_CAMERA_HAND);
   };
@@ -543,34 +528,6 @@ export function SettingsScreen({
               </Text>
             </Pressable>
           </View>
-
-          {stampTextLayout === 'watermark' ? (
-            <>
-              <Text style={[styles.label, styles.sectionGap]}>워터마크 스타일</Text>
-              <Text style={styles.hint}>
-                사진 하단 바의 배경 무늬입니다. 미리보기·PDF·이미지 저장에 적용됩니다.
-              </Text>
-              <View style={styles.optionRow}>
-                {WATERMARK_STYLE_OPTIONS.map((option) => {
-                  const selected = watermarkStyle === option;
-                  return (
-                    <Pressable
-                      key={option}
-                      style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                      onPress={() => setWatermarkStyleState(option)}
-                      disabled={saving}
-                    >
-                      <Text
-                        style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
-                      >
-                        {watermarkStyleLabel(option)}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </>
-          ) : null}
 
           <Text style={[styles.label, styles.sectionGap]}>좌표 표기</Text>
           <Text style={styles.hint}>

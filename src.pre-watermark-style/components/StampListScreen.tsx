@@ -35,12 +35,10 @@ import {
   getPdfFilenameIncludeDatetime,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getCoordsLabelMode,
   getTitleTextAlign,
   type CoordsLabelMode,
   type StampTextLayout,
-  type WatermarkStyle,
   type TextAlign,
 } from '../services/settingsService';
 import { stampDisplayTitle } from '../services/stampFloor';
@@ -85,7 +83,6 @@ export function StampListScreen({
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
-  const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
@@ -122,14 +119,13 @@ export function StampListScreen({
       setLoading(true);
     }
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, wmStyle, coordsLabelMode] = await Promise.all([
+      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, coordsLabelMode] = await Promise.all([
         listStamps(),
         getTitleTextAlign(),
         getMemoTextAlign(),
         getPdfFilenameIncludeDatetime(),
         getPdfShowDatetime(),
         getStampTextLayout(),
-        getWatermarkStyle(),
         getCoordsLabelMode(),
       ]);
       setStamps(rows);
@@ -138,7 +134,6 @@ export function StampListScreen({
       setPdfFilenameIncludeDatetime(filenameDatetime);
       setPdfShowDatetime(showDatetime);
       setStampTextLayout(textLayout);
-      setWatermarkStyle(wmStyle);
       setCoordsLabel(coordsLabelMode);
     } finally {
       setLoading(false);
@@ -272,7 +267,6 @@ export function StampListScreen({
         memoAlign: memoTextAlign,
         showDatetime: pdfShowDatetime,
         textLayout: stampTextLayout,
-        watermarkStyle,
         coordsLabel,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(

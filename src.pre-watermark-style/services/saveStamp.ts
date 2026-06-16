@@ -26,7 +26,6 @@ import {
   getMemoTextAlign,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getCoordsLabelMode,
   getTitleTextAlign,
   type GallerySaveMode,
@@ -63,16 +62,15 @@ function resolveStampTitle(title: string, fallbackTimestamp: number): string {
 }
 
 async function loadExportOptions(): Promise<StampImageExportOptions> {
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
-    getWatermarkStyle(),
   ]);
 
-  return { titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle };
+  return { titleAlign, memoAlign, showDatetime, textLayout, coordsLabel };
 }
 
 async function saveNewStampToGallery(

@@ -10,7 +10,6 @@ import {
   getMemoTextAlign,
   getPdfShowDatetime,
   getStampTextLayout,
-  getWatermarkStyle,
   getTitleTextAlign,
 } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -23,7 +22,6 @@ export type ProjectExportSettings = {
   showDatetime: boolean;
   textLayout: string;
   coordsLabel: string;
-  watermarkStyle: string;
 };
 
 export type ProjectManifestStamp = {
@@ -110,13 +108,12 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
-    getWatermarkStyle(),
   ]);
 
   const manifestStamps: ProjectManifestStamp[] = [];
@@ -161,7 +158,6 @@ export async function createStampsProjectZip(
       showDatetime,
       textLayout,
       coordsLabel,
-      watermarkStyle,
     },
     stamps: manifestStamps,
   };
