@@ -18,6 +18,8 @@ import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraBackIcon = require('../../assets/camera-back-icon.png');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const attachIcon = require('../../assets/attach-icon.png');
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
 import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
@@ -457,11 +459,12 @@ export function StampListScreen({
           style={[styles.albumNavButton, albumBusy && styles.albumNavButtonDisabled]}
           onPress={handlePickFromLibrary}
           disabled={albumBusy || selecting}
+          accessibilityLabel="사진 첨부"
         >
           {albumBusy ? (
             <ActivityIndicator size="small" color="#2563eb" />
           ) : (
-            <Text style={styles.albumNavText}>앨범</Text>
+            <Image source={attachIcon} style={styles.albumNavIcon} resizeMode="contain" />
           )}
         </Pressable>
         <View style={styles.headerRow}>
@@ -846,17 +849,16 @@ const styles = StyleSheet.create({
   albumNavButton: {
     alignSelf: 'flex-start',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     minHeight: 44,
     justifyContent: 'center',
   },
   albumNavButtonDisabled: {
     opacity: 0.6,
   },
-  albumNavText: {
-    color: '#2563eb',
-    fontWeight: '700',
-    fontSize: 17,
+  albumNavIcon: {
+    width: 40,
+    height: 40,
   },
   title: {
     fontSize: 20,
