@@ -1043,11 +1043,6 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
   },
-  bottomGalleryIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-  },
   bottomAttachText: {
     color: '#2563eb',
     fontWeight: '700',
