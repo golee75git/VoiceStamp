@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-14**  
-최신 커밋 기준: `7e453ea` (main)
+문서 작성일: **2026-06-17**  
+최신 커밋 기준: `87c7e15` (main)
 
 ---
 
@@ -222,6 +222,8 @@ VoiceStamp/
 | 124 | 목록 갤러리 아이콘+「갤러리」라벨 | `72ccc32` | `restore-list-gallery-button.bat` |
 | 125 | 목록 **갤러리 캡슐** 버튼 (`gallery.png`) | `0d7e72d` | `restore-list-gallery-pill.bat` |
 | 126 | 목록 **촬영 캡슐** 버튼 (`capture.png`) | `7e453ea` | `restore-list-capture-pill.bat` |
+| 127 | **워터마크 스타일** 설정 (검은 반투명 / 빨간 세로줄) | `534c9f7` | `restore-watermark-style.bat` §106 |
+| 128 | 워터마크 **흰색 반투명** (`solid_light`), 세로줄 제거 | `87c7e15` | `restore-watermark-solid-light.bat` §107 |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -287,7 +289,9 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260616_173518.apk`** | `7e453ea` | **설치 권장 (로컬)** — 갤러리·촬영 캡슐 버튼·내비 여백·HWPX/XLSX/ZIP |
+| **`VoiceStamp_20260617_001635.apk`** | `87c7e15` | **설치 권장 (로컬)** — 워터마크 검은/흰 반투명·갤러리·촬영 캡슐·HWPX/XLSX/ZIP |
+| `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 스타일(빨간 세로줄, 구버전) |
+| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 갤러리·촬영 캡슐 (워터마크 스타일 **미포함**) |
 | `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘+라벨 (캡슐 **미포함**) |
 | `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 28px 꽉 참 |
 | `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 31px 상향 |
@@ -303,11 +307,18 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-06-17
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260617_001635.apk` | `87c7e15` | 워터마크 **검은 반투명 / 흰색 반투명** (`watermark_style`) | **권장 (로컬)** |
+| `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 스타일(빨간 세로줄 포함, 중간) | 로컬 |
+
 #### 2026-06-16
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 목록 하단 **촬영 캡슐** (`capture.png`) | **권장 (로컬)** |
+| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 목록 하단 **촬영 캡슐** (`capture.png`) | 로컬 |
 | `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘+「갤러리」 (중간) | 로컬 |
 | `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 28px `cover` | 로컬 |
 | `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 `bottom: 31` (내비 바 회피) | 로컬 |
@@ -437,7 +448,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `galleryService.ts` | MediaLibrary Next, 앨범 저장·이동, asset ID 반환 |
 | `galleryService.web.ts` | 웹 스텁 (네이티브 갤러리 모듈 미로드) |
 | `infoUrls.ts` | 정책 웹 URL·`Linking.openURL` |
-| `settingsService.ts` | 앱 설정, `current_site_name`, `gallery_album_ids` |
+| `settingsService.ts` | 앱 설정, `current_site_name`, `gallery_album_ids`, `watermark_style` |
+| `watermarkStyle.ts` | 워터마크 바 테마·PDF CSS·웹 Canvas·미리보기 색상 |
 | `exportPdf.ts` | PDF HTML·생성·저장·공유 (워터마크·보고서 제목) |
 | `exportStampImage.ts` | 합성 JPEG, `buildExportJpegFileName` |
 | `pdfTitleFormat.ts` | PDF·내보내기 제목·파일명 포맷 |
@@ -491,6 +503,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | PDF 파일명 날짜·시간 | 포함 / 제외 | 포함 |
 | 제목·메모 정렬 | 왼쪽 / 가운데 / 오른쪽 | 왼쪽 |
 | 제목·메모 표시 | 별도 영역 / 워터마크 | 별도 영역 |
+| 워터마크 스타일 | 검은 반투명 / 흰색 반투명 | 검은 반투명 |
 | 카메라 손잡이 | 왼손 / 오른손 | 오른손 |
 
 **원본** PDF 프리셋: HTML 임베드 최대 2400px, JPEG 92% (디스크 원본 파일은 미변경).
@@ -520,11 +533,19 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-17
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`87c7e15` 기준) |
+| `87c7e15` | APK `VoiceStamp_20260617_001635` — 워터마크 **흰색 반투명**·빨간 세로줄 제거 (`restore-watermark-solid-light.bat` §107) |
+| `534c9f7` | APK `VoiceStamp_20260617_000721` — 워터마크 스타일(빨간 세로줄) (`restore-watermark-style.bat` §106) |
+
 ### 2026-06-16
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`7e453ea` 기준) |
+| `881e9d0` | PRD·PROJECT·PLAN·README 문서 동기화 (`7e453ea` 기준) |
 | `7e453ea` | APK `VoiceStamp_20260616_173518` — 목록 **촬영 캡슐** (`capture.png`) |
 | `0d7e72d` | 목록 **갤러리 캡슐** (`gallery.png`) (`restore-list-gallery-pill.bat`) |
 | `72ccc32` | 갤러리 아이콘+「갤러리」 (`restore-list-gallery-button.bat`) |

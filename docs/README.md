@@ -21,18 +21,18 @@
 |------|------|
 | [../README.md](../README.md) | 실행 방법 요약 |
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~105) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~107) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-16)
+## 현재 상태 스냅샷 (2026-06-17)
 
-- **최신 커밋:** `7e453ea` (main)
+- **최신 커밋:** `87c7e15` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info`
-- **권장 APK (로컬):** `VoiceStamp_20260616_173518.apk` — 갤러리·촬영 캡슐 버튼·내비 여백·HWPX/XLSX/ZIP
-- **GitHub APK:** `releases/VoiceStamp_20260616_082006.apk` (`f74012f`, 캡슐 버튼·내비 여백 **미포함**)
+- **권장 APK (로컬):** `VoiceStamp_20260617_001635.apk` — 워터마크 **검은/흰 반투명**·갤러리·촬영 캡슐·HWPX/XLSX/ZIP
+- **GitHub APK:** `releases/VoiceStamp_20260616_082006.apk` (`f74012f`, 워터마크 스타일·캡슐 버튼 **미포함**)
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260616_082006.apk
 - **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
@@ -53,18 +53,18 @@
 | 06-14 | **이전 장소 캐시**·**좌표 표기**·음성 커서·저장 모달 UX·**워터마크 미리보기**·**층 표기·자동 제목(기본 날짜)**·NCP 백업 설계 |
 | 06-15 | **프로젝트 ZIP·XLSX·HWPX**·웹 report·카메라 홈 스플래시·설정 UI |
 | 06-16 | **카메라 홈 리디자인**·목록 **헤더·카드**·하단 **갤러리·촬영 캡슐 버튼**·**내비 여백 31px** |
+| 06-17 | **워터마크 스타일** (검은 반투명 / **흰색 반투명**) |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260616_173518.apk` | `7e453ea` | **설치 권장** — 갤러리·촬영 캡슐·내비 여백 |
+| `VoiceStamp_20260617_001635.apk` | `87c7e15` | **설치 권장** — 워터마크 검은/흰 반투명 |
+| `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 빨간 세로줄 (구버전) |
+| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 갤러리·촬영 캡슐 (워터마크 스타일 미포함) |
 | `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘 (캡슐 미포함) |
-| `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 꽉 참 |
-| `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 31px 상향 |
 | `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI·첨부·카메라 홈 |
-| `VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 camera-back (리디자인 미포함) |
-| `releases/VoiceStamp_20260615_153600.apk` | `c6aff3c` | **GitHub 최신 커밋 APK** — HWPX APK 로드 |
+| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신 커밋 APK** |
 | `VoiceStamp_20260614_114256.apk` | `100e123` | 자동 제목·층 표기·전체 06-14 |
 | `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
 

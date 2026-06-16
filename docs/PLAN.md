@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.1 |
-| 작성일 | 2026-06-14 |
-| 기준 커밋 | `7e453ea` (main) |
+| 문서 버전 | 2.2 |
+| 작성일 | 2026-06-17 |
+| 기준 커밋 | `87c7e15` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -170,6 +170,13 @@
 | 131 | 목록 **갤러리 캡슐** (`gallery.png`) | `0d7e72d` | `restore-list-gallery-pill.bat` |
 | 132 | 목록 **촬영 캡슐** (`capture.png`) | `7e453ea` | `restore-list-capture-pill.bat` |
 
+## 2I. Phase 2 추가 완료 (2026-06-16~17)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 133 | **워터마크 스타일** (검은 반투명 / 빨간 세로줄) | `534c9f7` | `restore-watermark-style.bat` §106 |
+| 134 | 워터마크 **흰색 반투명**, 세로줄 제거 | `87c7e15` | `restore-watermark-solid-light.bat` §107 |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -191,6 +198,8 @@
 | `481b418` | PRD·PROJECT·PLAN·README 문서 동기화 (`69c0b66` 기준) |
 | (본 갱신) | `100e123` 반영 — 층 표기·자동 제목(기본 날짜)·APK·날짜별 이력 |
 | (본 갱신) | `7c127aa` 반영 — ZIP/XLSX/HWPX·카메라 홈·목록 UI·APK·날짜별 이력 |
+| `881e9d0` | PRD·PROJECT·PLAN·README 문서 동기화 (`7e453ea` 기준) |
+| (본 갱신) | `87c7e15` 반영 — 워터마크 검은/흰 반투명·APK·날짜별 이력 |
 
 ---
 
@@ -273,9 +282,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260616_173518.apk` (`7e453ea`, 로컬) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260617_001635.apk` (`87c7e15`, 로컬) |
 | GitHub APK | `releases/VoiceStamp_20260616_082006.apk` (`f74012f`) |
-| 최신 소스 | `7e453ea` — 목록 갤러리·촬영 캡슐 버튼·내비 여백·HWPX/XLSX/ZIP |
+| 최신 소스 | `87c7e15` — 워터마크 검은/흰 반투명·갤러리·촬영 캡슐·HWPX/XLSX/ZIP |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -300,7 +309,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~105 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~107 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
 
@@ -323,6 +332,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-14 | 4 (설계) | **§12 NCP 백업** 아키텍처 문서화 (`FEAT-03-NCP`, `b646e84`) |
 | 2026-06-15 | 2G | **프로젝트 ZIP·XLSX·HWPX**·웹 report·카메라 홈 스플래시·설정 UI |
 | 2026-06-16 | 2H | **카메라 홈 리디자인**·목록 **헤더·카드**·하단 **갤러리·촬영 캡슐 버튼**·내비 여백 31px |
+| 2026-06-17 | 2I | **워터마크 스타일** 검은 반투명 / **흰색 반투명** (미리보기·PDF·JPEG·APK) |
 
 ---
 
@@ -330,7 +340,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260616_173518.apk` | `7e453ea` | **설치 권장** — 갤러리·촬영 캡슐·내비 여백·HWPX/XLSX/ZIP |
+| `VoiceStamp_20260617_001635.apk` | `87c7e15` | **설치 권장** — 워터마크 검은/흰 반투명·갤러리·촬영 캡슐 |
+| `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 빨간 세로줄 (구버전) |
+| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 갤러리·촬영 캡슐 (워터마크 스타일 미포함) |
 | `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘 (캡슐 미포함) |
 | `VoiceStamp_20260616_165243.apk` | `9ceb325` | 첨부 아이콘 꽉 참 |
 | `VoiceStamp_20260616_163531.apk` | `109bfa3` | 하단바 31px 상향 |
