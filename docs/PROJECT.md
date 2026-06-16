@@ -205,6 +205,18 @@ VoiceStamp/
 | 107 | 워터마크 미리보기 캡션 슬롯 재사용 (**해결**) | `69c0b66` | `restore-watermark-preview-caption-slot.bat` §103 |
 | 108 | 층 표기 설정 (`floor_display_mode`: suffix/cursor) | `0f5c7c2` | `restore-floor-display-mode.bat` §104 |
 | 109 | 자동 제목 설정 (`title_datetime_mode`, 기본 `date`) | `100e123` | `restore-title-datetime-mode.bat` §105 |
+| 110 | 선택 모드 **프로젝트 ZIP**·**XLSX** 내보내기 | `6737f13` | — |
+| 111 | 웹 `/report` 썸네일 라이트박스 확대 | `84d13a7` | — |
+| 112 | XLSX 썸네일 A열 배치 | `946360e` | — |
+| 113 | **HWPX** 내보내기 (한컴 호환 템플릿) | `503e81a` | — |
+| 114 | HWPX BinData jpeg→jpg·템플릿 렌더·APK `expo-asset` 로드 | `c112cb0`~`9ab30ee` | — |
+| 115 | 카메라 홈 스플래시 (`camera-home.png`) | `338d919` | — |
+| 116 | 카메라 홈 중앙 정렬·설정 아이콘/텍스트 UI 반복 | `8d282e6`~`027c6fa` | — |
+| 117 | 카메라 홈 리디자인 (스플래시·촬영·하단 아이콘) | `7bf21fc` | — |
+| 118 | 설정 톱니 PNG (`settings-icon.png`) | `ae0695f` | — |
+| 119 | 목록 카메라-back 아이콘 | `3fca65b` | — |
+| 120 | 목록 **첨부(클립) 아이콘** | `f110256` | — |
+| 121 | 목록 UI (마이크 헤더·⋮ 메뉴·전체 N개·하단 첨부·촬영·카드) | `7c127aa` | — |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -227,6 +239,8 @@ VoiceStamp/
 | expo-image-picker | 앨범·카메라 앱에서 사진 선택 |
 | react-native-view-shot | APK 캡션 합성 JPEG 캡처 |
 | react-native-image-marker | APK 워터마크 네이티브 텍스트 합성 |
+| exceljs | XLSX 내보내기 |
+| jszip | 프로젝트 ZIP 내보내기 |
 | react-native-web | 웹 |
 
 ---
@@ -268,24 +282,37 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260614_114256.apk`** | `100e123` | **설치 권장 (로컬)** — 자동 제목(기본 날짜)·층 표기·전체 06-14 기능 |
-| `VoiceStamp_20260614_113244.apk` | `0f5c7c2` | 층 표기(커서 삽입) |
-| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기 수정 |
-| `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신 커밋 APK** — 층 선택 (`f4201a7`), 06-14 수정 미포함 |
-| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS·목록 안내 |
-| `VoiceStamp_20260611_232649.apk` | `182f4e7` | 4단계 온보딩·반응형·이미지 갱신 |
-| `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
-| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
-| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 (GPS→제목만) |
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 목록 설정·앱 정보·정책 웹 |
-| `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 모달 휴지통 스크롤 유지 |
-| `VoiceStamp_20260609_175552.apk` | `bfb77d8` | 휴지통 후 목록 재진입 무한 로딩 수정 |
-| `VoiceStamp_20260609_174552.apk` | `953c2cd` | 앵커 인덱스 되돌림 |
-| `VoiceStamp_20260608_235051.apk` | `6baa947` | 수정 화면 폴더 선택 모달 |
+| **`VoiceStamp_20260616_094515.apk`** | `7c127aa` | **설치 권장 (로컬)** — 목록 UI·첨부 아이콘·카메라 홈·HWPX/XLSX/ZIP |
+| `VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 카메라-back 아이콘 — 첨부·목록 리디자인 미포함 |
+| `VoiceStamp_20260616_081011.apk` | `ce59962` | 카메라 홈 리디자인 |
+| `VoiceStamp_20260616_075840.apk` | `c8221ca` | 설정 톱니 PNG |
+| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신 커밋 APK** — `7c127aa` 미포함 |
+| `releases/VoiceStamp_20260615_153600.apk` | `c6aff3c` | HWPX APK 템플릿 로드 수정 |
+| `VoiceStamp_20260614_114256.apk` | `100e123` | 자동 제목(기본 날짜)·층 표기·전체 06-14 기능 |
 
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-16
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI(헤더·⋮ 메뉴·하단 첨부·촬영·카드)·첨부 아이콘·카메라 홈·HWPX/XLSX/ZIP | **권장 (로컬)** |
+| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 카메라-back 아이콘 (`3fca65b`) | **GitHub** |
+| `releases/VoiceStamp_20260616_081011.apk` | `ce59962` | 카메라 홈 스플래시·촬영·하단 내비 (`7bf21fc`) | GitHub |
+| `releases/VoiceStamp_20260616_075840.apk` | `c8221ca` | 설정 톱니 PNG (`ae0695f`) | GitHub |
+
+#### 2026-06-15
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260615_153600.apk` | `c6aff3c` | HWPX 템플릿 `expo-asset` APK 로드 (`9ab30ee`) | GitHub |
+| `releases/VoiceStamp_20260615_233456.apk` | `2fa772c` | 카메라 홈 중앙 정렬·설정 **텍스트** 버튼 (아이콘 되돌림 `027c6fa`) | GitHub |
+| `releases/VoiceStamp_20260615_232645.apk` | `05392ee` | 카메라 홈 검은 배경 중앙 정렬 (`d8b5c98`) | GitHub |
+| `releases/VoiceStamp_20260615_231718.apk` | `47756ce` | 카메라 홈 스플래시 이미지 (`338d919`) | GitHub |
+| `releases/VoiceStamp_20260615_230611.apk` | `e5dad56` | 카메라 설정 대형 톱니 아이콘 (`8d282e6`) | GitHub |
+| (소스) | `6737f13`~`503e81a` | 프로젝트 ZIP·XLSX·HWPX·웹 report 라이트박스 | 소스 (153600 APK에 HWPX 포함) |
 
 #### 2026-06-14
 
@@ -479,6 +506,42 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-16
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`7c127aa` 기준) |
+| `7c127aa` | 목록 UI: 마이크+제목 헤더, ⋮ 메뉴, 전체 N개, 하단 첨부·촬영, 카드 스타일 |
+| `f110256` | 목록 「앨범」→ **첨부(클립) 아이콘** (`attach-icon.png`) |
+| `f74012f` | GitHub APK `VoiceStamp_20260616_082006` |
+| `3fca65b` | 목록 뒤로가기 텍스트 → **camera-back 아이콘** |
+| `ce59962` | GitHub APK `VoiceStamp_20260616_081011` |
+| `7bf21fc` | 카메라 홈: `camera-home.png` 스플래시·중앙 촬영·하단 목록/설정 아이콘 |
+| `c8221ca` | GitHub APK `VoiceStamp_20260616_075840` |
+| `ae0695f` | 카메라 설정 **톱니 PNG** (`settings-icon.png`) |
+
+### 2026-06-15
+
+| 커밋 | 내용 |
+|------|------|
+| `2fa772c` | GitHub APK `VoiceStamp_20260615_233456` |
+| `027c6fa` | 카메라 설정 버튼 아이콘 → **텍스트** 되돌림 |
+| `05392ee` | GitHub APK `VoiceStamp_20260615_232645` |
+| `d8b5c98` | 카메라 홈 검은 배경 중앙 정렬 (투명 PNG 느낌) |
+| `47756ce` | GitHub APK `VoiceStamp_20260615_231718` |
+| `338d919` | 카메라 런처 검은 화면 → **camera-home** 스플래시 |
+| `e5dad56` | GitHub APK `VoiceStamp_20260615_230611` |
+| `8d282e6` | 카메라 설정 대형 톱니 아이콘 (후속 되돌림) |
+| `c6aff3c` | GitHub APK `VoiceStamp_20260615_153600` |
+| `9ab30ee` | HWPX 템플릿 APK `expo-asset` 로드 |
+| `d5cdd26` | HWPX 한컴 호환 템플릿 렌더링 |
+| `c112cb0` | HWPX BinData 이미지 확장자 jpeg→jpg |
+| `503e81a` | **HWPX** 내보내기 추가 |
+| `946360e` | XLSX 썸네일 **A열** 배치 |
+| `84d13a7` | 웹 `/report` 썸네일 라이트박스 확대 |
+| `6737f13` | **프로젝트 ZIP**·**XLSX** 선택 내보내기 |
+| `23a8391` | GitHub APK `VoiceStamp_20260614_114256` |
 
 ### 2026-06-14
 

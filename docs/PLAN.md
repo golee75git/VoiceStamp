@@ -144,6 +144,27 @@
 | 115 | 층 표기 설정 (`floor_display_mode`: suffix/cursor) | `0f5c7c2` | `restore-floor-display-mode.bat` §104 |
 | 116 | 자동 제목 설정 (`title_datetime_mode`, 기본 `date`) | `100e123` | `restore-title-datetime-mode.bat` §105 |
 
+## 2G. Phase 2 추가 완료 (2026-06-15)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 117 | 선택 모드 **프로젝트 ZIP**·**XLSX** | `6737f13` | — |
+| 118 | 웹 `/report` 라이트박스 확대 | `84d13a7` | — |
+| 119 | XLSX 썸네일 A열 | `946360e` | — |
+| 120 | **HWPX** 내보내기 | `503e81a` | — |
+| 121 | HWPX 한컴 호환·APK 템플릿 로드 | `c112cb0`~`9ab30ee` | — |
+| 122 | 카메라 홈 스플래시·설정 UI 반복 | `338d919`~`027c6fa` | — |
+
+## 2H. Phase 2 추가 완료 (2026-06-16)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 123 | 카메라 홈 리디자인 (스플래시·촬영·내비) | `7bf21fc` | — |
+| 124 | 설정 톱니 PNG | `ae0695f` | — |
+| 125 | 목록 camera-back 아이콘 | `3fca65b` | — |
+| 126 | 목록 **첨부(클립) 아이콘** | `f110256` | — |
+| 127 | 목록 UI (헤더·⋮·하단바·카드) | `7c127aa` | — |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -164,6 +185,7 @@
 | (본 갱신) | `69c0b66` 반영 — 층·좌표·커서·저장 모달 UX·워터마크 미리보기·APK·날짜별 이력 |
 | `481b418` | PRD·PROJECT·PLAN·README 문서 동기화 (`69c0b66` 기준) |
 | (본 갱신) | `100e123` 반영 — 층 표기·자동 제목(기본 날짜)·APK·날짜별 이력 |
+| (본 갱신) | `7c127aa` 반영 — ZIP/XLSX/HWPX·카메라 홈·목록 UI·APK·날짜별 이력 |
 
 ---
 
@@ -246,9 +268,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260614_114256.apk` (`100e123`, 로컬) |
-| GitHub APK | `releases/VoiceStamp_20260613_234943.apk` (`484ac4c`) |
-| 최신 소스 | `100e123` — 웹·APK 동기화 (층 표기·자동 제목·워터마크 미리보기 포함) |
+| 최신 APK (문서 기준) | `VoiceStamp_20260616_094515.apk` (`7c127aa`, 로컬) |
+| GitHub APK | `releases/VoiceStamp_20260616_082006.apk` (`f74012f`) |
+| 최신 소스 | `7c127aa` — 목록 UI·첨부·카메라 홈·HWPX/XLSX/ZIP |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -294,6 +316,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-13 | 2D | **GPS**·저장 미리보기·**줌/크롭**·갤러리 백그라운드·start·**웹 카메라**·**층 선택** |
 | 2026-06-14 | 2E | **이전 장소 캐시**·**좌표 표기**·음성 커서·저장 모달 UX·**워터마크 미리보기**·**층 표기·자동 제목(기본 날짜)** |
 | 2026-06-14 | 4 (설계) | **§12 NCP 백업** 아키텍처 문서화 (`FEAT-03-NCP`, `b646e84`) |
+| 2026-06-15 | 2G | **프로젝트 ZIP·XLSX·HWPX**·웹 report·카메라 홈 스플래시·설정 UI |
+| 2026-06-16 | 2H | **카메라 홈 리디자인**·목록 **첨부 아이콘**·목록 **헤더·하단바·카드** UI |
 
 ---
 
@@ -301,24 +325,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260614_114256.apk` | `100e123` | **설치 권장** — 자동 제목(기본 날짜)·층 표기·전체 06-14 기능 |
-| `VoiceStamp_20260614_113244.apk` | `0f5c7c2` | 층 표기(커서 삽입) |
-| `VoiceStamp_20260614_110346.apk` | `69c0b66` | 워터마크 미리보기 수정 |
-| `VoiceStamp_20260614_105426.apk` | `19684c5` | 워터마크 미리보기 v2 (미해결) |
-| `VoiceStamp_20260614_102657.apk` | `41dce4f` | 720px 미리보기 썸네일 |
-| `releases/VoiceStamp_20260613_234943.apk` | `484ac4c` | **GitHub 최신** — 층 선택 |
-| `releases/VoiceStamp_20260613_114227.apk` | `b697025` | start·크롭·GPS |
-| `VoiceStamp_20260611_232649.apk` | `182f4e7` | 온보딩 4단계·반응형·이미지 갱신 |
-| `VoiceStamp_20260611_222640.apk` | `e14950a` | 학교 POI 우선 위치 제목 |
-| `VoiceStamp_20260611_184601.apk` | `0970d3d` | 저장 시 갤러리 원본/캡션/둘 다 |
-| `VoiceStamp_20260611_182919.apk` | `f61697d` | 워터마크 네이티브 합성 |
-| `VoiceStamp_20260611_172409.apk` | `be8bd93` | 시스템 카메라 (줌) |
-| `VoiceStamp_20260610_233157.apk` | `4f56b07` | 저장 폴더 현장명 유지 |
-| `VoiceStamp_20260609_183510.apk` | `a4a55d2` | 설정·앱 정보·정책 웹 |
-| `VoiceStamp_20260609_181249.apk` | `b44c469` | 수정 휴지통 스크롤 |
-| `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
-| `VoiceStamp_20260608_235051.apk` | `6baa947` | 폴더 선택 모달 |
-| `VoiceStamp_20260607_145955.apk` | `3b6201a` | Android 뒤로가기 |
+| `VoiceStamp_20260616_094515.apk` | `7c127aa` | **설치 권장** — 목록 UI·첨부·카메라 홈·HWPX/XLSX/ZIP |
+| `VoiceStamp_20260616_082006.apk` | `f74012f` | 목록 camera-back (첨부·리디자인 미포함) |
+| `VoiceStamp_20260616_081011.apk` | `ce59962` | 카메라 홈 리디자인 |
+| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신** — `7c127aa` 미포함 |
+| `releases/VoiceStamp_20260615_153600.apk` | `c6aff3c` | HWPX APK 템플릿 로드 |
+| `VoiceStamp_20260614_114256.apk` | `100e123` | 자동 제목·층 표기·전체 06-14 |
 
 전체: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13
 
