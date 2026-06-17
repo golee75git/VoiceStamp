@@ -78,14 +78,14 @@
     const themes = {
       solid_dark: { barBackground: 'rgba(0, 0, 0, 0.55)', ...lightText },
       solid_light: { barBackground: 'rgba(255, 255, 255, 0.55)', ...darkText },
-      slate: { barBackground: 'rgba(203, 213, 225, 0.55)', ...darkText },
-      blue: { barBackground: 'rgba(147, 197, 253, 0.55)', ...darkText },
-      indigo: { barBackground: 'rgba(165, 180, 252, 0.55)', ...darkText },
-      green: { barBackground: 'rgba(134, 239, 172, 0.55)', ...darkText },
-      teal: { barBackground: 'rgba(153, 246, 228, 0.55)', ...darkText },
-      amber: { barBackground: 'rgba(253, 230, 138, 0.55)', ...darkText },
-      red: { barBackground: 'rgba(252, 165, 165, 0.55)', ...darkText },
-      rose: { barBackground: 'rgba(251, 207, 232, 0.55)', ...darkText },
+      slate: { barBackground: 'rgba(71, 85, 105, 0.55)', ...lightText },
+      blue: { barBackground: 'rgba(37, 99, 235, 0.55)', ...lightText },
+      indigo: { barBackground: 'rgba(79, 70, 229, 0.55)', ...lightText },
+      green: { barBackground: 'rgba(22, 163, 74, 0.55)', ...lightText },
+      teal: { barBackground: 'rgba(13, 148, 136, 0.55)', ...lightText },
+      amber: { barBackground: 'rgba(217, 119, 6, 0.55)', ...lightText },
+      red: { barBackground: 'rgba(220, 38, 38, 0.55)', ...lightText },
+      rose: { barBackground: 'rgba(225, 29, 72, 0.55)', ...lightText },
     };
     return themes[style] || themes.solid_dark;
   }

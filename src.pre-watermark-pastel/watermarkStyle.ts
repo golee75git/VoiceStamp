@@ -38,28 +38,28 @@ function rgbaBar(
 const WATERMARK_THEMES: Record<WatermarkStyle, WatermarkTheme> = {
   solid_dark: { ...rgbaBar(0, 0, 0), ...LIGHT_TEXT },
   solid_light: { ...rgbaBar(255, 255, 255), ...DARK_TEXT },
-  slate: { ...rgbaBar(203, 213, 225), ...DARK_TEXT },
-  blue: { ...rgbaBar(147, 197, 253), ...DARK_TEXT },
-  indigo: { ...rgbaBar(165, 180, 252), ...DARK_TEXT },
-  green: { ...rgbaBar(134, 239, 172), ...DARK_TEXT },
-  teal: { ...rgbaBar(153, 246, 228), ...DARK_TEXT },
-  amber: { ...rgbaBar(253, 230, 138), ...DARK_TEXT },
-  red: { ...rgbaBar(252, 165, 165), ...DARK_TEXT },
-  rose: { ...rgbaBar(251, 207, 232), ...DARK_TEXT },
+  slate: { ...rgbaBar(71, 85, 105), ...LIGHT_TEXT },
+  blue: { ...rgbaBar(37, 99, 235), ...LIGHT_TEXT },
+  indigo: { ...rgbaBar(79, 70, 229), ...LIGHT_TEXT },
+  green: { ...rgbaBar(22, 163, 74), ...LIGHT_TEXT },
+  teal: { ...rgbaBar(13, 148, 136), ...LIGHT_TEXT },
+  amber: { ...rgbaBar(217, 119, 6), ...LIGHT_TEXT },
+  red: { ...rgbaBar(220, 38, 38), ...LIGHT_TEXT },
+  rose: { ...rgbaBar(225, 29, 72), ...LIGHT_TEXT },
 };
 
 /** Solid chip color shown in settings palette (full opacity). */
 export const WATERMARK_CHIP_COLORS: Record<WatermarkStyle, string> = {
   solid_dark: '#1f2937',
   solid_light: '#f3f4f6',
-  slate: '#cbd5e1',
-  blue: '#93c5fd',
-  indigo: '#a5b4fc',
-  green: '#86efac',
-  teal: '#99f6e4',
-  amber: '#fde68a',
-  red: '#fca5a5',
-  rose: '#fbcfe8',
+  slate: '#475569',
+  blue: '#2563eb',
+  indigo: '#4f46e5',
+  green: '#16a34a',
+  teal: '#0d9488',
+  amber: '#d97706',
+  red: '#dc2626',
+  rose: '#e11d48',
 };
 
 export function getWatermarkTheme(style: WatermarkStyle): WatermarkTheme {
