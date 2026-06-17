@@ -3,6 +3,7 @@ import Constants from 'expo-constants';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Platform,
   Pressable,
   ScrollView,
@@ -11,6 +12,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const backButtonImage = require('../../assets/back-button.png');
 
 import { openInfoPage } from '../constants/infoUrls';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
@@ -362,9 +366,6 @@ export function SettingsScreen({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={onBack}>
-          <Text style={styles.backText}>← {backLabel}</Text>
-        </Pressable>
         <Text style={styles.title}>설정</Text>
       </View>
 
@@ -910,6 +911,15 @@ export function SettingsScreen({
           <Text style={styles.copyright}>© 2026 이형우</Text>
         </ScrollView>
       )}
+
+      <Pressable
+        style={styles.bottomBackButton}
+        onPress={onBack}
+        accessibilityRole="button"
+        accessibilityLabel={`뒤로가기, ${backLabel}`}
+      >
+        <Image source={backButtonImage} style={styles.bottomBackButtonImage} resizeMode="contain" />
+      </Pressable>
     </View>
   );
 }
@@ -928,10 +938,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e5e7eb',
     gap: 8,
   },
-  backText: {
-    color: '#2563eb',
-    fontWeight: '600',
-  },
   title: {
     fontSize: 20,
     fontWeight: '700',
@@ -947,8 +953,18 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 20,
-    paddingBottom: 32,
+    paddingBottom: 100,
     gap: 12,
+  },
+  bottomBackButton: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: Platform.OS === 'ios' ? 28 : 16,
+  },
+  bottomBackButtonImage: {
+    width: '100%',
+    height: 52,
   },
   label: {
     fontSize: 16,
