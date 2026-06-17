@@ -40,7 +40,6 @@ type CoordAddress = {
 
 const SCHOOL_SEARCH_RADIUS_M = 400;
 const SCHOOL_PREFER_MAX_DISTANCE_M = 500;
-const KAKAO_FETCH_TIMEOUT_MS = 5000;
 
 function getKakaoRestKey(): string {
   return process.env.EXPO_PUBLIC_KAKAO_REST_KEY?.trim() ?? '';
@@ -168,24 +167,6 @@ function combinePlaceLabel(region: string | null, placeName: string | null): str
   return parts.join(' ');
 }
 
-async function kakaoFetch(url: string, restKey: string): Promise<Response | null> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), KAKAO_FETCH_TIMEOUT_MS);
-
-  try {
-    return await fetch(url, {
-      headers: {
-        Authorization: `KakaoAK ${restKey}`,
-      },
-      signal: controller.signal,
-    });
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
 async function fetchRegionLabel(
   restKey: string,
   longitude: number,
@@ -196,12 +177,16 @@ async function fetchRegionLabel(
     y: String(latitude),
   });
 
-  const response = await kakaoFetch(
+  const response = await fetch(
     `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?${params.toString()}`,
-    restKey,
+    {
+      headers: {
+        Authorization: `KakaoAK ${restKey}`,
+      },
+    },
   );
 
-  if (!response?.ok) {
+  if (!response.ok) {
     return null;
   }
 
@@ -224,12 +209,16 @@ async function fetchCoordAddress(
     input_coord: 'WGS84',
   });
 
-  const response = await kakaoFetch(
+  const response = await fetch(
     `https://dapi.kakao.com/v2/local/geo/coord2address.json?${params.toString()}`,
-    restKey,
+    {
+      headers: {
+        Authorization: `KakaoAK ${restKey}`,
+      },
+    },
   );
 
-  if (!response?.ok) {
+  if (!response.ok) {
     return { buildingName: null, roadAddressName: null };
   }
 
@@ -256,12 +245,16 @@ async function fetchNearestCategory(
     size: '5',
   });
 
-  const response = await kakaoFetch(
+  const response = await fetch(
     `https://dapi.kakao.com/v2/local/search/category.json?${params.toString()}`,
-    restKey,
+    {
+      headers: {
+        Authorization: `KakaoAK ${restKey}`,
+      },
+    },
   );
 
-  if (!response?.ok) {
+  if (!response.ok) {
     return null;
   }
 
@@ -287,12 +280,16 @@ async function fetchNearestKindergarten(
     size: '5',
   });
 
-  const response = await kakaoFetch(
+  const response = await fetch(
     `https://dapi.kakao.com/v2/local/search/category.json?${params.toString()}`,
-    restKey,
+    {
+      headers: {
+        Authorization: `KakaoAK ${restKey}`,
+      },
+    },
   );
 
-  if (!response?.ok) {
+  if (!response.ok) {
     return null;
   }
 
@@ -321,33 +318,28 @@ export async function getPlaceLabelFromCoords(
     return null;
   }
 
+  const [region, address] = await Promise.all([
+    fetchRegionLabel(restKey, longitude, latitude),
+    fetchCoordAddress(restKey, longitude, latitude),
+  ]);
+
+  const generalName = pickGeneralPlaceName(address.buildingName, address.roadAddressName);
+
   if (mode === 'general') {
-    const [region, address] = await Promise.all([
-      fetchRegionLabel(restKey, longitude, latitude),
-      fetchCoordAddress(restKey, longitude, latitude),
-    ]);
-    return combinePlaceLabel(region, pickGeneralPlaceName(address.buildingName, address.roadAddressName));
+    return combinePlaceLabel(region, generalName);
   }
 
   if (mode === 'public') {
-    const [region, address, publicPlace] = await Promise.all([
-      fetchRegionLabel(restKey, longitude, latitude),
-      fetchCoordAddress(restKey, longitude, latitude),
-      fetchNearestCategory(restKey, longitude, latitude, 'PO3'),
-    ]);
-    const generalName = pickGeneralPlaceName(address.buildingName, address.roadAddressName);
+    const publicPlace = await fetchNearestCategory(restKey, longitude, latitude, 'PO3');
     const placeName = pickPublicPlaceName(publicPlace) ?? generalName;
     return combinePlaceLabel(region, placeName);
   }
 
-  const [region, address, school, kindergarten] = await Promise.all([
-    fetchRegionLabel(restKey, longitude, latitude),
-    fetchCoordAddress(restKey, longitude, latitude),
+  const [school, kindergarten] = await Promise.all([
     fetchNearestCategory(restKey, longitude, latitude, 'SC4'),
     fetchNearestKindergarten(restKey, longitude, latitude),
   ]);
 
-  const generalName = pickGeneralPlaceName(address.buildingName, address.roadAddressName);
   const placeName =
     pickEducationPlaceName(address.buildingName, school, kindergarten) ?? generalName;
   return combinePlaceLabel(region, placeName);

@@ -22,12 +22,7 @@ import {
   formatStampGroupName,
   refreshStampGroupDate,
 } from '../services/fileService';
-import {
-  getCurrentLocationSnapshot,
-  getFastLocationSnapshot,
-  getNearbyCachedPlaceLabel,
-  refineLocationSnapshot,
-} from '../services/locationService';
+import { getCurrentLocationSnapshot, getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from '../services/locationService';
 import {
   getCameraHand,
   getCurrentSiteName,
@@ -359,69 +354,30 @@ export function StampSaveModal({
       }
 
       try {
-        const fastSnapshot = await getFastLocationSnapshot();
-
-        if (!cancelled && fastSnapshot && !titleTouchedRef.current) {
-          const cachedPlace = await getNearbyCachedPlaceLabel(fastSnapshot);
+        const quickCoords = await getQuickLastKnownCoords();
+        if (!cancelled && quickCoords && !titleTouchedRef.current) {
+          const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
           if (cachedPlace) {
             setPlaceLabel(cachedPlace);
             setTitle(formatDefaultStampTitle(capturedAt, cachedPlace));
-            setLocationLoading(false);
           }
         }
 
-        if (!cancelled && fastSnapshot) {
-          setPlaceLabel(fastSnapshot.placeLabel);
+        const snapshot = await getCurrentLocationSnapshot();
+        if (cancelled) {
+          return;
+        }
+        if (snapshot) {
+          setPlaceLabel(snapshot.placeLabel);
           const coords = {
-            latitude: fastSnapshot.latitude,
-            longitude: fastSnapshot.longitude,
+            latitude: snapshot.latitude,
+            longitude: snapshot.longitude,
           };
           captureCoordsRef.current = coords;
           setCaptureCoords(coords);
-          if (!titleTouchedRef.current) {
-            setTitle(formatDefaultStampTitle(capturedAt, fastSnapshot.placeLabel ?? undefined));
-          }
-          setLocationLoading(false);
-
-          void refineLocationSnapshot(fastSnapshot).then((refined) => {
-            if (cancelled) {
-              return;
-            }
-            if (
-              refined.latitude === fastSnapshot.latitude &&
-              refined.longitude === fastSnapshot.longitude &&
-              refined.placeLabel === fastSnapshot.placeLabel
-            ) {
-              return;
-            }
-            setPlaceLabel(refined.placeLabel);
-            const refinedCoords = {
-              latitude: refined.latitude,
-              longitude: refined.longitude,
-            };
-            captureCoordsRef.current = refinedCoords;
-            setCaptureCoords(refinedCoords);
-            if (!titleTouchedRef.current) {
-              setTitle(formatDefaultStampTitle(capturedAt, refined.placeLabel ?? undefined));
-            }
-          });
-        } else {
-          const snapshot = await getCurrentLocationSnapshot();
-          if (cancelled) {
-            return;
-          }
-          if (snapshot) {
-            setPlaceLabel(snapshot.placeLabel);
-            const coords = {
-              latitude: snapshot.latitude,
-              longitude: snapshot.longitude,
-            };
-            captureCoordsRef.current = coords;
-            setCaptureCoords(coords);
-          }
-          if (!titleTouchedRef.current) {
-            setTitle(formatDefaultStampTitle(capturedAt, snapshot?.placeLabel ?? undefined));
-          }
+        }
+        if (!titleTouchedRef.current) {
+          setTitle(formatDefaultStampTitle(capturedAt, snapshot?.placeLabel ?? undefined));
         }
       } catch {
         // 날짜·시간 제목은 이미 설정됨; 저장 폴더는 current_site_name 유지
