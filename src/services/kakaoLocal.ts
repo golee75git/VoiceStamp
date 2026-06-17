@@ -10,6 +10,7 @@ type KakaoCoord2RegionResponse = {
 };
 
 type KakaoRoadAddress = {
+  address_name?: string;
   building_name?: string;
 };
 
@@ -30,8 +31,12 @@ type KakaoCategorySearchResponse = {
   documents?: KakaoCategoryDocument[];
 };
 
-const SCHOOL_SEARCH_RADIUS_M = 400;
-const SCHOOL_PREFER_MAX_DISTANCE_M = 500;
+const SCHOOL_NEAR_RADIUS_M = 200;
+
+type CoordAddress = {
+  buildingName: string | null;
+  roadAddressName: string | null;
+};
 
 function getKakaoRestKey(): string {
   return process.env.EXPO_PUBLIC_KAKAO_REST_KEY?.trim() ?? '';
@@ -55,14 +60,19 @@ function pickRegionLabel(documents: KakaoRegionDocument[]): string | null {
   return preferred.region_1depth_name ?? null;
 }
 
-function pickBuildingName(documents: KakaoCoord2AddressDocument[]): string | null {
+function pickCoordAddress(documents: KakaoCoord2AddressDocument[]): CoordAddress {
   for (const doc of documents) {
-    const name = doc.road_address?.building_name?.trim();
-    if (name) {
-      return name;
+    const buildingName = doc.road_address?.building_name?.trim() || null;
+    const roadAddressName = doc.road_address?.address_name?.trim() || null;
+    if (buildingName || roadAddressName) {
+      return { buildingName, roadAddressName };
     }
   }
-  return null;
+  return { buildingName: null, roadAddressName: null };
+}
+
+function pickGeneralPlaceName(buildingName: string | null, roadAddressName: string | null): string | null {
+  return buildingName || roadAddressName || null;
 }
 
 function parseDistanceM(doc: KakaoCategoryDocument | null | undefined): number | null {
@@ -74,27 +84,17 @@ function parseDistanceM(doc: KakaoCategoryDocument | null | undefined): number |
 }
 
 function pickPlaceName(
-  building: string | null,
+  address: CoordAddress,
   school: KakaoCategoryDocument | null,
 ): string | null {
   const schoolName = school?.place_name?.trim() || null;
   const distance = parseDistanceM(school);
 
-  if (schoolName && distance !== null && distance <= SCHOOL_SEARCH_RADIUS_M) {
+  if (schoolName && distance !== null && distance <= SCHOOL_NEAR_RADIUS_M) {
     return schoolName;
   }
 
-  if (
-    building &&
-    schoolName &&
-    distance !== null &&
-    distance <= SCHOOL_PREFER_MAX_DISTANCE_M &&
-    building.includes('아파트')
-  ) {
-    return schoolName;
-  }
-
-  return building;
+  return pickGeneralPlaceName(address.buildingName, address.roadAddressName);
 }
 
 function combinePlaceLabel(region: string | null, placeName: string | null): string | null {
@@ -136,11 +136,11 @@ async function fetchRegionLabel(
   return pickRegionLabel(data.documents);
 }
 
-async function fetchBuildingName(
+async function fetchCoordAddress(
   restKey: string,
   longitude: number,
   latitude: number,
-): Promise<string | null> {
+): Promise<CoordAddress> {
   const params = new URLSearchParams({
     x: String(longitude),
     y: String(latitude),
@@ -157,15 +157,15 @@ async function fetchBuildingName(
   );
 
   if (!response.ok) {
-    return null;
+    return { buildingName: null, roadAddressName: null };
   }
 
   const data = (await response.json()) as KakaoCoord2AddressResponse;
   if (!data.documents?.length) {
-    return null;
+    return { buildingName: null, roadAddressName: null };
   }
 
-  return pickBuildingName(data.documents);
+  return pickCoordAddress(data.documents);
 }
 
 async function fetchNearestSchool(
@@ -177,7 +177,7 @@ async function fetchNearestSchool(
     category_group_code: 'SC4',
     x: String(longitude),
     y: String(latitude),
-    radius: String(SCHOOL_PREFER_MAX_DISTANCE_M),
+    radius: String(SCHOOL_NEAR_RADIUS_M),
     sort: 'distance',
     size: '5',
   });
@@ -212,12 +212,12 @@ export async function getPlaceLabelFromCoords(
     return null;
   }
 
-  const [region, building, school] = await Promise.all([
+  const [region, address, school] = await Promise.all([
     fetchRegionLabel(restKey, longitude, latitude),
-    fetchBuildingName(restKey, longitude, latitude),
+    fetchCoordAddress(restKey, longitude, latitude),
     fetchNearestSchool(restKey, longitude, latitude),
   ]);
 
-  const placeName = pickPlaceName(building, school);
+  const placeName = pickPlaceName(address, school);
   return combinePlaceLabel(region, placeName);
 }
