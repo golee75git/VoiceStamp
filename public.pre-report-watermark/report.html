@@ -43,16 +43,8 @@
     }
     .report-title-input { width: 100%; max-width: 28rem; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 1rem; }
     .status { margin-top: 0.75rem; color: #374151; font-size: 0.9rem; }
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-      gap: 0.75rem;
-      margin-top: 0.75rem;
-    }
-    .settings-grid label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; color: #374151; }
-    .settings-grid select { border: 1px solid #d1d5db; border-radius: 6px; padding: 0.35rem 0.5rem; font: inherit; }
     @media print {
-      nav, .panel.upload, .panel.export-settings, .toolbar, .status, .lightbox { display: none !important; }
+      nav, .panel.upload, .toolbar, .status, .lightbox { display: none !important; }
       body { background: #fff; padding: 0; }
       .panel { border: none; padding: 0; }
       td input, td textarea { border: none; padding: 0; }
@@ -67,7 +59,7 @@
 <body>
   <nav><a href="/">← 앱으로</a> · <a href="/info">앱 정보</a></nav>
   <h1>VoiceStamp 보고서 편집</h1>
-  <p class="muted">앱에서 보낸 <code>.voicestamp.zip</code>을 PC에서 열어 제목·메모·층을 수정하고, 합성 JPEG·PDF를 저장할 수 있습니다. <strong>파일은 서버로 전송되지 않으며</strong> 브라우저에서만 처리됩니다.</p>
+  <p class="muted">앱에서보낸 <code>.voicestamp.zip</code> 프로젝트 파일을 PC에서 열어 제목·메모·층을 수정하고 PDF로 인쇄할 수 있습니다.</p>
 
   <section class="panel upload">
     <label class="file-btn" for="zipInput">프로젝트 ZIP 열기</label>
@@ -75,61 +67,9 @@
     <div class="toolbar">
       <button id="saveManifestBtn" type="button" disabled>manifest.json 저장</button>
       <button id="saveZipBtn" type="button" disabled>수정 ZIP 저장</button>
-      <button id="jpegZipBtn" type="button" disabled>합성 JPEG ZIP</button>
       <button id="printBtn" class="primary" type="button" disabled>PDF 인쇄</button>
     </div>
     <p id="status" class="status">ZIP 파일을 선택하세요.</p>
-  </section>
-
-  <section id="exportSettingsPanel" class="panel export-settings" hidden>
-    <strong>합성 JPEG 설정</strong> <span class="muted">(manifest 설정을 기본값으로 불러옵니다)</span>
-    <div class="settings-grid">
-      <label>
-        표시 방식
-        <select id="optTextLayout">
-          <option value="caption">별도 영역</option>
-          <option value="watermark">워터마크</option>
-        </select>
-      </label>
-      <label>
-        워터마크 스타일
-        <select id="optWatermarkStyle">
-          <option value="solid_dark">검은 반투명</option>
-          <option value="solid_light">흰색 반투명</option>
-        </select>
-      </label>
-      <label>
-        제목 정렬
-        <select id="optTitleAlign">
-          <option value="left">왼쪽</option>
-          <option value="center">가운데</option>
-          <option value="right">오른쪽</option>
-        </select>
-      </label>
-      <label>
-        메모 정렬
-        <select id="optMemoAlign">
-          <option value="left">왼쪽</option>
-          <option value="center">가운데</option>
-          <option value="right">오른쪽</option>
-        </select>
-      </label>
-      <label>
-        좌표 표기
-        <select id="optCoordsLabel">
-          <option value="off">숫자만</option>
-          <option value="gps">GPS</option>
-          <option value="coords">좌표</option>
-        </select>
-      </label>
-      <label>
-        촬영 일시
-        <select id="optShowDatetime">
-          <option value="true">제목에 포함</option>
-          <option value="false">제목에서 제외</option>
-        </select>
-      </label>
-    </div>
   </section>
 
   <section id="editorPanel" class="panel" hidden>
@@ -162,17 +102,14 @@
     <img id="lightboxImg" alt="원본 미리보기" />
   </div>
 
-  <script src="/report/jszip.min.js"></script>
-  <script src="/report/watermark-export.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
     const zipInput = document.getElementById('zipInput');
     const saveManifestBtn = document.getElementById('saveManifestBtn');
     const saveZipBtn = document.getElementById('saveZipBtn');
-    const jpegZipBtn = document.getElementById('jpegZipBtn');
     const printBtn = document.getElementById('printBtn');
     const statusEl = document.getElementById('status');
     const editorPanel = document.getElementById('editorPanel');
-    const exportSettingsPanel = document.getElementById('exportSettingsPanel');
     const stampRows = document.getElementById('stampRows');
     const reportTitleInput = document.getElementById('reportTitle');
     const printPanel = document.getElementById('printPanel');
@@ -180,29 +117,13 @@
     const printItems = document.getElementById('printItems');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightboxImg');
-    const optTextLayout = document.getElementById('optTextLayout');
-    const optWatermarkStyle = document.getElementById('optWatermarkStyle');
-    const optTitleAlign = document.getElementById('optTitleAlign');
-    const optMemoAlign = document.getElementById('optMemoAlign');
-    const optCoordsLabel = document.getElementById('optCoordsLabel');
-    const optShowDatetime = document.getElementById('optShowDatetime');
 
     let loadedZip = null;
     let manifest = null;
     const imageUrls = new Map();
-    let exportBusy = false;
 
     function setStatus(text) {
       statusEl.textContent = text;
-    }
-
-    function setExportBusy(busy) {
-      exportBusy = busy;
-      const disabled = busy || !manifest;
-      jpegZipBtn.disabled = disabled;
-      saveManifestBtn.disabled = disabled;
-      saveZipBtn.disabled = disabled;
-      printBtn.disabled = disabled;
     }
 
     function revokeImageUrls() {
@@ -224,27 +145,6 @@
     function floorLabel(floor) {
       if (!floor) return '';
       return `${floor}층`;
-    }
-
-    function applyExportSettingsToUi(settings) {
-      const normalized = VoiceStampReportExport.normalizeExportSettings(settings);
-      optTextLayout.value = normalized.textLayout;
-      optWatermarkStyle.value = normalized.watermarkStyle;
-      optTitleAlign.value = normalized.titleAlign;
-      optMemoAlign.value = normalized.memoAlign;
-      optCoordsLabel.value = normalized.coordsLabel;
-      optShowDatetime.value = normalized.showDatetime ? 'true' : 'false';
-    }
-
-    function readExportOptionsFromUi() {
-      return VoiceStampReportExport.normalizeExportSettings({
-        textLayout: optTextLayout.value,
-        watermarkStyle: optWatermarkStyle.value,
-        titleAlign: optTitleAlign.value,
-        memoAlign: optMemoAlign.value,
-        coordsLabel: optCoordsLabel.value,
-        showDatetime: optShowDatetime.value === 'true',
-      });
     }
 
     function openLightbox(src) {
@@ -299,10 +199,10 @@
       });
       bindThumbClicks();
       reportTitleInput.value = manifest.reportTitle || '';
-      applyExportSettingsToUi(manifest.exportSettings || {});
       editorPanel.hidden = false;
-      exportSettingsPanel.hidden = false;
-      setExportBusy(false);
+      saveManifestBtn.disabled = false;
+      saveZipBtn.disabled = false;
+      printBtn.disabled = false;
     }
 
     function escapeHtml(text) {
@@ -322,8 +222,9 @@
       loadedZip = null;
       manifest = null;
       editorPanel.hidden = true;
-      exportSettingsPanel.hidden = true;
-      setExportBusy(true);
+      saveManifestBtn.disabled = true;
+      saveZipBtn.disabled = true;
+      printBtn.disabled = true;
 
       const zip = await JSZip.loadAsync(file);
       const manifestFile = zip.file('manifest.json');
@@ -367,52 +268,24 @@
     saveZipBtn.addEventListener('click', async () => {
       const next = readManifestFromEditor();
       if (!next || !loadedZip) return;
-      setExportBusy(true);
-      try {
-        const zip = new JSZip();
-        zip.file('manifest.json', JSON.stringify(next, null, 2));
-        const stampsFolder = zip.folder('stamps');
-        for (const stamp of next.stamps) {
-          const url = imageUrls.get(stamp.imageFile);
-          if (!url) continue;
-          const response = await fetch(url);
-          const blob = await response.blob();
-          stampsFolder.file(stamp.imageFile, blob);
-        }
-        const pdfFile = loadedZip.file('report.pdf');
-        if (pdfFile) {
-          zip.file('report.pdf', await pdfFile.async('uint8array'));
-        }
-        const blob = await zip.generateAsync({ type: 'blob' });
-        const baseName = (next.reportTitle || 'VoiceStamp').replace(/[\\/:*?"<>|]/g, '_');
-        downloadBlob(blob, `${baseName}.voicestamp.zip`);
-        setStatus('수정된 ZIP을 저장했습니다.');
-      } finally {
-        setExportBusy(false);
+      const zip = new JSZip();
+      zip.file('manifest.json', JSON.stringify(next, null, 2));
+      const stampsFolder = zip.folder('stamps');
+      for (const stamp of next.stamps) {
+        const url = imageUrls.get(stamp.imageFile);
+        if (!url) continue;
+        const response = await fetch(url);
+        const blob = await response.blob();
+        stampsFolder.file(stamp.imageFile, blob);
       }
-    });
-
-    jpegZipBtn.addEventListener('click', async () => {
-      const next = readManifestFromEditor();
-      if (!next) return;
-      setExportBusy(true);
-      try {
-        const options = readExportOptionsFromUi();
-        const result = await VoiceStampReportExport.createStampsJpegZip(
-          next,
-          imageUrls,
-          options,
-          (current, total) => {
-            setStatus(`합성 JPEG 생성 중… ${current} / ${total}`);
-          },
-        );
-        downloadBlob(result.blob, result.fileName);
-        setStatus(`합성 JPEG ZIP을 저장했습니다. (${result.fileName})`);
-      } catch (error) {
-        setStatus(error instanceof Error ? error.message : 'JPEG ZIP 저장에 실패했습니다.');
-      } finally {
-        setExportBusy(false);
+      const pdfFile = loadedZip.file('report.pdf');
+      if (pdfFile) {
+        zip.file('report.pdf', await pdfFile.async('uint8array'));
       }
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const baseName = (next.reportTitle || 'VoiceStamp').replace(/[\\/:*?"<>|]/g, '_');
+      downloadBlob(blob, `${baseName}.voicestamp.zip`);
+      setStatus('수정된 ZIP을 저장했습니다.');
     });
 
     printBtn.addEventListener('click', () => {
@@ -423,7 +296,7 @@
       printReportTitle.textContent = title || '';
       printReportTitle.style.display = title ? 'block' : 'none';
 
-      next.stamps.forEach((stamp) => {
+      next.stamps.forEach((stamp, index) => {
         const item = document.createElement('div');
         item.className = 'print-item';
         const imgUrl = imageUrls.get(stamp.imageFile);
@@ -451,7 +324,6 @@
       try {
         await loadZip(file);
       } catch (error) {
-        setExportBusy(false);
         setStatus(error instanceof Error ? error.message : 'ZIP을 열지 못했습니다.');
       }
     });
