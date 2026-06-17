@@ -10,10 +10,8 @@ if not exist "assets.pre-icon" (
   xcopy "assets" "assets.pre-icon\" /E /I /Y >nul
   echo Created backup assets.pre-icon
 )
-copy /Y "%SRC%" "assets\icon.png" >nul
-copy /Y "%SRC%" "assets\android-icon-foreground.png" >nul
-copy /Y "%SRC%" "assets\favicon.png" >nul
-echo Applied icon to assets\icon.png, android-icon-foreground.png, favicon.png
+python "%~dp0scripts\apply-icon-safezone.py"
+if errorlevel 1 exit /b 1
 echo Run: npx expo prebuild --platform android --no-install
 echo Then rebuild APK with build-apk.bat
 exit /b 0
