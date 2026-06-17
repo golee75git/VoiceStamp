@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-17**  
-최신 커밋 기준: `3e6a90d` (main)
+최신 커밋 기준: `7b6b0c1` (main)
 
 ---
 
@@ -232,6 +232,11 @@ VoiceStamp/
 | 134 | 워터마크 **10색 칩** 팔레트 | `35bdba6` | `restore-watermark-palette.bat` |
 | 135 | 워터마크 **파스텔** 팔레트 | `60a9754` | `restore-watermark-pastel.bat` |
 | 136 | 오버레이 **워터마크 한 바** 통합 | `3e6a90d` | `restore-overlay-watermark-layout.bat` |
+| 137 | 설정 **뒤로가기 이미지 버튼** (`back-icon.png`, 하단 왼쪽 83px) | `8a9357b`~`4033f68` | — |
+| 138 | 저장 미리보기 `isThumbnail` 선언 순서 (웹·앱 저장 모달 흰 화면) | `3af9203` | `git revert 3af9203` |
+| — | *(시도·되돌림)* 위치 표시 3모드 (교육/공공/일반) | `08c132a` → `5699d9c` | — |
+| — | *(시도·되돌림)* 위치 fast snapshot·GPS 3초·카카오 5초 타임아웃 | `c612e69` → `24e4b5e` | — |
+| 139 | 위치 제목: **학교 200m 이내 학교명**, 그 외 **건물명→도로명** (`kakaoLocal.ts`) | `7b6b0c1` | `git revert 7b6b0c1` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -297,7 +302,12 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260617_131932.apk`** | `3e6a90d` | **설치 권장 (로컬)** — 오버레이 한 바·파스텔 10색·/report JPEG·갤러리·촬영 캡슐 |
+| **`VoiceStamp_20260617_184121.apk`** | `7b6b0c1` | **설치 권장 (로컬)** — 학교 200m·건물명/도로명·뒤로가기·저장 모달·`.env` 카카오 키 |
+| `VoiceStamp_20260617_182811.apk` | `5699d9c` | 위치 revert·뒤로가기 (200m 규칙 **미포함**) |
+| `VoiceStamp_20260617_181630.apk` | `3af9203` | 저장 모달 흰 화면 수정 (3모드·fast snapshot **포함**, 위치 불안) |
+| `VoiceStamp_20260617_174312.apk` | `c612e69` | 위치 속도 개선 시도 (**되돌림**) |
+| `VoiceStamp_20260617_172752.apk` | `08c132a` | 위치 표시 3모드 시도 (**되돌림**) |
+| `VoiceStamp_20260617_131932.apk` | `3e6a90d` | 오버레이 한 바·파스텔 10색 (뒤로가기·위치 수정 **미포함**) |
 | `VoiceStamp_20260617_130651.apk` | `60a9754` | 파스텔 팔레트 |
 | `VoiceStamp_20260617_113216.apk` | `35bdba6` | 10색 칩 (원색) |
 | `VoiceStamp_20260617_111707.apk` | `78fd3e6` | 기관명·하단 문구 오버레이 |
@@ -326,7 +336,12 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260617_131932.apk` | `3e6a90d` | 기관명·하단 문구 **워터마크 한 바** 통합 | **권장 (로컬)** |
+| `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | **학교 200m 이내 학교명**, 그 외 건물명→도로명 (설정 모드 없음) | **권장 (로컬)** |
+| `VoiceStamp_20260617_182811.apk` | `5699d9c` | 설정 뒤로가기·위치 3모드·fast snapshot **revert**·저장 모달 | 로컬 |
+| `VoiceStamp_20260617_181630.apk` | `3af9203` | `StampSavePreview` `isThumbnail` 선언 순서 (흰 화면) | 로컬 (위치 불안) |
+| `VoiceStamp_20260617_174312.apk` | `c612e69` | GPS 3초·`getFastLocationSnapshot`·카카오 5초 타임아웃 | **되돌림** |
+| `VoiceStamp_20260617_172752.apk` | `08c132a` | 위치 표시 3모드 (교육/공공/일반) | **되돌림** |
+| `VoiceStamp_20260617_131932.apk` | `3e6a90d` | 기관명·하단 문구 **워터마크 한 바** 통합 | 로컬 |
 | `VoiceStamp_20260617_130651.apk` | `60a9754` | 워터마크 **파스텔** 10색 | 로컬 |
 | `VoiceStamp_20260617_113216.apk` | `35bdba6` | 워터마크 **10색 칩** (원색) | 로컬 |
 | `VoiceStamp_20260617_111707.apk` | `78fd3e6` | **기관명·하단 문구** 오버레이 (상단 별도 바) | 로컬 |
@@ -560,7 +575,18 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`3e6a90d` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`7b6b0c1` 기준) |
+| `7b6b0c1` | APK `VoiceStamp_20260617_184121` — **학교 200m 이내 학교명**, 그 외 **건물명→도로명** (`kakaoLocal.ts`) |
+| `5699d9c` | **Revert** 위치 표시 3모드 (`08c132a`) — `placeLabelMode.ts` 삭제 |
+| `24e4b5e` | **Revert** 위치 속도 개선 (`c612e69`) — GPS 6초·단일 `getCurrentLocationSnapshot` 복구 |
+| `3af9203` | APK `VoiceStamp_20260617_181630` — `StampSavePreview` `isThumbnail` 선언 순서 (웹·앱 저장 모달 흰 화면) |
+| `c612e69` | *(되돌림됨)* 위치 fast snapshot·GPS 3초·카카오 5초 타임아웃 — APK `174312` |
+| `08c132a` | *(되돌림됨)* 위치 표시 3모드 (교육/공공/일반)·설정 UI — APK `172752` |
+| `4033f68` | 설정 뒤로가기 아이콘 **1.3배 (83px)** |
+| `cd4a4e8` | 설정 뒤로가기 아이콘 확대·시스템 내비 위로 배치 |
+| `8c603f2` | 설정 뒤로가기 아이콘 왼쪽 정렬 |
+| `8a9357b` | 설정 상단 「← 카메라」 텍스트 → **하단 뒤로가기 이미지** (`back-icon.png`) |
+| `5e2f4f4` | PRD·PROJECT·PLAN·README 문서 동기화 (`3e6a90d` 기준) |
 | `3e6a90d` | APK `VoiceStamp_20260617_131932` — 기관명·하단 문구 **워터마크 한 바** (`restore-overlay-watermark-layout.bat`) |
 | `60a9754` | APK `VoiceStamp_20260617_130651` — 워터마크 **파스텔** 팔레트 (`restore-watermark-pastel.bat`) |
 | `35bdba6` | APK `VoiceStamp_20260617_113216` — 워터마크 **10색 칩** (`restore-watermark-palette.bat`) |
