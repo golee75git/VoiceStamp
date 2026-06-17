@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const backButtonImage = require('../../assets/back-button.png');
+const backButtonImage = require('../../assets/back-icon.png');
 
 import { openInfoPage } from '../constants/infoUrls';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
@@ -958,13 +958,17 @@ const styles = StyleSheet.create({
   },
   bottomBackButton: {
     position: 'absolute',
-    left: 16,
-    right: 16,
+    left: 8,
     bottom: Platform.OS === 'ios' ? 28 : 16,
+    padding: 8,
+    minWidth: 48,
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bottomBackButtonImage: {
-    width: '100%',
-    height: 52,
+    width: 48,
+    height: 48,
   },
   label: {
     fontSize: 16,
