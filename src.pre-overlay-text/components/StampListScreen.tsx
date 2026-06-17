@@ -37,10 +37,6 @@ import {
   getStampTextLayout,
   getWatermarkStyle,
   getCoordsLabelMode,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getTitleTextAlign,
   type CoordsLabelMode,
   type StampTextLayout,
@@ -91,10 +87,6 @@ export function StampListScreen({
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
-  const [overlayOrgName, setOverlayOrgName] = useState('');
-  const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
-  const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
-  const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
@@ -130,7 +122,7 @@ export function StampListScreen({
       setLoading(true);
     }
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, wmStyle, coordsLabelMode, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, wmStyle, coordsLabelMode] = await Promise.all([
         listStamps(),
         getTitleTextAlign(),
         getMemoTextAlign(),
@@ -139,10 +131,6 @@ export function StampListScreen({
         getStampTextLayout(),
         getWatermarkStyle(),
         getCoordsLabelMode(),
-        getOverlayOrgName(),
-        getOverlayFooterPhrase(),
-        getOverlayShowOrgName(),
-        getOverlayShowFooterPhrase(),
       ]);
       setStamps(rows);
       setTitleTextAlign(titleAlign);
@@ -152,10 +140,6 @@ export function StampListScreen({
       setStampTextLayout(textLayout);
       setWatermarkStyle(wmStyle);
       setCoordsLabel(coordsLabelMode);
-      setOverlayOrgName(orgName);
-      setOverlayFooterPhrase(footerPhrase);
-      setOverlayShowOrgName(showOrgName);
-      setOverlayShowFooterPhrase(showFooterPhrase);
     } finally {
       setLoading(false);
     }
@@ -290,10 +274,6 @@ export function StampListScreen({
         textLayout: stampTextLayout,
         watermarkStyle,
         coordsLabel,
-        orgName: overlayOrgName,
-        footerPhrase: overlayFooterPhrase,
-        showOrgName: overlayShowOrgName,
-        showFooterPhrase: overlayShowFooterPhrase,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,

@@ -6,30 +6,21 @@ export type CaptionLayout = {
   canvasWidth: number;
   canvasHeight: number;
   padding: number;
-  orgY: number | null;
   titleY: number;
   memoY: number | null;
   coordsY: number | null;
-  phraseY: number | null;
-  orgSize: number;
   titleSize: number;
   memoSize: number;
   coordsSize: number;
-  phraseSize: number;
-  orgLineHeight: number;
   titleLineHeight: number;
   memoLineHeight: number;
   coordsLineHeight: number;
-  phraseLineHeight: number;
-  orgText: string;
   titleText: string;
   memoText: string;
   coordsText: string;
-  phraseText: string;
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   coordsAlign: TextAlign;
-  phraseAlign: TextAlign;
 };
 
 function estimateTextWidth(text: string, fontSize: number): number {
@@ -86,101 +77,64 @@ export function buildCaptionLayout(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
   coords: string | null,
-  orgName: string | null = null,
-  footerPhrase: string | null = null,
 ): CaptionLayout {
   const scale = photoWidth / CAPTION_REFERENCE_PHOTO_WIDTH;
   const padding = Math.max(12, Math.round(24 * scale));
-  const orgSize = Math.max(16, Math.round(28 * scale));
   const titleSize = Math.max(18, Math.round(36 * scale));
   const memoSize = Math.max(16, Math.round(28 * scale));
   const coordsSize = Math.max(14, Math.round(24 * scale));
-  const phraseSize = Math.max(13, Math.round(22 * scale));
-  const orgLineHeight = Math.max(22, Math.round(36 * scale));
   const titleLineHeight = Math.max(24, Math.round(44 * scale));
   const memoLineHeight = Math.max(22, Math.round(36 * scale));
   const coordsLineHeight = Math.max(20, Math.round(32 * scale));
-  const phraseLineHeight = Math.max(18, Math.round(28 * scale));
   const contentWidth = photoWidth;
   const canvasWidth = contentWidth + padding * 2;
   const coordsAlign = memoAlign;
-  const phraseAlign = memoAlign;
 
-  const orgLines = orgName ? wrapTextLines(orgName, contentWidth, orgSize) : [];
   const titleLines = wrapTextLines(title, contentWidth, titleSize);
   const memoLines = memo ? wrapTextLines(memo, contentWidth, memoSize) : [];
   const coordsLines = coords ? wrapTextLines(coords, contentWidth, coordsSize) : [];
-  const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, contentWidth, phraseSize) : [];
 
-  const orgBlockHeight = orgLines.length > 0 ? orgLines.length * orgLineHeight + Math.round(8 * scale) : 0;
   const titleBlockHeight = titleLines.length * titleLineHeight;
   const memoBlockHeight = memoLines.length > 0 ? Math.round(12 * scale) + memoLines.length * memoLineHeight : 0;
   const coordsBlockHeight =
     coordsLines.length > 0 ? Math.round(8 * scale) + coordsLines.length * coordsLineHeight : 0;
-  const phraseBlockHeight =
-    phraseLines.length > 0 ? Math.round(8 * scale) + phraseLines.length * phraseLineHeight : 0;
-
   const canvasHeight =
     padding +
     photoHeight +
     Math.round(16 * scale) +
-    orgBlockHeight +
     titleBlockHeight +
     memoBlockHeight +
     coordsBlockHeight +
-    phraseBlockHeight +
     padding;
 
-  let cursorY = padding + photoHeight + Math.round(40 * scale);
-  const orgY = orgLines.length > 0 ? cursorY : null;
-  if (orgY !== null) {
-    cursorY += orgBlockHeight;
-  }
-
-  const titleY = cursorY;
-  const memoY = memoLines.length > 0 ? titleY + titleBlockHeight + Math.round(12 * scale) : null;
+  const titleY = padding + photoHeight + Math.round(40 * scale);
+  const memoY =
+    memoLines.length > 0 ? titleY + titleBlockHeight + Math.round(12 * scale) : null;
   const coordsY =
     coordsLines.length > 0
       ? (memoY !== null
           ? memoY + memoLines.length * memoLineHeight
           : titleY + titleBlockHeight) + Math.round(8 * scale)
       : null;
-  const phraseY =
-    phraseLines.length > 0
-      ? (coordsY !== null
-          ? coordsY + coordsLines.length * coordsLineHeight
-          : memoY !== null
-            ? memoY + memoLines.length * memoLineHeight
-            : titleY + titleBlockHeight) + Math.round(8 * scale)
-      : null;
 
   return {
     canvasWidth,
     canvasHeight,
     padding,
-    orgY,
     titleY,
     memoY,
     coordsY,
-    phraseY,
-    orgSize,
     titleSize,
     memoSize,
     coordsSize,
-    phraseSize,
-    orgLineHeight,
     titleLineHeight,
     memoLineHeight,
     coordsLineHeight,
-    phraseLineHeight,
-    orgText: orgLines.join('\n'),
     titleText: titleLines.join('\n'),
     memoText: memoLines.join('\n'),
     coordsText: coordsLines.join('\n'),
-    phraseText: phraseLines.join('\n'),
     titleAlign,
     memoAlign,
     coordsAlign,
-    phraseAlign,
   };
 }

@@ -31,10 +31,6 @@ import {
   getStampTextLayout,
   getWatermarkStyle,
   getCoordsLabelMode,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getTitleTextAlign,
   setCurrentSiteName,
   setLastCapturePlaceCache,
@@ -128,10 +124,6 @@ export function StampSaveModal({
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
-  const [overlayOrgName, setOverlayOrgName] = useState('');
-  const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
-  const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
-  const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
   const [showDatetime, setShowDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
@@ -203,7 +195,7 @@ export function StampSaveModal({
     let cancelled = false;
     setLayoutSettingsLoaded(false);
     (async () => {
-      const [titleAlign, memoAlign, hand, textLayout, wmStyle, datetimeVisible, coordsLabelMode, displayMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
+      const [titleAlign, memoAlign, hand, textLayout, wmStyle, datetimeVisible, coordsLabelMode, displayMode] =
         await Promise.all([
         getTitleTextAlign(),
         getMemoTextAlign(),
@@ -213,10 +205,6 @@ export function StampSaveModal({
         getPdfShowDatetime(),
         getCoordsLabelMode(),
         getFloorDisplayMode(),
-        getOverlayOrgName(),
-        getOverlayFooterPhrase(),
-        getOverlayShowOrgName(),
-        getOverlayShowFooterPhrase(),
       ]);
       if (!cancelled) {
         setTitleTextAlign(titleAlign);
@@ -227,10 +215,6 @@ export function StampSaveModal({
         setShowDatetime(datetimeVisible);
         setCoordsLabel(coordsLabelMode);
         setFloorDisplayModeState(displayMode);
-        setOverlayOrgName(orgName);
-        setOverlayFooterPhrase(footerPhrase);
-        setOverlayShowOrgName(showOrgName);
-        setOverlayShowFooterPhrase(showFooterPhrase);
         setLayoutSettingsLoaded(true);
       }
     })();
@@ -658,10 +642,6 @@ export function StampSaveModal({
                   watermarkStyle={watermarkStyle}
                   coordsLabel={coordsLabel}
                   showDatetime={showDatetime}
-                  orgName={overlayOrgName}
-                  footerPhrase={overlayFooterPhrase}
-                  showOrgName={overlayShowOrgName}
-                  showFooterPhrase={overlayShowFooterPhrase}
                   floor={floor}
                   latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                   longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}

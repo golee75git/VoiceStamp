@@ -8,10 +8,6 @@ import { resolveImageUri, sanitizeStampFileBaseName } from './fileService';
 import {
   getCoordsLabelMode,
   getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getPdfShowDatetime,
   getStampTextLayout,
   getWatermarkStyle,
@@ -28,10 +24,6 @@ export type ProjectExportSettings = {
   textLayout: string;
   coordsLabel: string;
   watermarkStyle: string;
-  orgName: string;
-  footerPhrase: string;
-  showOrgName: boolean;
-  showFooterPhrase: boolean;
 };
 
 export type ProjectManifestStamp = {
@@ -118,17 +110,13 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
     getWatermarkStyle(),
-    getOverlayOrgName(),
-    getOverlayFooterPhrase(),
-    getOverlayShowOrgName(),
-    getOverlayShowFooterPhrase(),
   ]);
 
   const manifestStamps: ProjectManifestStamp[] = [];
@@ -174,10 +162,6 @@ export async function createStampsProjectZip(
       textLayout,
       coordsLabel,
       watermarkStyle,
-      orgName,
-      footerPhrase,
-      showOrgName,
-      showFooterPhrase,
     },
     stamps: manifestStamps,
   };

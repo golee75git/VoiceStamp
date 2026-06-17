@@ -15,16 +15,6 @@ import {
 } from './titleDatetimeMode';
 import { sanitizeStampFloor } from './stampFloor';
 import type { StampFloor } from '../types/stamp';
-import {
-  DEFAULT_OVERLAY_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_ORG_NAME,
-  DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_ORG_NAME,
-  OVERLAY_ORG_MAX_LENGTH,
-  OVERLAY_PHRASE_MAX_LENGTH,
-  sanitizeOverlayShowFlag,
-  sanitizeOverlayText,
-} from './overlayText';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
@@ -50,10 +40,6 @@ const LAST_FLOOR_KEY = 'last_floor';
 const LAST_CAPTURE_LAT_KEY = 'last_capture_lat';
 const LAST_CAPTURE_LON_KEY = 'last_capture_lon';
 const LAST_PLACE_LABEL_KEY = 'last_place_label';
-const OVERLAY_ORG_NAME_KEY = 'overlay_org_name';
-const OVERLAY_FOOTER_PHRASE_KEY = 'overlay_footer_phrase';
-const OVERLAY_SHOW_ORG_NAME_KEY = 'overlay_show_org_name';
-const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -74,14 +60,6 @@ export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
-export {
-  DEFAULT_OVERLAY_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_ORG_NAME,
-  DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_ORG_NAME,
-  OVERLAY_ORG_MAX_LENGTH,
-  OVERLAY_PHRASE_MAX_LENGTH,
-} from './overlayText';
 export const DEFAULT_FLOOR_PICKER_MODE = 'school_only' as const;
 export { DEFAULT_FLOOR_DISPLAY_MODE, floorDisplayModeLabel, type FloorDisplayMode } from './floorDisplayMode';
 export {
@@ -438,62 +416,6 @@ export async function setCurrentSiteName(name: string): Promise<string> {
   const safeName = sanitizeSiteName(name);
   await writeSetting(CURRENT_SITE_NAME_KEY, safeName);
   return safeName;
-}
-
-export async function getOverlayOrgName(): Promise<string> {
-  const value = await readSetting(OVERLAY_ORG_NAME_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_ORG_NAME;
-  }
-  return sanitizeOverlayText(value, OVERLAY_ORG_MAX_LENGTH);
-}
-
-export async function setOverlayOrgName(name: string): Promise<string> {
-  const safeName = sanitizeOverlayText(name, OVERLAY_ORG_MAX_LENGTH);
-  await writeSetting(OVERLAY_ORG_NAME_KEY, safeName);
-  return safeName;
-}
-
-export async function getOverlayFooterPhrase(): Promise<string> {
-  const value = await readSetting(OVERLAY_FOOTER_PHRASE_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_FOOTER_PHRASE;
-  }
-  return sanitizeOverlayText(value, OVERLAY_PHRASE_MAX_LENGTH);
-}
-
-export async function setOverlayFooterPhrase(phrase: string): Promise<string> {
-  const safePhrase = sanitizeOverlayText(phrase, OVERLAY_PHRASE_MAX_LENGTH);
-  await writeSetting(OVERLAY_FOOTER_PHRASE_KEY, safePhrase);
-  return safePhrase;
-}
-
-export async function getOverlayShowOrgName(): Promise<boolean> {
-  const value = await readSetting(OVERLAY_SHOW_ORG_NAME_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_SHOW_ORG_NAME;
-  }
-  return sanitizeOverlayShowFlag(value);
-}
-
-export async function setOverlayShowOrgName(show: boolean): Promise<boolean> {
-  const safeShow = sanitizeOverlayShowFlag(show);
-  await writeSetting(OVERLAY_SHOW_ORG_NAME_KEY, safeShow ? 'true' : 'false');
-  return safeShow;
-}
-
-export async function getOverlayShowFooterPhrase(): Promise<boolean> {
-  const value = await readSetting(OVERLAY_SHOW_FOOTER_PHRASE_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE;
-  }
-  return sanitizeOverlayShowFlag(value);
-}
-
-export async function setOverlayShowFooterPhrase(show: boolean): Promise<boolean> {
-  const safeShow = sanitizeOverlayShowFlag(show);
-  await writeSetting(OVERLAY_SHOW_FOOTER_PHRASE_KEY, safeShow ? 'true' : 'false');
-  return safeShow;
 }
 
 async function readGalleryAlbumIdMap(): Promise<Record<string, string>> {

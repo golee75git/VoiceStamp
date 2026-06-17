@@ -30,12 +30,6 @@ import {
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_WATERMARK_STYLE,
   DEFAULT_TITLE_TEXT_ALIGN,
-  DEFAULT_OVERLAY_ORG_NAME,
-  DEFAULT_OVERLAY_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_ORG_NAME,
-  DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  OVERLAY_ORG_MAX_LENGTH,
-  OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
@@ -48,10 +42,6 @@ import {
   getCameraHand,
   getGallerySaveMode,
   getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getPdfFilenameIncludeDatetime,
   getPdfImageQuality,
   getPdfPhotosPerPage,
@@ -71,10 +61,6 @@ import {
   setTitleDatetimeMode,
   setGallerySaveMode,
   setMemoTextAlign,
-  setOverlayFooterPhrase,
-  setOverlayOrgName,
-  setOverlayShowFooterPhrase,
-  setOverlayShowOrgName,
   setPdfFilenameIncludeDatetime,
   setPdfImageQuality,
   setPdfPhotosPerPage,
@@ -166,12 +152,6 @@ export function SettingsScreen({
   const [coordsLabelMode, setCoordsLabelModeState] = useState<CoordsLabelMode>(
     DEFAULT_COORDS_LABEL_MODE,
   );
-  const [overlayOrgName, setOverlayOrgNameState] = useState(DEFAULT_OVERLAY_ORG_NAME);
-  const [overlayFooterPhrase, setOverlayFooterPhraseState] = useState(DEFAULT_OVERLAY_FOOTER_PHRASE);
-  const [overlayShowOrgName, setOverlayShowOrgNameState] = useState(DEFAULT_OVERLAY_SHOW_ORG_NAME);
-  const [overlayShowFooterPhrase, setOverlayShowFooterPhraseState] = useState(
-    DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [trashCount, setTrashCount] = useState(0);
@@ -182,7 +162,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -199,10 +179,6 @@ export function SettingsScreen({
           getFloorDisplayMode(),
           getTitleDatetimeMode(),
           getCoordsLabelMode(),
-          getOverlayOrgName(),
-          getOverlayFooterPhrase(),
-          getOverlayShowOrgName(),
-          getOverlayShowFooterPhrase(),
           getTrashedStampCount(),
         ]);
         setFolderName(name);
@@ -220,10 +196,6 @@ export function SettingsScreen({
         setFloorDisplayModeState(floorDisplay);
         setTitleDatetimeModeState(titleDatetime);
         setCoordsLabelModeState(coordsMode);
-        setOverlayOrgNameState(orgName);
-        setOverlayFooterPhraseState(footerPhrase);
-        setOverlayShowOrgNameState(showOrgName);
-        setOverlayShowFooterPhraseState(showFooterPhrase);
         setTrashCount(trashed);
       } finally {
         setLoading(false);
@@ -285,10 +257,6 @@ export function SettingsScreen({
         savedFloorDisplayMode,
         savedTitleDatetimeMode,
         savedCoordsLabelMode,
-        savedOrgName,
-        savedFooterPhrase,
-        savedShowOrgName,
-        savedShowFooterPhrase,
       ] = await Promise.all([
           setStampsFolderName(folderName),
           setPdfPhotosPerPage(pdfPhotosPerPage),
@@ -305,10 +273,6 @@ export function SettingsScreen({
           setFloorDisplayMode(floorDisplayMode),
           setTitleDatetimeMode(titleDatetimeMode),
           setCoordsLabelMode(coordsLabelMode),
-          setOverlayOrgName(overlayOrgName),
-          setOverlayFooterPhrase(overlayFooterPhrase),
-          setOverlayShowOrgName(overlayShowOrgName),
-          setOverlayShowFooterPhrase(overlayShowFooterPhrase),
         ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
@@ -325,10 +289,6 @@ export function SettingsScreen({
       setFloorDisplayModeState(savedFloorDisplayMode);
       setTitleDatetimeModeState(savedTitleDatetimeMode);
       setCoordsLabelModeState(savedCoordsLabelMode);
-      setOverlayOrgNameState(savedOrgName);
-      setOverlayFooterPhraseState(savedFooterPhrase);
-      setOverlayShowOrgNameState(savedShowOrgName);
-      setOverlayShowFooterPhraseState(savedShowFooterPhrase);
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
@@ -545,90 +505,6 @@ export function SettingsScreen({
                 ]}
               >
                 제외
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>사진 오버레이 문구</Text>
-          <Text style={styles.hint}>
-            PDF·이미지·미리보기에 표시할 기관명(상단)과 하단 문구입니다. 저장 폴더명과 별도입니다.
-          </Text>
-          <Text style={styles.label}>기관명</Text>
-          <TextInput
-            style={styles.input}
-            value={overlayOrgName}
-            onChangeText={setOverlayOrgNameState}
-            placeholder="예: ○○초등학교"
-            maxLength={OVERLAY_ORG_MAX_LENGTH}
-            editable={!saving}
-          />
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, overlayShowOrgName && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowOrgNameState(true)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  overlayShowOrgName && styles.optionButtonTextSelected,
-                ]}
-              >
-                표시
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, !overlayShowOrgName && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowOrgNameState(false)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  !overlayShowOrgName && styles.optionButtonTextSelected,
-                ]}
-              >
-                숨김
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>하단 문구</Text>
-          <TextInput
-            style={styles.input}
-            value={overlayFooterPhrase}
-            onChangeText={setOverlayFooterPhraseState}
-            placeholder="예: 촬영일 기준 현장 기록"
-            maxLength={OVERLAY_PHRASE_MAX_LENGTH}
-            editable={!saving}
-          />
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, overlayShowFooterPhrase && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowFooterPhraseState(true)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  overlayShowFooterPhrase && styles.optionButtonTextSelected,
-                ]}
-              >
-                표시
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, !overlayShowFooterPhrase && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowFooterPhraseState(false)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  !overlayShowFooterPhrase && styles.optionButtonTextSelected,
-                ]}
-              >
-                숨김
               </Text>
             </Pressable>
           </View>

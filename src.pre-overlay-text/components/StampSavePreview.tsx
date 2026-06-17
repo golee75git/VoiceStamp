@@ -14,11 +14,6 @@ import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
-import {
-  overlayPhraseFontSize,
-  resolveOverlayFooterPhrase,
-  resolveOverlayOrgName,
-} from '../services/overlayText';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
@@ -69,10 +64,6 @@ type StampSavePreviewProps = {
   watermarkStyle: WatermarkStyle;
   coordsLabel: CoordsLabelMode;
   showDatetime: boolean;
-  orgName: string;
-  footerPhrase: string;
-  showOrgName: boolean;
-  showFooterPhrase: boolean;
   floor?: StampFloor | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -90,10 +81,6 @@ export function StampSavePreview({
   watermarkStyle,
   coordsLabel,
   showDatetime,
-  orgName,
-  footerPhrase,
-  showOrgName,
-  showFooterPhrase,
   floor,
   latitude,
   longitude,
@@ -103,9 +90,6 @@ export function StampSavePreview({
   const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
   const displayMemo = memo.trim();
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
-  const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
-  const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
-  const phraseFontSize = overlayPhraseFontSize(isThumbnail ? 10 : 13);
   const isThumbnail = variant === 'thumbnail';
   const imageResizeMode: ImageResizeMode = textLayout === 'watermark' ? 'cover' : 'contain';
 
@@ -170,41 +154,14 @@ export function StampSavePreview({
           {coords}
         </Text>
       ) : null}
-      {displayFooterPhrase ? (
-        <Text
-          style={[
-            styles.thumbnailWatermarkPhrase,
-            { textAlign: memoAlign, color: watermarkTheme.coordsColor, fontSize: phraseFontSize },
-          ]}
-          numberOfLines={1}
-        >
-          {displayFooterPhrase}
-        </Text>
-      ) : null}
     </WatermarkBarBackground>
   );
-
-  const renderThumbnailOrgBar = () =>
-    displayOrgName ? (
-      <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkTopBar}>
-        <Text
-          style={[
-            styles.thumbnailWatermarkOrg,
-            { textAlign: titleAlign, color: watermarkTheme.titleColor },
-          ]}
-          numberOfLines={1}
-        >
-          {displayOrgName}
-        </Text>
-      </WatermarkBarBackground>
-    ) : null;
 
   if (textLayout === 'watermark' && isThumbnail) {
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
           {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
-          {renderThumbnailOrgBar()}
           {renderThumbnailWatermarkBar()}
         </View>
       </View>
@@ -220,18 +177,6 @@ export function StampSavePreview({
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode={imageResizeMode}
           />
-          {displayOrgName ? (
-            <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkTopBar}>
-              <Text
-                style={[
-                  styles.fullscreenWatermarkOrg,
-                  { textAlign: titleAlign, color: watermarkTheme.titleColor },
-                ]}
-              >
-                {displayOrgName}
-              </Text>
-            </WatermarkBarBackground>
-          ) : null}
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
               {displayTitle}
@@ -246,16 +191,6 @@ export function StampSavePreview({
                 {coords}
               </Text>
             ) : null}
-            {displayFooterPhrase ? (
-              <Text
-                style={[
-                  styles.fullscreenWatermarkPhrase,
-                  { textAlign: memoAlign, color: watermarkTheme.coordsColor, fontSize: phraseFontSize },
-                ]}
-              >
-                {displayFooterPhrase}
-              </Text>
-            ) : null}
           </WatermarkBarBackground>
         </View>
       </View>
@@ -267,11 +202,6 @@ export function StampSavePreview({
       <View style={styles.thumbnailCaptionCard}>
         {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
         <View style={styles.thumbnailCaptionText}>
-          {displayOrgName ? (
-            <Text style={[styles.thumbnailOrg, { textAlign: titleAlign }]} numberOfLines={1}>
-              {displayOrgName}
-            </Text>
-          ) : null}
           <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
             {displayTitle}
           </Text>
@@ -283,17 +213,6 @@ export function StampSavePreview({
           {coords ? (
             <Text style={[coordsStyle, { textAlign: memoAlign }]} numberOfLines={1}>
               {coords}
-            </Text>
-          ) : null}
-          {displayFooterPhrase ? (
-            <Text
-              style={[
-                styles.thumbnailCaptionPhrase,
-                { textAlign: memoAlign, fontSize: phraseFontSize },
-              ]}
-              numberOfLines={1}
-            >
-              {displayFooterPhrase}
             </Text>
           ) : null}
         </View>
@@ -311,25 +230,12 @@ export function StampSavePreview({
         />
       </View>
       <View style={styles.fullscreenCaptionText}>
-        {displayOrgName ? (
-          <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }]}>{displayOrgName}</Text>
-        ) : null}
         <Text style={[titleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
         {displayMemo ? (
           <Text style={[memoStyle, { textAlign: memoAlign }]}>{displayMemo}</Text>
         ) : null}
         {coords ? (
           <Text style={[coordsStyle, { textAlign: memoAlign }]}>{coords}</Text>
-        ) : null}
-        {displayFooterPhrase ? (
-          <Text
-            style={[
-              styles.fullscreenCaptionPhrase,
-              { textAlign: memoAlign, fontSize: phraseFontSize },
-            ]}
-          >
-            {displayFooterPhrase}
-          </Text>
         ) : null}
       </View>
     </View>
@@ -359,23 +265,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingHorizontal: 10,
     paddingVertical: 8,
-  },
-  thumbnailWatermarkTopBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  thumbnailWatermarkOrg: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  thumbnailWatermarkPhrase: {
-    marginTop: 3,
-    lineHeight: 13,
   },
   thumbnailWatermarkTitle: {
     fontSize: 13,
@@ -411,11 +300,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     gap: 4,
   },
-  thumbnailOrg: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#111827',
-  },
   thumbnailTitle: {
     fontSize: 13,
     fontWeight: '700',
@@ -428,10 +312,6 @@ const styles = StyleSheet.create({
   },
   thumbnailCoords: {
     fontSize: 10,
-    color: '#6b7280',
-    lineHeight: 13,
-  },
-  thumbnailCaptionPhrase: {
     color: '#6b7280',
     lineHeight: 13,
   },
@@ -455,23 +335,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingHorizontal: 16,
     paddingVertical: 12,
-  },
-  fullscreenWatermarkTopBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  fullscreenWatermarkOrg: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  fullscreenWatermarkPhrase: {
-    marginTop: 4,
-    lineHeight: 18,
   },
   fullscreenWatermarkTitle: {
     fontSize: 18,
@@ -500,15 +363,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 6,
-  },
-  fullscreenCaptionOrg: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  fullscreenCaptionPhrase: {
-    color: '#6b7280',
-    lineHeight: 18,
   },
   fullscreenCaptionTitle: {
     fontSize: 18,

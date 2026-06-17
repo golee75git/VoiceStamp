@@ -8,10 +8,6 @@ import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import {
   getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getPdfImageQuality,
   getPdfPhotosPerPage,
   getPdfShowDatetime,
@@ -25,12 +21,6 @@ import {
   type TextAlign,
   type WatermarkStyle,
 } from './settingsService';
-import {
-  overlayPhraseFontSize,
-  resolveOverlayFooterPhrase,
-  resolveOverlayOrgName,
-  type OverlayTextFields,
-} from './overlayText';
 import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
@@ -87,14 +77,10 @@ function buildStampItem(
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
   watermarkStyle: WatermarkStyle,
-  overlay: OverlayTextFields,
 ): string {
   const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, coordsLabel);
-  const orgName = resolveOverlayOrgName(overlay);
-  const footerPhrase = resolveOverlayFooterPhrase(overlay);
-  const phraseSize = overlayPhraseFontSize(11);
   const coordsBlock = coords
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
     : '';
@@ -109,37 +95,21 @@ function buildStampItem(
     const watermarkCoordsBlock = coords
       ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
       : '';
-    const topOrgBlock = orgName
-      ? `<div class="watermark-bar watermark-bar-top" style="${watermarkBarCss(watermarkStyle)}">
-            <div class="watermark-org" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${escapeHtml(orgName)}</div>
-          </div>`
-      : '';
-    const phraseBlock = footerPhrase
-      ? `<div class="watermark-phrase" style="text-align: ${memoAlign}; color: ${theme.coordsColor}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</div>`
-      : '';
     return `
       <div class="item item-watermark">
         <div class="photo-wrap">
-          ${topOrgBlock}
           <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
             <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
             ${memoBlock}
             ${watermarkCoordsBlock}
-            ${phraseBlock}
           </div>
         </div>
       </div>`;
   }
 
-  const orgBlock = orgName
-    ? `<p class="caption-org" style="text-align: ${titleAlign};">${escapeHtml(orgName)}</p>`
-    : '';
   const memoBlock = memoTrimmed
     ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
-    : '';
-  const phraseBlock = footerPhrase
-    ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
     : '';
   const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
   const dateBlock = showDatetime
@@ -149,11 +119,9 @@ function buildStampItem(
   return `
       <div class="item">
         <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
-        ${orgBlock}
         <h1 style="text-align: ${titleAlign};">${title}</h1>
         ${memoBlock}
         ${coordsBlock}
-        ${phraseBlock}
         ${dateBlock}
       </div>`;
 }
@@ -178,7 +146,6 @@ function buildHtml(
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
   watermarkStyle: WatermarkStyle,
-  overlay: OverlayTextFields,
 ): string {
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
@@ -202,7 +169,6 @@ function buildHtml(
             textLayout,
             coordsLabel,
             watermarkStyle,
-            overlay,
           ),
         )
         .join('');
@@ -245,11 +211,6 @@ function buildHtml(
     position: absolute; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.55); padding: 8px 10px; color: #fff;
   }
-  .watermark-bar-top { top: 0; bottom: auto; }
-  .watermark-org { font-size: 12px; font-weight: 700; }
-  .watermark-phrase { margin-top: 4px; opacity: 0.9; }
-  .caption-org { font-size: 13px; font-weight: 700; margin: 8px 0 4px; color: #111827; }
-  .caption-phrase { font-size: 11px; color: #6b7280; margin: 4px 0 0; }
   .watermark-title { font-size: 14px; font-weight: 700; }
   .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
   .stamp-coords { font-size: 11px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
@@ -372,7 +333,7 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
@@ -381,10 +342,6 @@ export async function createStampsPdf(
     getStampTextLayout(),
     getCoordsLabelMode(),
     getWatermarkStyle(),
-    getOverlayOrgName(),
-    getOverlayFooterPhrase(),
-    getOverlayShowOrgName(),
-    getOverlayShowFooterPhrase(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -402,7 +359,6 @@ export async function createStampsPdf(
     textLayout,
     coordsLabel,
     watermarkStyle,
-    { orgName, footerPhrase, showOrgName, showFooterPhrase },
   );
 
   if (Platform.OS === 'web') {

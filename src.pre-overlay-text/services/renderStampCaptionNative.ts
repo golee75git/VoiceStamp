@@ -4,10 +4,6 @@ import Marker, { ImageFormat, TextBackgroundType } from 'react-native-image-mark
 
 import { buildCaptionLayout, captionTextX } from './captionLayout';
 import {
-  resolveOverlayFooterPhrase,
-  resolveOverlayOrgName,
-} from './overlayText';
-import {
   prepareExportPhoto,
   type StampImageExportOptions,
   type StampRenderParams,
@@ -78,8 +74,6 @@ export async function renderStampCaptionNative(
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
-  const orgName = resolveOverlayOrgName(options);
-  const footerPhrase = resolveOverlayFooterPhrase(options);
   const layout = buildCaptionLayout(
     prepared.width,
     prepared.height,
@@ -88,8 +82,6 @@ export async function renderStampCaptionNative(
     options.titleAlign,
     options.memoAlign,
     coords,
-    orgName,
-    footerPhrase,
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 
@@ -110,39 +102,22 @@ export async function renderStampCaptionNative(
     saveFormat: ImageFormat.png,
   });
 
-  const watermarkTexts = [];
-
-  if (layout.orgY !== null && layout.orgText) {
-    watermarkTexts.push({
-      text: layout.orgText,
+  const watermarkTexts = [
+    {
+      text: layout.titleText,
       positionOptions: {
         X: captionTextX(layout.titleAlign, layout.padding, layout.canvasWidth),
-        Y: layout.orgY,
+        Y: layout.titleY,
       },
       style: captionTextStyle(
         '#111827',
-        layout.orgSize,
+        layout.titleSize,
         layout.titleAlign,
         true,
         textBackgroundPaddingY,
       ),
-    });
-  }
-
-  watermarkTexts.push({
-    text: layout.titleText,
-    positionOptions: {
-      X: captionTextX(layout.titleAlign, layout.padding, layout.canvasWidth),
-      Y: layout.titleY,
     },
-    style: captionTextStyle(
-      '#111827',
-      layout.titleSize,
-      layout.titleAlign,
-      true,
-      textBackgroundPaddingY,
-    ),
-  });
+  ];
 
   if (layout.memoY !== null && layout.memoText) {
     watermarkTexts.push({
@@ -172,23 +147,6 @@ export async function renderStampCaptionNative(
         '#6b7280',
         layout.coordsSize,
         layout.coordsAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.phraseY !== null && layout.phraseText) {
-    watermarkTexts.push({
-      text: layout.phraseText,
-      positionOptions: {
-        X: captionTextX(layout.phraseAlign, layout.padding, layout.canvasWidth),
-        Y: layout.phraseY,
-      },
-      style: captionTextStyle(
-        '#6b7280',
-        layout.phraseSize,
-        layout.phraseAlign,
         false,
         textBackgroundPaddingY,
       ),

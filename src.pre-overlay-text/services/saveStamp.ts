@@ -24,10 +24,6 @@ import {
   getCurrentSiteName,
   getGallerySaveMode,
   getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
   getPdfShowDatetime,
   getStampTextLayout,
   getWatermarkStyle,
@@ -67,20 +63,16 @@ function resolveStampTitle(title: string, fallbackTimestamp: number): string {
 }
 
 async function loadExportOptions(): Promise<StampImageExportOptions> {
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
     getWatermarkStyle(),
-    getOverlayOrgName(),
-    getOverlayFooterPhrase(),
-    getOverlayShowOrgName(),
-    getOverlayShowFooterPhrase(),
   ]);
 
-  return { titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase };
+  return { titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle };
 }
 
 async function saveNewStampToGallery(

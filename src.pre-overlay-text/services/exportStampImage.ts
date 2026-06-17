@@ -10,15 +10,8 @@ import {
 import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
-import { buildCaptionLayout } from './captionLayout';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
-import {
-  overlayPhraseFontSize,
-  resolveOverlayFooterPhrase,
-  resolveOverlayOrgName,
-  type OverlayTextFields,
-} from './overlayText';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
@@ -77,7 +70,7 @@ export type StampRenderParams = {
   jpegCompress?: number;
 };
 
-export type StampImageExportOptions = OverlayTextFields & {
+export type StampImageExportOptions = {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   showDatetime: boolean;
@@ -216,9 +209,6 @@ async function renderStampJpegWatermarkOnWeb(
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
-  const orgName = resolveOverlayOrgName(options) ?? '';
-  const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
-  const phraseSize = overlayPhraseFontSize(22);
   const barPaddingX = 20;
   const barPaddingY = 16;
   const textWidth = imgWidth - barPaddingX * 2;
@@ -229,26 +219,18 @@ async function renderStampJpegWatermarkOnWeb(
     throw new Error('??? ????? ??? ? ????.');
   }
 
-  measureCtx.font = '700 26px sans-serif';
-  const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
-  const topBarHeight =
-    orgLines.length > 0 ? barPaddingY + orgLines.length * 30 + barPaddingY : 0;
-
   measureCtx.font = '700 32px sans-serif';
   const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
   measureCtx.font = '400 26px sans-serif';
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
   measureCtx.font = '400 22px sans-serif';
   const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
-  measureCtx.font = `400 ${phraseSize}px sans-serif`;
-  const phraseLines = footerPhrase ? wrapCanvasLines(measureCtx, footerPhrase, textWidth) : [];
 
   const barHeight =
     barPaddingY +
     titleLines.length * 38 +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
-    (phraseLines.length > 0 ? 4 + phraseLines.length * 24 : 0) +
     barPaddingY;
 
   const canvas = document.createElement('canvas');
@@ -260,26 +242,9 @@ async function renderStampJpegWatermarkOnWeb(
   }
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-  const theme = getWatermarkTheme(options.watermarkStyle);
-
-  if (topBarHeight > 0) {
-    drawWatermarkBar(ctx, 0, 0, imgWidth, topBarHeight, options.watermarkStyle);
-    drawAlignedText(
-      ctx,
-      orgName,
-      barPaddingX,
-      barPaddingY + 22,
-      textWidth,
-      options.titleAlign,
-      26,
-      '700',
-      theme.titleColor,
-      30,
-    );
-  }
-
   drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
 
+  const theme = getWatermarkTheme(options.watermarkStyle);
   let textY = imgHeight - barHeight + barPaddingY + 28;
   textY =
     drawAlignedText(
@@ -311,7 +276,7 @@ async function renderStampJpegWatermarkOnWeb(
   }
 
   if (coords) {
-    textY = drawAlignedText(
+    drawAlignedText(
       ctx,
       coords,
       barPaddingX,
@@ -322,21 +287,6 @@ async function renderStampJpegWatermarkOnWeb(
       '400',
       theme.coordsColor,
       28,
-    );
-  }
-
-  if (footerPhrase) {
-    drawAlignedText(
-      ctx,
-      footerPhrase,
-      barPaddingX,
-      textY + 4,
-      textWidth,
-      options.memoAlign,
-      phraseSize,
-      '400',
-      theme.coordsColor,
-      24,
     );
   }
 
@@ -354,107 +304,89 @@ async function renderStampJpegCaptionOnWeb(
   const imgWidth = Math.max(1, Math.round(img.width * scale));
   const imgHeight = Math.max(1, Math.round(img.height * scale));
 
+  const padding = 24;
+  const contentWidth = imgWidth;
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
-  const orgName = resolveOverlayOrgName(options);
-  const footerPhrase = resolveOverlayFooterPhrase(options);
-  const layout = buildCaptionLayout(
-    imgWidth,
-    imgHeight,
-    title,
-    memo,
-    options.titleAlign,
-    options.memoAlign,
-    coords,
-    orgName,
-    footerPhrase,
-  );
+
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  if (!measureCtx) {
+    throw new Error('??? ????? ??? ? ????.');
+  }
+
+  measureCtx.font = '700 36px sans-serif';
+  const titleLines = wrapCanvasLines(measureCtx, title, contentWidth);
+  measureCtx.font = '400 28px sans-serif';
+  const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
+  measureCtx.font = '400 24px sans-serif';
+  const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
+
+  const canvasWidth = contentWidth + padding * 2;
+  const canvasHeight =
+    padding +
+    imgHeight +
+    16 +
+    titleLines.length * 44 +
+    (memoLines.length > 0 ? 12 + memoLines.length * 36 : 0) +
+    (coordsLines.length > 0 ? 8 + coordsLines.length * 32 : 0) +
+    padding;
 
   const canvas = document.createElement('canvas');
-  canvas.width = layout.canvasWidth;
-  canvas.height = layout.canvasHeight;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     throw new Error('??? ????? ??? ? ????.');
   }
 
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, layout.canvasWidth, layout.canvasHeight);
-  ctx.drawImage(img, layout.padding, layout.padding, imgWidth, imgHeight);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  ctx.drawImage(img, padding, padding, imgWidth, imgHeight);
 
-  if (layout.orgY !== null && layout.orgText) {
-    drawAlignedText(
-      ctx,
-      layout.orgText,
-      layout.padding,
-      layout.orgY,
-      imgWidth,
-      layout.titleAlign,
-      layout.orgSize,
-      '700',
-      '#111827',
-      layout.orgLineHeight,
-    );
-  }
-
-  let textY = layout.titleY;
+  let textY = padding + imgHeight + 40;
   textY =
     drawAlignedText(
       ctx,
-      layout.titleText,
-      layout.padding,
+      title,
+      padding,
       textY,
-      imgWidth,
-      layout.titleAlign,
-      layout.titleSize,
+      contentWidth,
+      options.titleAlign,
+      36,
       '700',
       '#111827',
-      layout.titleLineHeight,
+      44,
     ) + 4;
 
-  if (layout.memoY !== null && layout.memoText) {
+  if (memo) {
     textY = drawAlignedText(
       ctx,
-      layout.memoText,
-      layout.padding,
-      layout.memoY,
-      imgWidth,
-      layout.memoAlign,
-      layout.memoSize,
+      memo,
+      padding,
+      textY + 8,
+      contentWidth,
+      options.memoAlign,
+      28,
       '400',
       '#374151',
-      layout.memoLineHeight,
+      36,
     );
   }
 
-  if (layout.coordsY !== null && layout.coordsText) {
-    textY = drawAlignedText(
-      ctx,
-      layout.coordsText,
-      layout.padding,
-      layout.coordsY,
-      imgWidth,
-      layout.coordsAlign,
-      layout.coordsSize,
-      '400',
-      '#6b7280',
-      layout.coordsLineHeight,
-    );
-  }
-
-  if (layout.phraseY !== null && layout.phraseText) {
+  if (coords) {
     drawAlignedText(
       ctx,
-      layout.phraseText,
-      layout.padding,
-      layout.phraseY,
-      imgWidth,
-      layout.phraseAlign,
-      layout.phraseSize,
+      coords,
+      padding,
+      textY + 8,
+      contentWidth,
+      options.memoAlign,
+      24,
       '400',
       '#6b7280',
-      layout.phraseLineHeight,
+      32,
     );
   }
 

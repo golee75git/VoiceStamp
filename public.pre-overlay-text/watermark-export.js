@@ -21,44 +21,32 @@
       return {
         barPaddingX: scalePx(20, textScale),
         barPaddingY: scalePx(16, textScale),
-        orgFont: scalePx(26, textScale),
-        orgLine: scalePx(30, textScale),
         titleFont: scalePx(32, textScale),
         titleLine: scalePx(38, textScale),
         memoFont: scalePx(26, textScale),
         memoLine: scalePx(32, textScale),
         coordsFont: scalePx(22, textScale),
         coordsLine: scalePx(28, textScale),
-        phraseFont: scalePx(18, textScale),
-        phraseLine: scalePx(24, textScale),
         memoGapBefore: scalePx(8, textScale),
         coordsGapBefore: scalePx(6, textScale),
-        phraseGapBefore: scalePx(4, textScale),
         titleAfterGap: scalePx(4, textScale),
         memoAfterGap: scalePx(4, textScale),
         titleBaseline: scalePx(28, textScale),
-        orgBaseline: scalePx(22, textScale),
       };
     }
 
     return {
       padding: scalePx(24, textScale),
-      orgFont: scalePx(28, textScale),
-      orgLine: scalePx(36, textScale),
       titleFont: scalePx(36, textScale),
       titleLine: scalePx(44, textScale),
       memoFont: scalePx(28, textScale),
       memoLine: scalePx(36, textScale),
       coordsFont: scalePx(24, textScale),
       coordsLine: scalePx(32, textScale),
-      phraseFont: scalePx(22, textScale),
-      phraseLine: scalePx(28, textScale),
       imgToTextGap: scalePx(16, textScale),
       titleStartOffset: scalePx(40, textScale),
-      orgGapBefore: scalePx(8, textScale),
       memoGapBefore: scalePx(12, textScale),
       coordsGapBefore: scalePx(8, textScale),
-      phraseGapBefore: scalePx(8, textScale),
       titleAfterGap: scalePx(4, textScale),
       memoAfterGap: scalePx(8, textScale),
     };
@@ -178,29 +166,6 @@
     return numbers;
   }
 
-  function sanitizeOverlayText(text, maxLength) {
-    return String(text ?? '')
-      .trim()
-      .replace(/\s+/g, ' ')
-      .slice(0, maxLength);
-  }
-
-  function resolveOverlayOrgName(options) {
-    if (!options.showOrgName) {
-      return null;
-    }
-    const trimmed = sanitizeOverlayText(options.orgName, 80);
-    return trimmed || null;
-  }
-
-  function resolveOverlayFooterPhrase(options) {
-    if (!options.showFooterPhrase) {
-      return null;
-    }
-    const trimmed = sanitizeOverlayText(options.footerPhrase, 120);
-    return trimmed || null;
-  }
-
   function loadImage(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -247,8 +212,6 @@
     const title = stampDisplayTitle(stamp, options.showDatetime);
     const memo = String(stamp.memo ?? '').trim();
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
-    const orgName = resolveOverlayOrgName(options) ?? '';
-    const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
     const textWidth = imgWidth - sizes.barPaddingX * 2;
 
     const measureCanvas = document.createElement('canvas');
@@ -257,26 +220,18 @@
       throw new Error('캔버스를 사용할 수 없습니다.');
     }
 
-    measureCtx.font = `700 ${sizes.orgFont}px sans-serif`;
-    const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
-    const topBarHeight =
-      orgLines.length > 0 ? sizes.barPaddingY + orgLines.length * sizes.orgLine + sizes.barPaddingY : 0;
-
     measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
     const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
-    measureCtx.font = `400 ${sizes.phraseFont}px sans-serif`;
-    const phraseLines = footerPhrase ? wrapCanvasLines(measureCtx, footerPhrase, textWidth) : [];
 
     const barHeight =
       sizes.barPaddingY +
       titleLines.length * sizes.titleLine +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
-      (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
       sizes.barPaddingY;
 
     const canvas = document.createElement('canvas');
@@ -288,26 +243,9 @@
     }
 
     ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-    const theme = getWatermarkTheme(options.watermarkStyle);
-
-    if (topBarHeight > 0) {
-      drawWatermarkBar(ctx, 0, 0, imgWidth, topBarHeight, options.watermarkStyle);
-      drawAlignedText(
-        ctx,
-        orgName,
-        sizes.barPaddingX,
-        sizes.barPaddingY + sizes.orgBaseline,
-        textWidth,
-        options.titleAlign,
-        sizes.orgFont,
-        '700',
-        theme.titleColor,
-        sizes.orgLine,
-      );
-    }
-
     drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
 
+    const theme = getWatermarkTheme(options.watermarkStyle);
     let textY = imgHeight - barHeight + sizes.barPaddingY + sizes.titleBaseline;
     textY =
       drawAlignedText(
@@ -339,7 +277,7 @@
     }
 
     if (coords) {
-      textY = drawAlignedText(
+      drawAlignedText(
         ctx,
         coords,
         sizes.barPaddingX,
@@ -350,21 +288,6 @@
         '400',
         theme.coordsColor,
         sizes.coordsLine,
-      );
-    }
-
-    if (footerPhrase) {
-      drawAlignedText(
-        ctx,
-        footerPhrase,
-        sizes.barPaddingX,
-        textY + sizes.memoAfterGap,
-        textWidth,
-        options.memoAlign,
-        sizes.phraseFont,
-        '400',
-        theme.coordsColor,
-        sizes.phraseLine,
       );
     }
 
@@ -383,8 +306,6 @@
     const title = stampDisplayTitle(stamp, options.showDatetime);
     const memo = String(stamp.memo ?? '').trim();
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
-    const orgName = resolveOverlayOrgName(options) ?? '';
-    const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
 
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
@@ -392,27 +313,21 @@
       throw new Error('캔버스를 사용할 수 없습니다.');
     }
 
-    measureCtx.font = `700 ${sizes.orgFont}px sans-serif`;
-    const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, contentWidth) : [];
     measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
     const titleLines = wrapCanvasLines(measureCtx, title, contentWidth);
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
-    measureCtx.font = `400 ${sizes.phraseFont}px sans-serif`;
-    const phraseLines = footerPhrase ? wrapCanvasLines(measureCtx, footerPhrase, contentWidth) : [];
 
     const canvasWidth = contentWidth + padding * 2;
     const canvasHeight =
       padding +
       imgHeight +
       sizes.imgToTextGap +
-      (orgLines.length > 0 ? sizes.orgGapBefore + orgLines.length * sizes.orgLine : 0) +
       titleLines.length * sizes.titleLine +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
-      (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
       padding;
 
     const canvas = document.createElement('canvas');
@@ -428,22 +343,6 @@
     ctx.drawImage(img, padding, padding, imgWidth, imgHeight);
 
     let textY = padding + imgHeight + sizes.titleStartOffset;
-    if (orgName) {
-      textY =
-        drawAlignedText(
-          ctx,
-          orgName,
-          padding,
-          textY,
-          contentWidth,
-          options.titleAlign,
-          sizes.orgFont,
-          '700',
-          '#111827',
-          sizes.orgLine,
-        ) + sizes.titleAfterGap;
-    }
-
     textY =
       drawAlignedText(
         ctx,
@@ -474,7 +373,7 @@
     }
 
     if (coords) {
-      textY = drawAlignedText(
+      drawAlignedText(
         ctx,
         coords,
         padding,
@@ -485,21 +384,6 @@
         '400',
         '#6b7280',
         sizes.coordsLine,
-      );
-    }
-
-    if (footerPhrase) {
-      drawAlignedText(
-        ctx,
-        footerPhrase,
-        padding,
-        textY + sizes.memoAfterGap,
-        contentWidth,
-        options.memoAlign,
-        sizes.phraseFont,
-        '400',
-        '#6b7280',
-        sizes.phraseLine,
       );
     }
 
@@ -517,10 +401,6 @@
         settings.coordsLabel === 'gps' || settings.coordsLabel === 'coords' ? settings.coordsLabel : 'off',
       watermarkStyle: settings.watermarkStyle === 'solid_light' ? 'solid_light' : 'solid_dark',
       textScale: normalizeTextScale(settings.textScale),
-      orgName: typeof settings.orgName === 'string' ? settings.orgName : '',
-      footerPhrase: typeof settings.footerPhrase === 'string' ? settings.footerPhrase : '',
-      showOrgName: settings.showOrgName !== false,
-      showFooterPhrase: settings.showFooterPhrase !== false,
     };
   }
 
