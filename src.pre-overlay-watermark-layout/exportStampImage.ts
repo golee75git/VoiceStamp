@@ -231,6 +231,8 @@ async function renderStampJpegWatermarkOnWeb(
 
   measureCtx.font = '700 26px sans-serif';
   const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
+  const topBarHeight =
+    orgLines.length > 0 ? barPaddingY + orgLines.length * 30 + barPaddingY : 0;
 
   measureCtx.font = '700 32px sans-serif';
   const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
@@ -243,7 +245,6 @@ async function renderStampJpegWatermarkOnWeb(
 
   const barHeight =
     barPaddingY +
-    (orgLines.length > 0 ? orgLines.length * 30 + 4 : 0) +
     titleLines.length * 38 +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
@@ -261,26 +262,25 @@ async function renderStampJpegWatermarkOnWeb(
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
   const theme = getWatermarkTheme(options.watermarkStyle);
 
-  drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
-
-  let textY = imgHeight - barHeight + barPaddingY + (orgName ? 22 : 28);
-
-  if (orgName) {
-    textY =
-      drawAlignedText(
-        ctx,
-        orgName,
-        barPaddingX,
-        textY,
-        textWidth,
-        options.titleAlign,
-        26,
-        '700',
-        theme.titleColor,
-        30,
-      ) + 4;
+  if (topBarHeight > 0) {
+    drawWatermarkBar(ctx, 0, 0, imgWidth, topBarHeight, options.watermarkStyle);
+    drawAlignedText(
+      ctx,
+      orgName,
+      barPaddingX,
+      barPaddingY + 22,
+      textWidth,
+      options.titleAlign,
+      26,
+      '700',
+      theme.titleColor,
+      30,
+    );
   }
 
+  drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
+
+  let textY = imgHeight - barHeight + barPaddingY + 28;
   textY =
     drawAlignedText(
       ctx,

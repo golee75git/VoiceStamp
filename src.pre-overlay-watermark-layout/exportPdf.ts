@@ -109,8 +109,10 @@ function buildStampItem(
     const watermarkCoordsBlock = coords
       ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
       : '';
-    const orgBlock = orgName
-      ? `<div class="watermark-org" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${escapeHtml(orgName)}</div>`
+    const topOrgBlock = orgName
+      ? `<div class="watermark-bar watermark-bar-top" style="${watermarkBarCss(watermarkStyle)}">
+            <div class="watermark-org" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${escapeHtml(orgName)}</div>
+          </div>`
       : '';
     const phraseBlock = footerPhrase
       ? `<div class="watermark-phrase" style="text-align: ${memoAlign}; color: ${theme.coordsColor}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</div>`
@@ -118,9 +120,9 @@ function buildStampItem(
     return `
       <div class="item item-watermark">
         <div class="photo-wrap">
+          ${topOrgBlock}
           <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
-            ${orgBlock}
             <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
             ${memoBlock}
             ${watermarkCoordsBlock}

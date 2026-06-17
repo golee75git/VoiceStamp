@@ -34,7 +34,6 @@
         memoGapBefore: scalePx(8, textScale),
         coordsGapBefore: scalePx(6, textScale),
         phraseGapBefore: scalePx(4, textScale),
-        orgGapAfter: scalePx(4, textScale),
         titleAfterGap: scalePx(4, textScale),
         memoAfterGap: scalePx(4, textScale),
         titleBaseline: scalePx(28, textScale),
@@ -286,6 +285,8 @@
 
     measureCtx.font = `700 ${sizes.orgFont}px sans-serif`;
     const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
+    const topBarHeight =
+      orgLines.length > 0 ? sizes.barPaddingY + orgLines.length * sizes.orgLine + sizes.barPaddingY : 0;
 
     measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
     const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
@@ -298,7 +299,6 @@
 
     const barHeight =
       sizes.barPaddingY +
-      (orgLines.length > 0 ? orgLines.length * sizes.orgLine + sizes.orgGapAfter : 0) +
       titleLines.length * sizes.titleLine +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
@@ -316,30 +316,25 @@
     ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
     const theme = getWatermarkTheme(options.watermarkStyle);
 
-    drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
-
-    let textY =
-      imgHeight -
-      barHeight +
-      sizes.barPaddingY +
-      (orgName ? sizes.orgBaseline : sizes.titleBaseline);
-
-    if (orgName) {
-      textY =
-        drawAlignedText(
-          ctx,
-          orgName,
-          sizes.barPaddingX,
-          textY,
-          textWidth,
-          options.titleAlign,
-          sizes.orgFont,
-          '700',
-          theme.titleColor,
-          sizes.orgLine,
-        ) + sizes.orgGapAfter;
+    if (topBarHeight > 0) {
+      drawWatermarkBar(ctx, 0, 0, imgWidth, topBarHeight, options.watermarkStyle);
+      drawAlignedText(
+        ctx,
+        orgName,
+        sizes.barPaddingX,
+        sizes.barPaddingY + sizes.orgBaseline,
+        textWidth,
+        options.titleAlign,
+        sizes.orgFont,
+        '700',
+        theme.titleColor,
+        sizes.orgLine,
+      );
     }
 
+    drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
+
+    let textY = imgHeight - barHeight + sizes.barPaddingY + sizes.titleBaseline;
     textY =
       drawAlignedText(
         ctx,

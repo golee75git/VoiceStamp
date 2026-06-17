@@ -148,17 +148,6 @@ export function StampSavePreview({
 
   const renderThumbnailWatermarkBar = () => (
     <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkBar}>
-      {displayOrgName ? (
-        <Text
-          style={[
-            styles.thumbnailWatermarkOrg,
-            { textAlign: titleAlign, color: watermarkTheme.titleColor },
-          ]}
-          numberOfLines={1}
-        >
-          {displayOrgName}
-        </Text>
-      ) : null}
       <Text
         style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}
         numberOfLines={2}
@@ -195,11 +184,27 @@ export function StampSavePreview({
     </WatermarkBarBackground>
   );
 
+  const renderThumbnailOrgBar = () =>
+    displayOrgName ? (
+      <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkTopBar}>
+        <Text
+          style={[
+            styles.thumbnailWatermarkOrg,
+            { textAlign: titleAlign, color: watermarkTheme.titleColor },
+          ]}
+          numberOfLines={1}
+        >
+          {displayOrgName}
+        </Text>
+      </WatermarkBarBackground>
+    ) : null;
+
   if (textLayout === 'watermark' && isThumbnail) {
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
           {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
+          {renderThumbnailOrgBar()}
           {renderThumbnailWatermarkBar()}
         </View>
       </View>
@@ -215,8 +220,8 @@ export function StampSavePreview({
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode={imageResizeMode}
           />
-          <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
-            {displayOrgName ? (
+          {displayOrgName ? (
+            <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkTopBar}>
               <Text
                 style={[
                   styles.fullscreenWatermarkOrg,
@@ -225,7 +230,9 @@ export function StampSavePreview({
               >
                 {displayOrgName}
               </Text>
-            ) : null}
+            </WatermarkBarBackground>
+          ) : null}
+          <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
               {displayTitle}
             </Text>

@@ -7,7 +7,11 @@ import {
   type StampImageExportOptions,
   type StampRenderParams,
 } from './exportStampImage';
-import { resolveOverlayFooterPhrase, resolveOverlayOrgName } from './overlayText';
+import {
+  overlayPhraseFontSize,
+  resolveOverlayFooterPhrase,
+  resolveOverlayOrgName,
+} from './overlayText';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import { getWatermarkTheme } from './watermarkStyle';
@@ -24,6 +28,16 @@ function watermarkPosition(align: TextAlign): Position {
     return Position.bottomRight;
   }
   return Position.bottomLeft;
+}
+
+function topWatermarkPosition(align: TextAlign): Position {
+  if (align === 'center') {
+    return Position.topCenter;
+  }
+  if (align === 'right') {
+    return Position.topRight;
+  }
+  return Position.topLeft;
 }
 
 function normalizeMarkedUri(markedUri: string): string {
@@ -53,45 +67,79 @@ export async function renderStampWatermarkNative(
   const theme = getWatermarkTheme(options.watermarkStyle);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;
   const titleSize = Math.max(18, Math.round(32 * scale));
+  const orgSize = Math.max(16, Math.round(26 * scale));
+  const phraseSize = overlayPhraseFontSize(Math.max(14, Math.round(22 * scale)));
   const paddingX = Math.round(20 * scale);
   const paddingY = Math.round(16 * scale);
-
-  const overlayLines: string[] = [];
-  if (orgName) {
-    overlayLines.push(orgName);
-  }
-  overlayLines.push(title);
+  const overlayLines = [title];
   if (memo) {
     overlayLines.push(memo);
   }
   if (coords) {
     overlayLines.push(coords);
   }
-  if (footerPhrase) {
-    overlayLines.push(footerPhrase);
-  }
   const text = overlayLines.join('\n');
+
+  const watermarkTexts: Parameters<typeof Marker.markText>[0]['watermarkTexts'] = [];
+
+  if (orgName) {
+    watermarkTexts.push({
+      text: orgName,
+      positionOptions: { position: topWatermarkPosition(options.titleAlign) },
+      style: {
+        color: theme.titleColor,
+        fontSize: orgSize,
+        bold: true,
+        textAlign: options.titleAlign,
+        textBackgroundStyle: {
+          type: TextBackgroundType.stretchX,
+          color: theme.nativeBarColor,
+          paddingX,
+          paddingY,
+        },
+      },
+    });
+  }
+
+  watermarkTexts.push({
+    text,
+    positionOptions: { position: watermarkPosition(options.titleAlign) },
+    style: {
+      color: theme.titleColor,
+      fontSize: titleSize,
+      bold: true,
+      textAlign: options.titleAlign,
+      textBackgroundStyle: {
+        type: TextBackgroundType.stretchX,
+        color: theme.nativeBarColor,
+        paddingX,
+        paddingY,
+      },
+    },
+  });
+
+  if (footerPhrase) {
+    watermarkTexts.push({
+      text: footerPhrase,
+      positionOptions: { position: watermarkPosition(options.memoAlign) },
+      style: {
+        color: theme.coordsColor,
+        fontSize: phraseSize,
+        bold: false,
+        textAlign: options.memoAlign,
+        textBackgroundStyle: {
+          type: TextBackgroundType.stretchX,
+          color: theme.nativeBarColor,
+          paddingX,
+          paddingY: Math.max(8, Math.round(10 * scale)),
+        },
+      },
+    });
+  }
 
   const markedUri = await Marker.markText({
     backgroundImage: { src: prepared.uri, scale: 1 },
-    watermarkTexts: [
-      {
-        text,
-        positionOptions: { position: watermarkPosition(options.titleAlign) },
-        style: {
-          color: theme.titleColor,
-          fontSize: titleSize,
-          bold: true,
-          textAlign: options.titleAlign,
-          textBackgroundStyle: {
-            type: TextBackgroundType.stretchX,
-            color: theme.nativeBarColor,
-            paddingX,
-            paddingY,
-          },
-        },
-      },
-    ],
+    watermarkTexts,
     quality: Math.round(jpegCompress * 100),
     saveFormat: ImageFormat.jpg,
   });
