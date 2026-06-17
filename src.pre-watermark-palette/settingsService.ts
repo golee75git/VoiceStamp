@@ -95,17 +95,7 @@ export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
-export type WatermarkStyle =
-  | 'solid_dark'
-  | 'solid_light'
-  | 'slate'
-  | 'blue'
-  | 'indigo'
-  | 'green'
-  | 'teal'
-  | 'amber'
-  | 'red'
-  | 'rose';
+export type WatermarkStyle = 'solid_dark' | 'solid_light';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
@@ -132,49 +122,14 @@ export function stampTextLayoutLabel(layout: StampTextLayout): string {
   return layout === 'watermark' ? '워터마크' : '별도 영역';
 }
 
-export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = [
-  'solid_dark',
-  'solid_light',
-  'slate',
-  'blue',
-  'indigo',
-  'green',
-  'teal',
-  'amber',
-  'red',
-  'rose',
-];
+export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = ['solid_dark', 'solid_light'];
 
 export function watermarkStyleLabel(style: WatermarkStyle): string {
-  switch (style) {
-    case 'solid_light':
-      return '흰색';
-    case 'slate':
-      return '슬레이트';
-    case 'blue':
-      return '파랑';
-    case 'indigo':
-      return '남보라';
-    case 'green':
-      return '초록';
-    case 'teal':
-      return '청록';
-    case 'amber':
-      return '호박';
-    case 'red':
-      return '빨강';
-    case 'rose':
-      return '로즈';
-    default:
-      return '검정';
-  }
+  return style === 'solid_light' ? '흰색 반투명' : '검은 반투명';
 }
 
 export function sanitizeWatermarkStyle(value: string): WatermarkStyle {
-  if ((WATERMARK_STYLE_OPTIONS as string[]).includes(value)) {
-    return value as WatermarkStyle;
-  }
-  return DEFAULT_WATERMARK_STYLE;
+  return value === 'solid_light' ? 'solid_light' : 'solid_dark';
 }
 
 export function coordsLabelModeLabel(mode: CoordsLabelMode): string {

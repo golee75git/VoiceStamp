@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import { openInfoPage } from '../constants/infoUrls';
-import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
   DEFAULT_CAMERA_HAND,
@@ -673,32 +672,20 @@ export function SettingsScreen({
             <>
               <Text style={[styles.label, styles.sectionGap]}>워터마크 스타일</Text>
               <Text style={styles.hint}>
-                사진 바 배경 색입니다. 미리보기·PDF·이미지 저장에 적용됩니다.
+                사진 하단 바의 배경 무늬입니다. 미리보기·PDF·이미지 저장에 적용됩니다.
               </Text>
-              <View style={styles.paletteGrid}>
+              <View style={styles.optionRow}>
                 {WATERMARK_STYLE_OPTIONS.map((option) => {
                   const selected = watermarkStyle === option;
-                  const chipColor = WATERMARK_CHIP_COLORS[option];
                   return (
                     <Pressable
                       key={option}
-                      style={styles.paletteItem}
+                      style={[styles.optionButton, selected && styles.optionButtonSelected]}
                       onPress={() => setWatermarkStyleState(option)}
                       disabled={saving}
-                      accessibilityLabel={watermarkStyleLabel(option)}
-                      accessibilityState={{ selected }}
                     >
-                      <View
-                        style={[
-                          styles.paletteChip,
-                          { backgroundColor: chipColor },
-                          option === 'solid_light' && styles.paletteChipLightBorder,
-                          selected && styles.paletteChipSelected,
-                        ]}
-                      />
                       <Text
-                        style={[styles.paletteLabel, selected && styles.paletteLabelSelected]}
-                        numberOfLines={1}
+                        style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                       >
                         {watermarkStyleLabel(option)}
                       </Text>
@@ -1002,40 +989,6 @@ const styles = StyleSheet.create({
   },
   optionButtonTextSelected: {
     color: '#2563eb',
-  },
-  paletteGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 8,
-  },
-  paletteItem: {
-    width: '18%',
-    minWidth: 52,
-    alignItems: 'center',
-    gap: 4,
-  },
-  paletteChip: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-  },
-  paletteChipLightBorder: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  paletteChipSelected: {
-    borderWidth: 3,
-    borderColor: '#2563eb',
-  },
-  paletteLabel: {
-    fontSize: 10,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-  paletteLabelSelected: {
-    color: '#2563eb',
-    fontWeight: '600',
   },
   primaryButton: {
     backgroundColor: '#2563eb',

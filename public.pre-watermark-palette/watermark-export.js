@@ -65,46 +65,20 @@
   }
 
   function getWatermarkTheme(style) {
-    const lightText = {
+    if (style === 'solid_light') {
+      return {
+        barBackground: 'rgba(255, 255, 255, 0.55)',
+        titleColor: '#111827',
+        memoColor: '#374151',
+        coordsColor: '#6b7280',
+      };
+    }
+    return {
+      barBackground: 'rgba(0, 0, 0, 0.55)',
       titleColor: '#ffffff',
       memoColor: '#f3f4f6',
       coordsColor: '#e5e7eb',
     };
-    const darkText = {
-      titleColor: '#111827',
-      memoColor: '#374151',
-      coordsColor: '#6b7280',
-    };
-    const themes = {
-      solid_dark: { barBackground: 'rgba(0, 0, 0, 0.55)', ...lightText },
-      solid_light: { barBackground: 'rgba(255, 255, 255, 0.55)', ...darkText },
-      slate: { barBackground: 'rgba(71, 85, 105, 0.55)', ...lightText },
-      blue: { barBackground: 'rgba(37, 99, 235, 0.55)', ...lightText },
-      indigo: { barBackground: 'rgba(79, 70, 229, 0.55)', ...lightText },
-      green: { barBackground: 'rgba(22, 163, 74, 0.55)', ...lightText },
-      teal: { barBackground: 'rgba(13, 148, 136, 0.55)', ...lightText },
-      amber: { barBackground: 'rgba(217, 119, 6, 0.55)', ...lightText },
-      red: { barBackground: 'rgba(220, 38, 38, 0.55)', ...lightText },
-      rose: { barBackground: 'rgba(225, 29, 72, 0.55)', ...lightText },
-    };
-    return themes[style] || themes.solid_dark;
-  }
-
-  const VALID_WATERMARK_STYLES = new Set([
-    'solid_dark',
-    'solid_light',
-    'slate',
-    'blue',
-    'indigo',
-    'green',
-    'teal',
-    'amber',
-    'red',
-    'rose',
-  ]);
-
-  function sanitizeWatermarkStyle(value) {
-    return VALID_WATERMARK_STYLES.has(value) ? value : 'solid_dark';
   }
 
   function drawWatermarkBar(ctx, x, y, width, height, style) {
@@ -541,7 +515,7 @@
       textLayout: settings.textLayout === 'watermark' ? 'watermark' : 'caption',
       coordsLabel:
         settings.coordsLabel === 'gps' || settings.coordsLabel === 'coords' ? settings.coordsLabel : 'off',
-      watermarkStyle: sanitizeWatermarkStyle(settings.watermarkStyle),
+      watermarkStyle: settings.watermarkStyle === 'solid_light' ? 'solid_light' : 'solid_dark',
       textScale: normalizeTextScale(settings.textScale),
       orgName: typeof settings.orgName === 'string' ? settings.orgName : '',
       footerPhrase: typeof settings.footerPhrase === 'string' ? settings.footerPhrase : '',
