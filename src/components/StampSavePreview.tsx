@@ -105,8 +105,8 @@ export function StampSavePreview({
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
-  const phraseFontSize = overlayPhraseFontSize(isThumbnail ? 10 : 13);
   const isThumbnail = variant === 'thumbnail';
+  const phraseFontSize = overlayPhraseFontSize(isThumbnail ? 10 : 13);
   const imageResizeMode: ImageResizeMode = textLayout === 'watermark' ? 'cover' : 'contain';
 
   useEffect(() => {
