@@ -16,7 +16,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const backButtonImage = require('../../assets/back-icon.png');
 
-const BACK_ICON_SIZE = 64;
+const BACK_ICON_SIZE = 83;
 const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
 
 import { openInfoPage } from '../constants/infoUrls';
