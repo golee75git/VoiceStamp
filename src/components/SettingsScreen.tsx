@@ -16,6 +16,9 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const backButtonImage = require('../../assets/back-icon.png');
 
+const BACK_ICON_SIZE = 64;
+const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
+
 import { openInfoPage } from '../constants/infoUrls';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
@@ -959,16 +962,17 @@ const styles = StyleSheet.create({
   bottomBackButton: {
     position: 'absolute',
     left: 8,
-    bottom: Platform.OS === 'ios' ? 28 : 16,
-    padding: 8,
-    minWidth: 48,
-    minHeight: 48,
+    bottom: BACK_ICON_BOTTOM + BACK_ICON_SIZE * 0.5,
+    backgroundColor: 'transparent',
+    padding: 4,
+    minWidth: BACK_ICON_SIZE,
+    minHeight: BACK_ICON_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bottomBackButtonImage: {
-    width: 48,
-    height: 48,
+    width: BACK_ICON_SIZE,
+    height: BACK_ICON_SIZE,
   },
   label: {
     fontSize: 16,
