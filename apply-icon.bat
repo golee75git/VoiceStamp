@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-set "SRC=C:\Users\PJY\.cursor\projects\c-VoiceStamp\assets\c__Users_PJY_AppData_Roaming_Cursor_User_workspaceStorage_9f053dbc23b0fc0d0b0b41e77d91da68_images_9035c77b-aa42-4918-bef0-836a6bc6a47d-1e6822f8-39a6-406a-aa08-43d2d072c5fe.png"
+set "SRC=%~dp0assets\app-icon-source.png"
 if not exist "%SRC%" (
   echo ERROR: Source icon image not found: %SRC%
   exit /b 1
