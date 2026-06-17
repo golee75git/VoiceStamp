@@ -3,6 +3,7 @@ import * as Location from 'expo-location';
 import { getPlaceLabelFromCoords } from './kakaoLocal';
 import {
   getLastCapturePlaceCache,
+  getPlaceLabelMode,
   PLACE_CACHE_NEARBY_METERS,
 } from './settingsService';
 import { haversineMeters } from '../utils/geoDistance';
@@ -57,7 +58,8 @@ export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | n
     return null;
   }
 
-  const placeLabel = await getPlaceLabelFromCoords(coords.longitude, coords.latitude);
+  const mode = await getPlaceLabelMode();
+  const placeLabel = await getPlaceLabelFromCoords(coords.longitude, coords.latitude, mode);
   return {
     latitude: coords.latitude,
     longitude: coords.longitude,

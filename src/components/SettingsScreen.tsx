@@ -34,6 +34,7 @@ import {
   DEFAULT_COORDS_LABEL_MODE,
   DEFAULT_FLOOR_PICKER_MODE,
   DEFAULT_FLOOR_DISPLAY_MODE,
+  DEFAULT_PLACE_LABEL_MODE,
   DEFAULT_TITLE_DATETIME_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_WATERMARK_STYLE,
@@ -47,11 +48,14 @@ import {
   gallerySaveModeLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
+  placeLabelModeLabel,
+  PLACE_LABEL_MODE_OPTIONS,
   titleDatetimeModeLabel,
   coordsLabelModeLabel,
   getCoordsLabelMode,
   getFloorDisplayMode,
   getFloorPickerMode,
+  getPlaceLabelMode,
   getTitleDatetimeMode,
   getCameraHand,
   getGallerySaveMode,
@@ -76,6 +80,7 @@ import {
   setCoordsLabelMode,
   setFloorDisplayMode,
   setFloorPickerMode,
+  setPlaceLabelMode,
   setTitleDatetimeMode,
   setGallerySaveMode,
   setMemoTextAlign,
@@ -97,6 +102,7 @@ import {
   TEXT_ALIGN_OPTIONS,
   type FloorPickerMode,
   type FloorDisplayMode,
+  type PlaceLabelMode,
   type TitleDatetimeMode,
   type GallerySaveMode,
   type StampTextLayout,
@@ -171,6 +177,9 @@ export function SettingsScreen({
   const [titleDatetimeMode, setTitleDatetimeModeState] = useState<TitleDatetimeMode>(
     DEFAULT_TITLE_DATETIME_MODE,
   );
+  const [placeLabelMode, setPlaceLabelModeState] = useState<PlaceLabelMode>(
+    DEFAULT_PLACE_LABEL_MODE,
+  );
   const [coordsLabelMode, setCoordsLabelModeState] = useState<CoordsLabelMode>(
     DEFAULT_COORDS_LABEL_MODE,
   );
@@ -190,7 +199,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, placeMode, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -206,6 +215,7 @@ export function SettingsScreen({
           getFloorPickerMode(),
           getFloorDisplayMode(),
           getTitleDatetimeMode(),
+          getPlaceLabelMode(),
           getCoordsLabelMode(),
           getOverlayOrgName(),
           getOverlayFooterPhrase(),
@@ -227,6 +237,7 @@ export function SettingsScreen({
         setFloorPickerModeState(floorMode);
         setFloorDisplayModeState(floorDisplay);
         setTitleDatetimeModeState(titleDatetime);
+        setPlaceLabelModeState(placeMode);
         setCoordsLabelModeState(coordsMode);
         setOverlayOrgNameState(orgName);
         setOverlayFooterPhraseState(footerPhrase);
@@ -292,6 +303,7 @@ export function SettingsScreen({
         savedFloorPickerMode,
         savedFloorDisplayMode,
         savedTitleDatetimeMode,
+        savedPlaceLabelMode,
         savedCoordsLabelMode,
         savedOrgName,
         savedFooterPhrase,
@@ -312,6 +324,7 @@ export function SettingsScreen({
           setFloorPickerMode(floorPickerMode),
           setFloorDisplayMode(floorDisplayMode),
           setTitleDatetimeMode(titleDatetimeMode),
+          setPlaceLabelMode(placeLabelMode),
           setCoordsLabelMode(coordsLabelMode),
           setOverlayOrgName(overlayOrgName),
           setOverlayFooterPhrase(overlayFooterPhrase),
@@ -332,6 +345,7 @@ export function SettingsScreen({
       setFloorPickerModeState(savedFloorPickerMode);
       setFloorDisplayModeState(savedFloorDisplayMode);
       setTitleDatetimeModeState(savedTitleDatetimeMode);
+      setPlaceLabelModeState(savedPlaceLabelMode);
       setCoordsLabelModeState(savedCoordsLabelMode);
       setOverlayOrgNameState(savedOrgName);
       setOverlayFooterPhraseState(savedFooterPhrase);
@@ -417,6 +431,30 @@ export function SettingsScreen({
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
                     {titleDatetimeModeLabel(option)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>위치 표시</Text>
+          <Text style={styles.hint}>
+            자동 제목에 붙는 장소 이름입니다. 교육기관용은 학교·대학·유치원, 공공기관용은 주변 공공기관, 일반용은 건물명(없으면 도로명)을 씁니다. 어린이집은 일반용으로 표시됩니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {PLACE_LABEL_MODE_OPTIONS.map((option) => {
+              const selected = placeLabelMode === option;
+              return (
+                <Pressable
+                  key={option}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setPlaceLabelModeState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {placeLabelModeLabel(option)}
                   </Text>
                 </Pressable>
               );
@@ -739,7 +777,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>층 선택</Text>
           <Text style={styles.hint}>
-            학교 근처 촬영 시 저장·수정 모달에 1~5층 칩을 표시합니다.
+            교육기관 근처 촬영 시 저장·수정 모달에 1~5층 칩을 표시합니다.
           </Text>
           <View style={styles.optionRow}>
             {FLOOR_PICKER_OPTIONS.map((option) => {
