@@ -8,8 +8,9 @@ import {
 } from './settingsService';
 import { haversineMeters } from '../utils/geoDistance';
 
-const GPS_TIMEOUT_MS = 6000;
+const GPS_TIMEOUT_MS = 3000;
 const LAST_KNOWN_MAX_AGE_MS = 5 * 60 * 1000;
+const COORDS_REFINE_MIN_METERS = 30;
 
 export type LocationSnapshot = {
   latitude: number;
@@ -31,6 +32,10 @@ async function getCoordsWithCacheFallback(): Promise<Location.LocationObjectCoor
     maxAge: LAST_KNOWN_MAX_AGE_MS,
   });
 
+  if (lastKnown) {
+    return lastKnown.coords;
+  }
+
   const fresh = await withTimeout(
     Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
@@ -38,13 +43,17 @@ async function getCoordsWithCacheFallback(): Promise<Location.LocationObjectCoor
     GPS_TIMEOUT_MS,
   );
 
-  if (fresh) {
-    return fresh.coords;
-  }
-  if (lastKnown) {
-    return lastKnown.coords;
-  }
-  return null;
+  return fresh?.coords ?? null;
+}
+
+async function buildSnapshot(coords: Location.LocationObjectCoords): Promise<LocationSnapshot> {
+  const mode = await getPlaceLabelMode();
+  const placeLabel = await getPlaceLabelFromCoords(coords.longitude, coords.latitude, mode);
+  return {
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+    placeLabel,
+  };
 }
 
 export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | null> {
@@ -58,13 +67,54 @@ export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | n
     return null;
   }
 
-  const mode = await getPlaceLabelMode();
-  const placeLabel = await getPlaceLabelFromCoords(coords.longitude, coords.latitude, mode);
-  return {
-    latitude: coords.latitude,
-    longitude: coords.longitude,
-    placeLabel,
-  };
+  return buildSnapshot(coords);
+}
+
+export async function getFastLocationSnapshot(): Promise<LocationSnapshot | null> {
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (permission.status !== 'granted') {
+    return null;
+  }
+
+  const lastKnown = await Location.getLastKnownPositionAsync({
+    maxAge: LAST_KNOWN_MAX_AGE_MS,
+  });
+  if (!lastKnown) {
+    return null;
+  }
+
+  return buildSnapshot(lastKnown.coords);
+}
+
+export async function refineLocationSnapshot(
+  snapshot: LocationSnapshot,
+): Promise<LocationSnapshot> {
+  const permission = await Location.getForegroundPermissionsAsync();
+  if (permission.status !== 'granted') {
+    return snapshot;
+  }
+
+  const fresh = await withTimeout(
+    Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced,
+    }),
+    GPS_TIMEOUT_MS,
+  );
+  if (!fresh) {
+    return snapshot;
+  }
+
+  const movedMeters = haversineMeters(
+    snapshot.latitude,
+    snapshot.longitude,
+    fresh.coords.latitude,
+    fresh.coords.longitude,
+  );
+  if (movedMeters < COORDS_REFINE_MIN_METERS) {
+    return snapshot;
+  }
+
+  return buildSnapshot(fresh.coords);
 }
 
 export async function getCurrentPlaceLabel(): Promise<string | null> {
