@@ -129,15 +129,6 @@
           <option value="false">제목에서 제외</option>
         </select>
       </label>
-      <label>
-        텍스트 크기
-        <select id="optTextScale">
-          <option value="0.75">작게 (75%)</option>
-          <option value="1" selected>보통 (100%)</option>
-          <option value="1.25">크게 (125%)</option>
-          <option value="1.5">아주 크게 (150%)</option>
-        </select>
-      </label>
     </div>
   </section>
 
@@ -195,8 +186,6 @@
     const optMemoAlign = document.getElementById('optMemoAlign');
     const optCoordsLabel = document.getElementById('optCoordsLabel');
     const optShowDatetime = document.getElementById('optShowDatetime');
-    const optTextScale = document.getElementById('optTextScale');
-    const TEXT_SCALE_STORAGE_KEY = 'voicestamp-report-textScale';
 
     let loadedZip = null;
     let manifest = null;
@@ -245,30 +234,17 @@
       optMemoAlign.value = normalized.memoAlign;
       optCoordsLabel.value = normalized.coordsLabel;
       optShowDatetime.value = normalized.showDatetime ? 'true' : 'false';
-      let textScale = String(normalized.textScale);
-      if (!(settings && settings.textScale != null)) {
-        const savedScale = sessionStorage.getItem(TEXT_SCALE_STORAGE_KEY);
-        if (savedScale) {
-          textScale = String(
-            VoiceStampReportExport.normalizeExportSettings({ textScale: savedScale }).textScale,
-          );
-        }
-      }
-      optTextScale.value = textScale;
     }
 
     function readExportOptionsFromUi() {
-      const options = VoiceStampReportExport.normalizeExportSettings({
+      return VoiceStampReportExport.normalizeExportSettings({
         textLayout: optTextLayout.value,
         watermarkStyle: optWatermarkStyle.value,
         titleAlign: optTitleAlign.value,
         memoAlign: optMemoAlign.value,
         coordsLabel: optCoordsLabel.value,
         showDatetime: optShowDatetime.value === 'true',
-        textScale: optTextScale.value,
       });
-      sessionStorage.setItem(TEXT_SCALE_STORAGE_KEY, String(options.textScale));
-      return options;
     }
 
     function openLightbox(src) {

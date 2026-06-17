@@ -5,52 +5,6 @@
 (function (global) {
   const STAMP_JPEG_MAX_WIDTH = 2048;
   const STAMP_JPEG_COMPRESS = 0.85;
-  const TEXT_SCALE_PRESETS = [0.75, 1, 1.25, 1.5];
-
-  function scalePx(base, textScale) {
-    return Math.max(1, Math.round(base * textScale));
-  }
-
-  function normalizeTextScale(value) {
-    const num = Number(value);
-    return TEXT_SCALE_PRESETS.includes(num) ? num : 1;
-  }
-
-  function getLayoutSizes(textLayout, textScale) {
-    if (textLayout === 'watermark') {
-      return {
-        barPaddingX: scalePx(20, textScale),
-        barPaddingY: scalePx(16, textScale),
-        titleFont: scalePx(32, textScale),
-        titleLine: scalePx(38, textScale),
-        memoFont: scalePx(26, textScale),
-        memoLine: scalePx(32, textScale),
-        coordsFont: scalePx(22, textScale),
-        coordsLine: scalePx(28, textScale),
-        memoGapBefore: scalePx(8, textScale),
-        coordsGapBefore: scalePx(6, textScale),
-        titleAfterGap: scalePx(4, textScale),
-        memoAfterGap: scalePx(4, textScale),
-        titleBaseline: scalePx(28, textScale),
-      };
-    }
-
-    return {
-      padding: scalePx(24, textScale),
-      titleFont: scalePx(36, textScale),
-      titleLine: scalePx(44, textScale),
-      memoFont: scalePx(28, textScale),
-      memoLine: scalePx(36, textScale),
-      coordsFont: scalePx(24, textScale),
-      coordsLine: scalePx(32, textScale),
-      imgToTextGap: scalePx(16, textScale),
-      titleStartOffset: scalePx(40, textScale),
-      memoGapBefore: scalePx(12, textScale),
-      coordsGapBefore: scalePx(8, textScale),
-      titleAfterGap: scalePx(4, textScale),
-      memoAfterGap: scalePx(8, textScale),
-    };
-  }
 
   function getWatermarkTheme(style) {
     if (style === 'solid_light') {
@@ -207,12 +161,13 @@
     const scale = img.width > STAMP_JPEG_MAX_WIDTH ? STAMP_JPEG_MAX_WIDTH / img.width : 1;
     const imgWidth = Math.max(1, Math.round(img.width * scale));
     const imgHeight = Math.max(1, Math.round(img.height * scale));
-    const sizes = getLayoutSizes('watermark', options.textScale);
 
     const title = stampDisplayTitle(stamp, options.showDatetime);
     const memo = String(stamp.memo ?? '').trim();
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
-    const textWidth = imgWidth - sizes.barPaddingX * 2;
+    const barPaddingX = 20;
+    const barPaddingY = 16;
+    const textWidth = imgWidth - barPaddingX * 2;
 
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
@@ -220,19 +175,19 @@
       throw new Error('캔버스를 사용할 수 없습니다.');
     }
 
-    measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
+    measureCtx.font = '700 32px sans-serif';
     const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
-    measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
+    measureCtx.font = '400 26px sans-serif';
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
-    measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
+    measureCtx.font = '400 22px sans-serif';
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
 
     const barHeight =
-      sizes.barPaddingY +
-      titleLines.length * sizes.titleLine +
-      (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
-      (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
-      sizes.barPaddingY;
+      barPaddingY +
+      titleLines.length * 38 +
+      (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
+      (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
+      barPaddingY;
 
     const canvas = document.createElement('canvas');
     canvas.width = imgWidth;
@@ -246,33 +201,33 @@
     drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
 
     const theme = getWatermarkTheme(options.watermarkStyle);
-    let textY = imgHeight - barHeight + sizes.barPaddingY + sizes.titleBaseline;
+    let textY = imgHeight - barHeight + barPaddingY + 28;
     textY =
       drawAlignedText(
         ctx,
         title,
-        sizes.barPaddingX,
+        barPaddingX,
         textY,
         textWidth,
         options.titleAlign,
-        sizes.titleFont,
+        32,
         '700',
         theme.titleColor,
-        sizes.titleLine,
-      ) + sizes.titleAfterGap;
+        38,
+      ) + 4;
 
     if (memo) {
       textY = drawAlignedText(
         ctx,
         memo,
-        sizes.barPaddingX,
-        textY + sizes.memoAfterGap,
+        barPaddingX,
+        textY + 4,
         textWidth,
         options.memoAlign,
-        sizes.memoFont,
+        26,
         '400',
         theme.memoColor,
-        sizes.memoLine,
+        32,
       );
     }
 
@@ -280,14 +235,14 @@
       drawAlignedText(
         ctx,
         coords,
-        sizes.barPaddingX,
-        textY + sizes.memoAfterGap,
+        barPaddingX,
+        textY + 4,
         textWidth,
         options.memoAlign,
-        sizes.coordsFont,
+        22,
         '400',
         theme.coordsColor,
-        sizes.coordsLine,
+        28,
       );
     }
 
@@ -299,9 +254,8 @@
     const scale = img.width > STAMP_JPEG_MAX_WIDTH ? STAMP_JPEG_MAX_WIDTH / img.width : 1;
     const imgWidth = Math.max(1, Math.round(img.width * scale));
     const imgHeight = Math.max(1, Math.round(img.height * scale));
-    const sizes = getLayoutSizes('caption', options.textScale);
 
-    const padding = sizes.padding;
+    const padding = 24;
     const contentWidth = imgWidth;
     const title = stampDisplayTitle(stamp, options.showDatetime);
     const memo = String(stamp.memo ?? '').trim();
@@ -313,21 +267,21 @@
       throw new Error('캔버스를 사용할 수 없습니다.');
     }
 
-    measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
+    measureCtx.font = '700 36px sans-serif';
     const titleLines = wrapCanvasLines(measureCtx, title, contentWidth);
-    measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
+    measureCtx.font = '400 28px sans-serif';
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
-    measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
+    measureCtx.font = '400 24px sans-serif';
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
 
     const canvasWidth = contentWidth + padding * 2;
     const canvasHeight =
       padding +
       imgHeight +
-      sizes.imgToTextGap +
-      titleLines.length * sizes.titleLine +
-      (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
-      (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
+      16 +
+      titleLines.length * 44 +
+      (memoLines.length > 0 ? 12 + memoLines.length * 36 : 0) +
+      (coordsLines.length > 0 ? 8 + coordsLines.length * 32 : 0) +
       padding;
 
     const canvas = document.createElement('canvas');
@@ -342,7 +296,7 @@
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.drawImage(img, padding, padding, imgWidth, imgHeight);
 
-    let textY = padding + imgHeight + sizes.titleStartOffset;
+    let textY = padding + imgHeight + 40;
     textY =
       drawAlignedText(
         ctx,
@@ -351,24 +305,24 @@
         textY,
         contentWidth,
         options.titleAlign,
-        sizes.titleFont,
+        36,
         '700',
         '#111827',
-        sizes.titleLine,
-      ) + sizes.titleAfterGap;
+        44,
+      ) + 4;
 
     if (memo) {
       textY = drawAlignedText(
         ctx,
         memo,
         padding,
-        textY + sizes.memoAfterGap,
+        textY + 8,
         contentWidth,
         options.memoAlign,
-        sizes.memoFont,
+        28,
         '400',
         '#374151',
-        sizes.memoLine,
+        36,
       );
     }
 
@@ -377,13 +331,13 @@
         ctx,
         coords,
         padding,
-        textY + sizes.memoAfterGap,
+        textY + 8,
         contentWidth,
         options.memoAlign,
-        sizes.coordsFont,
+        24,
         '400',
         '#6b7280',
-        sizes.coordsLine,
+        32,
       );
     }
 
@@ -400,7 +354,6 @@
       coordsLabel:
         settings.coordsLabel === 'gps' || settings.coordsLabel === 'coords' ? settings.coordsLabel : 'off',
       watermarkStyle: settings.watermarkStyle === 'solid_light' ? 'solid_light' : 'solid_dark',
-      textScale: normalizeTextScale(settings.textScale),
     };
   }
 
