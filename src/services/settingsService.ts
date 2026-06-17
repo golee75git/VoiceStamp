@@ -13,13 +13,7 @@ import {
   setTitleDatetimeModeCache,
   titleDatetimeModeLabel,
 } from './titleDatetimeMode';
-import {
-  DEFAULT_PLACE_LABEL_MODE,
-  type PlaceLabelMode,
-  placeLabelModeLabel,
-  sanitizePlaceLabelMode,
-  setPlaceLabelModeCache,
-} from './placeLabelMode';
+import { sanitizeStampFloor } from './stampFloor';
 import type { StampFloor } from '../types/stamp';
 import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
@@ -50,8 +44,6 @@ const ONBOARDING_SEEN_KEY = 'onboarding_seen';
 const LAST_APP_OPEN_AT_KEY = 'last_app_open_at';
 const START_SCREEN_HIDDEN_UNTIL_KEY = 'start_screen_hidden_until';
 const FLOOR_PICKER_MODE_KEY = 'floor_picker_mode';
-const PLACE_LABEL_MODE_KEY = 'place_label_mode';
-const LAST_PLACE_LABEL_MODE_KEY = 'last_place_label_mode';
 const FLOOR_DISPLAY_MODE_KEY = 'floor_display_mode';
 const TITLE_DATETIME_MODE_KEY = 'title_datetime_mode';
 const LAST_FLOOR_KEY = 'last_floor';
@@ -91,12 +83,6 @@ export {
   OVERLAY_PHRASE_MAX_LENGTH,
 } from './overlayText';
 export const DEFAULT_FLOOR_PICKER_MODE = 'school_only' as const;
-export {
-  DEFAULT_PLACE_LABEL_MODE,
-  placeLabelModeLabel,
-  PLACE_LABEL_MODE_OPTIONS,
-  type PlaceLabelMode,
-} from './placeLabelMode';
 export { DEFAULT_FLOOR_DISPLAY_MODE, floorDisplayModeLabel, type FloorDisplayMode } from './floorDisplayMode';
 export {
   DEFAULT_TITLE_DATETIME_MODE,
@@ -642,20 +628,6 @@ export async function getFloorPickerMode(): Promise<FloorPickerMode> {
   return raw ? sanitizeFloorPickerMode(raw) : DEFAULT_FLOOR_PICKER_MODE;
 }
 
-export async function getPlaceLabelMode(): Promise<PlaceLabelMode> {
-  const raw = await readSetting(PLACE_LABEL_MODE_KEY);
-  const mode = raw ? sanitizePlaceLabelMode(raw) : DEFAULT_PLACE_LABEL_MODE;
-  setPlaceLabelModeCache(mode);
-  return mode;
-}
-
-export async function setPlaceLabelMode(mode: PlaceLabelMode): Promise<PlaceLabelMode> {
-  const sanitized = sanitizePlaceLabelMode(mode);
-  await writeSetting(PLACE_LABEL_MODE_KEY, sanitized);
-  setPlaceLabelModeCache(sanitized);
-  return sanitized;
-}
-
 export async function setFloorPickerMode(mode: FloorPickerMode): Promise<FloorPickerMode> {
   const sanitized = sanitizeFloorPickerMode(mode);
   await writeSetting(FLOOR_PICKER_MODE_KEY, sanitized);
@@ -710,17 +682,12 @@ export type LastCapturePlaceCache = {
 };
 
 export async function getLastCapturePlaceCache(): Promise<LastCapturePlaceCache | null> {
-  const [latRaw, lonRaw, placeLabel, cachedMode, currentMode] = await Promise.all([
+  const [latRaw, lonRaw, placeLabel] = await Promise.all([
     readSetting(LAST_CAPTURE_LAT_KEY),
     readSetting(LAST_CAPTURE_LON_KEY),
     readSetting(LAST_PLACE_LABEL_KEY),
-    readSetting(LAST_PLACE_LABEL_MODE_KEY),
-    getPlaceLabelMode(),
   ]);
   if (!latRaw || !lonRaw || !placeLabel?.trim()) {
-    return null;
-  }
-  if (cachedMode !== currentMode) {
     return null;
   }
   const latitude = Number.parseFloat(latRaw);
@@ -736,11 +703,9 @@ export async function getLastCapturePlaceCache(): Promise<LastCapturePlaceCache 
 }
 
 export async function setLastCapturePlaceCache(cache: LastCapturePlaceCache): Promise<void> {
-  const mode = await getPlaceLabelMode();
   await Promise.all([
     writeSetting(LAST_CAPTURE_LAT_KEY, String(cache.latitude)),
     writeSetting(LAST_CAPTURE_LON_KEY, String(cache.longitude)),
     writeSetting(LAST_PLACE_LABEL_KEY, cache.placeLabel.trim()),
-    writeSetting(LAST_PLACE_LABEL_MODE_KEY, mode),
   ]);
 }
