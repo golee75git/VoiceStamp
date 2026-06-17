@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-17**  
-최신 커밋 기준: `87c7e15` (main)
+최신 커밋 기준: `3e6a90d` (main)
 
 ---
 
@@ -224,6 +224,14 @@ VoiceStamp/
 | 126 | 목록 **촬영 캡슐** 버튼 (`capture.png`) | `7e453ea` | `restore-list-capture-pill.bat` |
 | 127 | **워터마크 스타일** 설정 (검은 반투명 / 빨간 세로줄) | `534c9f7` | `restore-watermark-style.bat` §106 |
 | 128 | 워터마크 **흰색 반투명** (`solid_light`), 세로줄 제거 | `87c7e15` | `restore-watermark-solid-light.bat` §107 |
+| 129 | `/report` **클라이언트 JPEG ZIP** | `b9edc0e` | `restore-report-watermark.bat` |
+| 130 | `/report` JPEG **글자 크기** 75~150% | `24d8fac` | `restore-report-textscale.bat` |
+| 131 | 보라 VS **마이크 앱 아이콘** | `b2d5456` | — |
+| 132 | Adaptive Icon **safe zone** 68% | `792df0c` | `restore-icon-safezone.bat` |
+| 133 | **기관명·하단 문구** 오버레이 | `78fd3e6` | `restore-overlay-text.bat` |
+| 134 | 워터마크 **10색 칩** 팔레트 | `35bdba6` | `restore-watermark-palette.bat` |
+| 135 | 워터마크 **파스텔** 팔레트 | `60a9754` | `restore-watermark-pastel.bat` |
+| 136 | 오버레이 **워터마크 한 바** 통합 | `3e6a90d` | `restore-overlay-watermark-layout.bat` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -289,7 +297,14 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260617_001635.apk`** | `87c7e15` | **설치 권장 (로컬)** — 워터마크 검은/흰 반투명·갤러리·촬영 캡슐·HWPX/XLSX/ZIP |
+| **`VoiceStamp_20260617_131932.apk`** | `3e6a90d` | **설치 권장 (로컬)** — 오버레이 한 바·파스텔 10색·/report JPEG·갤러리·촬영 캡슐 |
+| `VoiceStamp_20260617_130651.apk` | `60a9754` | 파스텔 팔레트 |
+| `VoiceStamp_20260617_113216.apk` | `35bdba6` | 10색 칩 (원색) |
+| `VoiceStamp_20260617_111707.apk` | `78fd3e6` | 기관명·하단 문구 오버레이 |
+| `VoiceStamp_20260617_104040.apk` | `792df0c` | 보라 VS 아이콘 + safe zone |
+| `VoiceStamp_20260617_092917.apk` | `24d8fac` | /report JPEG 글자 크기 |
+| `VoiceStamp_20260617_091820.apk` | `b9edc0e` | /report 클라이언트 JPEG |
+| `VoiceStamp_20260617_001635.apk` | `87c7e15` | 워터마크 검은/흰만 (오버레이·팔레트 **미포함**) |
 | `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 스타일(빨간 세로줄, 구버전) |
 | `VoiceStamp_20260616_173518.apk` | `7e453ea` | 갤러리·촬영 캡슐 (워터마크 스타일 **미포함**) |
 | `VoiceStamp_20260616_170713.apk` | `72ccc32` | 갤러리 아이콘+라벨 (캡슐 **미포함**) |
@@ -311,7 +326,15 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260617_001635.apk` | `87c7e15` | 워터마크 **검은 반투명 / 흰색 반투명** (`watermark_style`) | **권장 (로컬)** |
+| `VoiceStamp_20260617_131932.apk` | `3e6a90d` | 기관명·하단 문구 **워터마크 한 바** 통합 | **권장 (로컬)** |
+| `VoiceStamp_20260617_130651.apk` | `60a9754` | 워터마크 **파스텔** 10색 | 로컬 |
+| `VoiceStamp_20260617_113216.apk` | `35bdba6` | 워터마크 **10색 칩** (원색) | 로컬 |
+| `VoiceStamp_20260617_111707.apk` | `78fd3e6` | **기관명·하단 문구** 오버레이 (상단 별도 바) | 로컬 |
+| `VoiceStamp_20260617_104040.apk` | `792df0c` | 보라 VS 아이콘 + Adaptive Icon safe zone | 로컬 |
+| `VoiceStamp_20260617_102024.apk` | `b2d5456` | 보라 VS 마이크 앱 아이콘 | 로컬 |
+| `VoiceStamp_20260617_092917.apk` | `24d8fac` | `/report` JPEG 글자 크기 75~150% | 로컬 |
+| `VoiceStamp_20260617_091820.apk` | `b9edc0e` | `/report` 클라이언트 JPEG ZIP | 로컬 |
+| `VoiceStamp_20260617_001635.apk` | `87c7e15` | 워터마크 **검은 반투명 / 흰색 반투명** | 로컬 |
 | `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 스타일(빨간 세로줄 포함, 중간) | 로컬 |
 
 #### 2026-06-16
@@ -537,7 +560,16 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`87c7e15` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`3e6a90d` 기준) |
+| `3e6a90d` | APK `VoiceStamp_20260617_131932` — 기관명·하단 문구 **워터마크 한 바** (`restore-overlay-watermark-layout.bat`) |
+| `60a9754` | APK `VoiceStamp_20260617_130651` — 워터마크 **파스텔** 팔레트 (`restore-watermark-pastel.bat`) |
+| `35bdba6` | APK `VoiceStamp_20260617_113216` — 워터마크 **10색 칩** (`restore-watermark-palette.bat`) |
+| `78fd3e6` | APK `VoiceStamp_20260617_111707` — **기관명·하단 문구** 오버레이 (`restore-overlay-text.bat`) |
+| `792df0c` | APK `VoiceStamp_20260617_104040` — 보라 VS 아이콘 safe zone (`restore-icon-safezone.bat`) |
+| `b2d5456` | APK `VoiceStamp_20260617_102024` — 보라 VS 마이크 앱 아이콘 |
+| `24d8fac` | APK `VoiceStamp_20260617_092917` — `/report` JPEG 글자 크기 (`restore-report-textscale.bat`) |
+| `b9edc0e` | APK `VoiceStamp_20260617_091820` — `/report` 클라이언트 JPEG (`restore-report-watermark.bat`) |
+| `6c0789a` | PRD·PROJECT·PLAN·README 문서 동기화 (`87c7e15` 기준) |
 | `87c7e15` | APK `VoiceStamp_20260617_001635` — 워터마크 **흰색 반투명**·빨간 세로줄 제거 (`restore-watermark-solid-light.bat` §107) |
 | `534c9f7` | APK `VoiceStamp_20260617_000721` — 워터마크 스타일(빨간 세로줄) (`restore-watermark-style.bat` §106) |
 
