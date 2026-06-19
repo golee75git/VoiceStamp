@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-06-17 |
-| 최신 반영 커밋 | `7b6b0c1` (main) |
+| 문서 작성일 | 2026-06-19 |
+| 최신 반영 커밋 | `2a5b75b` (main) |
 
 ---
 
@@ -283,6 +283,7 @@
 | F-SET-09 | 제목·메모 표시 방식 (별도 영역 / 워터마크) | ✅ |
 | F-SET-10 | 설정 화면 세로 스크롤 | ✅ |
 | F-SET-11 | 앱 정보: 버전 표시·개인정보/라이선스/도움말 웹 링크·저작권 한 줄 | ✅ |
+| F-SET-19 | **오픈소스 라이선스** (npm+Gradle 817건, 라이선스 전문·dual-license 검토 완료 표시) | ✅ |
 | F-SET-12 | **저장 시 갤러리** (원본만 / 캡션만 / 원본+캡션) | ✅ |
 | F-SET-13 | **층 선택** 모드 (끔 / 학교만 / 항상), 기본 `school_only` | ✅ |
 | F-SET-14 | **좌표 표기** (GPS / 좌표 / 없음), 기본 `off`(숫자만) | ✅ |
@@ -305,6 +306,7 @@
 | F-DEP-08 | `app.json` 변경 시 `npx expo prebuild --platform android` 후 APK 재빌드 | ✅ |
 | F-DEP-09 | 웹: `galleryService.web.ts` 스텁으로 네이티브 갤러리 모듈 미로드 | ✅ |
 | F-DEP-10 | 정책 정적 페이지 `/info` `/privacy` `/license` `/help` (Vercel) | ✅ |
+| F-DEP-11 | OSS 목록 생성 스크립트·`assets/open_source_licenses.json` | ✅ |
 | F-DEP-11 | `/info` 페이지 GitHub Releases APK 다운로드 링크 | ✅ |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
@@ -559,6 +561,7 @@
 | **2026-06-15** | **프로젝트 ZIP·XLSX·HWPX** PC 보고서 내보내기·웹 `/report` 라이트박스·카메라 홈 스플래시·설정 아이콘 UI 반복 개선 | `6737f13` ~ `9ab30ee` |
 | **2026-06-16** | **카메라 홈 리디자인**·목록 **헤더·카드** UI·하단바 **시스템 내비 여백(31px)**·**갤러리·촬영 캡슐 이미지 버튼**·**워터마크 스타일**(빨간 세로줄 포함, 이후 제거) | `ae0695f` ~ `534c9f7` |
 | **2026-06-17** | 워터마크·/report JPEG·보라 아이콘·**10색 파스텔**·**기관명/하단 문구**·워터마크 **한 바** → **설정 뒤로가기** → 위치 3모드·속도 **revert** → 저장 모달 수정 → **학교 200m·건물명/도로명** (`7b6b0c1`) | `b9edc0e`~`7b6b0c1` |
+| **2026-06-19** | PRD·PROJECT·PLAN·README **`7b6b0c1` 동기화** · **앱 내 오픈소스 라이선스**·`open_source_licenses.json`(817건)·**LICENSE-NOTICE**(베타·MIT/BSD 확정)·LEG-06 · Vercel 배포 | `3caf3f0` · `2a5b75b` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -568,7 +571,8 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | **설치 권장 (로컬)** — 학교 200m·건물명/도로명·뒤로가기·저장 모달·오버레이·파스텔 |
+| `VoiceStamp_20260619_101343.apk` | `2a5b75b` | **설치 권장 (로컬)** — `7b6b0c1` 기능 + **앱 내 OSS 라이선스**·베타 라이선스 정책 |
+| `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | OSS **미포함** — 학교 200m·건물명/도로명·뒤로가기·저장 모달·오버레이·파스텔 |
 | `VoiceStamp_20260617_182811.apk` | `5699d9c` | 위치 revert·뒤로가기 (200m 규칙 미포함) |
 | `VoiceStamp_20260617_181630.apk` | `3af9203` | 저장 모달 흰 화면 수정 (3모드·fast snapshot 포함, 위치 불안) |
 | `VoiceStamp_20260617_174312.apk` | `c612e69` | 위치 속도 개선 (**되돌림**) |
@@ -634,6 +638,7 @@
 | 개발 계획 | [PLAN.md](./PLAN.md) |
 | 프로젝트 현황·기능 이력 | [PROJECT.md](./PROJECT.md) |
 | 개인정보 처리 안내 | [PRIVACY.md](./PRIVACY.md) |
+| OSS·라이선스 고지 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) |
 | 카카오 키 보안 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) |
 | 되돌리기 가이드 | [../RESTORE.md](../RESTORE.md) |
 | APK 빌드 | [../BUILD-APK.md](../BUILD-APK.md) |
