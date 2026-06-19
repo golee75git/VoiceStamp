@@ -1,0 +1,127 @@
+# VoiceStamp 라이선스·저작권·OSS 고지
+
+| 항목 | 내용 |
+|------|------|
+| 문서 버전 | 1.0 |
+| 작성일 | 2026-06-19 |
+| 앱 | VoiceStamp (Copyright © 2026 이형우) |
+| 앱 라이선스 | [MIT](../LICENSE) |
+| OSS 목록 데이터 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) |
+| 앱 내 열람 | 설정 → **오픈소스 라이선스** |
+| 웹 | https://voicestamp-gilt.vercel.app/license |
+| **배포 단계** | **베타·내부 테스트** (정식 스토어 출시 전) |
+
+> **안내:** 내부·테스터 배포용 컴플라이언스 정리입니다. Google Play 등 **정식 상용 스토어 등록** 시 범위·문구를 갱신하고 별도 법무 검토를 권장합니다.
+
+---
+
+## 1. VoiceStamp 소프트웨어
+
+- **저작권:** Copyright © 2026 이형우
+- **라이선스:** MIT License ([LICENSE](../LICENSE) 전문)
+- **고지:** MIT 조건(저작권·허가 문구 포함)을 사본에 유지
+
+---
+
+## 2. 오픈소스 구성요소 개요
+
+| 출처 | 수량 | 생성 기준 |
+|------|------|-----------|
+| npm (`package-lock.json`) | 625 | 직·간접 JavaScript 의존성 |
+| Android Gradle (`releaseRuntimeClasspath`) | 192 | APK 네이티브·Maven 의존성 |
+| **합계** | **817** | `assets/open_source_licenses.json` |
+
+재생성:
+
+```powershell
+cd C:\VoiceStamp\android
+.\gradlew.bat app:dependencies --configuration releaseRuntimeClasspath --no-daemon `
+  | Out-File ..\tmp-gradle-deps.txt -Encoding utf8
+cd ..
+node scripts/generate-open-source-licenses.mjs tmp-gradle-deps.txt
+```
+
+---
+
+## 3. Dual-license 검토 결과 (법무 결론)
+
+SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으로 `reviewRequired`에 올라갑니다.  
+아래는 VoiceStamp 프로젝트 **내부 검토 결론**입니다.
+
+| 패키지 | SPDX | **선택 라이선스** | VoiceStamp 사용 | 결론 |
+|--------|------|-------------------|-----------------|------|
+| **jszip** 3.10.1 | (MIT OR GPL-3.0-or-later) | **MIT** | 직접 의존 — 프로젝트 ZIP·HWPX (`exportProject.ts`, `hwpxTemplate.ts`) | **MIT 조건으로 사용·배포 확정.** GPL-3.0-or-later 경로는 선택하지 않음. |
+| **node-forge** 1.4.0 | (BSD-3-Clause OR GPL-2.0) | **BSD-3-Clause** | 간접 의존 — `@expo/code-signing-certificates` 등 Expo 빌드·서명 도구 | **BSD-3-Clause 조건으로 사용·배포 확정.** GPL-2.0 경로는 선택하지 않음. |
+
+### 3.1 검토 근거
+
+1. **선택권 행사:** 두 패키지 모두 upstream이 허용적 라이선스(MIT/BSD) 사용을 명시·권장함.
+2. **GPL 미선택:** VoiceStamp는 GPL 조건으로 해당 코드를 수정·재배포하지 않으며, copyleft(GPL) 경로를 채택하지 않음.
+3. **배포 형태:** 상업·폐쇄소스 APK/Web 배포는 **허용적 라이선스 조건**에 따름.
+4. **고지:** 앱 **오픈소스 라이선스** 화면 및 본 문서·`open_source_licenses.json`에 라이브러리명·버전·라이선스·전문(또는 POM/URL)을 제공.
+
+### 3.2 Dual-license를 검토 대상으로 표시한 이유 (요약)
+
+| 이유 | 설명 |
+|------|------|
+| SPDX에 GPL 포함 | `(MIT OR GPL-…)` 표현은 **배포자가 라이선스를 선택**해야 함을 의미 |
+| copyleft 경로 존재 | GPL을 선택할 경우 소스 공개 등 의무가 달라질 수 있어, 순수 MIT만 있는 패키지보다 확인 필요 |
+| 자동 분류 한계 | 스크립트는 SPDX 문자열만 보고 flag — **「위반」이 아니라 「확인 권장」** |
+
+### 3.3 잔여 권고
+
+- jszip: 앱 번들에 **포함** — MIT 고지 유지.
+- node-forge: Expo 간접 의존 — Release APK 번들 포함 여부는 빌드마다 다를 수 있음. 포함 시 BSD 고지 유지.
+- 스토어 등록(LEG-05) 전: Play Console OSS 고지와 본 결론 문구 일치 여부 최종 확인.
+
+**검토일:** 2026-06-19  
+**상태:** dual-license 2건 — **허용적 라이선스 조건 사용·배포 확정**
+
+---
+
+## 4. copyleft·제한 라이선스 자동 flag 기준
+
+`scripts/generate-open-source-licenses.mjs`의 `reviewRequired` 규칙:
+
+- AGPL, GPL, LGPL, SSPL, Commons Clause, EUPL, OSL, CPAL (SPDX **이름** 필드 기준)
+
+현재 VoiceStamp lockfile·Gradle 분석 결과 **위 카테고리 중 dual-license 2건만** 해당하며, §3 결론 적용.
+
+---
+
+## 5. 제3자 서비스 (라이선스 ≠ 개인정보)
+
+| 서비스 | 용도 | 참고 |
+|--------|------|------|
+| 카카오 로컬 API | GPS → 주소 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md), 카카오 개발자 약관 |
+| OS 음성 인식 | STT | 기기/OS 정책 — [PRIVACY.md](./PRIVACY.md) §2.3 |
+
+---
+
+## 6. UI·에셋 (별도 확인 권장)
+
+문서화되지 않은 항목 — 상업 배포 전 출처·AI 생성 이미지 이용약관 확인:
+
+- 앱 아이콘 (`assets/icon.png` 등)
+- 온보딩·UI PNG (`img/`, `assets/`)
+- HWPX 템플릿 (`public/templates/report.hwpx`)
+
+---
+
+## 7. 관련 문서
+
+| 문서 | 내용 |
+|------|------|
+| [PLAN.md](./PLAN.md) §3 | LEG-01~05 법무 로드맵 |
+| [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | `/license` 웹 페이지 |
+| [PRIVACY.md](./PRIVACY.md) | 개인정보 (라이선스와 별도) |
+| [../LICENSE](../LICENSE) | VoiceStamp MIT |
+| [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록·전문 |
+
+---
+
+## 8. 변경 이력
+
+| 날짜 | 변경 |
+|------|------|
+| 2026-06-19 | 최초 작성 — OSS JSON·dual-license 검토 결론(MIT/BSD 확정) |

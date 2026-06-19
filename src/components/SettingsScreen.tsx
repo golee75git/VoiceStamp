@@ -129,6 +129,7 @@ type SettingsScreenProps = {
   onTrashEmptied?: () => void;
   onSettingsSaved?: () => void;
   onShowOnboarding?: () => void;
+  onOpenOssLicenses?: () => void;
 };
 
 export function SettingsScreen({
@@ -138,6 +139,7 @@ export function SettingsScreen({
   onTrashEmptied,
   onSettingsSaved,
   onShowOnboarding,
+  onOpenOssLicenses,
 }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
@@ -897,6 +899,13 @@ export function SettingsScreen({
             onPress={() => void openInfoPage('/license')}
           >
             <Text style={styles.secondaryButtonText}>라이선스</Text>
+          </Pressable>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() => onOpenOssLicenses?.()}
+            disabled={!onOpenOssLicenses}
+          >
+            <Text style={styles.secondaryButtonText}>오픈소스 라이선스</Text>
           </Pressable>
           <Pressable
             style={styles.secondaryButton}

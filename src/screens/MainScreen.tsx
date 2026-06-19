@@ -7,10 +7,11 @@ import { IntroScreen } from '../components/IntroScreen';
 import { SettingsScreen } from '../components/SettingsScreen';
 import { StampImageExportHost, type StampImageExportHostRef } from '../components/StampImageExportHost';
 import { StampListScreen } from '../components/StampListScreen';
+import { OpenSourceLicensesScreen } from '../components/OpenSourceLicensesScreen';
 import { TrashScreen } from '../components/TrashScreen';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 
-type Screen = 'camera' | 'list' | 'settings' | 'trash';
+type Screen = 'camera' | 'list' | 'settings' | 'trash' | 'ossLicenses';
 type SettingsReturn = 'camera' | 'list';
 
 export function MainScreen() {
@@ -46,6 +47,9 @@ export function MainScreen() {
           return true;
         case 'settings':
           setScreen(settingsReturn);
+          return true;
+        case 'ossLicenses':
+          setScreen('settings');
           return true;
         case 'trash':
           setScreen('list');
@@ -101,7 +105,10 @@ export function MainScreen() {
           onTrashEmptied={bumpRefresh}
           onSettingsSaved={bumpRefresh}
           onShowOnboarding={() => setShowIntroOverlay(true)}
+          onOpenOssLicenses={() => setScreen('ossLicenses')}
         />
+      ) : screen === 'ossLicenses' ? (
+        <OpenSourceLicensesScreen onBack={() => setScreen('settings')} />
       ) : screen === 'trash' ? (
         <TrashScreen
           onBack={() => setScreen('list')}

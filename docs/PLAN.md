@@ -240,6 +240,7 @@
 | LEG-02 | [PRIVACY.md](./PRIVACY.md) 개인정보 처리 안내 | P1 | ✅ 커밋됨 |
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
 | LEG-04 | 버전·라이선스·개인정보·도움말 (설정 앱 정보 + 웹 `/privacy` 등) | P2 | ✅ `a4a55d2` |
+| LEG-06 | OSS 목록·앱 내 오픈소스 라이선스·[LICENSE-NOTICE.md](./LICENSE-NOTICE.md) dual-license 검토(MIT/BSD 확정) | P2 | ✅ 2026-06-19 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 미구현 (정책 URL: `/privacy` 준비됨) |
 | DEP-04 | `/info` GitHub Releases APK 다운로드 링크 | P2 | ✅ `3468630` |
 
@@ -323,7 +324,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |--------|-----------|
 | 기능 추가·변경 | PRD §3, PROJECT §4, PLAN §2·§4, RESTORE § |
 | 배포 | PROJECT §7, PLAN §7, PRD 헤더 커밋 해시 |
-| 법무·정책 | PRIVACY, LICENSE, PLAN §3 |
+| 법무·정책 | PRIVACY, LICENSE, [LICENSE-NOTICE.md](./LICENSE-NOTICE.md), PLAN §3 |
 | 분기 점검 | 본 문서 §6 우선순위 재검토 |
 
 ---
