@@ -2,7 +2,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.assetExts.push('wasm', 'hwpx');
+config.resolver.assetExts.push('wasm', 'hwpx', 'sqlite');
 
 config.server.enhanceMiddleware = (middleware) => {
   return (req, res, next) => {

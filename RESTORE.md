@@ -1138,6 +1138,26 @@ Copy-Item src.pre-local-school-db\db\schema.ts src\db\ -Force
 Remove-Item src\services\schoolLookup.ts, src\services\schoolSeed.ts, src\types\school.ts, assets\schools.seed.json -ErrorAction SilentlyContinue
 ```
 
+## 71b. 빌드 타임 SQLite 학교 DB 되돌리기 (선택)
+
+`assets/schools.sqlite` + `schoolDatabase.ts` 변경 후 문제가 생기면 아래로 JSON seed 방식으로 복구합니다.
+
+```bat
+restore-schools-sqlite.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-schools-sqlite\services\kakaoLocal.ts src\services\ -Force
+Copy-Item src.pre-schools-sqlite\services\schoolLookup.ts src\services\ -Force
+Copy-Item src.pre-schools-sqlite\services\schoolSeed.ts src\services\ -Force
+Copy-Item src.pre-schools-sqlite\db\database.ts src\db\ -Force
+Copy-Item src.pre-schools-sqlite\db\schema.ts src\db\ -Force
+Copy-Item src.pre-schools-sqlite\schools.seed.json assets\ -Force
+Remove-Item src\services\schoolDatabase.ts, assets\schools.sqlite, scripts\build-schools-db.mjs -ErrorAction SilentlyContinue
+```
+
 ## 72. 온보딩 인트로 화면 되돌리기 (선택)
 
 앱 시작 시 3단계 인트로(온보딩) 추가 후 문제가 생기면 아래로 복구합니다.

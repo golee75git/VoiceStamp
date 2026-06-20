@@ -1,4 +1,4 @@
-import { getSchoolsDatabase } from './schoolDatabase';
+import { getDatabase } from '../db/database';
 import type { NearestSchoolResult } from '../types/school';
 import { haversineMeters } from '../utils/geoDistance';
 
@@ -21,7 +21,7 @@ export async function findNearestSchool(
   radiusM: number,
 ): Promise<NearestSchoolResult | null> {
   const { latDelta, lonDelta } = bboxDeltas(latitude, radiusM);
-  const db = await getSchoolsDatabase();
+  const db = await getDatabase();
   const rows = await db.getAllAsync<SchoolRow>(
     `SELECT id, name, latitude, longitude FROM schools
      WHERE latitude BETWEEN ? AND ?

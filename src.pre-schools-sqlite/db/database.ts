@@ -6,11 +6,15 @@ import {
   ALTER_STAMPS_ADD_FLOOR,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
+  CREATE_SCHOOLS_LAT_INDEX,
+  CREATE_SCHOOLS_LON_INDEX,
+  CREATE_SCHOOLS_TABLE,
   CREATE_SETTINGS_TABLE,
   CREATE_STAMPS_INDEX,
   CREATE_STAMPS_TABLE,
   CREATE_STAMPS_TRASH_INDEX,
 } from './schema';
+import { seedSchoolsIfNeeded } from '../services/schoolSeed';
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
@@ -47,6 +51,10 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
       await db.execAsync(CREATE_STAMPS_INDEX);
       await migrateStampsTable(db);
       await db.execAsync(CREATE_SETTINGS_TABLE);
+      await db.execAsync(CREATE_SCHOOLS_TABLE);
+      await db.execAsync(CREATE_SCHOOLS_LAT_INDEX);
+      await db.execAsync(CREATE_SCHOOLS_LON_INDEX);
+      await seedSchoolsIfNeeded(db);
       return db;
     })();
   }
