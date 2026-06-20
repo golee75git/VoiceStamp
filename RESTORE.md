@@ -1158,6 +1158,21 @@ Copy-Item src.pre-schools-sqlite\schools.seed.json assets\ -Force
 Remove-Item src\services\schoolDatabase.ts, assets\schools.sqlite, scripts\build-schools-db.mjs -ErrorAction SilentlyContinue
 ```
 
+## 71c. 저장 목록 검색 되돌리기 (선택)
+
+목록 상단 제목·메모 검색 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-search.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-search\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\utils\stampListSearch.ts -ErrorAction SilentlyContinue
+```
+
 ## 72. 온보딩 인트로 화면 되돌리기 (선택)
 
 앱 시작 시 3단계 인트로(온보딩) 추가 후 문제가 생기면 아래로 복구합니다.

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -52,7 +52,6 @@ import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
 import type { Stamp } from '../types/stamp';
-import { filterStampsByQuery } from '../utils/stampListSearch';
 
 type StampListScreenProps = {
   onBack: () => void;
@@ -100,7 +99,6 @@ export function StampListScreen({
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
@@ -170,15 +168,6 @@ export function StampListScreen({
     }
     load({ silent: refreshKey > 0 });
   }, [load, refreshKey]);
-
-  const filteredStamps = useMemo(
-    () => filterStampsByQuery(stamps, searchQuery),
-    [stamps, searchQuery],
-  );
-
-  useEffect(() => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [searchQuery]);
 
   useEffect(() => {
     if (!selecting || selectedIds.size === 0) {
@@ -482,7 +471,6 @@ export function StampListScreen({
   };
 
   const selectedCount = selectedIds.size;
-  const hasSearchQuery = searchQuery.trim().length > 0;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
   const isGrid = numColumns > 1;
@@ -521,28 +509,6 @@ export function StampListScreen({
             </Pressable>
           </View>
         </View>
-        <View style={styles.searchRow}>
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="제목·메모 검색"
-            returnKeyType="search"
-            autoCorrect={false}
-            autoCapitalize="none"
-            clearButtonMode="while-editing"
-            accessibilityLabel="제목과 메모 검색"
-          />
-          {searchQuery.length > 0 && Platform.OS === 'android' ? (
-            <Pressable
-              style={styles.searchClearButton}
-              onPress={() => setSearchQuery('')}
-              accessibilityLabel="검색어 지우기"
-            >
-              <Text style={styles.searchClearText}>✕</Text>
-            </Pressable>
-          ) : null}
-        </View>
         {menuVisible ? (
           <View style={styles.menuCard}>
             <Pressable
@@ -575,16 +541,7 @@ export function StampListScreen({
           </View>
         ) : null}
         <Text style={styles.countLine}>
-          {hasSearchQuery ? (
-            <>
-              검색 결과 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
-              <Text style={styles.countNumber}>{stamps.length}</Text>개
-            </>
-          ) : (
-            <>
-              전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
-            </>
-          )}
+          전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
         </Text>
         <View style={styles.hintRow}>
           <Text style={styles.hintIcon}>ⓘ</Text>
@@ -734,15 +691,11 @@ export function StampListScreen({
           <View style={styles.centered}>
             <Text style={styles.empty}>저장된 스탬프가 없습니다.</Text>
           </View>
-        ) : filteredStamps.length === 0 ? (
-          <View style={styles.centered}>
-            <Text style={styles.empty}>검색 결과가 없습니다.</Text>
-          </View>
         ) : (
           <FlatList
             ref={listRef}
             key={numColumns}
-            data={filteredStamps}
+            data={stamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
@@ -931,36 +884,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#111827',
     fontWeight: '500',
-  },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    gap: 8,
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#111',
-  },
-  searchClearButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f3f4f6',
-  },
-  searchClearText: {
-    fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '600',
   },
   countLine: {
     fontSize: 14,
