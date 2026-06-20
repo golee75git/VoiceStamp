@@ -29,13 +29,14 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-19)
+## 현재 상태 스냅샷 (2026-06-20)
 
-- **최신 커밋:** `2a5b75b` (main)
+- **최신 커밋:** `eaa17e4` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (로컬):** `VoiceStamp_20260619_101343.apk` — **`7b6b0c1` 기능 + 앱 내 OSS 라이선스**·베타 LICENSE-NOTICE
-- **이전 권장 APK:** `VoiceStamp_20260617_184121.apk` (`7b6b0c1`, OSS **미포함**)
+- **권장 APK (로컬):** `VoiceStamp_20260620_234924.apk` — **목록 제목·메모 검색** + **`schools.sqlite`** (공공데이터 학교 DB)
+- **이전 권장 APK:** `VoiceStamp_20260619_101343.apk` (`2a5b75b`, OSS 라이선스·학교 DB·목록 검색 **미포함**)
+- **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **GitHub APK:** `releases/VoiceStamp_20260616_082006.apk` (`f74012f`, 워터마크 스타일·캡슐 버튼 **미포함**)
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260616_082006.apk
 - **APK 다운로드:** `/info` → GitHub Releases
@@ -59,12 +60,16 @@
 | 06-16 | **카메라 홈 리디자인**·목록 **헤더·카드**·하단 **갤러리·촬영 캡슐 버튼**·**내비 여백 31px** |
 | 06-17 | **워터마크**·/report JPEG·보라 아이콘·**10색 파스텔**·**기관명/하단 문구**·**설정 뒤로가기**·위치 revert·**학교 200m·건물명/도로명** |
 | 06-19 | **`7b6b0c1` 문서 동기화** · **앱 내 OSS 라이선스**·LICENSE-NOTICE(베타)·LEG-06 |
+| 06-20 | **로컬 학교 DB** → **`schools.sqlite`** (부팅 수정) · **목록 제목·메모 검색** |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260619_101343.apk` | `2a5b75b` | **설치 권장** — OSS 라이선스·베타 LICENSE-NOTICE |
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | **설치 권장** — 목록 검색 + `schools.sqlite` |
+| `VoiceStamp_20260620_171910.apk` | `88671c1` | `schools.sqlite` (목록 검색 미포함) |
+| `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed — **부팅 멈춤**, 사용 금지 |
+| `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE |
 | `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | OSS 미포함 — 학교 200m·건물명/도로명 |
 | `VoiceStamp_20260617_182811.apk` | `5699d9c` | 위치 revert·뒤로가기 |
 | `VoiceStamp_20260617_181630.apk` | `3af9203` | 저장 모달 흰 화면 |

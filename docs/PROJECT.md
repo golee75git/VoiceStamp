@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-19**  
-최신 커밋 기준: `2a5b75b` (main)
+문서 작성일: **2026-06-20**  
+최신 커밋 기준: `eaa17e4` (main)
 
 ---
 
@@ -238,6 +238,9 @@ VoiceStamp/
 | — | *(시도·되돌림)* 위치 fast snapshot·GPS 3초·카카오 5초 타임아웃 | `c612e69` → `24e4b5e` | — |
 | 139 | 위치 제목: **학교 200m 이내 학교명**, 그 외 **건물명→도로명** (`kakaoLocal.ts`) | `7b6b0c1` | `git revert 7b6b0c1` |
 | 140 | 앱 내 **오픈소스 라이선스**·`open_source_licenses.json`·[LICENSE-NOTICE.md](./LICENSE-NOTICE.md) (LEG-06) | `2a5b75b` | — |
+| 141 | **로컬 학교 DB** (공공데이터 CSV→JSON seed, 카카오 SC4 fallback) | `55c33df` | `restore-local-school-db.bat` |
+| 142 | 빌드 타임 **`schools.sqlite`** (JSON seed 제거, 부팅 블로킹 해소) | `88671c1` | `restore-schools-sqlite.bat` |
+| 143 | 저장 목록 **제목·메모 검색** (`stampListSearch`) | `eaa17e4` | `restore-list-search.bat` |
 
 > **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
 
@@ -303,7 +306,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260619_101343.apk`** | `2a5b75b` | **설치 권장 (로컬)** — `7b6b0c1` 기능 + **앱 내 OSS 라이선스**·베타 LICENSE-NOTICE |
+| **`VoiceStamp_20260620_234924.apk`** | `eaa17e4` | **설치 권장 (로컬)** — 목록 **제목·메모 검색** + `schools.sqlite` |
+| `VoiceStamp_20260620_171910.apk` | `88671c1` | 빌드 타임 **schools.sqlite** (목록 검색 **미포함**) |
+| `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed 학교 DB — **부팅 멈춤**, 사용 금지 |
+| `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE (학교 DB·목록 검색 **미포함**) |
 | `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | OSS **미포함** — 학교 200m·건물명/도로명·뒤로가기·저장 모달·`.env` 카카오 키 |
 | `VoiceStamp_20260617_182811.apk` | `5699d9c` | 위치 revert·뒤로가기 (200m 규칙 **미포함**) |
 | `VoiceStamp_20260617_181630.apk` | `3af9203` | 저장 모달 흰 화면 수정 (3모드·fast snapshot **포함**, 위치 불안) |
@@ -333,6 +339,14 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-20
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 저장 목록 **제목·메모 검색** + `schools.sqlite` | **권장 (로컬)** |
+| `VoiceStamp_20260620_171910.apk` | `88671c1` | 빌드 타임 **`schools.sqlite`** (12,011교, bbox+haversine 200m) | — |
+| `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed 학교 DB — **첫 실행 12k INSERT로 부팅 멈춤** | **사용 금지** |
 
 #### 2026-06-19
 
@@ -578,6 +592,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-20
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`eaa17e4` 기준) |
+| `eaa17e4` | APK `VoiceStamp_20260620_234924` — 저장 목록 **제목·메모 검색** (`stampListSearch.ts`, `StampListScreen`) · `restore-list-search.bat` |
+| `88671c1` | APK `VoiceStamp_20260620_171910` — **`scripts/build-schools-db.mjs`** → `assets/schools.sqlite` · JSON seed 제거(부팅 블로킹 해소) · `restore-schools-sqlite.bat` |
+| `55c33df` | APK `VoiceStamp_20260620_165718` — **로컬 학교 DB** (공공데이터 CSV→JSON, `schoolLookup`+카카오 fallback) — **부팅 멈춤** |
 
 ### 2026-06-19
 
