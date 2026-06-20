@@ -94,6 +94,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 서비스 | 용도 | 참고 |
 |--------|------|------|
 | 카카오 로컬 API | GPS → 주소 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md), 카카오 개발자 약관 |
+| 전국초중등학교위치표준데이터 | GPS → 학교명 (로컬 DB, 200m) | [공공데이터포털](https://www.data.go.kr/data/15021148/standard.do) — 한국교육시설안전원 제공, **출처 표시** (공공데이터). 앱 번들: `assets/schools.seed.json` (기준일 2026-03-20). |
 | OS 음성 인식 | STT | 기기/OS 정책 — [PRIVACY.md](./PRIVACY.md) §2.3 |
 
 ---

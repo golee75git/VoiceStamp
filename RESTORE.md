@@ -1121,6 +1121,23 @@ restore-school-poi.bat
 Copy-Item src.pre-school-poi\services\kakaoLocal.ts src\services\ -Force
 ```
 
+## 71a. 로컬 학교 DB 위치 조회 되돌리기 (선택)
+
+공공데이터 학교 DB + 카카오 SC4 fallback(`resolveNearestSchool`) 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-local-school-db.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-local-school-db\services\kakaoLocal.ts src\services\ -Force
+Copy-Item src.pre-local-school-db\db\database.ts src\db\ -Force
+Copy-Item src.pre-local-school-db\db\schema.ts src\db\ -Force
+Remove-Item src\services\schoolLookup.ts, src\services\schoolSeed.ts, src\types\school.ts, assets\schools.seed.json -ErrorAction SilentlyContinue
+```
+
 ## 72. 온보딩 인트로 화면 되돌리기 (선택)
 
 앱 시작 시 3단계 인트로(온보딩) 추가 후 문제가 생기면 아래로 복구합니다.

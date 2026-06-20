@@ -43,21 +43,3 @@ export const CREATE_SETTINGS_TABLE = `
     value TEXT NOT NULL
   );
 `;
-
-export const CREATE_SCHOOLS_TABLE = `
-  CREATE TABLE IF NOT EXISTS schools (
-    id TEXT PRIMARY KEY NOT NULL,
-    name TEXT NOT NULL,
-    school_type TEXT NOT NULL DEFAULT '',
-    latitude REAL NOT NULL,
-    longitude REAL NOT NULL
-  );
-`;
-
-export const CREATE_SCHOOLS_LAT_INDEX = `
-  CREATE INDEX IF NOT EXISTS idx_schools_latitude ON schools(latitude);
-`;
-
-export const CREATE_SCHOOLS_LON_INDEX = `
-  CREATE INDEX IF NOT EXISTS idx_schools_longitude ON schools(longitude);
-`;

@@ -1,5 +1,3 @@
-import { findNearestSchool } from './schoolLookup';
-
 type KakaoRegionDocument = {
   region_type?: string;
   region_1depth_name?: string;
@@ -170,7 +168,7 @@ async function fetchCoordAddress(
   return pickCoordAddress(data.documents);
 }
 
-async function fetchNearestSchoolFromKakao(
+async function fetchNearestSchool(
   restKey: string,
   longitude: number,
   latitude: number,
@@ -205,36 +203,19 @@ async function fetchNearestSchoolFromKakao(
   return data.documents[0];
 }
 
-async function resolveNearestSchool(
-  restKey: string,
-  longitude: number,
-  latitude: number,
-): Promise<KakaoCategoryDocument | null> {
-  const local = await findNearestSchool(latitude, longitude, SCHOOL_NEAR_RADIUS_M);
-  if (local) {
-    return {
-      place_name: local.name,
-      distance: String(Math.round(local.distanceM)),
-    };
-  }
-
-  if (!restKey) {
-    return null;
-  }
-
-  return fetchNearestSchoolFromKakao(restKey, longitude, latitude);
-}
-
 export async function getPlaceLabelFromCoords(
   longitude: number,
   latitude: number,
 ): Promise<string | null> {
   const restKey = getKakaoRestKey();
+  if (!restKey) {
+    return null;
+  }
 
   const [region, address, school] = await Promise.all([
-    restKey ? fetchRegionLabel(restKey, longitude, latitude) : Promise.resolve(null),
-    restKey ? fetchCoordAddress(restKey, longitude, latitude) : Promise.resolve({ buildingName: null, roadAddressName: null }),
-    resolveNearestSchool(restKey, longitude, latitude),
+    fetchRegionLabel(restKey, longitude, latitude),
+    fetchCoordAddress(restKey, longitude, latitude),
+    fetchNearestSchool(restKey, longitude, latitude),
   ]);
 
   const placeName = pickPlaceName(address, school);
