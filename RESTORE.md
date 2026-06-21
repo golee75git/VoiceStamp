@@ -1797,3 +1797,20 @@ Copy-Item src.pre-continuous-capture\components\CameraScreen.tsx src\components\
 Copy-Item src.pre-continuous-capture\components\SettingsScreen.tsx src\components\ -Force
 Remove-Item src\services\quickCaptureSave.ts -ErrorAction SilentlyContinue
 ```
+
+## 110. 촬영 후 3버튼 선택 되돌리기 (선택)
+
+촬영 확인 후 「다시 촬영 / 저장 / 연속 촬영」 선택 UI 추가·설정 토글 제거 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-capture-action-sheet.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-capture-action-sheet\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-capture-action-sheet\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-capture-action-sheet\components\SettingsScreen.tsx src\components\ -Force
+Remove-Item src\components\CaptureActionSheet.tsx -ErrorAction SilentlyContinue
+```

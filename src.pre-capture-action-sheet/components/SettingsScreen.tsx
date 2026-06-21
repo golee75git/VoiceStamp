@@ -24,6 +24,7 @@ import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
   DEFAULT_CAMERA_HAND,
+  DEFAULT_CONTINUOUS_CAPTURE,
   DEFAULT_MEMO_TEXT_ALIGN,
   DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   DEFAULT_PDF_IMAGE_QUALITY,
@@ -54,6 +55,7 @@ import {
   getFloorPickerMode,
   getTitleDatetimeMode,
   getCameraHand,
+  getContinuousCaptureEnabled,
   getGallerySaveMode,
   getMemoTextAlign,
   getOverlayFooterPhrase,
@@ -73,6 +75,7 @@ import {
   type PdfImageQuality,
   type PdfPhotosPerPage,
   setCameraHand,
+  setContinuousCaptureEnabled,
   setCoordsLabelMode,
   setFloorDisplayMode,
   setFloorPickerMode,
@@ -164,6 +167,9 @@ export function SettingsScreen({
     DEFAULT_GALLERY_SAVE_MODE,
   );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
+  const [continuousCaptureEnabled, setContinuousCaptureEnabledState] = useState(
+    DEFAULT_CONTINUOUS_CAPTURE,
+  );
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
   );
@@ -192,7 +198,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase, trashed] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, hand, continuousCapture, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase, trashed] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -205,6 +211,7 @@ export function SettingsScreen({
           getWatermarkStyle(),
           getGallerySaveMode(),
           getCameraHand(),
+          getContinuousCaptureEnabled(),
           getFloorPickerMode(),
           getFloorDisplayMode(),
           getTitleDatetimeMode(),
@@ -226,6 +233,7 @@ export function SettingsScreen({
         setWatermarkStyleState(wmStyle);
         setGallerySaveModeState(galleryMode);
         setCameraHandState(hand);
+        setContinuousCaptureEnabledState(continuousCapture);
         setFloorPickerModeState(floorMode);
         setFloorDisplayModeState(floorDisplay);
         setTitleDatetimeModeState(titleDatetime);
@@ -291,6 +299,7 @@ export function SettingsScreen({
         savedWatermarkStyle,
         savedGalleryMode,
         savedCameraHand,
+        savedContinuousCapture,
         savedFloorPickerMode,
         savedFloorDisplayMode,
         savedTitleDatetimeMode,
@@ -311,6 +320,7 @@ export function SettingsScreen({
           setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
           setCameraHand(cameraHand),
+          setContinuousCaptureEnabled(continuousCaptureEnabled),
           setFloorPickerMode(floorPickerMode),
           setFloorDisplayMode(floorDisplayMode),
           setTitleDatetimeMode(titleDatetimeMode),
@@ -331,6 +341,7 @@ export function SettingsScreen({
       setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
       setCameraHandState(savedCameraHand);
+      setContinuousCaptureEnabledState(savedContinuousCapture);
       setFloorPickerModeState(savedFloorPickerMode);
       setFloorDisplayModeState(savedFloorDisplayMode);
       setTitleDatetimeModeState(savedTitleDatetimeMode);
@@ -342,7 +353,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}, 연속 촬영: ${savedContinuousCapture ? '켜짐' : '꺼짐'}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -366,6 +377,7 @@ export function SettingsScreen({
     setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
     setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
     setCameraHandState(DEFAULT_CAMERA_HAND);
+    setContinuousCaptureEnabledState(DEFAULT_CONTINUOUS_CAPTURE);
   };
 
   return (
@@ -450,6 +462,42 @@ export function SettingsScreen({
                 style={[styles.optionButtonText, cameraHand === 'right' && styles.optionButtonTextSelected]}
               >
                 오른손
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>연속 촬영</Text>
+          <Text style={styles.hint}>
+            켜면 시스템 카메라에서 확인 후 기본 제목으로 자동 저장하고, 바로 다음 촬영으로
+            이어집니다. 카메라에서 취소하면 연속 촬영이 끝납니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, continuousCaptureEnabled && styles.optionButtonSelected]}
+              onPress={() => setContinuousCaptureEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  continuousCaptureEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                켜기
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !continuousCaptureEnabled && styles.optionButtonSelected]}
+              onPress={() => setContinuousCaptureEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !continuousCaptureEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                끄기
               </Text>
             </Pressable>
           </View>

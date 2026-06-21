@@ -2,10 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { saveQuickCapture } from '../services/quickCaptureSave';
-import { getCameraHand, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getContinuousCaptureEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -33,8 +32,6 @@ export function CameraScreen({
 }: CameraScreenProps) {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
-  const [pendingCaptureUri, setPendingCaptureUri] = useState<string | null>(null);
-  const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
@@ -43,7 +40,6 @@ export function CameraScreen({
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
   const launchingRef = useRef(false);
-  const actionSheetVisibleRef = useRef(false);
   const isWeb = Platform.OS === 'web';
 
   useEffect(() => {
@@ -60,21 +56,15 @@ export function CameraScreen({
     Alert.alert('카메라', message);
   }, []);
 
-  const showCaptureActionSheet = useCallback((uri: string) => {
-    actionSheetVisibleRef.current = true;
-    setPendingCaptureUri(uri);
-    setActionSheetVisible(true);
-  }, []);
+  const handleCapturedUri = useCallback(
+    async (uri: string) => {
+      const continuous = !isWeb && (await getContinuousCaptureEnabled());
+      if (!continuous) {
+        openSaveModal(uri);
+        return;
+      }
 
-  const clearCaptureActionSheet = useCallback(() => {
-    actionSheetVisibleRef.current = false;
-    setActionSheetVisible(false);
-    setPendingCaptureUri(null);
-  }, []);
-
-  const runContinuousCaptureLoop = useCallback(
-    async (firstUri: string) => {
-      let nextUri: string | null = firstUri;
+      let nextUri: string | null = uri;
       while (nextUri) {
         setCameraBusy(true);
         setBusyHint('저장 중…');
@@ -90,6 +80,10 @@ export function CameraScreen({
           return;
         } finally {
           setBusyHint(null);
+        }
+
+        if (!(await getContinuousCaptureEnabled())) {
+          return;
         }
 
         setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
@@ -111,15 +105,8 @@ export function CameraScreen({
     [captureStampForExport, handleCameraError, isWeb, onSaved, openSaveModal],
   );
 
-  const handleCapturedUri = useCallback(
-    (uri: string) => {
-      showCaptureActionSheet(uri);
-    },
-    [showCaptureActionSheet],
-  );
-
   const openSystemCamera = useCallback(async () => {
-    if (cameraBusy || modalVisible || actionSheetVisibleRef.current || launchingRef.current) {
+    if (cameraBusy || modalVisible || launchingRef.current) {
       return;
     }
 
@@ -129,7 +116,7 @@ export function CameraScreen({
     try {
       const uri = await takePhotoWithSystemCamera();
       if (uri) {
-        handleCapturedUri(uri);
+        await handleCapturedUri(uri);
       } else {
         setAutoLaunch(false);
       }
@@ -142,27 +129,6 @@ export function CameraScreen({
       setBusyHint(null);
     }
   }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, isWeb]);
-
-  const handleActionRetake = useCallback(() => {
-    clearCaptureActionSheet();
-    void openSystemCamera();
-  }, [clearCaptureActionSheet, openSystemCamera]);
-
-  const handleActionSave = useCallback(() => {
-    const uri = pendingCaptureUri;
-    clearCaptureActionSheet();
-    if (uri) {
-      openSaveModal(uri);
-    }
-  }, [clearCaptureActionSheet, openSaveModal, pendingCaptureUri]);
-
-  const handleActionContinuous = useCallback(() => {
-    const uri = pendingCaptureUri;
-    clearCaptureActionSheet();
-    if (uri) {
-      void runContinuousCaptureLoop(uri);
-    }
-  }, [clearCaptureActionSheet, pendingCaptureUri, runContinuousCaptureLoop]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -177,7 +143,7 @@ export function CameraScreen({
           return;
         }
         if (pending && 'assets' in pending && !pending.canceled && pending.assets?.[0]?.uri) {
-          handleCapturedUri(pending.assets[0].uri);
+          await handleCapturedUri(pending.assets[0].uri);
           setAutoLaunch(false);
         }
       } finally {
@@ -193,7 +159,7 @@ export function CameraScreen({
   }, [handleCapturedUri]);
 
   useEffect(() => {
-    if (!readyToLaunch || !permission?.granted || !autoLaunch || modalVisible || cameraBusy || actionSheetVisible) {
+    if (!readyToLaunch || !permission?.granted || !autoLaunch || modalVisible || cameraBusy) {
       return;
     }
     if (Platform.OS === 'web') {
@@ -201,16 +167,7 @@ export function CameraScreen({
     }
 
     void openSystemCamera();
-  }, [
-    readyToLaunch,
-    permission?.granted,
-    autoLaunch,
-    modalVisible,
-    cameraBusy,
-    actionSheetVisible,
-    openSystemCamera,
-    refreshKey,
-  ]);
+  }, [readyToLaunch, permission?.granted, autoLaunch, modalVisible, cameraBusy, openSystemCamera, refreshKey]);
 
   if (!permission) {
     return (
@@ -246,7 +203,7 @@ export function CameraScreen({
         <Pressable
           style={styles.launchCaptureButton}
           onPress={() => void openSystemCamera()}
-          disabled={cameraBusy || actionSheetVisible}
+          disabled={cameraBusy}
           accessibilityRole="button"
           accessibilityLabel="사진 촬영"
         >
@@ -271,7 +228,7 @@ export function CameraScreen({
         <Pressable
           style={[styles.navButton, styles.navIconButton]}
           onPress={onOpenList}
-          disabled={cameraBusy || actionSheetVisible}
+          disabled={cameraBusy}
           accessibilityLabel="목록"
         >
           <Image source={listIcon} style={styles.navIcon} resizeMode="contain" />
@@ -279,20 +236,12 @@ export function CameraScreen({
         <Pressable
           style={[styles.navButton, styles.navIconButton]}
           onPress={onOpenSettings}
-          disabled={cameraBusy || actionSheetVisible}
+          disabled={cameraBusy}
           accessibilityLabel="설정"
         >
           <Image source={settingsIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
       </View>
-
-      <CaptureActionSheet
-        visible={actionSheetVisible}
-        imageUri={pendingCaptureUri}
-        onRetake={handleActionRetake}
-        onSave={handleActionSave}
-        onContinuous={handleActionContinuous}
-      />
 
       <StampSaveModal
         visible={modalVisible}

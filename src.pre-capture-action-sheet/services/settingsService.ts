@@ -34,6 +34,7 @@ const MEMO_TEXT_ALIGN_KEY = 'memo_text_align';
 const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
+const CONTINUOUS_CAPTURE_KEY = 'continuous_capture';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const WATERMARK_STYLE_KEY = 'watermark_style';
 const COORDS_LABEL_KEY = 'coords_label';
@@ -70,6 +71,7 @@ export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
+export const DEFAULT_CONTINUOUS_CAPTURE = false;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
@@ -403,6 +405,16 @@ export async function setCameraHand(hand: CameraHand): Promise<CameraHand> {
   const safeHand = sanitizeCameraHand(hand);
   await writeSetting(CAMERA_HAND_KEY, safeHand);
   return safeHand;
+}
+
+export async function getContinuousCaptureEnabled(): Promise<boolean> {
+  const value = await readSetting(CONTINUOUS_CAPTURE_KEY);
+  return value === '1' || value === 'true';
+}
+
+export async function setContinuousCaptureEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(CONTINUOUS_CAPTURE_KEY, enabled ? '1' : '0');
+  return enabled;
 }
 
 export async function getStampTextLayout(): Promise<StampTextLayout> {
