@@ -22,7 +22,7 @@ import {
   formatStampGroupName,
   refreshStampGroupDate,
 } from '../services/fileService';
-import { getCurrentLocationSnapshot, getNearbyCachedPlaceLabel, getQuickLastKnownCoords, type LocationSnapshot } from '../services/locationService';
+import { getCurrentLocationSnapshot, getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from '../services/locationService';
 import {
   getCameraHand,
   getCurrentSiteName,
@@ -100,8 +100,6 @@ type StampSaveModalProps = {
   imageUri: string | null;
   stamp?: Stamp | null;
   captureStampForExport?: CaptureStampForExport;
-  prefetchedLocationSnapshot?: LocationSnapshot | null;
-  locationPrefetchLoading?: boolean;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -112,8 +110,6 @@ export function StampSaveModal({
   imageUri,
   stamp = null,
   captureStampForExport,
-  prefetchedLocationSnapshot = null,
-  locationPrefetchLoading = false,
   onClose,
   onSaved,
   onTrashed,
@@ -339,42 +335,24 @@ export function StampSaveModal({
       setSiteName(formatStampGroupName(capturedAt));
     }
 
-    const applySnapshot = (snapshot: LocationSnapshot | null) => {
-      if (!snapshot) {
-        return;
-      }
-      setPlaceLabel(snapshot.placeLabel);
-      const coords = {
-        latitude: snapshot.latitude,
-        longitude: snapshot.longitude,
-      };
-      captureCoordsRef.current = coords;
-      setCaptureCoords(coords);
-      if (!titleTouchedRef.current) {
-        setTitle(formatDefaultStampTitle(capturedAt, snapshot.placeLabel ?? undefined));
-      }
-    };
+    setLocationLoading(true);
 
-    const loadSiteSettings = async () => {
+    (async () => {
       const [savedSiteName, pickerMode, lastFloor] = await Promise.all([
         getCurrentSiteName(),
         getFloorPickerMode(),
         getLastFloor(),
       ]);
-      if (cancelled) {
-        return;
+      if (!cancelled) {
+        setFloorPickerModeState(pickerMode);
+        if (!floorTouchedRef.current && lastFloor) {
+          setFloor(lastFloor);
+        }
       }
-      setFloorPickerModeState(pickerMode);
-      if (!floorTouchedRef.current && lastFloor) {
-        setFloor(lastFloor);
-      }
-      if (!siteNameTouchedRef.current) {
+      if (!cancelled && !siteNameTouchedRef.current) {
         setSiteName(savedSiteName ? refreshStampGroupDate(savedSiteName, capturedAt) : formatStampGroupName(capturedAt));
       }
-    };
 
-    const fetchLocationFallback = async () => {
-      setLocationLoading(true);
       try {
         const quickCoords = await getQuickLastKnownCoords();
         if (!cancelled && quickCoords && !titleTouchedRef.current) {
@@ -389,9 +367,17 @@ export function StampSaveModal({
         if (cancelled) {
           return;
         }
-        applySnapshot(snapshot);
-        if (!titleTouchedRef.current && !snapshot) {
-          setTitle(formatDefaultStampTitle(capturedAt));
+        if (snapshot) {
+          setPlaceLabel(snapshot.placeLabel);
+          const coords = {
+            latitude: snapshot.latitude,
+            longitude: snapshot.longitude,
+          };
+          captureCoordsRef.current = coords;
+          setCaptureCoords(coords);
+        }
+        if (!titleTouchedRef.current) {
+          setTitle(formatDefaultStampTitle(capturedAt, snapshot?.placeLabel ?? undefined));
         }
       } catch {
         // 날짜·시간 제목은 이미 설정됨; 저장 폴더는 current_site_name 유지
@@ -400,43 +386,12 @@ export function StampSaveModal({
           setLocationLoading(false);
         }
       }
-    };
-
-    void loadSiteSettings();
-
-    if (prefetchedLocationSnapshot) {
-      applySnapshot(prefetchedLocationSnapshot);
-      setLocationLoading(false);
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    if (locationPrefetchLoading) {
-      setLocationLoading(true);
-      void (async () => {
-        const quickCoords = await getQuickLastKnownCoords();
-        if (cancelled || !quickCoords || titleTouchedRef.current) {
-          return;
-        }
-        const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-        if (cancelled || !cachedPlace) {
-          return;
-        }
-        setPlaceLabel(cachedPlace);
-        setTitle(formatDefaultStampTitle(capturedAt, cachedPlace));
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    void fetchLocationFallback();
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, [visible, imageUri, isEdit, prefetchedLocationSnapshot, locationPrefetchLoading]);
+  }, [visible, imageUri, isEdit]);
 
   useEffect(() => {
     if (!visible || !isEdit) {

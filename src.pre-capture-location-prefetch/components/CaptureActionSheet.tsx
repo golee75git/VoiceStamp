@@ -3,7 +3,6 @@ import { Image, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react
 type CaptureActionSheetProps = {
   visible: boolean;
   imageUri: string | null;
-  locationPrefetchLoading?: boolean;
   onRetake: () => void;
   onSave: () => void;
   onContinuous: () => void;
@@ -12,7 +11,6 @@ type CaptureActionSheetProps = {
 export function CaptureActionSheet({
   visible,
   imageUri,
-  locationPrefetchLoading = false,
   onRetake,
   onSave,
   onContinuous,
@@ -25,9 +23,6 @@ export function CaptureActionSheet({
           <Text style={styles.hint}>다음 중 하나를 선택하세요.</Text>
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
-          ) : null}
-          {locationPrefetchLoading ? (
-            <Text style={styles.locationHint}>위치 확인 중…</Text>
           ) : null}
           <Pressable style={styles.primaryButton} onPress={onContinuous} accessibilityLabel="연속 촬영">
             <Text style={styles.primaryButtonText}>연속 촬영</Text>
@@ -127,10 +122,5 @@ const styles = StyleSheet.create({
   buttonHintMuted: {
     color: '#6b7280',
     fontSize: 12,
-  },
-  locationHint: {
-    color: '#2563eb',
-    fontSize: 13,
-    textAlign: 'center',
   },
 });

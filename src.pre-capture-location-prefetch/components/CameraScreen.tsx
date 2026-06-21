@@ -4,7 +4,6 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
-import { getCurrentLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
 import { getCameraHand, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
@@ -45,39 +44,7 @@ export function CameraScreen({
   const savedAndClosingRef = useRef(false);
   const launchingRef = useRef(false);
   const actionSheetVisibleRef = useRef(false);
-  const prefetchForUriRef = useRef<string | null>(null);
-  const prefetchCancelledRef = useRef(false);
-  const [prefetchedLocation, setPrefetchedLocation] = useState<LocationSnapshot | null>(null);
-  const [locationPrefetchLoading, setLocationPrefetchLoading] = useState(false);
   const isWeb = Platform.OS === 'web';
-
-  const cancelLocationPrefetch = useCallback(() => {
-    prefetchCancelledRef.current = true;
-    prefetchForUriRef.current = null;
-    setPrefetchedLocation(null);
-    setLocationPrefetchLoading(false);
-  }, []);
-
-  const startLocationPrefetch = useCallback((uri: string) => {
-    prefetchForUriRef.current = uri;
-    prefetchCancelledRef.current = false;
-    setPrefetchedLocation(null);
-    setLocationPrefetchLoading(true);
-
-    void (async () => {
-      try {
-        const snapshot = await getCurrentLocationSnapshot();
-        if (prefetchCancelledRef.current || prefetchForUriRef.current !== uri) {
-          return;
-        }
-        setPrefetchedLocation(snapshot);
-      } finally {
-        if (!prefetchCancelledRef.current && prefetchForUriRef.current === uri) {
-          setLocationPrefetchLoading(false);
-        }
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     getCameraHand().then(setCameraHand);
@@ -93,15 +60,11 @@ export function CameraScreen({
     Alert.alert('카메라', message);
   }, []);
 
-  const showCaptureActionSheet = useCallback(
-    (uri: string) => {
-      actionSheetVisibleRef.current = true;
-      setPendingCaptureUri(uri);
-      setActionSheetVisible(true);
-      startLocationPrefetch(uri);
-    },
-    [startLocationPrefetch],
-  );
+  const showCaptureActionSheet = useCallback((uri: string) => {
+    actionSheetVisibleRef.current = true;
+    setPendingCaptureUri(uri);
+    setActionSheetVisible(true);
+  }, []);
 
   const clearCaptureActionSheet = useCallback(() => {
     actionSheetVisibleRef.current = false;
@@ -110,9 +73,9 @@ export function CameraScreen({
   }, []);
 
   const runContinuousCaptureLoop = useCallback(
-    async (firstUri: string, initialLocation?: QuickCaptureLocation) => {
+    async (firstUri: string) => {
       let nextUri: string | null = firstUri;
-      let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
+      let reuseLocation: QuickCaptureLocation | null = null;
       while (nextUri) {
         setCameraBusy(true);
         setBusyHint('저장 중…');
@@ -186,10 +149,9 @@ export function CameraScreen({
   }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, isWeb]);
 
   const handleActionRetake = useCallback(() => {
-    cancelLocationPrefetch();
     clearCaptureActionSheet();
     void openSystemCamera();
-  }, [cancelLocationPrefetch, clearCaptureActionSheet, openSystemCamera]);
+  }, [clearCaptureActionSheet, openSystemCamera]);
 
   const handleActionSave = useCallback(() => {
     const uri = pendingCaptureUri;
@@ -201,21 +163,11 @@ export function CameraScreen({
 
   const handleActionContinuous = useCallback(() => {
     const uri = pendingCaptureUri;
-    const initialLocation =
-      prefetchedLocation &&
-      prefetchedLocation.latitude != null &&
-      prefetchedLocation.longitude != null
-        ? {
-            latitude: prefetchedLocation.latitude,
-            longitude: prefetchedLocation.longitude,
-            placeLabel: prefetchedLocation.placeLabel,
-          }
-        : undefined;
     clearCaptureActionSheet();
     if (uri) {
-      void runContinuousCaptureLoop(uri, initialLocation);
+      void runContinuousCaptureLoop(uri);
     }
-  }, [clearCaptureActionSheet, pendingCaptureUri, prefetchedLocation, runContinuousCaptureLoop]);
+  }, [clearCaptureActionSheet, pendingCaptureUri, runContinuousCaptureLoop]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -342,7 +294,6 @@ export function CameraScreen({
       <CaptureActionSheet
         visible={actionSheetVisible}
         imageUri={pendingCaptureUri}
-        locationPrefetchLoading={locationPrefetchLoading}
         onRetake={handleActionRetake}
         onSave={handleActionSave}
         onContinuous={handleActionContinuous}
@@ -352,12 +303,9 @@ export function CameraScreen({
         visible={modalVisible}
         imageUri={capturedUri}
         captureStampForExport={captureStampForExport}
-        prefetchedLocationSnapshot={prefetchedLocation}
-        locationPrefetchLoading={locationPrefetchLoading}
         onClose={() => {
           setModalVisible(false);
           setCapturedUri(null);
-          cancelLocationPrefetch();
           savedAndClosingRef.current = false;
           setAutoLaunch(false);
         }}
