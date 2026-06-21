@@ -1765,3 +1765,18 @@ Copy-Item src.pre-watermark-solid-light\services\renderStampWatermarkNative.ts s
 Copy-Item src.pre-watermark-solid-light\services\exportPdf.ts src\services\ -Force
 Copy-Item src.pre-watermark-solid-light\components\WatermarkBarBackground.tsx src\components\ -Force
 ```
+
+## 108. 좌표 표기「없음」 숨김 되돌리기 (선택)
+
+설정「좌표 표기」에서 없음 선택 시 좌표 숫자를 숨기도록 변경한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-coords-off-hide.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-coords-off-hide\services\stampCoords.ts src\services\ -Force
+Copy-Item src.pre-coords-off-hide\components\SettingsScreen.tsx src\components\ -Force
+```
