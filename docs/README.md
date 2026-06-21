@@ -24,21 +24,21 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~107) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~111) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-20)
+## 현재 상태 스냅샷 (2026-06-22)
 
-- **최신 커밋:** `eaa17e4` (main)
+- **최신 커밋:** `b5922eb` (main)
 - **웹:** https://voicestamp-gilt.vercel.app
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (로컬):** `VoiceStamp_20260620_234924.apk` — **목록 제목·메모 검색** + **`schools.sqlite`** (공공데이터 학교 DB)
-- **이전 권장 APK:** `VoiceStamp_20260619_101343.apk` (`2a5b75b`, OSS 라이선스·학교 DB·목록 검색 **미포함**)
+- **권장 APK (로컬):** `VoiceStamp_20260622_000517.apk` — **3버튼** · **연속 촬영 위치 재사용** · **좌표 없음=숨김**
+- **이전 권장 APK:** `VoiceStamp_20260620_234924.apk` (`eaa17e4`, 목록 검색 + `schools.sqlite`, 3버튼 **미포함**)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
-- **GitHub APK:** `releases/VoiceStamp_20260616_082006.apk` (`f74012f`, 워터마크 스타일·캡슐 버튼 **미포함**)
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260616_082006.apk
+- **GitHub APK:** `releases/VoiceStamp_20260620_234924.apk` (`eaa17e4`, 3버튼·연속 촬영 **미포함**)
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260620_234924.apk
 - **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
 
@@ -61,33 +61,20 @@
 | 06-17 | **워터마크**·/report JPEG·보라 아이콘·**10색 파스텔**·**기관명/하단 문구**·**설정 뒤로가기**·위치 revert·**학교 200m·건물명/도로명** |
 | 06-19 | **`7b6b0c1` 문서 동기화** · **앱 내 OSS 라이선스**·LICENSE-NOTICE(베타)·LEG-06 |
 | 06-20 | **로컬 학교 DB** → **`schools.sqlite`** (부팅 수정) · **목록 제목·메모 검색** |
+| 06-21 | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | **설치 권장** — 목록 검색 + `schools.sqlite` |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **설치 권장** — 3버튼·연속 촬영 위치 재사용·좌표 없음=숨김 |
+| `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** |
+| `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 없음=숨김** |
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` (**GitHub**) |
 | `VoiceStamp_20260620_171910.apk` | `88671c1` | `schools.sqlite` (목록 검색 미포함) |
 | `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed — **부팅 멈춤**, 사용 금지 |
 | `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE |
 | `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | OSS 미포함 — 학교 200m·건물명/도로명 |
-| `VoiceStamp_20260617_182811.apk` | `5699d9c` | 위치 revert·뒤로가기 |
-| `VoiceStamp_20260617_181630.apk` | `3af9203` | 저장 모달 흰 화면 |
-| `VoiceStamp_20260617_174312.apk` | `c612e69` | 위치 속도 (**되돌림**) |
-| `VoiceStamp_20260617_172752.apk` | `08c132a` | 위치 3모드 (**되돌림**) |
-| `VoiceStamp_20260617_131932.apk` | `3e6a90d` | 오버레이 한 바·파스텔 10색 |
-| `VoiceStamp_20260617_130651.apk` | `60a9754` | 파스텔 팔레트 |
-| `VoiceStamp_20260617_113216.apk` | `35bdba6` | 10색 칩 |
-| `VoiceStamp_20260617_111707.apk` | `78fd3e6` | 기관명·하단 문구 오버레이 |
-| `VoiceStamp_20260617_104040.apk` | `792df0c` | 보라 VS 아이콘 |
-| `VoiceStamp_20260617_092917.apk` | `24d8fac` | /report JPEG 글자 크기 |
-| `VoiceStamp_20260617_091820.apk` | `b9edc0e` | /report 클라이언트 JPEG |
-| `VoiceStamp_20260617_001635.apk` | `87c7e15` | 워터마크 검은/흰만 |
-| `VoiceStamp_20260617_000721.apk` | `534c9f7` | 워터마크 빨간 세로줄 (구버전) |
-| `VoiceStamp_20260616_173518.apk` | `7e453ea` | 갤러리·촬영 캡슐 |
-| `VoiceStamp_20260616_094515.apk` | `7c127aa` | 목록 UI·첨부·카메라 홈 |
-| `releases/VoiceStamp_20260616_082006.apk` | `f74012f` | **GitHub 최신 커밋 APK** |
-| `VoiceStamp_20260614_114256.apk` | `100e123` | 자동 제목·층 표기·전체 06-14 |
 | `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
 
 상세 표: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13 · [PLAN.md](./PLAN.md) §11

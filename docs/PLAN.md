@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.5 |
-| 작성일 | 2026-06-20 |
-| 기준 커밋 | `eaa17e4` (main) |
+| 문서 버전 | 2.6 |
+| 작성일 | 2026-06-22 |
+| 기준 커밋 | `b5922eb` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -203,6 +203,15 @@
 | 147 | 빌드 타임 **`schools.sqlite`** (JSON seed 제거, 부팅 블로킹 해소) | `88671c1` | `restore-schools-sqlite.bat` |
 | 148 | 저장 목록 **제목·메모 검색** (`stampListSearch`) | `eaa17e4` | `restore-list-search.bat` |
 
+## 2M. Phase 2 추가 완료 (2026-06-21)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 149 | **좌표 표기 없음=숨김** | `3ecb4f4` | `restore-coords-off-hide.bat` §108 |
+| 150 | 설정 **연속 촬영** 토글 *(→ 151에서 3버튼으로 대체)* | `b46c9d3` | `restore-continuous-capture.bat` §109 |
+| 151 | 촬영 확인 후 **3버튼** (다시 촬영 / 저장 / 연속 촬영) | `ec4930e` | `restore-capture-action-sheet.bat` §110 |
+| 152 | **연속 촬영** 직전 **위치·장소명 재사용** | `b5922eb` | `restore-quick-capture-location.bat` §111 |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -230,6 +239,7 @@
 | (본 갱신) | `5699d9c` 반영 — 설정 뒤로가기·위치 revert·저장 모달·APK `182811`·날짜별 이력 |
 | (본 갱신) | `7b6b0c1` 반영 — 학교 200m·건물명/도로명·APK `184121`·날짜별 이력 |
 | (본 갱신) | `eaa17e4` 반영 — 로컬 학교 DB·`schools.sqlite`·목록 검색·APK·날짜별 이력 |
+| (본 갱신) | `b5922eb` 반영 — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·APK·날짜별 이력 |
 
 ---
 
@@ -313,9 +323,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260617_184121.apk` (`7b6b0c1`, 로컬) |
-| GitHub APK | `releases/VoiceStamp_20260616_082006.apk` (`f74012f`) |
-| 최신 소스 | `7b6b0c1` — 학교 200m·건물명/도로명·뒤로가기·저장 모달·오버레이·파스텔·/report JPEG·갤러리·촬영 캡슐·HWPX/XLSX/ZIP |
+| 최신 APK (문서 기준) | `VoiceStamp_20260622_000517.apk` (`b5922eb`, 로컬) |
+| GitHub APK | `releases/VoiceStamp_20260620_234924.apk` (`eaa17e4`) |
+| 최신 소스 | `b5922eb` — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·목록 검색·`schools.sqlite` |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -340,7 +350,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~107 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~111 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
@@ -369,6 +379,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-17 | 2K | **설정 뒤로가기**·저장 모달·위치 revert·**학교 200m·건물명/도로명** (`7b6b0c1`) |
 | 2026-06-19 | 3 | PRD·PROJECT·PLAN·README **`7b6b0c1` 동기화** · **앱 내 OSS 라이선스**·LICENSE-NOTICE(베타)·LEG-06 (`3caf3f0`·`2a5b75b`) |
 | 2026-06-20 | 2L | **로컬 학교 DB** (공공데이터) → **`schools.sqlite`** (부팅 수정) · **목록 제목·메모 검색** (`55c33df`·`88671c1`·`eaa17e4`) |
+| 2026-06-21 | 2M | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** (`3ecb4f4`·`ec4930e`·`b5922eb`) |
 
 ---
 
@@ -376,7 +387,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | **설치 권장** — 목록 검색 + `schools.sqlite` |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **설치 권장** — 3버튼·연속 촬영 **위치 재사용**·좌표 없음=숨김 |
+| `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
+| `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 없음=숨김** (3버튼 **미포함**) |
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` (**GitHub `releases/`**) |
 | `VoiceStamp_20260620_171910.apk` | `88671c1` | `schools.sqlite` (목록 검색 미포함) |
 | `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed — **부팅 멈춤**, 사용 금지 |
 | `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE |

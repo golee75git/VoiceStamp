@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-20**  
-최신 커밋 기준: `eaa17e4` (main)
+문서 작성일: **2026-06-22**  
+최신 커밋 기준: `b5922eb` (main)
 
 ---
 
@@ -44,7 +44,7 @@ VoiceStamp/
 ├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
 ├── build-apk.bat           # Release APK 빌드
 ├── public/                 # 정책 정적 HTML (info, privacy, license, help)
-├── RESTORE.md              # 기능별 되돌리기 (§8~105)
+├── RESTORE.md              # 기능별 되돌리기 (§8~111)
 ├── LICENSE                 # MIT (Copyright 2026 이형우)
 ├── BUILD-APK.md            # APK 빌드 가이드
 ├── vercel.json             # Vercel 웹 설정
@@ -241,8 +241,11 @@ VoiceStamp/
 | 141 | **로컬 학교 DB** (공공데이터 CSV→JSON seed, 카카오 SC4 fallback) | `55c33df` | `restore-local-school-db.bat` |
 | 142 | 빌드 타임 **`schools.sqlite`** (JSON seed 제거, 부팅 블로킹 해소) | `88671c1` | `restore-schools-sqlite.bat` |
 | 143 | 저장 목록 **제목·메모 검색** (`stampListSearch`) | `eaa17e4` | `restore-list-search.bat` |
+| 144 | **좌표 표기 없음=숨김** (`coords_label` off → null) | `3ecb4f4` | `restore-coords-off-hide.bat` §108 |
+| 145 | 촬영 확인 후 **3버튼** (`CaptureActionSheet`) | `ec4930e` | `restore-capture-action-sheet.bat` §110 |
+| 146 | **연속 촬영** 직전 위치·장소명 재사용 (`quickCaptureSave`) | `b5922eb` | `restore-quick-capture-location.bat` §111 |
 
-> **참고:** `6cf82f5`(scrollToIndex 앵커)는 앱 종료로 `953c2cd`에서 되돌림. `eef0891`은 `5831512`로 대체됨. 워터마크 미리보기는 `69c0b66`에서 Android 수정 완료.
+> **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
 전체 일정·후보: [PLAN.md](./PLAN.md)
 
@@ -306,7 +309,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260620_234924.apk`** | `eaa17e4` | **설치 권장 (로컬)** — 목록 **제목·메모 검색** + `schools.sqlite` |
+| **`VoiceStamp_20260622_000517.apk`** | `b5922eb` | **설치 권장 (로컬)** — 3버튼·연속 촬영 **위치 재사용**·좌표 없음=숨김 |
+| `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
+| `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 표기 없음=숨김** (3버튼 **미포함**) |
+| **`VoiceStamp_20260620_234924.apk`** | `eaa17e4` | 목록 **제목·메모 검색** + `schools.sqlite` (**GitHub `releases/`**) |
 | `VoiceStamp_20260620_171910.apk` | `88671c1` | 빌드 타임 **schools.sqlite** (목록 검색 **미포함**) |
 | `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed 학교 DB — **부팅 멈춤**, 사용 금지 |
 | `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE (학교 DB·목록 검색 **미포함**) |
@@ -340,11 +346,25 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-06-22
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **연속 촬영** 루프에서 직전 저장 **좌표·장소명 재사용** | **권장 (로컬)** |
+
+#### 2026-06-21
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 확인 후 **3버튼** (다시 촬영 / 저장 / 연속 촬영) | 로컬 |
+| `VoiceStamp_20260621_235346.apk` | `ec4930e` | 위와 동일 (재빌드) | 로컬 |
+| `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 표기 없음=숨김** (3버튼 **미포함**) | 로컬 |
+
 #### 2026-06-20
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 저장 목록 **제목·메모 검색** + `schools.sqlite` | **권장 (로컬)** |
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 저장 목록 **제목·메모 검색** + `schools.sqlite` | **GitHub `releases/`** |
 | `VoiceStamp_20260620_171910.apk` | `88671c1` | 빌드 타임 **`schools.sqlite`** (12,011교, bbox+haversine 200m) | — |
 | `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed 학교 DB — **첫 실행 12k INSERT로 부팅 멈춤** | **사용 금지** |
 
@@ -592,6 +612,22 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-22
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`b5922eb` 기준) |
+| `b5922eb` | APK `VoiceStamp_20260622_000517` — **연속 촬영** 루프 직전 **좌표·장소명 재사용** · `restore-quick-capture-location.bat` §111 |
+
+### 2026-06-21
+
+| 커밋 | 내용 |
+|------|------|
+| `ec4930e` | APK `VoiceStamp_20260621_234030` — 촬영 확인 후 **3버튼** (`CaptureActionSheet`) · 설정 연속 촬영 토글 **제거** · `restore-capture-action-sheet.bat` §110 |
+| `b46c9d3` | *(대체됨)* 설정 **연속 촬영** 토글 — `restore-continuous-capture.bat` §109 |
+| `3ecb4f4` | APK `VoiceStamp_20260621_125741` — **좌표 표기 없음=숨김** · `restore-coords-off-hide.bat` §108 |
+| `89b92da` | GitHub `releases/VoiceStamp_20260620_234924.apk` 업로드 |
 
 ### 2026-06-20
 
