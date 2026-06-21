@@ -1780,3 +1780,20 @@ restore-coords-off-hide.bat
 Copy-Item src.pre-coords-off-hide\services\stampCoords.ts src\services\ -Force
 Copy-Item src.pre-coords-off-hide\components\SettingsScreen.tsx src\components\ -Force
 ```
+
+## 109. 연속 촬영 설정 되돌리기 (선택)
+
+설정「연속 촬영」 토글 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-continuous-capture.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-continuous-capture\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-continuous-capture\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-continuous-capture\components\SettingsScreen.tsx src\components\ -Force
+Remove-Item src\services\quickCaptureSave.ts -ErrorAction SilentlyContinue
+```

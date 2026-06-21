@@ -3,8 +3,7 @@ import { ActivityIndicator, Alert, Image, Platform, Pressable, StyleSheet, Text,
 import * as ImagePicker from 'expo-image-picker';
 
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
-import { saveQuickCapture } from '../services/quickCaptureSave';
-import { getCameraHand, getContinuousCaptureEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -34,7 +33,6 @@ export function CameraScreen({
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
-  const [busyHint, setBusyHint] = useState<string | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
@@ -56,55 +54,6 @@ export function CameraScreen({
     Alert.alert('카메라', message);
   }, []);
 
-  const handleCapturedUri = useCallback(
-    async (uri: string) => {
-      const continuous = !isWeb && (await getContinuousCaptureEnabled());
-      if (!continuous) {
-        openSaveModal(uri);
-        return;
-      }
-
-      let nextUri: string | null = uri;
-      while (nextUri) {
-        setCameraBusy(true);
-        setBusyHint('저장 중…');
-        try {
-          await saveQuickCapture({
-            tempImageUri: nextUri,
-            captureForExport: captureStampForExport,
-          });
-          onSaved();
-        } catch (error) {
-          handleCameraError(error);
-          openSaveModal(nextUri);
-          return;
-        } finally {
-          setBusyHint(null);
-        }
-
-        if (!(await getContinuousCaptureEnabled())) {
-          return;
-        }
-
-        setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
-        launchingRef.current = true;
-        try {
-          nextUri = await takePhotoWithSystemCamera();
-        } catch (error) {
-          setAutoLaunch(false);
-          handleCameraError(error);
-          return;
-        } finally {
-          launchingRef.current = false;
-          setCameraBusy(false);
-          setBusyHint(null);
-        }
-      }
-      setAutoLaunch(false);
-    },
-    [captureStampForExport, handleCameraError, isWeb, onSaved, openSaveModal],
-  );
-
   const openSystemCamera = useCallback(async () => {
     if (cameraBusy || modalVisible || launchingRef.current) {
       return;
@@ -112,11 +61,10 @@ export function CameraScreen({
 
     launchingRef.current = true;
     setCameraBusy(true);
-    setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
     try {
       const uri = await takePhotoWithSystemCamera();
       if (uri) {
-        await handleCapturedUri(uri);
+        openSaveModal(uri);
       } else {
         setAutoLaunch(false);
       }
@@ -126,9 +74,8 @@ export function CameraScreen({
     } finally {
       launchingRef.current = false;
       setCameraBusy(false);
-      setBusyHint(null);
     }
-  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, isWeb]);
+  }, [cameraBusy, modalVisible, openSaveModal, handleCameraError]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -143,7 +90,7 @@ export function CameraScreen({
           return;
         }
         if (pending && 'assets' in pending && !pending.canceled && pending.assets?.[0]?.uri) {
-          await handleCapturedUri(pending.assets[0].uri);
+          openSaveModal(pending.assets[0].uri);
           setAutoLaunch(false);
         }
       } finally {
@@ -156,7 +103,7 @@ export function CameraScreen({
     return () => {
       cancelled = true;
     };
-  }, [handleCapturedUri]);
+  }, [openSaveModal]);
 
   useEffect(() => {
     if (!readyToLaunch || !permission?.granted || !autoLaunch || modalVisible || cameraBusy) {
@@ -213,7 +160,7 @@ export function CameraScreen({
           <View style={styles.busyOverlay}>
             <ActivityIndicator size="large" color="#fff" />
             <Text style={styles.launcherHint}>
-              {busyHint ?? (isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…')}
+              {isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…'}
             </Text>
           </View>
         ) : null}
