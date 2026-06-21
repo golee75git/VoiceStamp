@@ -1814,3 +1814,18 @@ Copy-Item src.pre-capture-action-sheet\components\CameraScreen.tsx src\component
 Copy-Item src.pre-capture-action-sheet\components\SettingsScreen.tsx src\components\ -Force
 Remove-Item src\components\CaptureActionSheet.tsx -ErrorAction SilentlyContinue
 ```
+
+## 111. 연속 촬영 직전 위치 재사용 되돌리기 (선택)
+
+연속 촬영 루프에서 직전 저장 좌표·장소명을 재사용하도록 변경한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-quick-capture-location.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-quick-capture-location\services\quickCaptureSave.ts src\services\ -Force
+Copy-Item src.pre-quick-capture-location\components\CameraScreen.tsx src\components\ -Force
+```

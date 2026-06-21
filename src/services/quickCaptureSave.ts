@@ -7,23 +7,38 @@ import { getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from './locationSe
 import { saveStamp } from './saveStamp';
 import {
   getCurrentSiteName,
+  getLastCapturePlaceCache,
   getLastFloor,
   setCurrentSiteName,
   setLastCapturePlaceCache,
 } from './settingsService';
 import type { CaptureStampForExport } from './exportStampImage';
 
+export type QuickCaptureLocation = {
+  latitude: number;
+  longitude: number;
+  placeLabel: string | null;
+};
+
 type QuickCaptureSaveInput = {
   tempImageUri: string;
   captureForExport?: CaptureStampForExport;
+  /** 연속 촬영 2장째부터 직전 저장 위치·장소를 그대로 씁니다. */
+  reuseLocation?: QuickCaptureLocation;
 };
 
-export async function saveQuickCapture(input: QuickCaptureSaveInput): Promise<void> {
-  const capturedAt = Date.now();
-  const [savedSiteName, lastFloor] = await Promise.all([getCurrentSiteName(), getLastFloor()]);
-  const siteName = savedSiteName
-    ? refreshStampGroupDate(savedSiteName, capturedAt)
-    : formatStampGroupName(capturedAt);
+async function resolveQuickCaptureLocation(reuseLocation?: QuickCaptureLocation): Promise<{
+  latitude: number | null;
+  longitude: number | null;
+  placeLabel: string | undefined;
+}> {
+  if (reuseLocation) {
+    return {
+      latitude: reuseLocation.latitude,
+      longitude: reuseLocation.longitude,
+      placeLabel: reuseLocation.placeLabel ?? undefined,
+    };
+  }
 
   let latitude: number | null = null;
   let longitude: number | null = null;
@@ -38,6 +53,33 @@ export async function saveQuickCapture(input: QuickCaptureSaveInput): Promise<vo
       placeLabel = cachedPlace;
     }
   }
+
+  if (latitude == null || longitude == null || !placeLabel) {
+    const cache = await getLastCapturePlaceCache();
+    if (cache) {
+      if (latitude == null || longitude == null) {
+        latitude = cache.latitude;
+        longitude = cache.longitude;
+      }
+      if (!placeLabel) {
+        placeLabel = cache.placeLabel;
+      }
+    }
+  }
+
+  return { latitude, longitude, placeLabel };
+}
+
+export async function saveQuickCapture(
+  input: QuickCaptureSaveInput,
+): Promise<QuickCaptureLocation | null> {
+  const capturedAt = Date.now();
+  const [savedSiteName, lastFloor] = await Promise.all([getCurrentSiteName(), getLastFloor()]);
+  const siteName = savedSiteName
+    ? refreshStampGroupDate(savedSiteName, capturedAt)
+    : formatStampGroupName(capturedAt);
+
+  const { latitude, longitude, placeLabel } = await resolveQuickCaptureLocation(input.reuseLocation);
 
   const title = formatDefaultStampTitle(capturedAt, placeLabel);
 
@@ -60,4 +102,14 @@ export async function saveQuickCapture(input: QuickCaptureSaveInput): Promise<vo
       placeLabel,
     });
   }
+
+  if (latitude == null || longitude == null) {
+    return null;
+  }
+
+  return {
+    latitude,
+    longitude,
+    placeLabel: placeLabel ?? null,
+  };
 }

@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
-import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
+import { saveQuickCapture } from '../services/quickCaptureSave';
 import { getCameraHand, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
@@ -75,19 +75,14 @@ export function CameraScreen({
   const runContinuousCaptureLoop = useCallback(
     async (firstUri: string) => {
       let nextUri: string | null = firstUri;
-      let reuseLocation: QuickCaptureLocation | null = null;
       while (nextUri) {
         setCameraBusy(true);
         setBusyHint('저장 중…');
         try {
-          const savedLocation = await saveQuickCapture({
+          await saveQuickCapture({
             tempImageUri: nextUri,
             captureForExport: captureStampForExport,
-            reuseLocation: reuseLocation ?? undefined,
           });
-          if (savedLocation) {
-            reuseLocation = savedLocation;
-          }
           onSaved();
         } catch (error) {
           handleCameraError(error);
