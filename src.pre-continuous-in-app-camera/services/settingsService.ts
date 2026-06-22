@@ -38,7 +38,6 @@ const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const WATERMARK_STYLE_KEY = 'watermark_style';
 const COORDS_LABEL_KEY = 'coords_label';
 const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
-const CONTINUOUS_CAPTURE_CAMERA_KEY = 'continuous_capture_camera';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 const ONBOARDING_SEEN_KEY = 'onboarding_seen';
@@ -75,7 +74,6 @@ export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
-export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -110,19 +108,7 @@ export type WatermarkStyle =
   | 'rose';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
-export type ContinuousCaptureCamera = 'system' | 'in_app';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
-
-export function continuousCaptureCameraLabel(mode: ContinuousCaptureCamera): string {
-  return mode === 'in_app' ? '앱 내 (빠름)' : '시스템';
-}
-
-export function sanitizeContinuousCaptureCamera(value: string): ContinuousCaptureCamera {
-  if (value === 'system') {
-    return 'system';
-  }
-  return 'in_app';
-}
 
 export function floorPickerModeLabel(mode: FloorPickerMode): string {
   switch (mode) {
@@ -472,22 +458,6 @@ export async function getGallerySaveMode(): Promise<GallerySaveMode> {
 export async function setGallerySaveMode(mode: GallerySaveMode): Promise<GallerySaveMode> {
   const safeMode = sanitizeGallerySaveMode(mode);
   await writeSetting(GALLERY_SAVE_MODE_KEY, safeMode);
-  return safeMode;
-}
-
-export async function getContinuousCaptureCamera(): Promise<ContinuousCaptureCamera> {
-  const value = await readSetting(CONTINUOUS_CAPTURE_CAMERA_KEY);
-  if (!value) {
-    return DEFAULT_CONTINUOUS_CAPTURE_CAMERA;
-  }
-  return sanitizeContinuousCaptureCamera(value);
-}
-
-export async function setContinuousCaptureCamera(
-  mode: ContinuousCaptureCamera,
-): Promise<ContinuousCaptureCamera> {
-  const safeMode = sanitizeContinuousCaptureCamera(mode);
-  await writeSetting(CONTINUOUS_CAPTURE_CAMERA_KEY, safeMode);
   return safeMode;
 }
 

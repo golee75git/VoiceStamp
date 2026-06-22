@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import { CameraView } from 'expo-camera';
+import { ActivityIndicator, Alert, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getContinuousCaptureCamera, type CameraHand } from '../services/settingsService';
+import { getCameraHand, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
-import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -51,12 +49,6 @@ export function CameraScreen({
   const prefetchCancelledRef = useRef(false);
   const [prefetchedLocation, setPrefetchedLocation] = useState<LocationSnapshot | null>(null);
   const [locationPrefetchLoading, setLocationPrefetchLoading] = useState(false);
-  const [inAppContinuousActive, setInAppContinuousActive] = useState(false);
-  const [inAppCameraReady, setInAppCameraReady] = useState(false);
-  const [inAppCapturing, setInAppCapturing] = useState(false);
-  const [inAppPictureSize, setInAppPictureSize] = useState<string | undefined>();
-  const cameraRef = useRef<CameraView>(null);
-  const reuseLocationRef = useRef<QuickCaptureLocation | null>(null);
   const isWeb = Platform.OS === 'web';
 
   const cancelLocationPrefetch = useCallback(() => {
@@ -161,97 +153,6 @@ export function CameraScreen({
     [captureStampForExport, handleCameraError, isWeb, onSaved, openSaveModal],
   );
 
-  const exitInAppContinuous = useCallback(() => {
-    setInAppContinuousActive(false);
-    setInAppCameraReady(false);
-    setInAppCapturing(false);
-    reuseLocationRef.current = null;
-    setAutoLaunch(false);
-  }, []);
-
-  const startInAppContinuousCapture = useCallback(
-    async (firstUri: string, initialLocation?: QuickCaptureLocation) => {
-      setCameraBusy(true);
-      setBusyHint('저장 중…');
-      try {
-        let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
-        const savedLocation = await saveQuickCapture({
-          tempImageUri: firstUri,
-          captureForExport: captureStampForExport,
-          reuseLocation: reuseLocation ?? undefined,
-        });
-        if (savedLocation) {
-          reuseLocation = savedLocation;
-        }
-        reuseLocationRef.current = reuseLocation;
-        onSaved();
-        setInAppContinuousActive(true);
-      } catch (error) {
-        handleCameraError(error);
-        openSaveModal(firstUri);
-      } finally {
-        setCameraBusy(false);
-        setBusyHint(null);
-      }
-    },
-    [captureStampForExport, handleCameraError, onSaved, openSaveModal],
-  );
-
-  const handleInAppCameraReady = useCallback(async () => {
-    setInAppCameraReady(true);
-    try {
-      const sizes = await cameraRef.current?.getAvailablePictureSizesAsync();
-      const largest = sizes?.length ? pickLargestPictureSize(sizes) : undefined;
-      if (largest) {
-        setInAppPictureSize(largest);
-      }
-    } catch {
-      // Keep default picture size when sizes are unavailable.
-    }
-  }, []);
-
-  const handleInAppContinuousShutter = useCallback(async () => {
-    if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy) {
-      return;
-    }
-
-    setInAppCapturing(true);
-    setCameraBusy(true);
-    setBusyHint('저장 중…');
-    try {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 1,
-        skipProcessing: false,
-      });
-      if (!photo?.uri) {
-        return;
-      }
-
-      const savedLocation = await saveQuickCapture({
-        tempImageUri: photo.uri,
-        captureForExport: captureStampForExport,
-        reuseLocation: reuseLocationRef.current ?? undefined,
-      });
-      if (savedLocation) {
-        reuseLocationRef.current = savedLocation;
-      }
-      onSaved();
-    } catch (error) {
-      handleCameraError(error);
-    } finally {
-      setInAppCapturing(false);
-      setCameraBusy(false);
-      setBusyHint(null);
-    }
-  }, [
-    cameraBusy,
-    captureStampForExport,
-    handleCameraError,
-    inAppCameraReady,
-    inAppCapturing,
-    onSaved,
-  ]);
-
   const handleCapturedUri = useCallback(
     (uri: string) => {
       showCaptureActionSheet(uri);
@@ -260,13 +161,7 @@ export function CameraScreen({
   );
 
   const openSystemCamera = useCallback(async () => {
-    if (
-      cameraBusy ||
-      modalVisible ||
-      actionSheetVisibleRef.current ||
-      launchingRef.current ||
-      inAppContinuousActive
-    ) {
+    if (cameraBusy || modalVisible || actionSheetVisibleRef.current || launchingRef.current) {
       return;
     }
 
@@ -288,7 +183,7 @@ export function CameraScreen({
       setCameraBusy(false);
       setBusyHint(null);
     }
-  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, inAppContinuousActive, isWeb]);
+  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, isWeb]);
 
   const handleActionRetake = useCallback(() => {
     cancelLocationPrefetch();
@@ -317,39 +212,10 @@ export function CameraScreen({
           }
         : undefined;
     clearCaptureActionSheet();
-    if (!uri) {
-      return;
+    if (uri) {
+      void runContinuousCaptureLoop(uri, initialLocation);
     }
-
-    void (async () => {
-      const mode = isWeb ? 'system' : await getContinuousCaptureCamera();
-      if (mode === 'in_app') {
-        await startInAppContinuousCapture(uri, initialLocation);
-        return;
-      }
-      await runContinuousCaptureLoop(uri, initialLocation);
-    })();
-  }, [
-    clearCaptureActionSheet,
-    pendingCaptureUri,
-    prefetchedLocation,
-    isWeb,
-    startInAppContinuousCapture,
-    runContinuousCaptureLoop,
-  ]);
-
-  useEffect(() => {
-    if (!inAppContinuousActive) {
-      return;
-    }
-
-    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      exitInAppContinuous();
-      return true;
-    });
-
-    return () => sub.remove();
-  }, [exitInAppContinuous, inAppContinuousActive]);
+  }, [clearCaptureActionSheet, pendingCaptureUri, prefetchedLocation, runContinuousCaptureLoop]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -380,15 +246,7 @@ export function CameraScreen({
   }, [handleCapturedUri]);
 
   useEffect(() => {
-    if (
-      !readyToLaunch ||
-      !permission?.granted ||
-      !autoLaunch ||
-      modalVisible ||
-      cameraBusy ||
-      actionSheetVisible ||
-      inAppContinuousActive
-    ) {
+    if (!readyToLaunch || !permission?.granted || !autoLaunch || modalVisible || cameraBusy || actionSheetVisible) {
       return;
     }
     if (Platform.OS === 'web') {
@@ -403,7 +261,6 @@ export function CameraScreen({
     modalVisible,
     cameraBusy,
     actionSheetVisible,
-    inAppContinuousActive,
     openSystemCamera,
     refreshKey,
   ]);
@@ -426,60 +283,6 @@ export function CameraScreen({
         <Pressable style={styles.secondaryButton} onPress={onOpenList}>
           <Text style={styles.secondaryButtonText}>목록으로 (앨범)</Text>
         </Pressable>
-      </View>
-    );
-  }
-
-  if (inAppContinuousActive && !isWeb) {
-    return (
-      <View style={styles.container}>
-        <CameraView
-          ref={cameraRef}
-          style={styles.inAppCamera}
-          facing="back"
-          pictureSize={inAppPictureSize}
-          onCameraReady={() => void handleInAppCameraReady()}
-        />
-
-        <View style={styles.inAppTopBar}>
-          <Text style={styles.inAppTitle}>연속 촬영</Text>
-          <Text style={styles.inAppHint}>셔터 → 저장 · 완료로 종료</Text>
-        </View>
-
-        <View
-          style={[
-            styles.inAppSideNav,
-            cameraHand === 'left' ? styles.sideNavLeft : styles.sideNavRight,
-          ]}
-        >
-          <Pressable
-            style={styles.inAppDoneButton}
-            onPress={exitInAppContinuous}
-            disabled={cameraBusy || inAppCapturing}
-            accessibilityLabel="연속 촬영 완료"
-          >
-            <Text style={styles.inAppDoneButtonText}>완료</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.inAppBottomBar}>
-          <Pressable
-            style={styles.inAppShutterOuter}
-            onPress={() => void handleInAppContinuousShutter()}
-            disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
-            accessibilityRole="button"
-            accessibilityLabel="촬영"
-          >
-            <View style={styles.inAppShutterInner} />
-          </Pressable>
-        </View>
-
-        {cameraBusy ? (
-          <View style={styles.busyOverlay}>
-            <ActivityIndicator size="large" color="#fff" />
-            <Text style={styles.launcherHint}>{busyHint ?? '저장 중…'}</Text>
-          </View>
-        ) : null}
       </View>
     );
   }
@@ -677,69 +480,5 @@ const styles = StyleSheet.create({
   navIcon: {
     width: 40,
     height: 40,
-  },
-  inAppCamera: {
-    flex: 1,
-  },
-  inAppTopBar: {
-    position: 'absolute',
-    top: Platform.OS === 'android' ? 48 : 56,
-    left: 16,
-    right: 16,
-    alignItems: 'center',
-    gap: 4,
-  },
-  inAppTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-    textShadowColor: 'rgba(0,0,0,0.55)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  inAppHint: {
-    color: '#e5e7eb',
-    fontSize: 13,
-    textShadowColor: 'rgba(0,0,0,0.55)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  inAppSideNav: {
-    position: 'absolute',
-    bottom: 120,
-    zIndex: 10,
-  },
-  inAppDoneButton: {
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  inAppDoneButtonText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
-  },
-  inAppBottomBar: {
-    position: 'absolute',
-    bottom: 36,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  inAppShutterOuter: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 4,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inAppShutterInner: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#fff',
   },
 });
