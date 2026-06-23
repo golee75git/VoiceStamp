@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VoiceStamp — 보고서 편집</title>
+  <title>VoiceStamp ??蹂닿퀬???몄쭛</title>
   <style>
     :root { color-scheme: light; }
     body { font-family: system-ui, sans-serif; max-width: 56rem; margin: 0 auto; padding: 1.25rem; color: #111; line-height: 1.5; background: #f9fafb; }
@@ -65,96 +65,95 @@
   </style>
 </head>
 <body>
-  <nav><a href="/">← 홈</a> · <a href="/app">웹 테스트</a> · <a href="/info">앱 정보</a></nav>
-  <h1>VoiceStamp 보고서 편집</h1>
-  <p class="muted">앱에서 보낸 <code>.voicestamp.zip</code>을 PC에서 열어 제목·메모·층을 수정하고, 합성 JPEG·PDF를 저장할 수 있습니다. <strong>파일은 서버로 전송되지 않으며</strong> 브라우저에서만 처리됩니다.</p>
+  <nav><a href="/">???깆쑝濡?/a> 쨌 <a href="/info">???뺣낫</a></nav>
+  <h1>VoiceStamp 蹂닿퀬???몄쭛</h1>
+  <p class="muted">?깆뿉??蹂대궦 <code>.voicestamp.zip</code>??PC?먯꽌 ?댁뼱 ?쒕ぉ쨌硫붾え쨌痢듭쓣 ?섏젙?섍퀬, ?⑹꽦 JPEG쨌PDF瑜???ν븷 ???덉뒿?덈떎. <strong>?뚯씪? ?쒕쾭濡??꾩넚?섏? ?딆쑝硫?/strong> 釉뚮씪?곗??먯꽌留?泥섎━?⑸땲??</p>
 
   <section class="panel upload">
-    <label class="file-btn" for="zipInput">프로젝트 ZIP 열기</label>
+    <label class="file-btn" for="zipInput">?꾨줈?앺듃 ZIP ?닿린</label>
     <input id="zipInput" type="file" accept=".zip,.voicestamp.zip,application/zip" />
     <div class="toolbar">
-      <button id="saveManifestBtn" type="button" disabled>manifest.json 저장</button>
-      <button id="saveZipBtn" type="button" disabled>수정 ZIP 저장</button>
-      <button id="jpegZipBtn" type="button" disabled>합성 JPEG ZIP</button>
-      <button id="printBtn" class="primary" type="button" disabled>PDF 인쇄</button>
+      <button id="saveManifestBtn" type="button" disabled>manifest.json ???/button>
+      <button id="saveZipBtn" type="button" disabled>?섏젙 ZIP ???/button>
+      <button id="jpegZipBtn" type="button" disabled>?⑹꽦 JPEG ZIP</button>
+      <button id="printBtn" class="primary" type="button" disabled>PDF ?몄뇙</button>
     </div>
-    <p id="status" class="status">ZIP 파일을 선택하세요.</p>
+    <p id="status" class="status">ZIP ?뚯씪???좏깮?섏꽭??</p>
   </section>
 
   <section id="exportSettingsPanel" class="panel export-settings" hidden>
-    <strong>합성 JPEG 설정</strong> <span class="muted">(manifest 설정을 기본값으로 불러옵니다)</span>
+    <strong>?⑹꽦 JPEG ?ㅼ젙</strong> <span class="muted">(manifest ?ㅼ젙??湲곕낯媛믪쑝濡?遺덈윭?듬땲??</span>
     <div class="settings-grid">
       <label>
-        표시 방식
+        ?쒖떆 諛⑹떇
         <select id="optTextLayout">
-          <option value="caption">별도 영역</option>
-          <option value="watermark">워터마크</option>
+          <option value="caption">蹂꾨룄 ?곸뿭</option>
+          <option value="watermark">?뚰꽣留덊겕</option>
         </select>
       </label>
       <label>
-        워터마크 스타일
-        <select id="optWatermarkStyle">
-          <option value="solid_dark">검은 반투명</option>
-          <option value="solid_light">흰색 반투명</option>
+        ?뚰꽣留덊겕 ?ㅽ???        <select id="optWatermarkStyle">
+          <option value="solid_dark">寃? 諛섑닾紐?/option>
+          <option value="solid_light">?곗깋 諛섑닾紐?/option>
         </select>
       </label>
       <label>
-        제목 정렬
+        ?쒕ぉ ?뺣젹
         <select id="optTitleAlign">
-          <option value="left">왼쪽</option>
-          <option value="center">가운데</option>
-          <option value="right">오른쪽</option>
+          <option value="left">?쇱そ</option>
+          <option value="center">媛?대뜲</option>
+          <option value="right">?ㅻⅨ履?/option>
         </select>
       </label>
       <label>
-        메모 정렬
+        硫붾え ?뺣젹
         <select id="optMemoAlign">
-          <option value="left">왼쪽</option>
-          <option value="center">가운데</option>
-          <option value="right">오른쪽</option>
+          <option value="left">?쇱そ</option>
+          <option value="center">媛?대뜲</option>
+          <option value="right">?ㅻⅨ履?/option>
         </select>
       </label>
       <label>
-        좌표 표기
+        醫뚰몴 ?쒓린
         <select id="optCoordsLabel">
-          <option value="off">숫자만</option>
+          <option value="off">?レ옄留?/option>
           <option value="gps">GPS</option>
-          <option value="coords">좌표</option>
+          <option value="coords">醫뚰몴</option>
         </select>
       </label>
       <label>
-        촬영 일시
+        珥ъ쁺 ?쇱떆
         <select id="optShowDatetime">
-          <option value="true">제목에 포함</option>
-          <option value="false">제목에서 제외</option>
+          <option value="true">?쒕ぉ???ы븿</option>
+          <option value="false">?쒕ぉ?먯꽌 ?쒖쇅</option>
         </select>
       </label>
       <label>
-        텍스트 크기
+        ?띿뒪???ш린
         <select id="optTextScale">
-          <option value="0.75">작게 (75%)</option>
-          <option value="1" selected>보통 (100%)</option>
-          <option value="1.25">크게 (125%)</option>
-          <option value="1.5">아주 크게 (150%)</option>
+          <option value="0.75">?묎쾶 (75%)</option>
+          <option value="1" selected>蹂댄넻 (100%)</option>
+          <option value="1.25">?ш쾶 (125%)</option>
+          <option value="1.5">?꾩＜ ?ш쾶 (150%)</option>
         </select>
       </label>
     </div>
   </section>
 
   <section id="editorPanel" class="panel" hidden>
-    <label for="reportTitle">보고서 제목</label>
-    <input id="reportTitle" class="report-title-input" type="text" placeholder="1페이지 상단 제목 (선택)" />
+    <label for="reportTitle">蹂닿퀬???쒕ぉ</label>
+    <input id="reportTitle" class="report-title-input" type="text" placeholder="1?섏씠吏 ?곷떒 ?쒕ぉ (?좏깮)" />
     <div style="overflow-x:auto; margin-top: 0.75rem;">
       <table>
         <thead>
           <tr>
-            <th>순번</th>
-            <th>미리보기</th>
-            <th>제목</th>
-            <th>메모</th>
-            <th>층</th>
-            <th>좌표</th>
-            <th>촬영일시</th>
+            <th>?쒕쾲</th>
+            <th>誘몃━蹂닿린</th>
+            <th>?쒕ぉ</th>
+            <th>硫붾え</th>
+            <th>痢?/th>
+            <th>醫뚰몴</th>
+            <th>珥ъ쁺?쇱떆</th>
           </tr>
         </thead>
         <tbody id="stampRows"></tbody>
@@ -168,7 +167,7 @@
   </section>
 
   <div id="lightbox" class="lightbox" hidden>
-    <img id="lightboxImg" alt="원본 미리보기" />
+    <img id="lightboxImg" alt="?먮낯 誘몃━蹂닿린" />
   </div>
 
   <script src="/report/jszip.min.js"></script>
@@ -234,7 +233,7 @@
 
     function floorLabel(floor) {
       if (!floor) return '';
-      return `${floor}층`;
+      return `${floor}痢?;
     }
 
     function applyExportSettingsToUi(settings) {
@@ -298,7 +297,7 @@
         stamp.title = row.querySelector('[data-field="title"]').value;
         stamp.memo = row.querySelector('[data-field="memo"]').value;
         const floorRaw = row.querySelector('[data-field="floor"]').value.trim();
-        stamp.floor = floorRaw ? floorRaw.replace(/층$/, '') : null;
+        stamp.floor = floorRaw ? floorRaw.replace(/痢?/, '') : null;
       });
       next.exportedAt = Date.now();
       return next;
@@ -312,10 +311,10 @@
         const imgUrl = imageUrls.get(stamp.imageFile) || '';
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td>${imgUrl ? `<img class="thumb" src="${imgUrl}" alt="">` : '(없음)'}</td>
+          <td>${imgUrl ? `<img class="thumb" src="${imgUrl}" alt="">` : '(?놁쓬)'}</td>
           <td><input data-field="title" value="${escapeAttr(stamp.title)}" /></td>
           <td><textarea data-field="memo">${escapeHtml(stamp.memo || '')}</textarea></td>
-          <td><input data-field="floor" value="${escapeAttr(floorLabel(stamp.floor))}" placeholder="예: 3층" /></td>
+          <td><input data-field="floor" value="${escapeAttr(floorLabel(stamp.floor))}" placeholder="?? 3痢? /></td>
           <td>${escapeHtml(formatCoords(stamp))}</td>
           <td>${escapeHtml(formatDate(stamp.createdAt))}</td>
         `;
@@ -352,11 +351,11 @@
       const zip = await JSZip.loadAsync(file);
       const manifestFile = zip.file('manifest.json');
       if (!manifestFile) {
-        throw new Error('manifest.json이 없습니다. VoiceStamp 프로젝트 ZIP인지 확인하세요.');
+        throw new Error('manifest.json???놁뒿?덈떎. VoiceStamp ?꾨줈?앺듃 ZIP?몄? ?뺤씤?섏꽭??');
       }
       manifest = JSON.parse(await manifestFile.async('string'));
       if (!manifest.stamps || !Array.isArray(manifest.stamps)) {
-        throw new Error('manifest 형식이 올바르지 않습니다.');
+        throw new Error('manifest ?뺤떇???щ컮瑜댁? ?딆뒿?덈떎.');
       }
 
       for (const stamp of manifest.stamps) {
@@ -368,7 +367,7 @@
 
       loadedZip = zip;
       renderEditor();
-      setStatus(`${file.name} — ${manifest.stamps.length}장 로드됨`);
+      setStatus(`${file.name} ??${manifest.stamps.length}??濡쒕뱶??);
     }
 
     function downloadBlob(blob, fileName) {
@@ -385,7 +384,7 @@
       if (!next) return;
       const blob = new Blob([JSON.stringify(next, null, 2)], { type: 'application/json' });
       downloadBlob(blob, 'manifest.json');
-      setStatus('manifest.json을 저장했습니다.');
+      setStatus('manifest.json????ν뻽?듬땲??');
     });
 
     saveZipBtn.addEventListener('click', async () => {
@@ -410,7 +409,7 @@
         const blob = await zip.generateAsync({ type: 'blob' });
         const baseName = (next.reportTitle || 'VoiceStamp').replace(/[\\/:*?"<>|]/g, '_');
         downloadBlob(blob, `${baseName}.voicestamp.zip`);
-        setStatus('수정된 ZIP을 저장했습니다.');
+        setStatus('?섏젙??ZIP????ν뻽?듬땲??');
       } finally {
         setExportBusy(false);
       }
@@ -427,13 +426,13 @@
           imageUrls,
           options,
           (current, total) => {
-            setStatus(`합성 JPEG 생성 중… ${current} / ${total}`);
+            setStatus(`?⑹꽦 JPEG ?앹꽦 以묅?${current} / ${total}`);
           },
         );
         downloadBlob(result.blob, result.fileName);
-        setStatus(`합성 JPEG ZIP을 저장했습니다. (${result.fileName})`);
+        setStatus(`?⑹꽦 JPEG ZIP????ν뻽?듬땲?? (${result.fileName})`);
       } catch (error) {
-        setStatus(error instanceof Error ? error.message : 'JPEG ZIP 저장에 실패했습니다.');
+        setStatus(error instanceof Error ? error.message : 'JPEG ZIP ??μ뿉 ?ㅽ뙣?덉뒿?덈떎.');
       } finally {
         setExportBusy(false);
       }
@@ -454,7 +453,7 @@
         const coords = formatCoords(stamp);
         item.innerHTML = `
           ${imgUrl ? `<img src="${imgUrl}" alt="">` : ''}
-          <div class="print-meta"><strong>${escapeHtml(stamp.title || '(제목 없음)')}</strong></div>
+          <div class="print-meta"><strong>${escapeHtml(stamp.title || '(?쒕ぉ ?놁쓬)')}</strong></div>
           ${stamp.memo ? `<div class="print-meta">${escapeHtml(stamp.memo)}</div>` : ''}
           ${stamp.floor ? `<div class="print-meta">${escapeHtml(floorLabel(stamp.floor))}</div>` : ''}
           ${coords ? `<div class="print-meta">${escapeHtml(coords)}</div>` : ''}
@@ -466,7 +465,7 @@
       printPanel.hidden = false;
       window.print();
       printPanel.hidden = true;
-      setStatus('인쇄 대화상자를 열었습니다. PDF로 저장을 선택하세요.');
+      setStatus('?몄뇙 ??붿긽?먮? ?댁뿀?듬땲?? PDF濡???μ쓣 ?좏깮?섏꽭??');
     });
 
     zipInput.addEventListener('change', async (event) => {
@@ -476,7 +475,7 @@
         await loadZip(file);
       } catch (error) {
         setExportBusy(false);
-        setStatus(error instanceof Error ? error.message : 'ZIP을 열지 못했습니다.');
+        setStatus(error instanceof Error ? error.message : 'ZIP???댁? 紐삵뻽?듬땲??');
       }
     });
 
