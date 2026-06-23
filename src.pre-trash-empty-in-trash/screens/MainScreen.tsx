@@ -102,6 +102,7 @@ export function MainScreen() {
           onBack={() => setScreen(settingsReturn)}
           backLabel={settingsReturn === 'list' ? '목록' : '카메라'}
           refreshKey={refreshKey}
+          onTrashEmptied={bumpRefresh}
           onSettingsSaved={bumpRefresh}
           onShowOnboarding={() => setShowIntroOverlay(true)}
           onOpenOssLicenses={() => setScreen('ossLicenses')}

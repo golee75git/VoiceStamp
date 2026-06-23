@@ -218,6 +218,7 @@ export function SettingsScreen({
           getOverlayFooterPhrase(),
           getOverlayShowOrgName(),
           getOverlayShowFooterPhrase(),
+          getTrashedStampCount(),
         ]);
         setFolderName(name);
         setPdfPhotosPerPageState(perPage);
@@ -239,11 +240,42 @@ export function SettingsScreen({
         setOverlayFooterPhraseState(footerPhrase);
         setOverlayShowOrgNameState(showOrgName);
         setOverlayShowFooterPhraseState(showFooterPhrase);
+        setTrashCount(trashed);
       } finally {
         setLoading(false);
       }
     })();
   }, [refreshKey]);
+
+  const handleEmptyTrash = () => {
+    void (async () => {
+      if (trashCount === 0) {
+        showAlert('휴지통 비우기', '휴지통이 이미 비어 있습니다.');
+        return;
+      }
+
+      const confirmed = await confirmAlert(
+        '휴지통 비우기',
+        `${trashCount}개 스탬프를 영구 삭제합니다. 되돌릴 수 없습니다.`,
+        { confirmText: '비우기', destructive: true },
+      );
+      if (!confirmed) {
+        return;
+      }
+
+      setEmptyingTrash(true);
+      try {
+        const removed = await emptyTrash();
+        setTrashCount(0);
+        onTrashEmptied?.();
+        showAlert('완료', `${removed}개를 영구 삭제했습니다.`);
+      } catch (e) {
+        showAlert('실패', e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.');
+      } finally {
+        setEmptyingTrash(false);
+      }
+    })();
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -865,6 +897,22 @@ export function SettingsScreen({
             <Text style={styles.secondaryButtonText}>
               기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
             </Text>
+          </Pressable>
+
+          <Text style={[styles.label, styles.sectionGap]}>휴지통</Text>
+          <Text style={styles.hint}>
+            휴지통에 {trashCount}개 있습니다. 비우면 사진과 기록이 영구 삭제됩니다.
+          </Text>
+          <Pressable
+            style={[styles.dangerButton, (saving || emptyingTrash) && styles.buttonDisabled]}
+            onPress={handleEmptyTrash}
+            disabled={saving || emptyingTrash}
+          >
+            {emptyingTrash ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.dangerButtonText}>휴지통 비우기</Text>
+            )}
           </Pressable>
 
           <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,9 +14,8 @@ import {
 import { resolveImageUri } from '../services/fileService';
 import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { listTrashedStamps } from '../services/stampRepository';
-import { emptyTrash, restoreStampFromTrash } from '../services/stampTrash';
+import { restoreStampFromTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
-import { confirmAlert, showAlert } from '../utils/confirmAlert';
 
 type TrashScreenProps = {
   onBack: () => void;
@@ -27,7 +26,6 @@ type TrashScreenProps = {
 export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps) {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [loading, setLoading] = useState(true);
-  const [emptyingTrash, setEmptyingTrash] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
@@ -52,50 +50,20 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
     load();
   }, [load, refreshKey]);
 
-  const handleEmptyTrash = () => {
-    void (async () => {
-      if (stamps.length === 0) {
-        showAlert('휴지통 비우기', '휴지통이 이미 비어 있습니다.');
-        return;
-      }
-
-      const confirmed = await confirmAlert(
-        '휴지통 비우기',
-        `${stamps.length}개 스탬프를 영구 삭제합니다. 되돌릴 수 없습니다.`,
-        { confirmText: '비우기', destructive: true },
-      );
-      if (!confirmed) {
-        return;
-      }
-
-      setEmptyingTrash(true);
-      try {
-        const removed = await emptyTrash();
-        onChanged();
-        await load();
-        showAlert('완료', `${removed}개를 영구 삭제했습니다.`);
-      } catch (e) {
-        showAlert('실패', e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.');
-      } finally {
-        setEmptyingTrash(false);
-      }
-    })();
-  };
-
   const handleRestore = async (stamp: Stamp) => {
     setBusyId(stamp.id);
     try {
       const restored = await restoreStampFromTrash(stamp.id);
       if (!restored) {
-        Alert.alert('복원 실패', '스탬프를 찾을 수 없습니다.');
+        Alert.alert('蹂듭썝 ?ㅽ뙣', '?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
         return;
       }
       onChanged();
       await load();
     } catch (e) {
       Alert.alert(
-        '복원 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        '蹂듭썝 ?ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setBusyId(null);
@@ -110,23 +78,10 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={onBack}>
-          <Text style={styles.backText}>← 목록</Text>
+          <Text style={styles.backText}>??紐⑸줉</Text>
         </Pressable>
-        <Text style={styles.title}>휴지통</Text>
-        <Text style={styles.hint}>항목을 누르면 목록으로 복원합니다.</Text>
-        {stamps.length > 0 ? (
-          <Pressable
-            style={[styles.dangerButton, emptyingTrash && styles.buttonDisabled]}
-            onPress={handleEmptyTrash}
-            disabled={emptyingTrash || busyId !== null}
-          >
-            {emptyingTrash ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.dangerButtonText}>휴지통 비우기 ({stamps.length})</Text>
-            )}
-          </Pressable>
-        ) : null}
+        <Text style={styles.title}>?댁???/Text>
+        <Text style={styles.hint}>??ぉ???꾨Ⅴ硫?紐⑸줉?쇰줈 蹂듭썝?⑸땲?? ?곴뎄 ??젣???ㅼ젙?먯꽌 鍮꾩슱 ???덉뒿?덈떎.</Text>
       </View>
 
       <View style={styles.listArea}>
@@ -136,7 +91,7 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
           </View>
         ) : stamps.length === 0 ? (
           <View style={styles.centered}>
-            <Text style={styles.empty}>휴지통이 비어 있습니다.</Text>
+            <Text style={styles.empty}>?댁??듭씠 鍮꾩뼱 ?덉뒿?덈떎.</Text>
           </View>
         ) : (
           <FlatList
@@ -158,16 +113,16 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
                 />
                 <View style={styles.meta}>
                   <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
-                    {item.title || '(제목 없음)'}
+                    {item.title || '(?쒕ぉ ?놁쓬)'}
                   </Text>
                   <Text
                     style={[styles.cardMemo, { textAlign: memoTextAlign }]}
                     numberOfLines={isGrid ? 3 : 2}
                   >
-                    {item.memo || '(메모 없음)'}
+                    {item.memo || '(硫붾え ?놁쓬)'}
                   </Text>
                   <Text style={styles.cardDate}>
-                    삭제:{' '}
+                    ??젣:{' '}
                     {item.deletedAt
                       ? new Date(item.deletedAt).toLocaleString('ko-KR')
                       : '-'}
@@ -212,20 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b7280',
     lineHeight: 18,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  dangerButton: {
-    backgroundColor: '#dc2626',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  dangerButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
   listArea: {
     flex: 1,
