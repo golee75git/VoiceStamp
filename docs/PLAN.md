@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.6 |
-| 작성일 | 2026-06-22 |
-| 기준 커밋 | `b5922eb` (main) |
+| 문서 버전 | 2.7 |
+| 작성일 | 2026-06-23 |
+| 기준 커밋 | `e6bb868` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -212,6 +212,20 @@
 | 151 | 촬영 확인 후 **3버튼** (다시 촬영 / 저장 / 연속 촬영) | `ec4930e` | `restore-capture-action-sheet.bat` §110 |
 | 152 | **연속 촬영** 직전 **위치·장소명 재사용** | `b5922eb` | `restore-quick-capture-location.bat` §111 |
 
+## 2N. Phase 2 추가 완료 (2026-06-22 ~ 2026-06-23)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 153 | 촬영 확인 시트 열림 중 **GPS 프리페치** | `f5f1592` | `restore-capture-location-prefetch.bat` |
+| 154 | 연속 촬영 **인앱 카메라** 옵션 | `e971934` | `restore-continuous-in-app-camera.bat` |
+| 155 | GitHub APK `releases/20260622_094203` | `4f20bca` | — |
+| 156 | 카메라 홈 스플래시 **flex 확대** | `a89e166` | `restore-camera-home-splash-size.bat` |
+| 157 | 웹 휴지통 이동 **`confirmAlert`** | `fcbf747` | `restore-web-trash-confirm.bat` |
+| 158 | 웹 휴지통 비우기 **`confirmAlert`** | `4745255` | `restore-web-empty-trash-confirm.bat` |
+| 159 | 웹 **`/` APK 랜딩** · **`/app`** 테스트 앱 | `0c7e2dd` | `restore-root-landing.bat` |
+| 160 | `expo export` 후 **랜딩/앱 index 스왑** | `0ab0f93` | `restore-web-root-layout.bat` |
+| 161 | 랜딩 **개인정보·APK 권장** 안내 | `e6bb868` | `restore-landing-privacy.bat` |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -240,6 +254,7 @@
 | (본 갱신) | `7b6b0c1` 반영 — 학교 200m·건물명/도로명·APK `184121`·날짜별 이력 |
 | (본 갱신) | `eaa17e4` 반영 — 로컬 학교 DB·`schools.sqlite`·목록 검색·APK·날짜별 이력 |
 | (본 갱신) | `b5922eb` 반영 — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·APK·날짜별 이력 |
+| (본 갱신) | `e6bb868` 반영 — GPS 프리페치·연속 인앱 카메라·스플래시·웹 랜딩/휴지통 confirm·APK·날짜별 이력 |
 
 ---
 
@@ -380,6 +395,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-19 | 3 | PRD·PROJECT·PLAN·README **`7b6b0c1` 동기화** · **앱 내 OSS 라이선스**·LICENSE-NOTICE(베타)·LEG-06 (`3caf3f0`·`2a5b75b`) |
 | 2026-06-20 | 2L | **로컬 학교 DB** (공공데이터) → **`schools.sqlite`** (부팅 수정) · **목록 제목·메모 검색** (`55c33df`·`88671c1`·`eaa17e4`) |
 | 2026-06-21 | 2M | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** (`3ecb4f4`·`ec4930e`·`b5922eb`) |
+| 2026-06-22 | 2N | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** (`f5f1592`·`e971934`·`4f20bca`·`a89e166`) |
+| 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
 
 ---
 
@@ -387,7 +404,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **설치 권장** — 3버튼·연속 촬영 **위치 재사용**·좌표 없음=숨김 |
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | **설치 권장** — GPS 프리페치·연속 인앱 카메라·스플래시·3버튼·연속 위치 재사용 |
+| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **GitHub** — GPS 프리페치·연속 인앱 카메라 (스플래시 **미포함**) |
+| `VoiceStamp_20260623_132828.apk` | `a89e166` | 스플래시 flex 확대 (프리페치·인앱 카메라 **미포함**) |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치·인앱 카메라 **미포함**) |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
 | `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 없음=숨김** (3버튼 **미포함**) |
 | `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` (**GitHub `releases/`**) |

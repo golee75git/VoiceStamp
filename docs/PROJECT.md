@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-22**  
-최신 커밋 기준: `b5922eb` (main)
+문서 작성일: **2026-06-23**  
+최신 커밋 기준: `e6bb868` (main)
 
 ---
 
@@ -244,6 +244,14 @@ VoiceStamp/
 | 144 | **좌표 표기 없음=숨김** (`coords_label` off → null) | `3ecb4f4` | `restore-coords-off-hide.bat` §108 |
 | 145 | 촬영 확인 후 **3버튼** (`CaptureActionSheet`) | `ec4930e` | `restore-capture-action-sheet.bat` §110 |
 | 146 | **연속 촬영** 직전 위치·장소명 재사용 (`quickCaptureSave`) | `b5922eb` | `restore-quick-capture-location.bat` §111 |
+| 147 | 촬영 확인 시트 열림 중 **GPS 프리페치** | `f5f1592` | `restore-capture-location-prefetch.bat` |
+| 148 | 연속 촬영 **인앱 카메라** 옵션 | `e971934` | `restore-continuous-in-app-camera.bat` |
+| 149 | 카메라 홈 스플래시 **flex 확대** | `a89e166` | `restore-camera-home-splash-size.bat` |
+| 150 | 웹 휴지통 이동 **`confirmAlert`** (`window.confirm`) | `fcbf747` | `restore-web-trash-confirm.bat` |
+| 151 | 웹 휴지통 비우기 **`confirmAlert`** | `4745255` | `restore-web-empty-trash-confirm.bat` |
+| 152 | 웹 **`/` APK 랜딩** · **`/app`** 웹 테스트 앱 | `0c7e2dd` | `restore-root-landing.bat` |
+| 153 | `expo export` 후 **`dist/index.html` 스왑** (랜딩/앱 분리) | `0ab0f93` | `restore-web-root-layout.bat` |
+| 154 | 랜딩 **개인정보·APK 권장** 안내 패널 | `e6bb868` | `restore-landing-privacy.bat` |
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -309,7 +317,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260622_000517.apk`** | `b5922eb` | **설치 권장 (로컬)** — 3버튼·연속 촬영 **위치 재사용**·좌표 없음=숨김 |
+| **`VoiceStamp_20260623_164337.apk`** | `0ab0f93` | **설치 권장 (로컬)** — GPS 프리페치·연속 인앱 카메라·스플래시 확대·3버튼·연속 위치 재사용 |
+| **`releases/VoiceStamp_20260622_094203.apk`** | `4f20bca` | GPS 프리페치·연속 인앱 카메라 (**GitHub `releases/`**) |
+| `VoiceStamp_20260623_132828.apk` | `a89e166` | 스플래시 flex 확대 (프리페치·인앱 카메라 **미포함**) |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치·인앱 카메라·스플래시 **미포함**) |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
 | `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 표기 없음=숨김** (3버튼 **미포함**) |
 | **`VoiceStamp_20260620_234924.apk`** | `eaa17e4` | 목록 **제목·메모 검색** + `schools.sqlite` (**GitHub `releases/`**) |
@@ -346,11 +357,21 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-06-23
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | **권장 (로컬)** — GPS 프리페치·연속 인앱 카메라·스플래시 flex 확대 포함 | 로컬 |
+| `VoiceStamp_20260623_132828.apk` | `a89e166` | 스플래시 flex 확대 (웹 루트·휴지통 confirm **미포함**) | 로컬 |
+
+> 웹 전용 (`0c7e2dd`~`e6bb868`): 루트 APK 랜딩·`/app`·`post-export-web-layout.mjs`·랜딩 개인정보 안내 — APK 기능 변경 없음.
+
 #### 2026-06-22
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **연속 촬영** 루프에서 직전 저장 **좌표·장소명 재사용** | **권장 (로컬)** |
+| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **촬영 시트 GPS 프리페치** · **연속 촬영 인앱 카메라** | **GitHub `releases/`** |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **연속 촬영** 루프 직전 **좌표·장소명 재사용** (프리페치·인앱 카메라 **미포함**) | 로컬 |
 
 #### 2026-06-21
 
@@ -613,12 +634,27 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-23
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`e6bb868` 기준) |
+| `e6bb868` | 랜딩 **개인정보·APK 권장** 안내 패널 · Vercel 배포 · `restore-landing-privacy.bat` |
+| `0ab0f93` | APK `VoiceStamp_20260623_164337` — `scripts/post-export-web-layout.mjs` (`dist/index.html`↔`dist/app/`) · `restore-web-root-layout.bat` |
+| `0c7e2dd` | 웹 **`/`** `landing.html` · **`/app`** Expo 앱 · `vercel.json` rewrite · `restore-root-landing.bat` |
+| `4745255` | 웹 설정 **휴지통 비우기** `confirmAlert` · `restore-web-empty-trash-confirm.bat` |
+| `fcbf747` | 웹 **휴지통 이동** `confirmAlert` (`src/utils/confirmAlert.ts`) · `restore-web-trash-confirm.bat` |
+| `a89e166` | APK `VoiceStamp_20260623_132828` — 카메라 홈 스플래시 **flex 확대** · `restore-camera-home-splash-size.bat` |
+
 ### 2026-06-22
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`b5922eb` 기준) |
-| `b5922eb` | APK `VoiceStamp_20260622_000517` — **연속 촬영** 루프 직전 **좌표·장소명 재사용** · `restore-quick-capture-location.bat` §111 |
+| `dd09b59` | PRD·PROJECT·PLAN·README 문서 동기화 (`b5922eb` 기준) |
+| `4f20bca` | GitHub `releases/VoiceStamp_20260622_094203.apk` — GPS 프리페치·연속 인앱 카메라 |
+| `e971934` | 연속 촬영 **인앱 CameraView** 옵션 · `restore-continuous-in-app-camera.bat` |
+| `f5f1592` | 촬영 확인 시트 열림 중 **GPS 프리페치** · `restore-capture-location-prefetch.bat` |
+| `b5922eb` | APK `VoiceStamp_20260622_000517` — **연속 촬영** 직전 **좌표·장소명 재사용** · `restore-quick-capture-location.bat` §111 |
 
 ### 2026-06-21
 

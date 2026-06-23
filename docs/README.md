@@ -29,16 +29,16 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-22)
+## 현재 상태 스냅샷 (2026-06-23)
 
-- **최신 커밋:** `b5922eb` (main)
-- **웹:** https://voicestamp-gilt.vercel.app
+- **최신 커밋:** `e6bb868` (main)
+- **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (로컬):** `VoiceStamp_20260622_000517.apk` — **3버튼** · **연속 촬영 위치 재사용** · **좌표 없음=숨김**
-- **이전 권장 APK:** `VoiceStamp_20260620_234924.apk` (`eaa17e4`, 목록 검색 + `schools.sqlite`, 3버튼 **미포함**)
+- **권장 APK (로컬):** `VoiceStamp_20260623_164337.apk` — GPS 프리페치 · 연속 **인앱 카메라** · 스플래시 확대 · 3버튼·연속 위치 재사용
+- **권장 APK (GitHub):** `releases/VoiceStamp_20260622_094203.apk` (`4f20bca`, 스플래시 확대 **미포함**)
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260622_094203.apk
+- **이전 권장 APK:** `VoiceStamp_20260622_000517.apk` (`b5922eb`, 프리페치·인앱 카메라 **미포함**)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
-- **GitHub APK:** `releases/VoiceStamp_20260620_234924.apk` (`eaa17e4`, 3버튼·연속 촬영 **미포함**)
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260620_234924.apk
 - **APK 다운로드:** `/info` → GitHub Releases
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
 
@@ -62,12 +62,16 @@
 | 06-19 | **`7b6b0c1` 문서 동기화** · **앱 내 OSS 라이선스**·LICENSE-NOTICE(베타)·LEG-06 |
 | 06-20 | **로컬 학교 DB** → **`schools.sqlite`** (부팅 수정) · **목록 제목·메모 검색** |
 | 06-21 | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** |
+| 06-22 | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** |
+| 06-23 | 웹 **휴지통 confirm** · **`/` APK 랜딩 + `/app`** · 랜딩 **개인정보·APK 권장** 안내 |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260622_000517.apk` | `b5922eb` | **설치 권장** — 3버튼·연속 촬영 위치 재사용·좌표 없음=숨김 |
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | **설치 권장** — GPS 프리페치·연속 인앱 카메라·스플래시·3버튼 |
+| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **GitHub** — GPS 프리페치·연속 인앱 카메라 |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치 **미포함**) |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** |
 | `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 없음=숨김** |
 | `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` (**GitHub**) |
