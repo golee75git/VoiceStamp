@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 
 import { openInfoPage } from '../constants/infoUrls';
-import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
 
@@ -244,11 +243,11 @@ export function StampListScreen({
     try {
       const uri = await createStampsPdf(selected, pdfFileName, pdfReportTitle);
       setPdfUri(uri);
-      Alert.alert('PDF 생성 완료', '저장 또는 공유 버튼을 눌러주세요.');
+      Alert.alert('PDF ?앹꽦 ?꾨즺', '????먮뒗 怨듭쑀 踰꾪듉???뚮윭二쇱꽭??');
     } catch (e) {
       Alert.alert(
-        'PDF 생성 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF ?앹꽦 ?ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -263,8 +262,8 @@ export function StampListScreen({
       await savePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
-        'PDF 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -279,8 +278,8 @@ export function StampListScreen({
       await sharePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
-        'PDF 공유 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'PDF 怨듭쑀 ?ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setPdfBusy(false);
@@ -315,21 +314,21 @@ export function StampListScreen({
       );
 
       if (saved === 0) {
-        Alert.alert('이미지 저장 실패', '선택한 스탬프를 저장하지 못했습니다.');
+        Alert.alert('?대?吏 ????ㅽ뙣', '?좏깮???ㅽ꺃?꾨? ??ν븯吏 紐삵뻽?듬땲??');
         return;
       }
 
-      const failPart = failed > 0 ? `\n${failed}장은 실패했습니다.` : '';
+      const failPart = failed > 0 ? `\n${failed}?μ? ?ㅽ뙣?덉뒿?덈떎.` : '';
       Alert.alert(
-        '이미지 저장 완료',
+        '?대?吏 ????꾨즺',
         Platform.OS === 'web'
-          ? `${saved}장을 다운로드했습니다.${failPart}`
-          : `${saved}장을 갤러리 VoiceStamp 앨범에 저장했습니다.${failPart}`,
+          ? `${saved}?μ쓣 ?ㅼ슫濡쒕뱶?덉뒿?덈떎.${failPart}`
+          : `${saved}?μ쓣 媛ㅻ윭由?VoiceStamp ?⑤쾾????ν뻽?듬땲??${failPart}`,
       );
     } catch (e) {
       Alert.alert(
-        '이미지 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        '?대?吏 ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setImageBusy(false);
@@ -354,15 +353,15 @@ export function StampListScreen({
       );
       await shareProjectZip(result);
       Alert.alert(
-        '프로젝트 저장 완료',
+        '?꾨줈?앺듃 ????꾨즺',
         Platform.OS === 'web'
-          ? 'ZIP 파일을 다운로드했습니다. PC에서 압축을 풀거나 /report 페이지에서 편집할 수 있습니다.'
-          : '프로젝트 ZIP을 공유했습니다. PC로 보낸 뒤 압축을 풀거나 voicestamp-gilt.vercel.app/report 에서 편집할 수 있습니다.',
+          ? 'ZIP ?뚯씪???ㅼ슫濡쒕뱶?덉뒿?덈떎. PC?먯꽌 ?뺤텞???嫄곕굹 /report ?섏씠吏?먯꽌 ?몄쭛?????덉뒿?덈떎.'
+          : '?꾨줈?앺듃 ZIP??怨듭쑀?덉뒿?덈떎. PC濡?蹂대궦 ???뺤텞???嫄곕굹 voicestamp-gilt.vercel.app/report ?먯꽌 ?몄쭛?????덉뒿?덈떎.',
       );
     } catch (e) {
       Alert.alert(
-        '프로젝트 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        '?꾨줈?앺듃 ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setProjectBusy(false);
@@ -380,15 +379,15 @@ export function StampListScreen({
       const result = await createStampsXlsx(selected, pdfFileName);
       await shareStampsXlsx(result);
       Alert.alert(
-        '엑셀 저장 완료',
+        '?묒? ????꾨즺',
         Platform.OS === 'web'
-          ? 'XLSX 파일을 다운로드했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.'
-          : '엑셀 파일을 공유했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.',
+          ? 'XLSX ?뚯씪???ㅼ슫濡쒕뱶?덉뒿?덈떎. PC Excel?먯꽌 ?쒕ぉ쨌硫붾え쨌痢듭쓣 ?몄쭛?????덉뒿?덈떎.'
+          : '?묒? ?뚯씪??怨듭쑀?덉뒿?덈떎. PC Excel?먯꽌 ?쒕ぉ쨌硫붾え쨌痢듭쓣 ?몄쭛?????덉뒿?덈떎.',
       );
     } catch (e) {
       Alert.alert(
-        '엑셀 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        '?묒? ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setXlsxBusy(false);
@@ -406,15 +405,15 @@ export function StampListScreen({
       const result = await createStampsHwpx(selected, pdfFileName, pdfReportTitle);
       await shareStampsHwpx(result);
       Alert.alert(
-        'HWPX 저장 완료',
+        'HWPX ????꾨즺',
         Platform.OS === 'web'
-          ? 'HWPX 파일을 다운로드했습니다. PC에서 한컴오피스 등으로 열어 편집할 수 있습니다.'
-          : 'HWPX 파일을 공유했습니다. PC로 보낸 뒤 한컴오피스 등에서 편집할 수 있습니다.',
+          ? 'HWPX ?뚯씪???ㅼ슫濡쒕뱶?덉뒿?덈떎. PC?먯꽌 ?쒖뺨?ㅽ뵾???깆쑝濡??댁뼱 ?몄쭛?????덉뒿?덈떎.'
+          : 'HWPX ?뚯씪??怨듭쑀?덉뒿?덈떎. PC濡?蹂대궦 ???쒖뺨?ㅽ뵾???깆뿉???몄쭛?????덉뒿?덈떎.',
       );
     } catch (e) {
       Alert.alert(
-        'HWPX 저장 실패',
-        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+        'HWPX ????ㅽ뙣',
+        e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
       );
     } finally {
       setHwpxBusy(false);
@@ -435,8 +434,8 @@ export function StampListScreen({
       }
     } catch (e) {
       Alert.alert(
-        '앨범',
-        e instanceof Error ? e.message : '앨범에서 선택하지 못했습니다.',
+        '?⑤쾾',
+        e instanceof Error ? e.message : '?⑤쾾?먯꽌 ?좏깮?섏? 紐삵뻽?듬땲??',
       );
     } finally {
       setAlbumBusy(false);
@@ -444,40 +443,42 @@ export function StampListScreen({
   };
 
   const handleDeleteSelected = () => {
-    void (async () => {
-      const selected = getSelectedStamps();
-      if (selected.length === 0) {
-        return;
-      }
+    const selected = getSelectedStamps();
+    if (selected.length === 0) {
+      return;
+    }
 
-      const confirmed = await confirmAlert(
-        '휴지통으로 이동',
-        `선택한 ${selected.length}개 스탬프를 휴지통으로 옮깁니다.`,
-        { confirmText: '삭제', destructive: true },
-      );
-      if (!confirmed) {
-        return;
-      }
-
-      setDeleteBusy(true);
-      try {
-        const idsToTrash = [...selectedIds];
-        const moved = await moveStampsToTrash(idsToTrash);
-        if (moved === 0) {
-          Alert.alert('삭제 실패', '스탬프를 찾을 수 없습니다.');
-          return;
-        }
-        exitSelection();
-        removeStampsKeepScroll(idsToTrash);
-      } catch (e) {
-        Alert.alert(
-          '삭제 실패',
-          e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
-        );
-      } finally {
-        setDeleteBusy(false);
-      }
-    })();
+    Alert.alert(
+      '?댁??듭쑝濡??대룞',
+      `?좏깮??${selected.length}媛??ㅽ꺃?꾨? ?댁??듭쑝濡???퉩?덈떎.`,
+      [
+        { text: '痍⑥냼', style: 'cancel' },
+        {
+          text: '??젣',
+          style: 'destructive',
+          onPress: async () => {
+            setDeleteBusy(true);
+            try {
+              const idsToTrash = [...selectedIds];
+              const moved = await moveStampsToTrash(idsToTrash);
+              if (moved === 0) {
+                Alert.alert('??젣 ?ㅽ뙣', '?ㅽ꺃?꾨? 李얠쓣 ???놁뒿?덈떎.');
+                return;
+              }
+              exitSelection();
+              removeStampsKeepScroll(idsToTrash);
+            } catch (e) {
+              Alert.alert(
+                '??젣 ?ㅽ뙣',
+                e instanceof Error ? e.message : '?????녿뒗 ?ㅻ쪟媛 諛쒖깮?덉뒿?덈떎.',
+              );
+            } finally {
+              setDeleteBusy(false);
+            }
+          },
+        },
+      ],
+    );
   };
 
   const selectedCount = selectedIds.size;
@@ -491,32 +492,32 @@ export function StampListScreen({
   return (
     <View style={styles.container}>
       {menuVisible ? (
-        <Pressable style={styles.menuBackdrop} onPress={closeMenu} accessibilityLabel="메뉴 닫기" />
+        <Pressable style={styles.menuBackdrop} onPress={closeMenu} accessibilityLabel="硫붾돱 ?リ린" />
       ) : null}
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.headerTitleGroup}>
             <Image source={micIcon} style={styles.headerMicIcon} resizeMode="contain" />
-            <Text style={styles.title}>저장 목록</Text>
+            <Text style={styles.title}>???紐⑸줉</Text>
           </View>
           <View style={styles.headerActions}>
             {selecting ? (
               <Pressable onPress={exitSelection}>
-                <Text style={styles.actionText}>취소</Text>
+                <Text style={styles.actionText}>痍⑥냼</Text>
               </Pressable>
             ) : (
               stamps.length > 0 && (
                 <Pressable onPress={() => setSelecting(true)}>
-                  <Text style={styles.actionText}>선택</Text>
+                  <Text style={styles.actionText}>?좏깮</Text>
                 </Pressable>
               )
             )}
             <Pressable
               style={styles.menuButton}
               onPress={() => setMenuVisible((visible) => !visible)}
-              accessibilityLabel="더보기 메뉴"
+              accessibilityLabel="?붾낫湲?硫붾돱"
             >
-              <Text style={styles.menuButtonText}>⋮</Text>
+              <Text style={styles.menuButtonText}>??/Text>
             </Pressable>
           </View>
         </View>
@@ -525,20 +526,20 @@ export function StampListScreen({
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="제목·메모 검색"
+            placeholder="?쒕ぉ쨌硫붾え 寃??
             returnKeyType="search"
             autoCorrect={false}
             autoCapitalize="none"
             clearButtonMode="while-editing"
-            accessibilityLabel="제목과 메모 검색"
+            accessibilityLabel="?쒕ぉ怨?硫붾え 寃??
           />
           {searchQuery.length > 0 && Platform.OS === 'android' ? (
             <Pressable
               style={styles.searchClearButton}
               onPress={() => setSearchQuery('')}
-              accessibilityLabel="검색어 지우기"
+              accessibilityLabel="寃?됱뼱 吏?곌린"
             >
-              <Text style={styles.searchClearText}>✕</Text>
+              <Text style={styles.searchClearText}>??/Text>
             </Pressable>
           ) : null}
         </View>
@@ -551,7 +552,7 @@ export function StampListScreen({
                 onOpenTrash();
               }}
             >
-              <Text style={styles.menuItemText}>휴지통</Text>
+              <Text style={styles.menuItemText}>?댁???/Text>
             </Pressable>
             <Pressable
               style={styles.menuItem}
@@ -560,7 +561,7 @@ export function StampListScreen({
                 onOpenSettings();
               }}
             >
-              <Text style={styles.menuItemText}>설정</Text>
+              <Text style={styles.menuItemText}>?ㅼ젙</Text>
             </Pressable>
             <Pressable
               style={styles.menuItem}
@@ -569,30 +570,28 @@ export function StampListScreen({
                 void openInfoPage('/help');
               }}
             >
-              <Text style={styles.menuItemText}>도움말</Text>
+              <Text style={styles.menuItemText}>?꾩?留?/Text>
             </Pressable>
           </View>
         ) : null}
         <Text style={styles.countLine}>
           {hasSearchQuery ? (
             <>
-              검색 결과 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
-              <Text style={styles.countNumber}>{stamps.length}</Text>개
-            </>
+              寃??寃곌낵 <Text style={styles.countNumber}>{filteredStamps.length}</Text>媛?쨌 ?꾩껜{' '}
+              <Text style={styles.countNumber}>{stamps.length}</Text>媛?            </>
           ) : (
             <>
-              전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
-            </>
+              ?꾩껜 <Text style={styles.countNumber}>{stamps.length}</Text>媛?            </>
           )}
         </Text>
         <View style={styles.hintRow}>
-          <Text style={styles.hintIcon}>ⓘ</Text>
+          <Text style={styles.hintIcon}>??/Text>
           <Text style={styles.hint}>
             {selecting
               ? selectedCount > 0
-                ? '탭으로 추가 선택 · PDF / 이미지 / 프로젝트 / 엑셀 저장'
-                : '사진을 탭하거나 길게 눌러 선택하세요.'
-              : '항목을 길게 눌러 선택하거나 내보낼 수 있습니다.'}
+                ? '??쑝濡?異붽? ?좏깮 쨌 PDF / ?대?吏 / ?꾨줈?앺듃 / ?묒? ???
+                : '?ъ쭊????븯嫄곕굹 湲멸쾶 ?뚮윭 ?좏깮?섏꽭??'
+              : '??ぉ??湲멸쾶 ?뚮윭 ?좏깮?섍굅???대낫?????덉뒿?덈떎.'}
           </Text>
         </View>
         {selecting && selectedCount > 0 && (
@@ -605,7 +604,7 @@ export function StampListScreen({
               {pdfBusy && !pdfUri ? (
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <Text style={styles.pdfBarButtonText}>PDF 만들기</Text>
+                <Text style={styles.pdfBarButtonText}>PDF 留뚮뱾湲?/Text>
               )}
             </Pressable>
             <Pressable
@@ -619,8 +618,7 @@ export function StampListScreen({
                   !pdfUri && styles.pdfBarButtonTextDisabled,
                 ]}
               >
-                저장
-              </Text>
+                ???              </Text>
             </Pressable>
             <Pressable
               style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
@@ -630,7 +628,7 @@ export function StampListScreen({
               {imageBusy ? (
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <Text style={styles.pdfBarButtonText}>이미지 저장</Text>
+                <Text style={styles.pdfBarButtonText}>?대?吏 ???/Text>
               )}
             </Pressable>
             <Pressable
@@ -647,7 +645,7 @@ export function StampListScreen({
                   !pdfUri && styles.pdfBarButtonTextDisabled,
                 ]}
               >
-                공유
+                怨듭쑀
               </Text>
             </Pressable>
           </View>
@@ -662,7 +660,7 @@ export function StampListScreen({
               {projectBusy ? (
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <Text style={styles.pdfBarButtonText}>프로젝트</Text>
+                <Text style={styles.pdfBarButtonText}>?꾨줈?앺듃</Text>
               )}
             </Pressable>
             <Pressable
@@ -673,7 +671,7 @@ export function StampListScreen({
               {xlsxBusy ? (
                 <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <Text style={styles.pdfBarButtonText}>엑셀</Text>
+                <Text style={styles.pdfBarButtonText}>?묒?</Text>
               )}
             </Pressable>
             <Pressable
@@ -691,7 +689,7 @@ export function StampListScreen({
         )}
         {selecting && selectedCount > 0 && (
           <View style={styles.pdfNameRow}>
-            <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
+            <Text style={styles.pdfNameLabel}>PDF쨌?대?吏 ?뚯씪紐?/Text>
             <TextInput
               style={styles.pdfNameInput}
               value={pdfFileName}
@@ -699,12 +697,12 @@ export function StampListScreen({
               placeholder="VoiceStamp"
               editable={!exportBusy}
             />
-            <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
+            <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>蹂닿퀬???쒕ぉ</Text>
             <TextInput
               style={styles.pdfNameInput}
               value={pdfReportTitle}
               onChangeText={setPdfReportTitle}
-              placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
+              placeholder="1?섏씠吏 ?곷떒 ?쒕ぉ (鍮꾩슦硫??쒖떆 ????"
               editable={!exportBusy}
             />
           </View>
@@ -718,7 +716,7 @@ export function StampListScreen({
             {deleteBusy ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text style={styles.deleteButtonText}>휴지통으로 이동 ({selectedCount})</Text>
+              <Text style={styles.deleteButtonText}>?댁??듭쑝濡??대룞 ({selectedCount})</Text>
             )}
           </Pressable>
         )}
@@ -731,11 +729,11 @@ export function StampListScreen({
           </View>
         ) : stamps.length === 0 ? (
           <View style={styles.centered}>
-            <Text style={styles.empty}>저장된 스탬프가 없습니다.</Text>
+            <Text style={styles.empty}>??λ맂 ?ㅽ꺃?꾧? ?놁뒿?덈떎.</Text>
           </View>
         ) : filteredStamps.length === 0 ? (
           <View style={styles.centered}>
-            <Text style={styles.empty}>검색 결과가 없습니다.</Text>
+            <Text style={styles.empty}>寃??寃곌낵媛 ?놁뒿?덈떎.</Text>
           </View>
         ) : (
           <FlatList
@@ -772,7 +770,7 @@ export function StampListScreen({
                           isSelected && styles.checkboxChecked,
                         ]}
                       >
-                        {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                        {isSelected && <Text style={styles.checkmark}>??/Text>}
                       </View>
                     </View>
                   )}
@@ -782,13 +780,13 @@ export function StampListScreen({
                   />
                   <View style={styles.meta}>
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
-                      {stampDisplayTitle(item, pdfShowDatetime) || '(제목 없음)'}
+                      {stampDisplayTitle(item, pdfShowDatetime) || '(?쒕ぉ ?놁쓬)'}
                     </Text>
                     <Text
                       style={[styles.cardMemo, { textAlign: memoTextAlign }]}
                       numberOfLines={isGrid ? 3 : 2}
                     >
-                      {item.memo || '(메모 없음)'}
+                      {item.memo || '(硫붾え ?놁쓬)'}
                     </Text>
                     <Text style={styles.cardDate}>
                       {new Date(item.createdAt).toLocaleString('ko-KR')}
@@ -807,7 +805,7 @@ export function StampListScreen({
             style={[styles.bottomGalleryButton, albumBusy && styles.bottomButtonDisabled]}
             onPress={handlePickFromLibrary}
             disabled={albumBusy}
-            accessibilityLabel="갤러리에서 사진 선택"
+            accessibilityLabel="媛ㅻ윭由ъ뿉???ъ쭊 ?좏깮"
           >
             <Image source={galleryButton} style={styles.bottomGalleryButtonImage} resizeMode="cover" />
             {albumBusy ? (
@@ -819,7 +817,7 @@ export function StampListScreen({
           <Pressable
             style={styles.bottomCapturePillButton}
             onPress={onBack}
-            accessibilityLabel="사진 촬영"
+            accessibilityLabel="?ъ쭊 珥ъ쁺"
           >
             <Image source={captureButton} style={styles.bottomCapturePillButtonImage} resizeMode="cover" />
           </Pressable>
