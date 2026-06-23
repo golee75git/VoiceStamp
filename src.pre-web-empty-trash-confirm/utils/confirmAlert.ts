@@ -1,4 +1,4 @@
-import { Alert, Platform } from 'react-native';
+﻿import { Alert, Platform } from 'react-native';
 
 type ConfirmAlertOptions = {
   confirmText?: string;
@@ -11,8 +11,8 @@ export function confirmAlert(
   message: string,
   options?: ConfirmAlertOptions,
 ): Promise<boolean> {
-  const confirmText = options?.confirmText ?? '확인';
-  const cancelText = options?.cancelText ?? '취소';
+  const confirmText = options?.confirmText ?? '?뺤씤';
+  const cancelText = options?.cancelText ?? '痍⑥냼';
 
   if (Platform.OS === 'web') {
     if (typeof window === 'undefined') {
@@ -32,17 +32,4 @@ export function confirmAlert(
       },
     ]);
   });
-}
-
-export function showAlert(title: string, message?: string): void {
-  if (Platform.OS === 'web') {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const text = message ? `${title}\n\n${message}` : title;
-    window.alert(text);
-    return;
-  }
-
-  Alert.alert(title, message ?? '');
 }
