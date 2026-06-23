@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, BackHandler, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -97,8 +97,8 @@ export function CameraScreen({
   }, []);
 
   const handleCameraError = useCallback((error: unknown) => {
-    const message = error instanceof Error ? error.message : '카메라에 실패했습니다.';
-    Alert.alert('카메라', message);
+    const message = error instanceof Error ? error.message : '移대찓?쇱뿉 ?ㅽ뙣?덉뒿?덈떎.';
+    Alert.alert('移대찓??, message);
   }, []);
 
   const showCaptureActionSheet = useCallback(
@@ -123,7 +123,7 @@ export function CameraScreen({
       let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
       while (nextUri) {
         setCameraBusy(true);
-        setBusyHint('저장 중…');
+        setBusyHint('???以묅?);
         try {
           const savedLocation = await saveQuickCapture({
             tempImageUri: nextUri,
@@ -142,7 +142,7 @@ export function CameraScreen({
           setBusyHint(null);
         }
 
-        setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
+        setBusyHint(isWeb ? '移대찓???щ뒗 以묅? : '?쒖뒪??移대찓???щ뒗 以묅?);
         launchingRef.current = true;
         try {
           nextUri = await takePhotoWithSystemCamera();
@@ -172,7 +172,7 @@ export function CameraScreen({
   const startInAppContinuousCapture = useCallback(
     async (firstUri: string, initialLocation?: QuickCaptureLocation) => {
       setCameraBusy(true);
-      setBusyHint('저장 중…');
+      setBusyHint('???以묅?);
       try {
         let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
         const savedLocation = await saveQuickCapture({
@@ -217,7 +217,7 @@ export function CameraScreen({
 
     setInAppCapturing(true);
     setCameraBusy(true);
-    setBusyHint('저장 중…');
+    setBusyHint('???以묅?);
     try {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 1,
@@ -272,7 +272,7 @@ export function CameraScreen({
 
     launchingRef.current = true;
     setCameraBusy(true);
-    setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
+    setBusyHint(isWeb ? '移대찓???щ뒗 以묅? : '?쒖뒪??移대찓???щ뒗 以묅?);
     try {
       const uri = await takePhotoWithSystemCamera();
       if (uri) {
@@ -411,7 +411,7 @@ export function CameraScreen({
   if (!permission) {
     return (
       <View style={styles.centered}>
-        <Text>카메라 권한 확인 중...</Text>
+        <Text>移대찓??沅뚰븳 ?뺤씤 以?..</Text>
       </View>
     );
   }
@@ -419,12 +419,12 @@ export function CameraScreen({
   if (!isWeb && !permission.granted) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
+        <Text style={styles.message}>?ъ쭊 珥ъ쁺???꾪빐 移대찓??沅뚰븳???꾩슂?⑸땲??</Text>
         <Pressable style={styles.primaryButton} onPress={requestPermission}>
-          <Text style={styles.primaryButtonText}>권한 허용</Text>
+          <Text style={styles.primaryButtonText}>沅뚰븳 ?덉슜</Text>
         </Pressable>
         <Pressable style={styles.secondaryButton} onPress={onOpenList}>
-          <Text style={styles.secondaryButtonText}>목록으로 (앨범)</Text>
+          <Text style={styles.secondaryButtonText}>紐⑸줉?쇰줈 (?⑤쾾)</Text>
         </Pressable>
       </View>
     );
@@ -442,8 +442,8 @@ export function CameraScreen({
         />
 
         <View style={styles.inAppTopBar}>
-          <Text style={styles.inAppTitle}>연속 촬영</Text>
-          <Text style={styles.inAppHint}>셔터 → 저장 · 완료로 종료</Text>
+          <Text style={styles.inAppTitle}>?곗냽 珥ъ쁺</Text>
+          <Text style={styles.inAppHint}>?뷀꽣 ?????쨌 ?꾨즺濡?醫낅즺</Text>
         </View>
 
         <View
@@ -456,9 +456,9 @@ export function CameraScreen({
             style={styles.inAppDoneButton}
             onPress={exitInAppContinuous}
             disabled={cameraBusy || inAppCapturing}
-            accessibilityLabel="연속 촬영 완료"
+            accessibilityLabel="?곗냽 珥ъ쁺 ?꾨즺"
           >
-            <Text style={styles.inAppDoneButtonText}>완료</Text>
+            <Text style={styles.inAppDoneButtonText}>?꾨즺</Text>
           </Pressable>
         </View>
 
@@ -468,7 +468,7 @@ export function CameraScreen({
             onPress={() => void handleInAppContinuousShutter()}
             disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
             accessibilityRole="button"
-            accessibilityLabel="촬영"
+            accessibilityLabel="珥ъ쁺"
           >
             <View style={styles.inAppShutterInner} />
           </Pressable>
@@ -477,7 +477,7 @@ export function CameraScreen({
         {cameraBusy ? (
           <View style={styles.busyOverlay}>
             <ActivityIndicator size="large" color="#fff" />
-            <Text style={styles.launcherHint}>{busyHint ?? '저장 중…'}</Text>
+            <Text style={styles.launcherHint}>{busyHint ?? '???以묅?}</Text>
           </View>
         ) : null}
       </View>
@@ -487,20 +487,18 @@ export function CameraScreen({
   return (
     <View style={styles.container}>
       <View style={styles.launcher}>
-        <View style={styles.launcherSplash}>
-          <Image
-            source={cameraHomeImage}
-            style={styles.launcherImage}
-            resizeMode="contain"
-            accessibilityIgnoresInvertColors
-          />
-        </View>
+        <Image
+          source={cameraHomeImage}
+          style={styles.launcherImage}
+          resizeMode="contain"
+          accessibilityIgnoresInvertColors
+        />
         <Pressable
           style={styles.launchCaptureButton}
           onPress={() => void openSystemCamera()}
           disabled={cameraBusy || actionSheetVisible}
           accessibilityRole="button"
-          accessibilityLabel="사진 촬영"
+          accessibilityLabel="?ъ쭊 珥ъ쁺"
         >
           <View style={styles.launchCaptureInner} />
         </Pressable>
@@ -508,7 +506,7 @@ export function CameraScreen({
           <View style={styles.busyOverlay}>
             <ActivityIndicator size="large" color="#fff" />
             <Text style={styles.launcherHint}>
-              {busyHint ?? (isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…')}
+              {busyHint ?? (isWeb ? '移대찓???щ뒗 以묅? : '?쒖뒪??移대찓???щ뒗 以묅?)}
             </Text>
           </View>
         ) : null}
@@ -524,7 +522,7 @@ export function CameraScreen({
           style={[styles.navButton, styles.navIconButton]}
           onPress={onOpenList}
           disabled={cameraBusy || actionSheetVisible}
-          accessibilityLabel="목록"
+          accessibilityLabel="紐⑸줉"
         >
           <Image source={listIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
@@ -532,7 +530,7 @@ export function CameraScreen({
           style={[styles.navButton, styles.navIconButton]}
           onPress={onOpenSettings}
           disabled={cameraBusy || actionSheetVisible}
-          accessibilityLabel="설정"
+          accessibilityLabel="?ㅼ젙"
         >
           <Image source={settingsIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
@@ -579,22 +577,13 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#000',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 100,
-    gap: 12,
-  },
-  launcherSplash: {
-    flex: 1,
-    width: '100%',
-    minHeight: 0,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: '4%',
-    paddingTop: 8,
+    paddingBottom: 120,
+    gap: 20,
   },
   launcherImage: {
-    width: '100%',
-    height: '100%',
+    width: '88%',
+    height: '50%',
   },
   launchCaptureButton: {
     width: 76,
