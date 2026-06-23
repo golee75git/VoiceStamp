@@ -28,7 +28,8 @@
     { "source": "/license", "destination": "/license.html" },
     { "source": "/help", "destination": "/help.html" },
     { "source": "/report", "destination": "/report.html" },
-    { "source": "/app", "destination": "/app/index.html" },
-    { "source": "/app/", "destination": "/app/index.html" }
+    { "source": "/app", "destination": "/index.html" },
+    { "source": "/app/", "destination": "/index.html" },
+    { "source": "/", "destination": "/landing.html" }
   ]
 }
