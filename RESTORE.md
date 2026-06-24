@@ -1846,3 +1846,17 @@ Copy-Item public.pre-visitor-counter\privacy.html public\ -Force
 Remove-Item api\visitor.js -ErrorAction SilentlyContinue
 Remove-Item api -ErrorAction SilentlyContinue
 ```
+
+## 113. 랜딩 저작권 표기 영문 되돌리기 (선택)
+
+홈페이지 `© 2026 Lee Hyung Woo` 표기 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-landing-copyright-en.bat
+```
+
+또는:
+
+```powershell
+Copy-Item public.pre-landing-copyright-en\landing.html public\ -Force
+```
