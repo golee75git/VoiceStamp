@@ -54,45 +54,6 @@
   </section>
 
   <p>© 2026 이형우</p>
-  <footer>
-    <p id="visitor-stats" class="muted" aria-live="polite"></p>
-    문의: <a href="https://github.com/golee75git/VoiceStamp/issues">GitHub Issues</a>
-  </footer>
-  <script>
-    (function () {
-      var el = document.getElementById('visitor-stats');
-      if (!el) return;
-
-      var today = new Date().toISOString().slice(0, 10);
-      var seenKey = 'vs_landing_seen_' + today;
-
-      function showStats(data) {
-        if (!data || typeof data.daily !== 'number' || typeof data.total !== 'number') return;
-        el.textContent = '오늘 방문 ' + data.daily.toLocaleString('ko-KR')
-          + ' · 누적 ' + data.total.toLocaleString('ko-KR');
-      }
-
-      function loadStats() {
-        fetch('/api/visitor')
-          .then(function (res) { return res.ok ? res.json() : null; })
-          .then(showStats)
-          .catch(function () {});
-      }
-
-      if (localStorage.getItem(seenKey)) {
-        loadStats();
-        return;
-      }
-
-      localStorage.setItem(seenKey, '1');
-      fetch('/api/visitor', { method: 'POST', keepalive: true })
-        .then(function (res) { return res.ok ? res.json() : null; })
-        .then(function (data) {
-          if (data) showStats(data);
-          else loadStats();
-        })
-        .catch(loadStats);
-    })();
-  </script>
+  <footer>문의: <a href="https://github.com/golee75git/VoiceStamp/issues">GitHub Issues</a></footer>
 </body>
 </html>

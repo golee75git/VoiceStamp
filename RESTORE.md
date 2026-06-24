@@ -1829,3 +1829,20 @@ restore-quick-capture-location.bat
 Copy-Item src.pre-quick-capture-location\services\quickCaptureSave.ts src\services\ -Force
 Copy-Item src.pre-quick-capture-location\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 112. 랜딩 방문자 카운터 되돌리기 (선택)
+
+홈페이지 하단 방문자 집계(`api/visitor.js`, `localStorage` 당일 1회) 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-visitor-counter.bat
+```
+
+또는:
+
+```powershell
+Copy-Item public.pre-visitor-counter\landing.html public\ -Force
+Copy-Item public.pre-visitor-counter\privacy.html public\ -Force
+Remove-Item api\visitor.js -ErrorAction SilentlyContinue
+Remove-Item api -ErrorAction SilentlyContinue
+```
