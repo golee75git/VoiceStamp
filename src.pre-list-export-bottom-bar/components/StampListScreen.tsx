@@ -484,7 +484,6 @@ export function StampListScreen({
 
   const selectedCount = selectedIds.size;
   const hasSearchQuery = searchQuery.trim().length > 0;
-  const selectionCompact = selecting && selectedCount > 0;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
   const isGrid = numColumns > 1;
@@ -496,15 +495,11 @@ export function StampListScreen({
       {menuVisible ? (
         <Pressable style={styles.menuBackdrop} onPress={closeMenu} accessibilityLabel="메뉴 닫기" />
       ) : null}
-      <View style={[styles.header, selectionCompact && styles.headerCompact]}>
+      <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={styles.headerTitleGroup}>
-            {!selectionCompact ? (
-              <Image source={micIcon} style={styles.headerMicIcon} resizeMode="contain" />
-            ) : null}
-            <Text style={styles.title}>
-              {selectionCompact ? `${selectedCount}개 선택` : '저장 목록'}
-            </Text>
+            <Image source={micIcon} style={styles.headerMicIcon} resizeMode="contain" />
+            <Text style={styles.title}>저장 목록</Text>
           </View>
           <View style={styles.headerActions}>
             {selecting ? (
@@ -518,42 +513,38 @@ export function StampListScreen({
                 </Pressable>
               )
             )}
-            {!selectionCompact ? (
-              <Pressable
-                style={styles.menuButton}
-                onPress={() => setMenuVisible((visible) => !visible)}
-                accessibilityLabel="더보기 메뉴"
-              >
-                <Text style={styles.menuButtonText}>⋮</Text>
-              </Pressable>
-            ) : null}
+            <Pressable
+              style={styles.menuButton}
+              onPress={() => setMenuVisible((visible) => !visible)}
+              accessibilityLabel="더보기 메뉴"
+            >
+              <Text style={styles.menuButtonText}>⋮</Text>
+            </Pressable>
           </View>
         </View>
-        {!selecting ? (
-          <View style={styles.searchRow}>
-            <TextInput
-              style={styles.searchInput}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="제목·메모 검색"
-              returnKeyType="search"
-              autoCorrect={false}
-              autoCapitalize="none"
-              clearButtonMode="while-editing"
-              accessibilityLabel="제목과 메모 검색"
-            />
-            {searchQuery.length > 0 && Platform.OS === 'android' ? (
-              <Pressable
-                style={styles.searchClearButton}
-                onPress={() => setSearchQuery('')}
-                accessibilityLabel="검색어 지우기"
-              >
-                <Text style={styles.searchClearText}>✕</Text>
-              </Pressable>
-            ) : null}
-          </View>
-        ) : null}
-        {menuVisible && !selectionCompact ? (
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="제목·메모 검색"
+            returnKeyType="search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+            accessibilityLabel="제목과 메모 검색"
+          />
+          {searchQuery.length > 0 && Platform.OS === 'android' ? (
+            <Pressable
+              style={styles.searchClearButton}
+              onPress={() => setSearchQuery('')}
+              accessibilityLabel="검색어 지우기"
+            >
+              <Text style={styles.searchClearText}>✕</Text>
+            </Pressable>
+          ) : null}
+        </View>
+        {menuVisible ? (
           <View style={styles.menuCard}>
             <Pressable
               style={styles.menuItem}
@@ -584,32 +575,155 @@ export function StampListScreen({
             </Pressable>
           </View>
         ) : null}
-        {!selecting ? (
-          <>
-            <Text style={styles.countLine}>
-              {hasSearchQuery ? (
-                <>
-                  검색 결과 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
-                  <Text style={styles.countNumber}>{stamps.length}</Text>개
-                </>
+        <Text style={styles.countLine}>
+          {hasSearchQuery ? (
+            <>
+              검색 결과 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
+              <Text style={styles.countNumber}>{stamps.length}</Text>개
+            </>
+          ) : (
+            <>
+              전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
+            </>
+          )}
+        </Text>
+        <View style={styles.hintRow}>
+          <Text style={styles.hintIcon}>ⓘ</Text>
+          <Text style={styles.hint}>
+            {selecting
+              ? selectedCount > 0
+                ? '탭으로 추가 선택 · PDF / 이미지 / 프로젝트 / 엑셀 저장'
+                : '사진을 탭하거나 길게 눌러 선택하세요.'
+              : '항목을 길게 눌러 선택하거나 내보낼 수 있습니다.'}
+          </Text>
+        </View>
+        {selecting && selectedCount > 0 && (
+          <View style={styles.pdfBar}>
+            <Pressable
+              style={styles.pdfBarButton}
+              onPress={handleCreatePdf}
+              disabled={exportBusy}
+            >
+              {pdfBusy && !pdfUri ? (
+                <ActivityIndicator size="small" color="#2563eb" />
               ) : (
-                <>
-                  전체 <Text style={styles.countNumber}>{stamps.length}</Text>개
-                </>
+                <Text style={styles.pdfBarButtonText}>PDF 만들기</Text>
               )}
-            </Text>
-            <View style={styles.hintRow}>
-              <Text style={styles.hintIcon}>ⓘ</Text>
-              <Text style={styles.hint}>항목을 길게 눌러 선택하거나 내보낼 수 있습니다.</Text>
-            </View>
-          </>
-        ) : null}
-        {selecting && !selectionCompact ? (
-          <View style={styles.hintRow}>
-            <Text style={styles.hintIcon}>ⓘ</Text>
-            <Text style={styles.hint}>사진을 탭하거나 길게 눌러 선택하세요.</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.pdfBarButton, !pdfUri && styles.pdfBarButtonDisabled]}
+              onPress={handleSavePdf}
+              disabled={!pdfUri || exportBusy}
+            >
+              <Text
+                style={[
+                  styles.pdfBarButtonText,
+                  !pdfUri && styles.pdfBarButtonTextDisabled,
+                ]}
+              >
+                저장
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+              onPress={handleSaveImages}
+              disabled={exportBusy}
+            >
+              {imageBusy ? (
+                <ActivityIndicator size="small" color="#2563eb" />
+              ) : (
+                <Text style={styles.pdfBarButtonText}>이미지 저장</Text>
+              )}
+            </Pressable>
+            <Pressable
+              style={[
+                styles.pdfBarButtonPrimary,
+                !pdfUri && styles.pdfBarButtonDisabled,
+              ]}
+              onPress={handleSharePdf}
+              disabled={!pdfUri || exportBusy}
+            >
+              <Text
+                style={[
+                  styles.pdfBarButtonPrimaryText,
+                  !pdfUri && styles.pdfBarButtonTextDisabled,
+                ]}
+              >
+                공유
+              </Text>
+            </Pressable>
           </View>
-        ) : null}
+        )}
+        {selecting && selectedCount > 0 && (
+          <View style={styles.exportBar}>
+            <Pressable
+              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+              onPress={handleShareProject}
+              disabled={exportBusy}
+            >
+              {projectBusy ? (
+                <ActivityIndicator size="small" color="#2563eb" />
+              ) : (
+                <Text style={styles.pdfBarButtonText}>프로젝트</Text>
+              )}
+            </Pressable>
+            <Pressable
+              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+              onPress={handleShareXlsx}
+              disabled={exportBusy}
+            >
+              {xlsxBusy ? (
+                <ActivityIndicator size="small" color="#2563eb" />
+              ) : (
+                <Text style={styles.pdfBarButtonText}>엑셀</Text>
+              )}
+            </Pressable>
+            <Pressable
+              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+              onPress={handleShareHwpx}
+              disabled={exportBusy}
+            >
+              {hwpxBusy ? (
+                <ActivityIndicator size="small" color="#2563eb" />
+              ) : (
+                <Text style={styles.pdfBarButtonText}>HWPX</Text>
+              )}
+            </Pressable>
+          </View>
+        )}
+        {selecting && selectedCount > 0 && (
+          <View style={styles.pdfNameRow}>
+            <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
+            <TextInput
+              style={styles.pdfNameInput}
+              value={pdfFileName}
+              onChangeText={setPdfFileName}
+              placeholder="VoiceStamp"
+              editable={!exportBusy}
+            />
+            <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
+            <TextInput
+              style={styles.pdfNameInput}
+              value={pdfReportTitle}
+              onChangeText={setPdfReportTitle}
+              placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
+              editable={!exportBusy}
+            />
+          </View>
+        )}
+        {selecting && selectedCount > 0 && (
+          <Pressable
+            style={[styles.deleteButton, exportBusy && styles.pdfBarButtonDisabled]}
+            onPress={handleDeleteSelected}
+            disabled={exportBusy || deleteBusy}
+          >
+            {deleteBusy ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.deleteButtonText}>휴지통으로 이동 ({selectedCount})</Text>
+            )}
+          </Pressable>
+        )}
       </View>
 
       <View style={[styles.listArea, !selecting && styles.listAreaWithBottomBar]}>
@@ -712,136 +826,6 @@ export function StampListScreen({
             <Image source={captureButton} style={styles.bottomCapturePillButtonImage} resizeMode="cover" />
           </Pressable>
         </View>
-      ) : selectionCompact ? (
-        <View style={styles.exportBottomBar}>
-          <View style={styles.pdfBar}>
-            <Pressable
-              style={styles.pdfBarButton}
-              onPress={handleCreatePdf}
-              disabled={exportBusy}
-            >
-              {pdfBusy && !pdfUri ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>PDF 만들기</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, !pdfUri && styles.pdfBarButtonDisabled]}
-              onPress={handleSavePdf}
-              disabled={!pdfUri || exportBusy}
-            >
-              <Text
-                style={[
-                  styles.pdfBarButtonText,
-                  !pdfUri && styles.pdfBarButtonTextDisabled,
-                ]}
-              >
-                저장
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleSaveImages}
-              disabled={exportBusy}
-            >
-              {imageBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>이미지 저장</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButtonPrimary, !pdfUri && styles.pdfBarButtonDisabled]}
-              onPress={handleSharePdf}
-              disabled={!pdfUri || exportBusy}
-            >
-              <Text
-                style={[
-                  styles.pdfBarButtonPrimaryText,
-                  !pdfUri && styles.pdfBarButtonTextDisabled,
-                ]}
-              >
-                공유
-              </Text>
-            </Pressable>
-          </View>
-          <View style={styles.exportBar}>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareProject}
-              disabled={exportBusy}
-            >
-              {projectBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>프로젝트</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareXlsx}
-              disabled={exportBusy}
-            >
-              {xlsxBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>엑셀</Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.pdfBarButton, exportBusy && styles.pdfBarButtonDisabled]}
-              onPress={handleShareHwpx}
-              disabled={exportBusy}
-            >
-              {hwpxBusy ? (
-                <ActivityIndicator size="small" color="#2563eb" />
-              ) : (
-                <Text style={styles.pdfBarButtonText}>HWPX</Text>
-              )}
-            </Pressable>
-          </View>
-          <Pressable
-            style={styles.exportDetailsToggle}
-            onPress={() => setExportDetailsExpanded((expanded) => !expanded)}
-            disabled={exportBusy}
-          >
-            <Text style={styles.exportDetailsToggleText}>
-              파일명·보고서 제목 {exportDetailsExpanded ? '▲' : '▼'}
-            </Text>
-          </Pressable>
-          {exportDetailsExpanded ? (
-            <View style={styles.pdfNameRow}>
-              <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
-              <TextInput
-                style={styles.pdfNameInput}
-                value={pdfFileName}
-                onChangeText={setPdfFileName}
-                placeholder="VoiceStamp"
-                editable={!exportBusy}
-              />
-              <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
-              <TextInput
-                style={styles.pdfNameInput}
-                value={pdfReportTitle}
-                onChangeText={setPdfReportTitle}
-                placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
-                editable={!exportBusy}
-              />
-            </View>
-          ) : null}
-          <Pressable
-            style={[styles.deleteButton, exportBusy && styles.pdfBarButtonDisabled]}
-            onPress={handleDeleteSelected}
-            disabled={exportBusy || deleteBusy}
-          >
-            {deleteBusy ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.deleteButtonText}>휴지통으로 이동 ({selectedCount})</Text>
-            )}
-          </Pressable>
-        </View>
       ) : null}
 
       <StampSaveModal
@@ -885,9 +869,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e5e7eb',
     gap: 8,
     zIndex: 2,
-  },
-  headerCompact: {
-    paddingBottom: 8,
   },
   headerTitleGroup: {
     flexDirection: 'row',
@@ -1009,28 +990,12 @@ const styles = StyleSheet.create({
   pdfBar: {
     flexDirection: 'row',
     gap: 8,
+    marginTop: 4,
   },
   exportBar: {
     flexDirection: 'row',
     gap: 8,
-  },
-  exportBottomBar: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    gap: 8,
-  },
-  exportDetailsToggle: {
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  exportDetailsToggleText: {
-    color: '#2563eb',
-    fontWeight: '600',
-    fontSize: 14,
+    marginTop: 4,
   },
   pdfBarButton: {
     flex: 1,
@@ -1066,6 +1031,7 @@ const styles = StyleSheet.create({
   },
   pdfNameRow: {
     gap: 4,
+    marginTop: 4,
   },
   pdfNameLabel: {
     fontSize: 13,
@@ -1090,6 +1056,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
+    marginTop: 4,
   },
   deleteButtonText: {
     color: '#fff',
