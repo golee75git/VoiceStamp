@@ -1,28 +1,39 @@
-const NS = 'voicestamp-gilt';
+const BASE = 'https://countapi.mileshilliard.com/api/v1';
+const KEY_PREFIX = 'voicestamp-gilt-landing';
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function countApiGet(key) {
-  const res = await fetch(`https://api.countapi.xyz/get/${NS}/${key}`);
-  if (!res.ok) throw new Error('count get failed');
-  const data = await res.json();
-  return typeof data.value === 'number' ? data.value : 0;
+function dailyCounterKey() {
+  return `${KEY_PREFIX}-${todayKey()}`;
 }
 
-async function countApiHit(key) {
-  const res = await fetch(`https://api.countapi.xyz/hit/${NS}/${key}`);
+function totalCounterKey() {
+  return `${KEY_PREFIX}-total`;
+}
+
+async function countGet(key) {
+  const res = await fetch(`${BASE}/get/${encodeURIComponent(key)}`);
+  if (!res.ok) throw new Error('count get failed');
+  const data = await res.json();
+  const value = Number(data.value);
+  return Number.isFinite(value) ? value : 0;
+}
+
+async function countHit(key) {
+  const res = await fetch(`${BASE}/hit/${encodeURIComponent(key)}`);
   if (!res.ok) throw new Error('count hit failed');
   const data = await res.json();
-  return typeof data.value === 'number' ? data.value : 0;
+  const value = Number(data.value);
+  return Number.isFinite(value) ? value : 0;
 }
 
 async function readStats() {
   const today = todayKey();
   const [daily, total] = await Promise.all([
-    countApiGet(`landing-${today}`),
-    countApiGet('landing-total'),
+    countGet(dailyCounterKey()),
+    countGet(totalCounterKey()),
   ]);
   return { daily, total, today };
 }
@@ -38,8 +49,8 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
       const today = todayKey();
       const [daily, total] = await Promise.all([
-        countApiHit(`landing-${today}`),
-        countApiHit('landing-total'),
+        countHit(dailyCounterKey()),
+        countHit(totalCounterKey()),
       ]);
       return res.status(200).json({ daily, total, today });
     }
