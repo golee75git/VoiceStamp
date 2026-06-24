@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-23**  
-최신 커밋 기준: `e6bb868` (main)
+문서 작성일: **2026-06-24**  
+최신 커밋 기준: `64aa037` (main)
 
 ---
 
@@ -252,6 +252,11 @@ VoiceStamp/
 | 152 | 웹 **`/` APK 랜딩** · **`/app`** 웹 테스트 앱 | `0c7e2dd` | `restore-root-landing.bat` |
 | 153 | `expo export` 후 **`dist/index.html` 스왑** (랜딩/앱 분리) | `0ab0f93` | `restore-web-root-layout.bat` |
 | 154 | 랜딩 **개인정보·APK 권장** 안내 패널 | `e6bb868` | `restore-landing-privacy.bat` |
+| 155 | **휴지통 비우기** → 휴지통 화면 (설정에서 제거) | `64d6728` | `restore-trash-empty-in-trash.bat` |
+| 156 | 목록 선택 **보내기 하단바**·헤더 축소·파일명 접기 | `ecb3fe1` | `restore-list-export-bottom-bar.bat` |
+| 157 |보내기 하단바 **Android 내비 여백 31px** | `c5cbeec` | `restore-export-bottom-lift.bat` |
+| 158 | 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 | `64aa037` | `restore-trash-empty-back.bat` |
+| 159 | GitHub APK `releases/20260624_094846` · 랜딩 링크 | `64aa037` | `restore-apk-download-20260624-094846.bat` |
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -317,8 +322,12 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`VoiceStamp_20260623_164337.apk`** | `0ab0f93` | **설치 권장 (로컬)** — GPS 프리페치·연속 인앱 카메라·스플래시 확대·3버튼·연속 위치 재사용 |
-| **`releases/VoiceStamp_20260622_094203.apk`** | `4f20bca` | GPS 프리페치·연속 인앱 카메라 (**GitHub `releases/`**) |
+| **`releases/VoiceStamp_20260624_094846.apk`** | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 31px (비우기 후 목록 **미포함**) |
+| `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록보내기 하단바·헤더 축소 |
+| `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | GPS 프리페치·연속 인앱 카메라·스플래시·3버튼 |
+| **`releases/VoiceStamp_20260622_094203.apk`** | `4f20bca` | GPS 프리페치·연속 인앱 카메라 (**이전 GitHub**) |
 | `VoiceStamp_20260623_132828.apk` | `a89e166` | 스플래시 flex 확대 (프리페치·인앱 카메라 **미포함**) |
 | `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치·인앱 카메라·스플래시 **미포함**) |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
@@ -356,6 +365,15 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-24
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **권장** — 휴지통 비우기 후 목록 복귀·`← 목록` 제거·보내기 하단바·내비 31px | **GitHub `releases/`** |
+| `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 Android `marginBottom: 31` | 로컬 |
+| `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록 선택 **보내기 하단바**·헤더 축소·파일명 접기 | 로컬 |
+| `VoiceStamp_20260624_085417.apk` | `64d6728` | **휴지통 비우기** 설정→휴지통 화면 | 로컬 |
 
 #### 2026-06-23
 
@@ -633,6 +651,18 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-24
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`64aa037` 기준) |
+| `64aa037` | APK `releases/VoiceStamp_20260624_094846` — 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 · `restore-trash-empty-back.bat` |
+| `c5cbeec` | APK `VoiceStamp_20260624_093448` —보내기 하단바 **Android 31px** · `restore-export-bottom-lift.bat` |
+| `2fb6e11` | APK `releases/VoiceStamp_20260624_092411` — 랜딩 링크 갱신 |
+| `ecb3fe1` | 목록 선택 **보내기 하단바**·헤더 축소 · `restore-list-export-bottom-bar.bat` |
+| `e11779c` | APK `releases/VoiceStamp_20260624_085417` — 랜딩 링크 갱신 |
+| `64d6728` | **휴지통 비우기** 설정→휴지통 화면 · `restore-trash-empty-in-trash.bat` |
 
 ### 2026-06-23
 

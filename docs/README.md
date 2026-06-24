@@ -29,17 +29,16 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-23)
+## 현재 상태 스냅샷 (2026-06-24)
 
-- **최신 커밋:** `e6bb868` (main)
+- **최신 커밋:** `64aa037` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (로컬):** `VoiceStamp_20260623_164337.apk` — GPS 프리페치 · 연속 **인앱 카메라** · 스플래시 확대 · 3버튼·연속 위치 재사용
-- **권장 APK (GitHub):** `releases/VoiceStamp_20260622_094203.apk` (`4f20bca`, 스플래시 확대 **미포함**)
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260622_094203.apk
-- **이전 권장 APK:** `VoiceStamp_20260622_000517.apk` (`b5922eb`, 프리페치·인앱 카메라 **미포함**)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260624_094846.apk` — 휴지통 비우기 UX · 목록 **보내기 하단바** · Android 내비 31px
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk
+- **이전 권장 APK:** `VoiceStamp_20260624_093448.apk` (`c5cbeec`, 비우기 후 목록 복귀 **미포함**)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
-- **APK 다운로드:** `/info` → GitHub Releases
+- **APK 다운로드:** `/` · `/info` → GitHub `releases/`
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
 
 ### 날짜별 요약
@@ -64,21 +63,23 @@
 | 06-21 | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** |
 | 06-22 | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** |
 | 06-23 | 웹 **휴지통 confirm** · **`/` APK 랜딩 + `/app`** · 랜딩 **개인정보·APK 권장** 안내 |
+| 06-24 | **휴지통 비우기 화면** · 목록 **보내기 하단바**·헤더 축소 · 내비 31px · 비우기 후 **목록 복귀** · APK `094846` |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | **설치 권장** — GPS 프리페치·연속 인앱 카메라·스플래시·3버튼 |
-| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **GitHub** — GPS 프리페치·연속 인앱 카메라 |
-| `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치 **미포함**) |
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·보내기 하단바·내비 31px |
+| `VoiceStamp_20260624_093448.apk` | `c5cbeec` | 보내기 하단바 31px (비우기 후 목록 **미포함**) |
+| `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록 보내기 하단바·헤더 축소 |
+| `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | GPS 프리페치·연속 인앱 카메라·스플래시·3버튼 |
+| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | GPS 프리페치·연속 인앱 카메라 (**이전 GitHub**) |
+| `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** |
 | `VoiceStamp_20260621_125741.apk` | `3ecb4f4` | **좌표 없음=숨김** |
-| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` (**GitHub**) |
-| `VoiceStamp_20260620_171910.apk` | `88671c1` | `schools.sqlite` (목록 검색 미포함) |
+| `VoiceStamp_20260620_234924.apk` | `eaa17e4` | 목록 검색 + `schools.sqlite` |
 | `VoiceStamp_20260620_165718.apk` | `55c33df` | JSON seed — **부팅 멈춤**, 사용 금지 |
-| `VoiceStamp_20260619_101343.apk` | `2a5b75b` | OSS 라이선스·베타 LICENSE-NOTICE |
-| `VoiceStamp_20260617_184121.apk` | `7b6b0c1` | OSS 미포함 — 학교 200m·건물명/도로명 |
 | `VoiceStamp_20260609_173859.apk` | `6cf82f5` | **배포 금지** |
 
 상세 표: [PROJECT.md](./PROJECT.md) §7.4 · [PRD.md](./PRD.md) §13 · [PLAN.md](./PLAN.md) §11

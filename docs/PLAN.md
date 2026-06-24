@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.7 |
-| 작성일 | 2026-06-23 |
-| 기준 커밋 | `e6bb868` (main) |
+| 문서 버전 | 2.8 |
+| 작성일 | 2026-06-24 |
+| 기준 커밋 | `64aa037` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -226,6 +226,16 @@
 | 160 | `expo export` 후 **랜딩/앱 index 스왑** | `0ab0f93` | `restore-web-root-layout.bat` |
 | 161 | 랜딩 **개인정보·APK 권장** 안내 | `e6bb868` | `restore-landing-privacy.bat` |
 
+## 2O. Phase 2 추가 완료 (2026-06-24)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 162 | **휴지통 비우기** → 휴지통 화면 (설정에서 제거) | `64d6728` | `restore-trash-empty-in-trash.bat` |
+| 163 | 목록 선택 **보내기 하단바**·헤더 축소·파일명 접기 | `ecb3fe1` | `restore-list-export-bottom-bar.bat` |
+| 164 |보내기 하단바 **Android 내비 여백 31px** | `c5cbeec` | `restore-export-bottom-lift.bat` |
+| 165 | 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 | `64aa037` | `restore-trash-empty-back.bat` |
+| 166 | GitHub APK `releases/20260624_094846` · 랜딩 링크 갱신 | `64aa037` | `restore-apk-download-20260624-094846.bat` |
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -255,6 +265,7 @@
 | (본 갱신) | `eaa17e4` 반영 — 로컬 학교 DB·`schools.sqlite`·목록 검색·APK·날짜별 이력 |
 | (본 갱신) | `b5922eb` 반영 — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·APK·날짜별 이력 |
 | (본 갱신) | `e6bb868` 반영 — GPS 프리페치·연속 인앱 카메라·스플래시·웹 랜딩/휴지통 confirm·APK·날짜별 이력 |
+| (본 갱신) | `64aa037` 반영 — 휴지통 비우기 UX·목록보내기 하단바·APK `094846`·날짜별 이력 |
 
 ---
 
@@ -338,10 +349,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `VoiceStamp_20260622_000517.apk` (`b5922eb`, 로컬) |
-| GitHub APK | `releases/VoiceStamp_20260620_234924.apk` (`eaa17e4`) |
-| 최신 소스 | `b5922eb` — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·목록 검색·`schools.sqlite` |
-| APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/info → GitHub Releases |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260624_094846.apk` (`64aa037`) |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk |
+| 최신 소스 | `64aa037` — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
 
@@ -397,6 +408,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-21 | 2M | **좌표 없음=숨김** · **촬영 후 3버튼** · **연속 촬영 위치 재사용** (`3ecb4f4`·`ec4930e`·`b5922eb`) |
 | 2026-06-22 | 2N | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** (`f5f1592`·`e971934`·`4f20bca`·`a89e166`) |
 | 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
+| 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
 
 ---
 
@@ -404,8 +416,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | **설치 권장** — GPS 프리페치·연속 인앱 카메라·스플래시·3버튼·연속 위치 재사용 |
-| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **GitHub** — GPS 프리페치·연속 인앱 카메라 (스플래시 **미포함**) |
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 31px (비우기 후 목록 **미포함**) |
+| `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록보내기 하단바·헤더 축소 |
+| `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |
+| `VoiceStamp_20260623_164337.apk` | `0ab0f93` | GPS 프리페치·연속 인앱 카메라·스플래시·3버튼 |
+| `releases/VoiceStamp_20260622_094203.apk` | `4f20bca` | **GitHub (이전)** — GPS 프리페치·연속 인앱 카메라 |
 | `VoiceStamp_20260623_132828.apk` | `a89e166` | 스플래시 flex 확대 (프리페치·인앱 카메라 **미포함**) |
 | `VoiceStamp_20260622_000517.apk` | `b5922eb` | 3버튼·연속 위치 재사용 (프리페치·인앱 카메라 **미포함**) |
 | `VoiceStamp_20260621_234030.apk` | `ec4930e` | 촬영 후 **3버튼** (연속 위치 재사용 **미포함**) |
