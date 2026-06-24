@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-06-24 |
-| 최신 반영 커밋 | `64aa037` (main) |
+| 문서 작성일 | 2026-06-25 |
+| 최신 반영 커밋 | `608357d` (main) |
 
 ---
 
@@ -121,6 +121,7 @@
 | US-60 | 연속 촬영 시 **앱 내 카메라**로 바로 다음 장을 찍고 싶다 (시스템 카메라 대안) | P2 | ✅ |
 | US-61 | 웹에서 **휴지통 이동·비우기** 확인 대화상자가 동작했으면 한다 | P1 | ✅ |
 | US-62 | 웹 루트(`/`)에서 **APK 설치 안내**를 보고, `/app`에서만 웹 테스트를 하고 싶다 | P1 | ✅ |
+| US-63 | 웹 랜딩 하단에서 **오늘·누적 방문** 집계를 보고, 같은 날 재방문은 1회만 반영되길 원한다 | P3 | ✅ |
 
 ### 2.3 주요 플로우
 
@@ -329,6 +330,7 @@
 | F-DEP-10 | 정책 정적 페이지 `/info` `/privacy` `/license` `/help` (Vercel) | ✅ |
 | F-DEP-11 | OSS 목록 생성 스크립트·`assets/open_source_licenses.json` | ✅ |
 | F-DEP-11 | `/info` 페이지 GitHub Releases APK 다운로드 링크 | ✅ |
+| F-DEP-12 | 랜딩(`/`) 하단 **방문자 집계** — `localStorage` 당일 1회 + `/api/visitor` + CountAPI 프록시 | ✅ `608357d` |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
@@ -468,6 +470,7 @@
 | 웹 루트 URL | — | **`/`** APK 안내 랜딩 (`landing.html`) |
 | 웹 앱 URL | — | **`/app`** Expo 웹 테스트 (실사용은 APK 권장) |
 | 사진·위치 서버 저장 | — | **없음** (브라우저 로컬 SQLite·data URI) |
+| 랜딩 방문 집계 | — | `/` 하단 오늘·누적 (브라우저당 하루 1회, 익명 합계만 외부 API) |
 
 ---
 
@@ -591,6 +594,7 @@
 | **2026-06-22** | **촬영 시트 GPS 프리페치** · **연속 촬영 인앱 카메라** · GitHub `releases/094203` · **카메라 홈 스플래시 flex 확대** · 문서 동기화 | `f5f1592` · `e971934` · `4f20bca` · `a89e166` · `dd09b59` |
 | **2026-06-23** | 웹 **휴지통·비우기 확인**(`confirmAlert`) · 웹 **`/` APK 랜딩 + `/app` 테스트** · 빌드 후 `index.html` 스왑 · 랜딩 **개인정보·APK 권장** 안내 · Vercel 배포 | `fcbf747` · `4745255` · `0c7e2dd` · `0ab0f93` · `e6bb868` |
 | **2026-06-24** | **휴지통 비우기 → 휴지통 화면** · 목록 선택 **보내기 하단바**·헤더 축소 ·보내기 바 **Android 31px** · 비우기 후 **목록 복귀** · GitHub APK `094846` · Vercel | `64d6728` · `ecb3fe1` · `c5cbeec` · `64aa037` |
+| **2026-06-25** | 랜딩 **방문자 집계**(오늘·누적, `localStorage` 당일 1회) · `/api/visitor` · CountAPI 대체 API · `privacy` 제3자 항목 · Vercel | `4b71431` · `608357d` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 

@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-24**  
-최신 커밋 기준: `64aa037` (main)
+문서 작성일: **2026-06-25**  
+최신 커밋 기준: `608357d` (main)
 
 ---
 
@@ -257,6 +257,8 @@ VoiceStamp/
 | 157 |보내기 하단바 **Android 내비 여백 31px** | `c5cbeec` | `restore-export-bottom-lift.bat` |
 | 158 | 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 | `64aa037` | `restore-trash-empty-back.bat` |
 | 159 | GitHub APK `releases/20260624_094846` · 랜딩 링크 | `64aa037` | `restore-apk-download-20260624-094846.bat` |
+| 160 | 랜딩 **방문자 집계** (`api/visitor.js`, `localStorage` 당일 1회) | `4b71431` · `608357d` | `restore-visitor-counter.bat` §112 |
+| 161 | CountAPI(`countapi.xyz`) 중단 → **countapi.mileshilliard.com** 프록시 | `608357d` | (160과 동일) |
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -652,11 +654,21 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-25
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`608357d` 기준) |
+| `608357d` | CountAPI(`countapi.xyz`) 중단 대응 → **countapi.mileshilliard.com** · `privacy.html` 링크 |
+| `4b71431` | 랜딩 **방문자 집계** — `api/visitor.js` · `localStorage` 당일 1회 · `restore-visitor-counter.bat` §112 · Vercel |
+
+> APK 변경 없음. 권장 설치 파일은 **`releases/VoiceStamp_20260624_094846.apk`** (`64aa037`) 유지.
+
 ### 2026-06-24
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`64aa037` 기준) |
+| `edda87d` | PRD·PROJECT·PLAN·README 문서 동기화 (`64aa037` 기준) |
 | `64aa037` | APK `releases/VoiceStamp_20260624_094846` — 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 · `restore-trash-empty-back.bat` |
 | `c5cbeec` | APK `VoiceStamp_20260624_093448` —보내기 하단바 **Android 31px** · `restore-export-bottom-lift.bat` |
 | `2fb6e11` | APK `releases/VoiceStamp_20260624_092411` — 랜딩 링크 갱신 |
@@ -964,7 +976,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~105) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~112) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

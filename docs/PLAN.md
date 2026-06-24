@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.8 |
-| 작성일 | 2026-06-24 |
-| 기준 커밋 | `64aa037` (main) |
+| 문서 버전 | 2.9 |
+| 작성일 | 2026-06-25 |
+| 기준 커밋 | `608357d` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -236,6 +236,15 @@
 | 165 | 휴지통 비우기 후 **완료→목록** · `← 목록` 제거 | `64aa037` | `restore-trash-empty-back.bat` |
 | 166 | GitHub APK `releases/20260624_094846` · 랜딩 링크 갱신 | `64aa037` | `restore-apk-download-20260624-094846.bat` |
 
+## 2P. Phase 3 추가 완료 (2026-06-25, 웹)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 167 | 랜딩 **방문자 집계** (오늘·누적, `localStorage` 당일 1회) | `4b71431` | `restore-visitor-counter.bat` §112 |
+| 168 | CountAPI 중단 대응 → **countapi.mileshilliard.com** | `608357d` | (167과 동일) |
+
+> APK 재빌드 없음. 권장 APK는 `releases/VoiceStamp_20260624_094846.apk` (`64aa037`) 유지.
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -266,6 +275,7 @@
 | (본 갱신) | `b5922eb` 반영 — 좌표 없음=숨김·3버튼·연속 촬영 위치 재사용·APK·날짜별 이력 |
 | (본 갱신) | `e6bb868` 반영 — GPS 프리페치·연속 인앱 카메라·스플래시·웹 랜딩/휴지통 confirm·APK·날짜별 이력 |
 | (본 갱신) | `64aa037` 반영 — 휴지통 비우기 UX·목록보내기 하단바·APK `094846`·날짜별 이력 |
+| (본 갱신) | `608357d` 반영 — 랜딩 방문자 집계·CountAPI 대체·APK 변경 없음·날짜별 이력 |
 
 ---
 
@@ -351,7 +361,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | Vercel | https://voicestamp-gilt.vercel.app |
 | 최신 APK (문서 기준) | `releases/VoiceStamp_20260624_094846.apk` (`64aa037`) |
 | GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk |
-| 최신 소스 | `64aa037` — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| 최신 소스 | `608357d` — 랜딩 방문자 집계·CountAPI 대체 (APK 변경 없음) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -376,7 +386,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~111 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~112 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
@@ -409,6 +419,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-22 | 2N | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** (`f5f1592`·`e971934`·`4f20bca`·`a89e166`) |
 | 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
 | 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
+| 2026-06-25 | 3 | 랜딩 **방문자 집계** (오늘·누적, 당일 1회) · CountAPI 대체 · Vercel (`4b71431`·`608357d`, **APK 변경 없음**) |
 
 ---
 

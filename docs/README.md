@@ -24,15 +24,15 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~111) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~112) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-06-24)
+## 현재 상태 스냅샷 (2026-06-25)
 
-- **최신 커밋:** `64aa037` (main)
-- **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱
+- **최신 커밋:** `608357d` (main)
+- **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260624_094846.apk` — 휴지통 비우기 UX · 목록 **보내기 하단바** · Android 내비 31px
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk
@@ -64,6 +64,7 @@
 | 06-22 | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** |
 | 06-23 | 웹 **휴지통 confirm** · **`/` APK 랜딩 + `/app`** · 랜딩 **개인정보·APK 권장** 안내 |
 | 06-24 | **휴지통 비우기 화면** · 목록 **보내기 하단바**·헤더 축소 · 내비 31px · 비우기 후 **목록 복귀** · APK `094846` |
+| 06-25 | 랜딩 **방문자 집계**(오늘·누적, 당일 1회) · CountAPI 대체 · Vercel (**APK 변경 없음**) |
 
 ### APK별 (권장·주요)
 
