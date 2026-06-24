@@ -72,8 +72,8 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
       try {
         const removed = await emptyTrash();
         onChanged();
-        await load();
         showAlert('완료', `${removed}개를 영구 삭제했습니다.`);
+        onBack();
       } catch (e) {
         showAlert('실패', e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
@@ -109,9 +109,6 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={onBack}>
-          <Text style={styles.backText}>← 목록</Text>
-        </Pressable>
         <Text style={styles.title}>휴지통</Text>
         <Text style={styles.hint}>항목을 누르면 목록으로 복원합니다.</Text>
         {stamps.length > 0 ? (
