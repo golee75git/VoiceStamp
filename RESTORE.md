@@ -1860,3 +1860,17 @@ restore-landing-copyright-en.bat
 ```powershell
 Copy-Item public.pre-landing-copyright-en\landing.html public\ -Force
 ```
+
+## 114. 길 위치 지번·POI 근처·학교 300m 되돌리기 (선택)
+
+지번 fallback·POI `근처`·학교 반경 300m 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-road-place-fallback.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-road-place-fallback\services\kakaoLocal.ts src\services\ -Force
+```

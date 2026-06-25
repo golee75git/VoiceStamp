@@ -16,7 +16,15 @@ type KakaoRoadAddress = {
   building_name?: string;
 };
 
+type KakaoJibunAddress = {
+  address_name?: string;
+  mountain_yn?: string;
+  main_address_no?: string;
+  sub_address_no?: string;
+};
+
 type KakaoCoord2AddressDocument = {
+  address?: KakaoJibunAddress | null;
   road_address?: KakaoRoadAddress | null;
 };
 
@@ -33,11 +41,21 @@ type KakaoCategorySearchResponse = {
   documents?: KakaoCategoryDocument[];
 };
 
-const SCHOOL_NEAR_RADIUS_M = 200;
+const SCHOOL_NEAR_RADIUS_M = 300;
+const POI_SEARCH_RADIUS_M = 150;
+const POI_MAX_DISTANCE_M = 100;
+const POI_CATEGORY_CODES = ['CS2', 'CE7', 'FD6'] as const;
 
 type CoordAddress = {
   buildingName: string | null;
   roadAddressName: string | null;
+  jibunTail: string | null;
+};
+
+const EMPTY_COORD_ADDRESS: CoordAddress = {
+  buildingName: null,
+  roadAddressName: null,
+  jibunTail: null,
 };
 
 function getKakaoRestKey(): string {
@@ -62,19 +80,37 @@ function pickRegionLabel(documents: KakaoRegionDocument[]): string | null {
   return preferred.region_1depth_name ?? null;
 }
 
+function formatJibunTail(jibun: KakaoJibunAddress | null | undefined): string | null {
+  if (!jibun) {
+    return null;
+  }
+  const main = jibun.main_address_no?.trim();
+  if (!main) {
+    return null;
+  }
+  const sub = jibun.sub_address_no?.trim();
+  const lot = sub ? `${main}-${sub}` : main;
+  return jibun.mountain_yn === 'Y' ? `산 ${lot}` : lot;
+}
+
 function pickCoordAddress(documents: KakaoCoord2AddressDocument[]): CoordAddress {
   for (const doc of documents) {
     const buildingName = doc.road_address?.building_name?.trim() || null;
     const roadAddressName = doc.road_address?.address_name?.trim() || null;
-    if (buildingName || roadAddressName) {
-      return { buildingName, roadAddressName };
+    const jibunTail = formatJibunTail(doc.address);
+    if (buildingName || roadAddressName || jibunTail) {
+      return { buildingName, roadAddressName, jibunTail };
     }
   }
-  return { buildingName: null, roadAddressName: null };
+  return EMPTY_COORD_ADDRESS;
 }
 
-function pickGeneralPlaceName(buildingName: string | null, roadAddressName: string | null): string | null {
-  return buildingName || roadAddressName || null;
+function pickGeneralPlaceName(
+  buildingName: string | null,
+  roadAddressName: string | null,
+  jibunTail: string | null,
+): string | null {
+  return buildingName || roadAddressName || jibunTail || null;
 }
 
 function parseDistanceM(doc: KakaoCategoryDocument | null | undefined): number | null {
@@ -85,18 +121,40 @@ function parseDistanceM(doc: KakaoCategoryDocument | null | undefined): number |
   return Number.isFinite(distance) ? distance : null;
 }
 
+function isSchoolWithinRadius(school: KakaoCategoryDocument | null): boolean {
+  const schoolName = school?.place_name?.trim() || null;
+  const distance = parseDistanceM(school);
+  return Boolean(schoolName && distance !== null && distance <= SCHOOL_NEAR_RADIUS_M);
+}
+
+function needsNearbyPoiFallback(address: CoordAddress, school: KakaoCategoryDocument | null): boolean {
+  if (isSchoolWithinRadius(school)) {
+    return false;
+  }
+  return !pickGeneralPlaceName(address.buildingName, address.roadAddressName, address.jibunTail);
+}
+
 function pickPlaceName(
   address: CoordAddress,
   school: KakaoCategoryDocument | null,
+  nearbyPoi: KakaoCategoryDocument | null,
 ): string | null {
-  const schoolName = school?.place_name?.trim() || null;
-  const distance = parseDistanceM(school);
-
-  if (schoolName && distance !== null && distance <= SCHOOL_NEAR_RADIUS_M) {
-    return schoolName;
+  if (isSchoolWithinRadius(school)) {
+    return school?.place_name?.trim() || null;
   }
 
-  return pickGeneralPlaceName(address.buildingName, address.roadAddressName);
+  const general = pickGeneralPlaceName(address.buildingName, address.roadAddressName, address.jibunTail);
+  if (general) {
+    return general;
+  }
+
+  const poiName = nearbyPoi?.place_name?.trim() || null;
+  const poiDistance = parseDistanceM(nearbyPoi);
+  if (poiName && poiDistance !== null && poiDistance <= POI_MAX_DISTANCE_M) {
+    return `${poiName} 근처`;
+  }
+
+  return null;
 }
 
 function combinePlaceLabel(region: string | null, placeName: string | null): string | null {
@@ -159,29 +217,31 @@ async function fetchCoordAddress(
   );
 
   if (!response.ok) {
-    return { buildingName: null, roadAddressName: null };
+    return EMPTY_COORD_ADDRESS;
   }
 
   const data = (await response.json()) as KakaoCoord2AddressResponse;
   if (!data.documents?.length) {
-    return { buildingName: null, roadAddressName: null };
+    return EMPTY_COORD_ADDRESS;
   }
 
   return pickCoordAddress(data.documents);
 }
 
-async function fetchNearestSchoolFromKakao(
+async function fetchCategoryNearest(
   restKey: string,
   longitude: number,
   latitude: number,
+  categoryGroupCode: string,
+  radiusM: number,
 ): Promise<KakaoCategoryDocument | null> {
   const params = new URLSearchParams({
-    category_group_code: 'SC4',
+    category_group_code: categoryGroupCode,
     x: String(longitude),
     y: String(latitude),
-    radius: String(SCHOOL_NEAR_RADIUS_M),
+    radius: String(radiusM),
     sort: 'distance',
-    size: '5',
+    size: '3',
   });
 
   const response = await fetch(
@@ -203,6 +263,41 @@ async function fetchNearestSchoolFromKakao(
   }
 
   return data.documents[0];
+}
+
+async function fetchNearestSchoolFromKakao(
+  restKey: string,
+  longitude: number,
+  latitude: number,
+): Promise<KakaoCategoryDocument | null> {
+  return fetchCategoryNearest(restKey, longitude, latitude, 'SC4', SCHOOL_NEAR_RADIUS_M);
+}
+
+async function fetchNearestPoiFromKakao(
+  restKey: string,
+  longitude: number,
+  latitude: number,
+): Promise<KakaoCategoryDocument | null> {
+  const results = await Promise.all(
+    POI_CATEGORY_CODES.map((code) =>
+      fetchCategoryNearest(restKey, longitude, latitude, code, POI_SEARCH_RADIUS_M),
+    ),
+  );
+
+  let nearest: KakaoCategoryDocument | null = null;
+  let nearestDistance: number | null = null;
+  for (const doc of results) {
+    const distance = parseDistanceM(doc);
+    if (!doc || distance === null || distance > POI_MAX_DISTANCE_M) {
+      continue;
+    }
+    if (nearestDistance === null || distance < nearestDistance) {
+      nearest = doc;
+      nearestDistance = distance;
+    }
+  }
+
+  return nearest;
 }
 
 async function resolveNearestSchool(
@@ -233,10 +328,15 @@ export async function getPlaceLabelFromCoords(
 
   const [region, address, school] = await Promise.all([
     restKey ? fetchRegionLabel(restKey, longitude, latitude) : Promise.resolve(null),
-    restKey ? fetchCoordAddress(restKey, longitude, latitude) : Promise.resolve({ buildingName: null, roadAddressName: null }),
+    restKey ? fetchCoordAddress(restKey, longitude, latitude) : Promise.resolve(EMPTY_COORD_ADDRESS),
     resolveNearestSchool(restKey, longitude, latitude),
   ]);
 
-  const placeName = pickPlaceName(address, school);
+  let nearbyPoi: KakaoCategoryDocument | null = null;
+  if (restKey && needsNearbyPoiFallback(address, school)) {
+    nearbyPoi = await fetchNearestPoiFromKakao(restKey, longitude, latitude);
+  }
+
+  const placeName = pickPlaceName(address, school, nearbyPoi);
   return combinePlaceLabel(region, placeName);
 }
