@@ -1,5 +1,6 @@
 ﻿import { Platform } from 'react-native';
 
+import { embedCaptionExif } from './embedCaptionExif';
 import { renderStampJpegUri, type StampImageExportOptions } from './exportStampImage';
 import {
   buildGalleryOriginalFileName,
@@ -99,13 +100,14 @@ async function saveNewStampToGallery(
 
   try {
     const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
+    const captionWithExif = await embedCaptionExif(captionUri, stamp, originalUri);
 
     if (mode === 'caption_only') {
-      return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
+      return saveStampPhotoToGallery(captionWithExif, stampFileName, groupName);
     }
 
     await saveStampPhotoToGallery(originalUri, originalFileName, groupName);
-    return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
+    return saveStampPhotoToGallery(captionWithExif, stampFileName, groupName);
   } catch {
     if (mode === 'caption_only') {
       return null;
@@ -155,7 +157,8 @@ async function saveEditStampCaptionToGallery(
 
   try {
     const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
-    return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
+    const captionWithExif = await embedCaptionExif(captionUri, stamp);
+    return saveStampPhotoToGallery(captionWithExif, stampFileName, groupName);
   } catch {
     return stamp.galleryAssetId ?? null;
   }

@@ -7,6 +7,12 @@ type VoicestampGalleryNative = {
     displayName: string,
     albumFolder: string,
   ): Promise<string>;
+  embedExifFromSource(
+    captionUri: string,
+    sourceUri: string | null,
+    latitude: number | null,
+    longitude: number | null,
+  ): Promise<string>;
 };
 
 let nativeModule: VoicestampGalleryNative | null | undefined;
@@ -35,4 +41,17 @@ export async function saveImageWithDisplayName(
     return null;
   }
   return mod.saveImageWithDisplayName(localUri, displayName, albumFolder);
+}
+
+export async function embedExifFromSource(
+  captionUri: string,
+  sourceUri: string | null,
+  latitude: number | null,
+  longitude: number | null,
+): Promise<string | null> {
+  const mod = getNativeModule();
+  if (!mod) {
+    return null;
+  }
+  return mod.embedExifFromSource(captionUri, sourceUri, latitude, longitude);
 }

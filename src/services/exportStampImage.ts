@@ -8,6 +8,7 @@ import {
   sanitizeStampFileBaseName,
   resolveImageUri,
 } from './fileService';
+import { embedCaptionExif } from './embedCaptionExif';
 import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
@@ -546,6 +547,7 @@ export async function saveStampsAsJpegToGallery(
       }
 
       jpegUri = await renderStampJpegUri(stamp, options, captureNative);
+      jpegUri = await embedCaptionExif(jpegUri, stamp);
       const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
       await saveStampPhotoToGallery(jpegUri, fileName, albumName);
       saved += 1;

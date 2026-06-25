@@ -1315,6 +1315,14 @@ Copy-Item src.pre-gallery-filename\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-gallery-filename\services\exportStampImage.ts src\services\ -Force
 ```
 
+## 83. 캡션 EXIF(ISO·GPS·크기) 되돌리기 (선택)
+
+캡션 갤러리 파일에 원본 EXIF 복사 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-caption-exif.bat
+```
+
 ## 82. 갤러리 DISPLAY_NAME 네이티브 저장 되돌리기 (선택)
 
 Android MediaStore DISPLAY_NAME 한글 저장(네이티브 모듈) 후 문제가 생기면 아래로 복구합니다.
