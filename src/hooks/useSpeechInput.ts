@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -12,8 +12,13 @@ type UseSpeechInputOptions = {
 export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptions) {
   const [listening, setListening] = useState(false);
   const [available, setAvailable] = useState(true);
+  const listeningRef = useRef(false);
 
   const finishListening = useCallback(() => {
+    if (!listeningRef.current) {
+      return;
+    }
+    listeningRef.current = false;
     setListening(false);
     onListeningEnd?.();
   }, [onListeningEnd]);
@@ -28,7 +33,13 @@ export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptio
     }
   });
 
-  useSpeechRecognitionEvent('error', () => {
+  useSpeechRecognitionEvent('error', (event) => {
+    if (event.error === 'aborted') {
+      return;
+    }
+    if (event.error === 'not-allowed') {
+      setAvailable(false);
+    }
     finishListening();
   });
 
@@ -44,15 +55,11 @@ export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptio
     try {
       const permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!permission.granted) {
+        setAvailable(false);
         return false;
       }
 
-      try {
-        ExpoSpeechRecognitionModule.abort();
-      } catch {
-        // ignore stale session cleanup failures
-      }
-
+      listeningRef.current = true;
       setListening(true);
       ExpoSpeechRecognitionModule.start({
         lang: 'ko-KR',
@@ -61,7 +68,7 @@ export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptio
       });
       return true;
     } catch {
-      setAvailable(false);
+      listeningRef.current = false;
       setListening(false);
       return false;
     }
