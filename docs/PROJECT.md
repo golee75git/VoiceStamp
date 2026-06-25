@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-25**  
-최신 커밋 기준: `608357d` (main)
+최신 커밋 기준: `847ea63` (main)
 
 ---
 
@@ -259,6 +259,14 @@ VoiceStamp/
 | 159 | GitHub APK `releases/20260624_094846` · 랜딩 링크 | `64aa037` | `restore-apk-download-20260624-094846.bat` |
 | 160 | 랜딩 **방문자 집계** (`api/visitor.js`, `localStorage` 당일 1회) | `4b71431` · `608357d` | `restore-visitor-counter.bat` §112 |
 | 161 | CountAPI(`countapi.xyz`) 중단 → **countapi.mileshilliard.com** 프록시 | `608357d` | (160과 동일) |
+| 162 | 랜딩 푸터 저작권 **Lee Hyung Woo** (영문) | `f50a2fb` | — |
+| 163 | **도로·지번·근처 POI** 위치 제목 fallback (`kakaoLocal.ts`, 학교 300m) | `511a67c` | `restore-road-place-fallback.bat` |
+| 164 | 갤러리 **한글 파일명**·원본 `_orig` (경로 한글 → 저장 실패 이슈) | `143a140` | `restore-gallery-filename.bat` |
+| 165 | 갤러리 **MediaStore DISPLAY_NAME** 한글 (`modules/voicestamp-gallery`) | `44997be` | `restore-gallery-display-name.bat` |
+| 166 | 캡션 갤러리 JPEG **EXIF 복사**(ISO·GPS·크기, `androidx.exifinterface`) | `847ea63` | `restore-caption-exif.bat` |
+| 167 | GitHub APK `releases/20260625_171805` · 랜딩·`/info` 링크 | `847ea63` | `restore-apk-download-20260625-171805.bat` |
+
+> **참고:** `143a140` APK `161125`는 캐시 경로 한글로 갤러리 저장 실패 가능 → **`165551` 이상** 권장.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -324,7 +332,11 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260624_094846.apk`** | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| **`releases/VoiceStamp_20260625_171805.apk`** | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 fallback |
+| `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
+| `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 저장 **불안정**, 사용 비권장 |
+| `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |
+| **`releases/VoiceStamp_20260624_094846.apk`** | `64aa037` | 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
 | `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 31px (비우기 후 목록 **미포함**) |
 | `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록보내기 하단바·헤더 축소 |
 | `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |
@@ -367,6 +379,17 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-25
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **권장** — 캡션 갤러리 **EXIF**(ISO·GPS·크기)·DISPLAY_NAME 한글·도로 위치 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260625_165551.apk` | `44997be` | **MediaStore DISPLAY_NAME** 한글 (`voicestamp-gallery`) | GitHub |
+| `VoiceStamp_20260625_161125.apk` | `143a140` | 갤러리 한글 파일명·`_orig` — **캐시 경로 한글로 저장 실패** | 로컬 (비권장) |
+| `VoiceStamp_20260625_100743.apk` | `511a67c` | **도로·지번·근처 POI** 위치 제목 (학교 반경 300m) | 로컬 |
+
+> 웹: `f50a2fb` 랜딩 저작권 표기 — APK 변경 없음.
 
 #### 2026-06-24
 
@@ -658,11 +681,17 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`608357d` 기준) |
-| `608357d` | CountAPI(`countapi.xyz`) 중단 대응 → **countapi.mileshilliard.com** · `privacy.html` 링크 |
-| `4b71431` | 랜딩 **방문자 집계** — `api/visitor.js` · `localStorage` 당일 1회 · `restore-visitor-counter.bat` §112 · Vercel |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`847ea63` 기준) |
+| `847ea63` | APK `releases/VoiceStamp_20260625_171805` — 캡션 **EXIF** 복사 · `restore-caption-exif.bat` · Vercel |
+| `44997be` | APK `165551` — **DISPLAY_NAME** 한글 네이티브 · `voicestamp-gallery` · `restore-gallery-display-name.bat` |
+| `143a140` | 갤러리 한글 파일명·`_orig` · `restore-gallery-filename.bat` (APK `161125`, 갤러리 경로 이슈) |
+| `511a67c` | **도로·지번·POI** 위치 fallback · APK `100743` · `restore-road-place-fallback.bat` |
+| `f50a2fb` | 랜딩 푸터 저작권 **Lee Hyung Woo** · Vercel |
+| `cf4c226` | 문서 동기화 (`608357d` 기준) |
+| `608357d` | CountAPI 중단 대응 · `privacy.html` |
+| `4b71431` | 랜딩 **방문자 집계** · `restore-visitor-counter.bat` §112 |
 
-> APK 변경 없음. 권장 설치 파일은 **`releases/VoiceStamp_20260624_094846.apk`** (`64aa037`) 유지.
+> **권장 APK:** `releases/VoiceStamp_20260625_171805.apk` (`847ea63`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-06-24
 

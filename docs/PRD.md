@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-06-25 |
-| 최신 반영 커밋 | `608357d` (main) |
+| 최신 반영 커밋 | `847ea63` (main) |
 
 ---
 
@@ -197,6 +197,10 @@
 | F-SAVE-22 | GPS 조회 전 **300m 이내 이전 `placeLabel` 캐시** 즉시 표시 후 갱신 | ✅ |
 | F-SAVE-23 | 저장 모달 미리보기: 720px 썸네일 + 레이아웃(별도 영역/워터마크) 오버레이 | ✅ |
 | F-SAVE-24 | **로컬 학교 DB** (전국초중등학교위치표준데이터, `schools.sqlite`) 200m 우선, 없으면 **카카오 SC4** fallback | ✅ `88671c1` |
+| F-SAVE-25 | **도로 촬영** 위치: 지번·**근처 POI**(CS2/CE7/FD6) fallback, 학교 반경 **300m** | ✅ `511a67c` |
+| F-GAL-20 | 갤러리 **한글 DISPLAY_NAME** (ASCII 캐시 + MediaStore, `voicestamp-gallery`) | ✅ `44997be` |
+| F-GAL-21 | 갤러리 파일명 **한글 제목**·원본 `_orig` (경로 한글 시 저장 실패 → 20으로 해결) | ✅ `143a140` |
+| F-GAL-22 | 캡션 갤러리 JPEG **EXIF 복사**(ISO·GPS·크기, 원본·스탬프 좌표) | ✅ `847ea63` |
 
 ### 3.3 음성 입력 (P0)
 
@@ -331,6 +335,7 @@
 | F-DEP-11 | OSS 목록 생성 스크립트·`assets/open_source_licenses.json` | ✅ |
 | F-DEP-11 | `/info` 페이지 GitHub Releases APK 다운로드 링크 | ✅ |
 | F-DEP-12 | 랜딩(`/`) 하단 **방문자 집계** — `localStorage` 당일 1회 + `/api/visitor` + CountAPI 프록시 | ✅ `608357d` |
+| F-DEP-13 | 랜딩 푸터 저작권 **Lee Hyung Woo** (영문) | ✅ `f50a2fb` |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
@@ -543,7 +548,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK 지연 | `releases/` 최신은 `234924`(목록 검색·`schools.sqlite`). **권장 설치**는 로컬 `VoiceStamp_20260622_000517.apk` (`b5922eb`) |
+| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260625_171805.apk`** (`847ea63`). 이전 권장: `094846` (`64aa037`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -553,6 +558,7 @@
 | UX-C | 구·동 먼저 표시, 건물명은 나중에 추가 | `kakaoLocal.ts` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
+| **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) 설계 완료 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 (재설치 복구) | 로드맵 |
@@ -594,7 +600,7 @@
 | **2026-06-22** | **촬영 시트 GPS 프리페치** · **연속 촬영 인앱 카메라** · GitHub `releases/094203` · **카메라 홈 스플래시 flex 확대** · 문서 동기화 | `f5f1592` · `e971934` · `4f20bca` · `a89e166` · `dd09b59` |
 | **2026-06-23** | 웹 **휴지통·비우기 확인**(`confirmAlert`) · 웹 **`/` APK 랜딩 + `/app` 테스트** · 빌드 후 `index.html` 스왑 · 랜딩 **개인정보·APK 권장** 안내 · Vercel 배포 | `fcbf747` · `4745255` · `0c7e2dd` · `0ab0f93` · `e6bb868` |
 | **2026-06-24** | **휴지통 비우기 → 휴지통 화면** · 목록 선택 **보내기 하단바**·헤더 축소 ·보내기 바 **Android 31px** · 비우기 후 **목록 복귀** · GitHub APK `094846` · Vercel | `64d6728` · `ecb3fe1` · `c5cbeec` · `64aa037` |
-| **2026-06-25** | 랜딩 **방문자 집계**(오늘·누적, `localStorage` 당일 1회) · `/api/visitor` · CountAPI 대체 API · `privacy` 제3자 항목 · Vercel | `4b71431` · `608357d` |
+| **2026-06-25** | 랜딩 **방문자 집계**·CountAPI 대체 · 랜딩 저작권 표기 · **도로·지번·POI** 위치 · 갤러리 **한글 DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` · Vercel | `4b71431`~`847ea63` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -604,7 +610,11 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 |
+| `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
+| `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 **불안정**, 비권장 |
+| `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
 | `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 31px (비우기 후 목록 복귀 **미포함**) |
 | `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록보내기 하단바·헤더 축소 (31px·비우기 UX **미포함**) |
 | `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 화면 이동 (목록 하단바 **미포함**) |
@@ -681,6 +691,7 @@
 |------|------|
 | 문서 목록 | [README.md](./README.md) |
 | 정보·정책 페이지 설계·구현 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) |
+| ML Kit 장면 라벨 설계 (AI-ML-01) | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
 | 개발 계획 | [PLAN.md](./PLAN.md) |
 | 프로젝트 현황·기능 이력 | [PROJECT.md](./PROJECT.md) |
 | 개인정보 처리 안내 | [PRIVACY.md](./PRIVACY.md) |

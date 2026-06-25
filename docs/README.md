@@ -12,6 +12,7 @@
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, **§7.4 APK 빌드별 상세**, **§12 날짜별 커밋** |
 | [PLAN.md](./PLAN.md) | 기획·개발 | 단계·완료 기능, **§10 날짜별** · **§11 APK별** |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 기획·UI | LEG-04 정책 페이지 설계·구현 (`a4a55d2`) |
+| [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | 기획·AI | **AI-ML-01** ML Kit 장면 키워드 설계 (구현 전) |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | 운영 | 카카오 REST API 키 체크리스트 |
@@ -31,12 +32,13 @@
 
 ## 현재 상태 스냅샷 (2026-06-25)
 
-- **최신 커밋:** `608357d` (main)
+- **최신 커밋:** `847ea63` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260624_094846.apk` — 휴지통 비우기 UX · 목록 **보내기 하단바** · Android 내비 31px
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk
-- **이전 권장 APK:** `VoiceStamp_20260624_093448.apk` (`c5cbeec`, 비우기 후 목록 복귀 **미포함**)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260625_171805.apk` — 캡션 **EXIF** · 갤러리 **DISPLAY_NAME** 한글 · 도로·지번·POI 위치
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260625_171805.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260624_094846.apk` (`64aa037`, 휴지통·보내기 하단바)
+- **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
@@ -64,13 +66,17 @@
 | 06-22 | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** |
 | 06-23 | 웹 **휴지통 confirm** · **`/` APK 랜딩 + `/app`** · 랜딩 **개인정보·APK 권장** 안내 |
 | 06-24 | **휴지통 비우기 화면** · 목록 **보내기 하단바**·헤더 축소 · 내비 31px · 비우기 후 **목록 복귀** · APK `094846` |
-| 06-25 | 랜딩 **방문자 집계**(오늘·누적, 당일 1회) · CountAPI 대체 · Vercel (**APK 변경 없음**) |
+| 06-25 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·보내기 하단바·내비 31px |
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 |
+| `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
+| `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 — 갤러리 **불안정**, 비권장 |
+| `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI (갤러리 한글 **미포함**) |
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | 휴지통 비우기 UX·보내기 하단바·내비 31px |
 | `VoiceStamp_20260624_093448.apk` | `c5cbeec` | 보내기 하단바 31px (비우기 후 목록 **미포함**) |
 | `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록 보내기 하단바·헤더 축소 |
 | `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |

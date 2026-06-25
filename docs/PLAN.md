@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 2.9 |
+| 문서 버전 | 3.0 |
 | 작성일 | 2026-06-25 |
-| 기준 커밋 | `608357d` (main) |
+| 기준 커밋 | `847ea63` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -243,7 +243,18 @@
 | 167 | 랜딩 **방문자 집계** (오늘·누적, `localStorage` 당일 1회) | `4b71431` | `restore-visitor-counter.bat` §112 |
 | 168 | CountAPI 중단 대응 → **countapi.mileshilliard.com** | `608357d` | (167과 동일) |
 
-> APK 재빌드 없음. 권장 APK는 `releases/VoiceStamp_20260624_094846.apk` (`64aa037`) 유지.
+## 2Q. Phase 3 추가 완료 (2026-06-25, APK)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 169 | 랜딩 푸터 저작권 **Lee Hyung Woo** (영문) | `f50a2fb` | — |
+| 170 | **도로·지번·POI** 위치 fallback (학교 300m) | `511a67c` | `restore-road-place-fallback.bat` |
+| 171 | 갤러리 **한글 파일명**·원본 `_orig` | `143a140` | `restore-gallery-filename.bat` §80 |
+| 172 | 갤러리 **DISPLAY_NAME** 한글 (`voicestamp-gallery`) | `44997be` | `restore-gallery-display-name.bat` §82 |
+| 173 | 캡션 갤러리 JPEG **EXIF 복사** (ISO·GPS·크기) | `847ea63` | `restore-caption-exif.bat` §83 |
+| 174 | GitHub APK `releases/20260625_171805` · 랜딩·`/info` 링크 | `847ea63` | `restore-apk-download-20260625-171805.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260625_171805.apk` (`847ea63`). `161125`(`143a140`)은 갤러리 경로 이슈로 비권장.
 
 ### 2.1 문서 동기화 이력
 
@@ -276,6 +287,7 @@
 | (본 갱신) | `e6bb868` 반영 — GPS 프리페치·연속 인앱 카메라·스플래시·웹 랜딩/휴지통 confirm·APK·날짜별 이력 |
 | (본 갱신) | `64aa037` 반영 — 휴지통 비우기 UX·목록보내기 하단바·APK `094846`·날짜별 이력 |
 | (본 갱신) | `608357d` 반영 — 랜딩 방문자 집계·CountAPI 대체·APK 변경 없음·날짜별 이력 |
+| (본 갱신) | `847ea63` 반영 — 도로·지번·POI·DISPLAY_NAME 한글·캡션 EXIF·APK `171805`·날짜별 이력 |
 
 ---
 
@@ -327,6 +339,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | RPT-02 | xlsx 다중 이미지 POC | exceljs |
 | RPT-03 | hwpx POC | 범위 조정 가능 |
 
+### 4.4 AI·온디바이스 (설계 완료)
+
+| ID | 내용 | 비고 |
+|----|------|------|
+| **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기 |
+
 ---
 
 ## 5. 개발 원칙 (유지)
@@ -359,9 +377,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260624_094846.apk` (`64aa037`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260624_094846.apk |
-| 최신 소스 | `608357d` — 랜딩 방문자 집계·CountAPI 대체 (APK 변경 없음) |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260625_171805.apk` (`847ea63`) |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260625_171805.apk |
+| 최신 소스 | `847ea63` — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 fallback |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -388,6 +406,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [README.md](./README.md) | docs 목록 |
 | [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~112 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
+| [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
 
@@ -419,7 +438,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-22 | 2N | **GPS 프리페치** · **연속 인앱 카메라** · GitHub `094203` · **스플래시 flex 확대** (`f5f1592`·`e971934`·`4f20bca`·`a89e166`) |
 | 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
 | 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
-| 2026-06-25 | 3 | 랜딩 **방문자 집계** (오늘·누적, 당일 1회) · CountAPI 대체 · Vercel (`4b71431`·`608357d`, **APK 변경 없음**) |
+| 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
 
 ---
 
@@ -427,7 +446,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | **설치·GitHub 권장** — 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 |
+| `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
+| `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 **불안정**, 비권장 |
+| `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |
+| `releases/VoiceStamp_20260624_094846.apk` | `64aa037` | 휴지통 비우기 UX·목록보내기 하단바·내비 31px |
 | `VoiceStamp_20260624_093448.apk` | `c5cbeec` |보내기 하단바 31px (비우기 후 목록 **미포함**) |
 | `VoiceStamp_20260624_092411.apk` | `ecb3fe1` | 목록보내기 하단바·헤더 축소 |
 | `VoiceStamp_20260624_085417.apk` | `64d6728` | 휴지통 비우기 → 휴지통 화면 |
