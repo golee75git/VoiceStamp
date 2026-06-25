@@ -38,6 +38,10 @@ export function useSpeechInput({ onResult }: UseSpeechInputOptions) {
         lang: 'ko-KR',
         interimResults: true,
         continuous: false,
+        androidIntentOptions: {
+          EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS: 2500,
+          EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS: 1500,
+        },
       });
       return true;
     } catch {
