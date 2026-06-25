@@ -6,11 +6,17 @@ import {
 
 type UseSpeechInputOptions = {
   onResult: (text: string, isFinal: boolean) => void;
+  onListeningEnd?: () => void;
 };
 
-export function useSpeechInput({ onResult }: UseSpeechInputOptions) {
+export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptions) {
   const [listening, setListening] = useState(false);
   const [available, setAvailable] = useState(true);
+
+  const finishListening = useCallback(() => {
+    setListening(false);
+    onListeningEnd?.();
+  }, [onListeningEnd]);
 
   useSpeechRecognitionEvent('result', (event) => {
     const text = event.results[0]?.transcript ?? '';
@@ -18,12 +24,20 @@ export function useSpeechInput({ onResult }: UseSpeechInputOptions) {
       onResult(text, event.isFinal);
     }
     if (event.isFinal) {
-      setListening(false);
+      finishListening();
     }
   });
 
   useSpeechRecognitionEvent('error', () => {
-    setListening(false);
+    finishListening();
+  });
+
+  useSpeechRecognitionEvent('end', () => {
+    finishListening();
+  });
+
+  useSpeechRecognitionEvent('nomatch', () => {
+    finishListening();
   });
 
   const start = useCallback(async () => {
@@ -33,15 +47,17 @@ export function useSpeechInput({ onResult }: UseSpeechInputOptions) {
         return false;
       }
 
+      try {
+        ExpoSpeechRecognitionModule.abort();
+      } catch {
+        // ignore stale session cleanup failures
+      }
+
       setListening(true);
       ExpoSpeechRecognitionModule.start({
         lang: 'ko-KR',
         interimResults: true,
         continuous: false,
-        androidIntentOptions: {
-          EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS: 2500,
-          EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS: 1500,
-        },
       });
       return true;
     } catch {
@@ -55,9 +71,9 @@ export function useSpeechInput({ onResult }: UseSpeechInputOptions) {
     try {
       ExpoSpeechRecognitionModule.stop();
     } finally {
-      setListening(false);
+      finishListening();
     }
-  }, []);
+  }, [finishListening]);
 
   return { listening, available, start, stop };
 }

@@ -198,6 +198,7 @@ export function StampSaveModal({
         setSpeechTarget(null);
       }
     },
+    onListeningEnd: () => setSpeechTarget(null),
   });
 
   useEffect(() => {
@@ -460,6 +461,10 @@ export function StampSaveModal({
       stop();
       setSpeechTarget(null);
       return;
+    }
+
+    if (listening) {
+      stop();
     }
 
     if (target === 'title') {
