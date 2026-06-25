@@ -26,7 +26,8 @@
     "react-native-image-marker": "^1.2.11",
     "react-native-reanimated": "4.3.1",
     "react-native-view-shot": "5.1.0",
-    "react-native-web": "^0.21.2"
+    "react-native-web": "^0.21.2",
+    "voicestamp-gallery": "file:./modules/voicestamp-gallery"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",

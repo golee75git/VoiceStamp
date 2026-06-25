@@ -1,8 +1,9 @@
 ﻿import * as FileSystem from 'expo-file-system/legacy';
 import { Album, Asset, requestPermissionsAsync } from 'expo-media-library';
 import { Platform } from 'react-native';
+import { saveImageWithDisplayName } from 'voicestamp-gallery';
 
-import { normalizeStampGroupName, sanitizeStampFileBaseName } from './fileService';
+import { normalizeStampGroupName } from './fileService';
 import { getGalleryAlbumId, setGalleryAlbumId } from './settingsService';
 
 const LEGACY_GALLERY_ALBUM = 'VoiceStamp';
@@ -19,41 +20,78 @@ function resolveGalleryAlbumName(groupName: string): string {
   return normalized || LEGACY_GALLERY_ALBUM;
 }
 
-function sanitizeGalleryCacheFileName(preferredFileName?: string): string {
+function resolveGalleryDisplayName(preferredFileName?: string): string {
   const raw = preferredFileName?.trim();
   if (!raw) {
-    return `voicestamp_${Date.now()}.jpg`;
+    return `VoiceStamp_${Date.now()}.jpg`;
   }
 
-  const match = /^(.*)\.(jpe?g)$/i.exec(raw);
-  if (match) {
-    const base = sanitizeStampFileBaseName(match[1]);
-    const ext = match[2].toLowerCase() === 'jpeg' ? 'jpeg' : 'jpg';
-    return `${base}.${ext}`;
-  }
-
-  return `${sanitizeStampFileBaseName(raw)}.jpg`;
+  const cleaned = raw.replace(/[\\/:*?"<>|]/g, '_');
+  return cleaned.includes('.') ? cleaned : `${cleaned}.jpg`;
 }
 
-async function copyToGalleryCache(localUri: string, preferredFileName?: string): Promise<string> {
+function buildAsciiGalleryCacheFileName(): string {
+  const suffix = Math.random().toString(36).slice(2, 8);
+  return `vs_${Date.now()}_${suffix}.jpg`;
+}
+
+function sanitizeAsciiGalleryCacheFileName(preferredFileName?: string): string {
+  const rawName = preferredFileName?.trim() || buildAsciiGalleryCacheFileName();
+  const safeName =
+    rawName
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^\.+/, '') || buildAsciiGalleryCacheFileName();
+  return safeName.includes('.') ? safeName : `${safeName}.jpg`;
+}
+
+async function copyToAsciiGalleryCache(localUri: string): Promise<string> {
   const cacheDir = FileSystem.cacheDirectory;
   if (!cacheDir) {
     return toFileUri(localUri);
   }
 
-  const fileName = sanitizeGalleryCacheFileName(preferredFileName);
+  const dest = `${cacheDir}${buildAsciiGalleryCacheFileName()}`;
+  await FileSystem.copyAsync({ from: localUri, to: dest });
+  return toFileUri(dest);
+}
+
+async function copyToAsciiGalleryCacheWithName(localUri: string, preferredFileName?: string): Promise<string> {
+  const cacheDir = FileSystem.cacheDirectory;
+  if (!cacheDir) {
+    return toFileUri(localUri);
+  }
+
+  const fileName = sanitizeAsciiGalleryCacheFileName(preferredFileName);
   const dest = `${cacheDir}${fileName}`;
 
   await FileSystem.copyAsync({ from: localUri, to: dest });
   return toFileUri(dest);
 }
 
-async function saveToGalleryAlbum(
+async function saveViaNativeDisplayName(
+  localUri: string,
+  displayName: string,
+  albumName: string,
+): Promise<string | null> {
+  if (Platform.OS !== 'android') {
+    return null;
+  }
+
+  try {
+    const asciiUri = await copyToAsciiGalleryCache(localUri);
+    return await saveImageWithDisplayName(asciiUri, displayName, albumName);
+  } catch {
+    return null;
+  }
+}
+
+async function saveToGalleryAlbumFallback(
   localUri: string,
   albumName: string,
   preferredFileName?: string,
 ): Promise<string | null> {
-  const fileUri = await copyToGalleryCache(localUri, preferredFileName);
+  const fileUri = await copyToAsciiGalleryCacheWithName(localUri, preferredFileName);
   const storedAlbumId = await getGalleryAlbumId(albumName);
 
   if (storedAlbumId) {
@@ -73,6 +111,20 @@ async function saveToGalleryAlbum(
   } catch {
     return null;
   }
+}
+
+async function saveToGalleryAlbum(
+  localUri: string,
+  albumName: string,
+  preferredFileName?: string,
+): Promise<string | null> {
+  const displayName = resolveGalleryDisplayName(preferredFileName);
+  const nativeAssetId = await saveViaNativeDisplayName(localUri, displayName, albumName);
+  if (nativeAssetId) {
+    return nativeAssetId;
+  }
+
+  return saveToGalleryAlbumFallback(localUri, albumName, preferredFileName);
 }
 
 export async function saveStampPhotoToGallery(
@@ -95,7 +147,7 @@ export async function saveStampPhotoToGallery(
     return await saveToGalleryAlbum(localFileUri, album, preferredFileName);
   } catch {
     try {
-      const fileUri = await copyToGalleryCache(localFileUri, preferredFileName);
+      const fileUri = await copyToAsciiGalleryCacheWithName(localFileUri, preferredFileName);
       const asset = await Asset.create(fileUri);
       return asset.id;
     } catch {
@@ -120,7 +172,7 @@ export async function moveStampGalleryAlbum(
 
   const albumName = resolveGalleryAlbumName(newGroupName);
 
-  if (assetId) {
+  if (assetId && !assetId.startsWith('content://')) {
     try {
       const asset = new Asset(assetId);
       const storedTargetId = await getGalleryAlbumId(albumName);

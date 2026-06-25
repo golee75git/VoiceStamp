@@ -1315,6 +1315,22 @@ Copy-Item src.pre-gallery-filename\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-gallery-filename\services\exportStampImage.ts src\services\ -Force
 ```
 
+## 82. 갤러리 DISPLAY_NAME 네이티브 저장 되돌리기 (선택)
+
+Android MediaStore DISPLAY_NAME 한글 저장(네이티브 모듈) 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-gallery-display-name.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-gallery-display-name\services\galleryService.ts src\services\ -Force
+Copy-Item src.pre-gallery-display-name\package.json . -Force
+npm install
+```
+
 ## 81. 캡처 좌표(위도·경도) 표시 되돌리기 (선택)
 
 캡션/워터마크에 GPS 좌표 표시 후 문제가 생기면 아래로 복구합니다.

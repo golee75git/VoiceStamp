@@ -1,0 +1,13 @@
+{
+  "name": "voicestamp-gallery",
+  "version": "1.0.0",
+  "description": "Android MediaStore gallery save with Korean DISPLAY_NAME",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": "*",
+    "expo-modules-core": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
