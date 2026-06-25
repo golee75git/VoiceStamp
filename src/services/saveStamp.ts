@@ -1,11 +1,9 @@
 ﻿import { Platform } from 'react-native';
 
+import { renderStampJpegUri, type StampImageExportOptions } from './exportStampImage';
 import {
-  buildCaptionGalleryFileName,
-  renderStampJpegUri,
-  type StampImageExportOptions,
-} from './exportStampImage';
-import {
+  buildGalleryOriginalFileName,
+  buildGalleryStampFileName,
   ensureStampOriginalCopy,
   extractStampGroupFromImagePath,
   formatDefaultStampTitle,
@@ -90,28 +88,30 @@ async function saveNewStampToGallery(
   mode: GallerySaveMode,
   captureForExport?: SaveStampInput['captureForExport'],
 ): Promise<string | null> {
+  const stampFileName = buildGalleryStampFileName(stamp.title);
+  const originalFileName = buildGalleryOriginalFileName(stamp.title);
+
   if (mode === 'original_only') {
-    return saveStampPhotoToGallery(originalUri, undefined, groupName);
+    return saveStampPhotoToGallery(originalUri, originalFileName, groupName);
   }
 
   const options = await loadExportOptions();
-  const captionFileName = buildCaptionGalleryFileName(stamp.title);
 
   try {
     const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
 
     if (mode === 'caption_only') {
-      return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
+      return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
     }
 
-    await saveStampPhotoToGallery(originalUri, undefined, groupName);
-    return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
+    await saveStampPhotoToGallery(originalUri, originalFileName, groupName);
+    return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
   } catch {
     if (mode === 'caption_only') {
       return null;
     }
 
-    return saveStampPhotoToGallery(originalUri, undefined, groupName);
+    return saveStampPhotoToGallery(originalUri, originalFileName, groupName);
   }
 }
 
@@ -151,11 +151,11 @@ async function saveEditStampCaptionToGallery(
   }
 
   const options = await loadExportOptions();
-  const captionFileName = buildCaptionGalleryFileName(stamp.title);
+  const stampFileName = buildGalleryStampFileName(stamp.title);
 
   try {
     const captionUri = await renderStampJpegUri(stamp, options, captureForExport);
-    return saveStampPhotoToGallery(captionUri, captionFileName, groupName);
+    return saveStampPhotoToGallery(captionUri, stampFileName, groupName);
   } catch {
     return stamp.galleryAssetId ?? null;
   }

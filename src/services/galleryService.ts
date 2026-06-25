@@ -2,7 +2,7 @@
 import { Album, Asset, requestPermissionsAsync } from 'expo-media-library';
 import { Platform } from 'react-native';
 
-import { normalizeStampGroupName } from './fileService';
+import { normalizeStampGroupName, sanitizeStampFileBaseName } from './fileService';
 import { getGalleryAlbumId, setGalleryAlbumId } from './settingsService';
 
 const LEGACY_GALLERY_ALBUM = 'VoiceStamp';
@@ -19,19 +19,29 @@ function resolveGalleryAlbumName(groupName: string): string {
   return normalized || LEGACY_GALLERY_ALBUM;
 }
 
+function sanitizeGalleryCacheFileName(preferredFileName?: string): string {
+  const raw = preferredFileName?.trim();
+  if (!raw) {
+    return `voicestamp_${Date.now()}.jpg`;
+  }
+
+  const match = /^(.*)\.(jpe?g)$/i.exec(raw);
+  if (match) {
+    const base = sanitizeStampFileBaseName(match[1]);
+    const ext = match[2].toLowerCase() === 'jpeg' ? 'jpeg' : 'jpg';
+    return `${base}.${ext}`;
+  }
+
+  return `${sanitizeStampFileBaseName(raw)}.jpg`;
+}
+
 async function copyToGalleryCache(localUri: string, preferredFileName?: string): Promise<string> {
   const cacheDir = FileSystem.cacheDirectory;
   if (!cacheDir) {
     return toFileUri(localUri);
   }
 
-  const rawName = preferredFileName?.trim() || `voicestamp_${Date.now()}.jpg`;
-  const safeName =
-    rawName
-      .replace(/[^a-zA-Z0-9._-]/g, '_')
-      .replace(/_+/g, '_')
-      .replace(/^\.+/, '') || `voicestamp_${Date.now()}.jpg`;
-  const fileName = safeName.includes('.') ? safeName : `${safeName}.jpg`;
+  const fileName = sanitizeGalleryCacheFileName(preferredFileName);
   const dest = `${cacheDir}${fileName}`;
 
   await FileSystem.copyAsync({ from: localUri, to: dest });

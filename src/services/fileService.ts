@@ -70,6 +70,14 @@ export function buildStampOriginalFileName(title: string, id: string, ext: strin
   return `${base}_${shortIdFromStampId(id)}_orig.${ext}`;
 }
 
+export function buildGalleryStampFileName(title: string): string {
+  return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}.jpg`;
+}
+
+export function buildGalleryOriginalFileName(title: string): string {
+  return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}_orig.jpg`;
+}
+
 export function formatStampGroupName(timestamp: number, siteName?: string): string {
   const date = new Date(timestamp);
   const pad = (value: number) => String(value).padStart(2, '0');

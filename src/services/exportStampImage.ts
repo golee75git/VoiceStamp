@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 
 import {
   extractStampGroupFromImagePath,
+  buildGalleryStampFileName,
   sanitizeStampFileBaseName,
   resolveImageUri,
 } from './fileService';
@@ -493,7 +494,7 @@ export function buildExportJpegFileName(
 
 
 export function buildCaptionGalleryFileName(title: string): string {
-  return `${sanitizeStampFileBaseName(title.trim() || 'VoiceStamp')}-caption.jpg`;
+  return buildGalleryStampFileName(title);
 }
 
 export async function renderStampJpegUri(
