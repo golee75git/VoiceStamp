@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-06-26**  
-최신 커밋 기준: `fb0363b` (main)
+최신 커밋 기준: `6f95aa8` (main)
 
 ---
 
@@ -278,8 +278,10 @@ VoiceStamp/
 | 178 | 음성 **끝 공백·커서** (장소·제목·메모) | `0b5c1b8` | `restore-speech-end-gap.bat` §116 |
 | 179 | **도로명+POI 근처** 장소 표기 | `fb0363b` | `restore-place-road-poi.bat` §117 |
 | 180 | GitHub APK `releases/20260626_172205` · 랜딩·`/info` 링크 | `fb0363b` | `restore-apk-download-20260626-place-road-poi.bat` |
+| 181 | 촬영 후 3버튼 **눌림 배경·Android 리플** | `a780b27` | `restore-capture-button-press.bat` |
+| 182 | GitHub APK `releases/20260626_184823` · 랜딩·`/info` 링크 | `6f95aa8` | `restore-apk-download-20260626-184823.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_172205.apk` (`fb0363b`).
+> **권장 APK:** `releases/VoiceStamp_20260626_184823.apk` (`6f95aa8`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -345,7 +347,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260626_172205.apk`** | `fb0363b` | **설치·GitHub 권장** — 도로명+POI 근처·음성 커서·장소 마이크·`place_label` |
+| **`releases/VoiceStamp_20260626_184823.apk`** | `6f95aa8` | **설치·GitHub 권장** — 촬영 후 3버튼 **눌림 배경·Android 리플** + `172205` 기능 전부 |
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | 도로명+POI 근처·음성 커서·장소 마이크·`place_label` (버튼 눌림 **미포함**) |
 | `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
 | `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
 | `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit **되돌림** |
@@ -402,7 +405,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **권장** — **도로명+POI 근처**·음성 끝 공백·커서·장소 마이크·`place_label` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260626_184823.apk` | `6f95aa8` | **권장** — 촬영 후 3버튼 **눌림 배경·Android 리플** + `172205` 기능 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **도로명+POI 근처**·음성 끝 공백·커서·장소 마이크·`place_label` (버튼 눌림 **미포함**) | GitHub |
 | `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (`restore-speech-end-gap.bat`) | GitHub |
 | `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 필드 마이크 (`restore-place-speech.bat`) | GitHub |
 | `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit 장면 키워드 **되돌림** | GitHub |
@@ -711,7 +715,10 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`fb0363b` 기준) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`6f95aa8` 기준) |
+| `6f95aa8` | APK `releases/VoiceStamp_20260626_184823` — 촬영 후 3버튼 눌림·리플 배포 · `restore-apk-download-20260626-184823.bat` · Vercel |
+| `a780b27` | **촬영 후 3버튼** 연속 촬영·저장·다시 촬영 — **눌림 배경색·Android 리플** (`CaptureActionSheet`) · `restore-capture-button-press.bat` |
+| `f279e26` | PRD·PROJECT·PLAN·README 문서 동기화 (`fb0363b` 기준) |
 | `fb0363b` | APK `releases/VoiceStamp_20260626_172205` — **도로명+POI 근처** (`kakaoLocal.ts`) · `restore-place-road-poi.bat` §117 · Vercel |
 | `0b5c1b8` | 음성 **끝 공백·커서** (장소·제목·메모) · `restore-speech-end-gap.bat` §116 |
 | `b06310a` | **장소** 필드 마이크 · `restore-place-speech.bat` §115 |
@@ -726,7 +733,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `3037ffe` | APK `134226` 배포 링크 갱신 |
 | `e330e7e` | **`place_label`** 별도 장소 필드 · `restore-place-label.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_172205.apk` (`fb0363b`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260626_184823.apk` (`6f95aa8`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-06-25
 

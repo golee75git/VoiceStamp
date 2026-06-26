@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-06-26 |
-| 최신 반영 커밋 | `fb0363b` (main) |
+| 최신 반영 커밋 | `6f95aa8` (main) |
 
 ---
 
@@ -168,6 +168,7 @@
 | F-CAM-12 | 촬영 확인 시트(`CaptureActionSheet`) 열림 중 **GPS 프리페치** | ✅ `f5f1592` |
 | F-CAM-13 | 연속 촬영 시 **인앱 CameraView** 옵션 (시스템 카메라 대안) | ✅ `e971934` |
 | F-CAM-14 | 카메라 홈 스플래시(`camera-home.png`) **flex 확대** (셔터 위 영역) | ✅ `a89e166` |
+| F-CAM-15 | 촬영 확인 시트 3버튼 **눌림 배경색·Android 리플** 터치 피드백 | ✅ `a780b27` |
 
 ### 3.2 스탬프 저장 (P0)
 
@@ -552,7 +553,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260626_172205.apk`** (`fb0363b`). 이전 권장: `171805` (`847ea63`) |
+| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260626_184823.apk`** (`6f95aa8`). 이전 권장: `172205` (`fb0363b`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -605,7 +606,7 @@
 | **2026-06-23** | 웹 **휴지통·비우기 확인**(`confirmAlert`) · 웹 **`/` APK 랜딩 + `/app` 테스트** · 빌드 후 `index.html` 스왑 · 랜딩 **개인정보·APK 권장** 안내 · Vercel 배포 | `fcbf747` · `4745255` · `0c7e2dd` · `0ab0f93` · `e6bb868` |
 | **2026-06-24** | **휴지통 비우기 → 휴지통 화면** · 목록 선택 **보내기 하단바**·헤더 축소 ·보내기 바 **Android 31px** · 비우기 후 **목록 복귀** · GitHub APK `094846` · Vercel | `64d6728` · `ecb3fe1` · `c5cbeec` · `64aa037` |
 | **2026-06-25** | 랜딩 **방문자 집계**·CountAPI 대체 · 랜딩 저작권 표기 · **도로·지번·POI** 위치 · 갤러리 **한글 DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` · Vercel | `4b71431`~`847ea63` |
-| **2026-06-26** | **별도 장소 필드**(`place_label`) · **장소 마이크** · **음성 끝 공백·커서** · **도로명+POI 근처** · 마이크 안정화 · ML Kit **되돌림** · 랜딩 정리(웹테스트·사진 책임·앱정보 링크) · APK `172205` | `e330e7e`~`fb0363b` |
+| **2026-06-26** | **별도 장소 필드**(`place_label`) · **장소 마이크** · **음성 끝 공백·커서** · **도로명+POI 근처** · 마이크 안정화 · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림 배경·Android 리플** · APK `184823` | `e330e7e`~`6f95aa8` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -615,7 +616,8 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **설치·GitHub 권장** — 도로명+POI 근처·음성 커서·장소 마이크·`place_label` |
+| `releases/VoiceStamp_20260626_184823.apk` | `6f95aa8` | **설치·GitHub 권장** — 촬영 후 3버튼 **눌림 배경·Android 리플** + `172205` 기능 전부 |
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | 도로명+POI 근처·음성 커서·장소 마이크·`place_label` (버튼 눌림 **미포함**) |
 | `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
 | `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
 | `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit **되돌림** (`place_label`·마이크 수정 **미포함**) |
