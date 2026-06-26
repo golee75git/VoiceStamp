@@ -73,6 +73,29 @@ type SpeechTarget = 'title' | 'memo' | 'place' | null;
 
 type SpeechInsertSlice = { prefix: string; suffix: string };
 
+type TextSelection = { start: number; end: number };
+
+function textWithTrailingGap(text: string): { text: string; selection: TextSelection } {
+  if (!text) {
+    return { text: '', selection: { start: 0, end: 0 } };
+  }
+  const withGap = text.endsWith(' ') ? text : `${text} `;
+  const pos = withGap.length;
+  return { text: withGap, selection: { start: pos, end: pos } };
+}
+
+function applyTextSelection(
+  selection: TextSelection,
+  ref: { current: TextSelection },
+  setSelection: (value: TextSelection) => void,
+) {
+  ref.current = selection;
+  setSelection(selection);
+  requestAnimationFrame(() => {
+    setSelection({ start: selection.start, end: selection.end });
+  });
+}
+
 function insertSpeechAtCursor(prefix: string, suffix: string, spoken: string): string {
   const trimmed = spoken.trim();
   if (!trimmed) {
@@ -128,6 +151,9 @@ export function StampSaveModal({
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
+  const [titleSelection, setTitleSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [placeSelection, setPlaceSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [memoSelection, setMemoSelection] = useState<TextSelection>({ start: 0, end: 0 });
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
@@ -196,15 +222,35 @@ export function StampSaveModal({
       const target = speechTargetRef.current;
       if (target === 'title') {
         const { prefix, suffix } = speechInsertRef.current.title;
-        setTitle(insertSpeechAtCursor(prefix, suffix, text));
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setTitle(withGap);
+          applyTextSelection(selection, titleSelectionRef, setTitleSelection);
+        } else {
+          setTitle(merged);
+        }
       } else if (target === 'memo') {
         const { prefix, suffix } = speechInsertRef.current.memo;
-        setMemo(insertSpeechAtCursor(prefix, suffix, text));
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setMemo(withGap);
+          applyTextSelection(selection, memoSelectionRef, setMemoSelection);
+        } else {
+          setMemo(merged);
+        }
       } else if (target === 'place') {
         const { prefix, suffix } = speechInsertRef.current.place;
         const merged = insertSpeechAtCursor(prefix, suffix, text);
         placeTouchedRef.current = true;
-        setPlaceLabel(merged.trim() ? merged : null);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setPlaceLabel(withGap.trim() ? withGap : null);
+          applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
+        } else {
+          setPlaceLabel(merged.trim() ? merged : null);
+        }
       }
       if (isFinal) {
         setSpeechTarget(null);
@@ -268,6 +314,12 @@ export function StampSaveModal({
       setLocationLoading(false);
       setError(null);
       setSpeechTarget(null);
+      setTitleSelection({ start: 0, end: 0 });
+      setPlaceSelection({ start: 0, end: 0 });
+      setMemoSelection({ start: 0, end: 0 });
+      titleSelectionRef.current = { start: 0, end: 0 };
+      placeSelectionRef.current = { start: 0, end: 0 };
+      memoSelectionRef.current = { start: 0, end: 0 };
       setImageViewerVisible(false);
       setFolderPickerVisible(false);
       setFolderOptions([]);
@@ -481,23 +533,32 @@ export function StampSaveModal({
 
     if (target === 'title') {
       titleTouchedRef.current = true;
+      const { text: withGap, selection } = textWithTrailingGap(title);
+      setTitle(withGap);
+      applyTextSelection(selection, titleSelectionRef, setTitleSelection);
       speechInsertRef.current.title = speechSliceAtSelection(
-        title,
-        titleSelectionRef.current.start,
-        titleSelectionRef.current.end,
+        withGap,
+        selection.start,
+        selection.end,
       );
     } else if (target === 'memo') {
+      const { text: withGap, selection } = textWithTrailingGap(memo);
+      setMemo(withGap);
+      applyTextSelection(selection, memoSelectionRef, setMemoSelection);
       speechInsertRef.current.memo = speechSliceAtSelection(
-        memo,
-        memoSelectionRef.current.start,
-        memoSelectionRef.current.end,
+        withGap,
+        selection.start,
+        selection.end,
       );
     } else if (target === 'place') {
       placeTouchedRef.current = true;
+      const { text: withGap, selection } = textWithTrailingGap(placeLabel ?? '');
+      setPlaceLabel(withGap.trim() ? withGap : null);
+      applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
       speechInsertRef.current.place = speechSliceAtSelection(
-        placeLabel ?? '',
-        placeSelectionRef.current.start,
-        placeSelectionRef.current.end,
+        withGap,
+        selection.start,
+        selection.end,
       );
     }
 
@@ -802,8 +863,10 @@ export function StampSaveModal({
               listening={listening && speechTarget === 'place'}
               speechAvailable={available}
               onFocus={scrollFieldIntoView}
+              selection={placeSelection}
               onSelectionChange={(selection) => {
                 placeSelectionRef.current = selection;
+                setPlaceSelection(selection);
               }}
               textAlign="left"
               cameraHand={cameraHand}
@@ -845,8 +908,10 @@ export function StampSaveModal({
                 listening={listening && speechTarget === 'title'}
                 speechAvailable={available}
                 onFocus={scrollFieldIntoView}
+                selection={titleSelection}
                 onSelectionChange={(selection) => {
                   titleSelectionRef.current = selection;
+                  setTitleSelection(selection);
                 }}
                 textAlign={titleTextAlign}
                 cameraHand={cameraHand}
@@ -862,8 +927,10 @@ export function StampSaveModal({
               speechAvailable={available}
               multiline
               onFocus={scrollFieldIntoView}
+              selection={memoSelection}
               onSelectionChange={(selection) => {
                 memoSelectionRef.current = selection;
+                setMemoSelection(selection);
               }}
               textAlign={memoTextAlign}
               cameraHand={cameraHand}

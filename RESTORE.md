@@ -1912,3 +1912,18 @@ restore-place-speech.bat
 ```powershell
 Copy-Item src.pre-place-speech\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 116. 음성 입력 끝 공백·커서 되돌리기 (선택)
+
+장소·제목·메모 음성 입력 시 끝 공백·커서 맨 뒤 배치 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-speech-end-gap.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-speech-end-gap\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-speech-end-gap\components\VoiceInputField.tsx src\components\ -Force
+```

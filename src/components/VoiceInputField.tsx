@@ -14,6 +14,7 @@ type VoiceInputFieldProps = {
   speechAvailable?: boolean;
   onFocus?: () => void;
   onSelectionChange?: (selection: { start: number; end: number }) => void;
+  selection?: { start: number; end: number };
   textAlign?: TextAlign;
   cameraHand?: CameraHand;
 };
@@ -28,6 +29,7 @@ export function VoiceInputField({
   speechAvailable = true,
   onFocus,
   onSelectionChange,
+  selection,
   textAlign = 'left',
   cameraHand = 'right',
 }: VoiceInputFieldProps) {
@@ -58,6 +60,7 @@ export function VoiceInputField({
         onChangeText={onChangeText}
         onFocus={onFocus}
         onSelectionChange={(event) => onSelectionChange?.(event.nativeEvent.selection)}
+        selection={selection}
         placeholder={`${label} 입력`}
         multiline={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}
