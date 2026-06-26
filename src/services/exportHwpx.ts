@@ -102,7 +102,9 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
   for (const stamp of stamps) {
     const coords = stampCoordinatesLine(stamp, coordsLabel) ?? '';
     const floorText = formatFloor(stamp.floor);
+    const placeText = stamp.placeLabel?.trim() ?? '';
     const metaParts = [
+      placeText,
       floorText,
       coords,
       new Date(stamp.createdAt).toLocaleString('ko-KR'),

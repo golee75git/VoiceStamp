@@ -54,6 +54,7 @@ type SaveStampInput = {
   latitude?: number | null;
   longitude?: number | null;
   floor?: Stamp['floor'];
+  placeLabel?: string | null;
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -211,6 +212,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     latitude: input.latitude ?? null,
     longitude: input.longitude ?? null,
     floor: input.floor ?? null,
+    placeLabel: input.placeLabel?.trim() || null,
   };
 
   await insertStamp(stamp);
@@ -232,6 +234,7 @@ export async function updateStamp(input: {
   memo: string;
   groupName?: string;
   floor?: Stamp['floor'];
+  placeLabel?: string | null;
   croppedImageUri?: string;
   captureForExport?: SaveStampInput['captureForExport'];
 }): Promise<void> {
@@ -242,6 +245,7 @@ export async function updateStamp(input: {
 
   const title = resolveStampTitle(input.title, stamp.createdAt);
   const memo = input.memo.trim();
+  const placeLabel = input.placeLabel?.trim() || null;
   const nextGroup = normalizeStampGroupName(input.groupName ?? '');
   const currentGroup = extractStampGroupFromImagePath(stamp.imagePath) ?? '';
   const groupChanged = nextGroup !== currentGroup;
@@ -288,12 +292,13 @@ export async function updateStamp(input: {
     titleChanged ||
     memo !== stamp.memo ||
     imageCropped ||
-    (input.floor ?? null) !== (stamp.floor ?? null);
+    (input.floor ?? null) !== (stamp.floor ?? null) ||
+    placeLabel !== (stamp.placeLabel?.trim() || null);
 
   if (metadataChanged) {
-    await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId, input.floor ?? null);
+    await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId, input.floor ?? null, placeLabel);
   } else {
-    await updateStampMetadata(stamp.id, title, memo, input.floor ?? null);
+    await updateStampMetadata(stamp.id, title, memo, input.floor ?? null, placeLabel);
   }
 
   if (imageCropped && Platform.OS !== 'web') {
@@ -304,6 +309,7 @@ export async function updateStamp(input: {
       imagePath,
       galleryAssetId,
       floor: input.floor ?? null,
+      placeLabel,
       updatedAt: Date.now(),
     };
     scheduleEditStampCaptionGallerySave(

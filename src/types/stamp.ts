@@ -12,6 +12,7 @@ export type Stamp = {
   latitude?: number | null;
   longitude?: number | null;
   floor?: StampFloor | null;
+  placeLabel?: string | null;
 };
 
 export type StampRow = {
@@ -26,4 +27,5 @@ export type StampRow = {
   latitude?: number | null;
   longitude?: number | null;
   floor?: string | null;
+  place_label?: string | null;
 };

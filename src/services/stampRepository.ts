@@ -3,7 +3,7 @@ import { sanitizeStampFloor } from './stampFloor';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label';
 
 function mapRow(row: StampRow): Stamp {
   return {
@@ -18,14 +18,15 @@ function mapRow(row: StampRow): Stamp {
     latitude: row.latitude ?? null,
     longitude: row.longitude ?? null,
     floor: sanitizeStampFloor(row.floor),
+    placeLabel: row.place_label?.trim() || null,
   };
 }
 
 export async function insertStamp(stamp: Stamp): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -37,6 +38,7 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     stamp.latitude ?? null,
     stamp.longitude ?? null,
     stamp.floor ?? null,
+    stamp.placeLabel?.trim() || null,
   );
 }
 
@@ -121,13 +123,15 @@ export async function updateStampMetadata(
   title: string,
   memo: string,
   floor?: Stamp['floor'],
+  placeLabel?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
-    'UPDATE stamps SET title = ?, memo = ?, floor = ?, updated_at = ? WHERE id = ?',
+    'UPDATE stamps SET title = ?, memo = ?, floor = ?, place_label = ?, updated_at = ? WHERE id = ?',
     title,
     memo,
     floor ?? null,
+    placeLabel?.trim() || null,
     Date.now(),
     id,
   );
@@ -157,17 +161,19 @@ export async function updateStampRecord(
   imagePath: string,
   galleryAssetId?: string | null,
   floor?: Stamp['floor'],
+  placeLabel?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(
     `UPDATE stamps
-     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, updated_at = ?
+     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, place_label = ?, updated_at = ?
      WHERE id = ?`,
     title,
     memo,
     imagePath,
     galleryAssetId ?? null,
     floor ?? null,
+    placeLabel?.trim() || null,
     Date.now(),
     id,
   );

@@ -81,7 +81,7 @@ export async function saveQuickCapture(
 
   const { latitude, longitude, placeLabel } = await resolveQuickCaptureLocation(input.reuseLocation);
 
-  const title = formatDefaultStampTitle(capturedAt, placeLabel);
+  const title = formatDefaultStampTitle(capturedAt);
 
   await setCurrentSiteName(siteName);
   await saveStamp({
@@ -92,6 +92,7 @@ export async function saveQuickCapture(
     latitude,
     longitude,
     floor: lastFloor,
+    placeLabel: placeLabel ?? null,
     captureForExport: input.captureForExport,
   });
 

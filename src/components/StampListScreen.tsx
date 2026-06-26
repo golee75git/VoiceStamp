@@ -672,6 +672,11 @@ export function StampListScreen({
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
                       {stampDisplayTitle(item, pdfShowDatetime) || '(제목 없음)'}
                     </Text>
+                    {item.placeLabel?.trim() ? (
+                      <Text style={styles.cardPlace} numberOfLines={1}>
+                        {item.placeLabel.trim()}
+                      </Text>
+                    ) : null}
                     <Text
                       style={[styles.cardMemo, { textAlign: memoTextAlign }]}
                       numberOfLines={isGrid ? 3 : 2}
@@ -1305,6 +1310,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111',
+  },
+  cardPlace: {
+    fontSize: 13,
+    color: '#4b5563',
+    lineHeight: 18,
   },
   cardMemo: {
     fontSize: 14,

@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
 import {
   getMemoTextAlign,
   getOverlayFooterPhrase,
@@ -91,12 +92,16 @@ function buildStampItem(
 ): string {
   const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
   const memoTrimmed = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
   const coords = stampCoordinatesLine(stamp, coordsLabel);
   const orgName = resolveOverlayOrgName(overlay);
   const footerPhrase = resolveOverlayFooterPhrase(overlay);
   const phraseSize = overlayPhraseFontSize(11);
   const coordsBlock = coords
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
+    : '';
+  const placeBlock = place
+    ? `<div class="stamp-place" style="text-align: ${titleAlign};">${escapeHtml(place)}</div>`
     : '';
   const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
   const imageMargin = imageMarginStyle(titleAlign);
@@ -105,6 +110,9 @@ function buildStampItem(
     const theme = getWatermarkTheme(watermarkStyle);
     const memoBlock = memoTrimmed
       ? `<div class="watermark-memo" style="text-align: ${memoAlign}; color: ${theme.memoColor};">${escapeHtml(memoTrimmed)}</div>`
+      : '';
+    const watermarkPlaceBlock = place
+      ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(place)}</div>`
       : '';
     const watermarkCoordsBlock = coords
       ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
@@ -122,6 +130,7 @@ function buildStampItem(
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
             ${orgBlock}
             <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
+            ${watermarkPlaceBlock}
             ${memoBlock}
             ${watermarkCoordsBlock}
             ${phraseBlock}
@@ -136,6 +145,9 @@ function buildStampItem(
   const memoBlock = memoTrimmed
     ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
     : '';
+  const placeCaptionBlock = place
+    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(place)}</p>`
+    : '';
   const phraseBlock = footerPhrase
     ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
     : '';
@@ -149,6 +161,7 @@ function buildStampItem(
         <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
         ${orgBlock}
         <h1 style="text-align: ${titleAlign};">${title}</h1>
+        ${placeCaptionBlock}
         ${memoBlock}
         ${coordsBlock}
         ${phraseBlock}

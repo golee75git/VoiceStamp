@@ -11,7 +11,8 @@ export function stampMatchesQuery(stamp: Stamp, query: string): boolean {
   }
   const title = normalizeForSearch(stamp.title);
   const memo = normalizeForSearch(stamp.memo ?? '');
-  return title.includes(q) || memo.includes(q);
+  const place = normalizeForSearch(stamp.placeLabel ?? '');
+  return title.includes(q) || memo.includes(q) || place.includes(q);
 }
 
 export function filterStampsByQuery(stamps: Stamp[], query: string): Stamp[] {

@@ -163,6 +163,7 @@ export function StampSaveModal({
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
+  const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
@@ -262,6 +263,7 @@ export function StampSaveModal({
       setFolderOptionsLoading(false);
       setDeleting(false);
       titleTouchedRef.current = false;
+      placeTouchedRef.current = false;
       siteNameTouchedRef.current = false;
       floorTouchedRef.current = false;
       captureCoordsRef.current = null;
@@ -279,8 +281,10 @@ export function StampSaveModal({
       setTitle(stamp.title);
       setMemo(stamp.memo);
       setFloor(stamp.floor ?? null);
+      setPlaceLabel(stamp.placeLabel ?? null);
       setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
       titleTouchedRef.current = true;
+      placeTouchedRef.current = true;
       floorTouchedRef.current = Boolean(stamp.floor);
     }
   }, [visible, stamp, stop]);
@@ -345,16 +349,15 @@ export function StampSaveModal({
       if (!snapshot) {
         return;
       }
-      setPlaceLabel(snapshot.placeLabel);
+      if (!placeTouchedRef.current) {
+        setPlaceLabel(snapshot.placeLabel);
+      }
       const coords = {
         latitude: snapshot.latitude,
         longitude: snapshot.longitude,
       };
       captureCoordsRef.current = coords;
       setCaptureCoords(coords);
-      if (!titleTouchedRef.current) {
-        setTitle(formatDefaultStampTitle(capturedAt, snapshot.placeLabel ?? undefined));
-      }
     };
 
     const loadSiteSettings = async () => {
@@ -379,11 +382,10 @@ export function StampSaveModal({
       setLocationLoading(true);
       try {
         const quickCoords = await getQuickLastKnownCoords();
-        if (!cancelled && quickCoords && !titleTouchedRef.current) {
+        if (!cancelled && quickCoords && !placeTouchedRef.current) {
           const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
           if (cachedPlace) {
             setPlaceLabel(cachedPlace);
-            setTitle(formatDefaultStampTitle(capturedAt, cachedPlace));
           }
         }
 
@@ -418,7 +420,7 @@ export function StampSaveModal({
       setLocationLoading(true);
       void (async () => {
         const quickCoords = await getQuickLastKnownCoords();
-        if (cancelled || !quickCoords || titleTouchedRef.current) {
+        if (cancelled || !quickCoords || placeTouchedRef.current) {
           return;
         }
         const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
@@ -426,7 +428,6 @@ export function StampSaveModal({
           return;
         }
         setPlaceLabel(cachedPlace);
-        setTitle(formatDefaultStampTitle(capturedAt, cachedPlace));
       })();
       return () => {
         cancelled = true;
@@ -607,6 +608,7 @@ export function StampSaveModal({
           memo,
           groupName,
           floor,
+          placeLabel,
           croppedImageUri,
           captureForExport: captureStampForExport,
         });
@@ -628,6 +630,7 @@ export function StampSaveModal({
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
           floor,
+          placeLabel,
           captureForExport: captureStampForExport,
         });
         const coords = captureCoordsRef.current;
@@ -706,6 +709,7 @@ export function StampSaveModal({
                   imageLoading={!layoutSettingsLoaded || !previewThumbUri}
                   title={title}
                   memo={memo}
+                  placeLabel={placeLabel}
                   titleAlign={titleTextAlign}
                   memoAlign={memoTextAlign}
                   textLayout={stampTextLayout}
@@ -744,9 +748,7 @@ export function StampSaveModal({
                   </Pressable>
                 </View>
                 {locationLoading ? (
-                  <Text style={styles.locationHint}>
-                    {placeLabel ? '이전 장소 표시 · 위치 확인 중…' : '위치 확인 중…'}
-                  </Text>
+                  <Text style={styles.locationHint}>위치 확인 중…</Text>
                 ) : null}
               </View>
             ) : (
@@ -770,6 +772,21 @@ export function StampSaveModal({
                 </Text>
               </View>
             )}
+
+            <View style={styles.siteField}>
+              <Text style={styles.siteLabel}>장소</Text>
+              <TextInput
+                style={styles.folderInput}
+                value={placeLabel ?? ''}
+                onChangeText={(text) => {
+                  placeTouchedRef.current = true;
+                  setPlaceLabel(text.trim() ? text : null);
+                }}
+                placeholder={locationLoading ? '위치 확인 중…' : '예: 역삼초등학교'}
+                onFocus={scrollFieldIntoView}
+                maxLength={120}
+              />
+            </View>
 
             {showFloorPicker ? (
               <View style={styles.siteField}>

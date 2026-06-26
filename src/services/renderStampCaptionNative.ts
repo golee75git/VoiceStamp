@@ -15,6 +15,7 @@ import {
 import { resolveImageUri } from './fileService';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
@@ -77,6 +78,7 @@ export async function renderStampCaptionNative(
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -90,6 +92,7 @@ export async function renderStampCaptionNative(
     coords,
     orgName,
     footerPhrase,
+    place,
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 
@@ -143,6 +146,23 @@ export async function renderStampCaptionNative(
       textBackgroundPaddingY,
     ),
   });
+
+  if (layout.placeY !== null && layout.placeText) {
+    watermarkTexts.push({
+      text: layout.placeText,
+      positionOptions: {
+        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
+        Y: layout.placeY,
+      },
+      style: captionTextStyle(
+        '#374151',
+        layout.placeSize,
+        layout.placeAlign,
+        false,
+        textBackgroundPaddingY,
+      ),
+    });
+  }
 
   if (layout.memoY !== null && layout.memoText) {
     watermarkTexts.push({

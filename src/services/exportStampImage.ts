@@ -15,6 +15,7 @@ import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { buildCaptionLayout } from './captionLayout';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
 import {
   overlayPhraseFontSize,
   resolveOverlayFooterPhrase,
@@ -217,6 +218,7 @@ async function renderStampJpegWatermarkOnWeb(
 
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options) ?? '';
   const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -236,6 +238,8 @@ async function renderStampJpegWatermarkOnWeb(
 
   measureCtx.font = '700 32px sans-serif';
   const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
+  measureCtx.font = '400 24px sans-serif';
+  const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
   measureCtx.font = '400 26px sans-serif';
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
   measureCtx.font = '400 22px sans-serif';
@@ -247,6 +251,7 @@ async function renderStampJpegWatermarkOnWeb(
     barPaddingY +
     (orgLines.length > 0 ? orgLines.length * 30 + 4 : 0) +
     titleLines.length * 38 +
+    (placeLines.length > 0 ? 6 + placeLines.length * 28 : 0) +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
     (phraseLines.length > 0 ? 4 + phraseLines.length * 24 : 0) +
@@ -296,6 +301,21 @@ async function renderStampJpegWatermarkOnWeb(
       theme.titleColor,
       38,
     ) + 4;
+
+  if (place) {
+    textY = drawAlignedText(
+      ctx,
+      place,
+      barPaddingX,
+      textY + 2,
+      textWidth,
+      options.titleAlign,
+      24,
+      '400',
+      theme.memoColor,
+      28,
+    );
+  }
 
   if (memo) {
     textY = drawAlignedText(
@@ -358,6 +378,7 @@ async function renderStampJpegCaptionOnWeb(
 
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -371,6 +392,7 @@ async function renderStampJpegCaptionOnWeb(
     coords,
     orgName,
     footerPhrase,
+    place,
   );
 
   const canvas = document.createElement('canvas');
@@ -414,6 +436,21 @@ async function renderStampJpegCaptionOnWeb(
       '#111827',
       layout.titleLineHeight,
     ) + 4;
+
+  if (layout.placeY !== null && layout.placeText) {
+    drawAlignedText(
+      ctx,
+      layout.placeText,
+      layout.padding,
+      layout.placeY,
+      imgWidth,
+      layout.placeAlign,
+      layout.placeSize,
+      '400',
+      '#374151',
+      layout.placeLineHeight,
+    );
+  }
 
   if (layout.memoY !== null && layout.memoText) {
     textY = drawAlignedText(

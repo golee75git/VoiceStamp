@@ -63,6 +63,7 @@ type StampSavePreviewProps = {
   imageLoading?: boolean;
   title: string;
   memo: string;
+  placeLabel?: string | null;
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   textLayout: StampTextLayout;
@@ -84,6 +85,7 @@ export function StampSavePreview({
   imageLoading = false,
   title,
   memo,
+  placeLabel,
   titleAlign,
   memoAlign,
   textLayout,
@@ -102,6 +104,7 @@ export function StampSavePreview({
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
   const displayMemo = memo.trim();
+  const displayPlace = placeLabel?.trim() ?? '';
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
@@ -130,8 +133,10 @@ export function StampSavePreview({
   const titleStyle = isThumbnail ? styles.thumbnailTitle : styles.fullscreenCaptionTitle;
   const memoStyle = isThumbnail ? styles.thumbnailMemo : styles.fullscreenCaptionMemo;
   const coordsStyle = isThumbnail ? styles.thumbnailCoords : styles.fullscreenCaptionCoords;
+  const placeStyle = isThumbnail ? styles.thumbnailPlace : styles.fullscreenCaptionPlace;
   const watermarkTitleStyle = isThumbnail ? styles.thumbnailWatermarkTitle : styles.fullscreenWatermarkTitle;
   const watermarkMemoStyle = isThumbnail ? styles.thumbnailWatermarkMemo : styles.fullscreenWatermarkMemo;
+  const watermarkPlaceStyle = isThumbnail ? styles.thumbnailWatermarkPlace : styles.fullscreenWatermarkPlace;
   const watermarkCoordsStyle = isThumbnail ? styles.thumbnailWatermarkCoords : styles.fullscreenWatermarkCoords;
   const watermarkTheme = getWatermarkTheme(watermarkStyle);
 
@@ -165,6 +170,14 @@ export function StampSavePreview({
       >
         {displayTitle}
       </Text>
+      {displayPlace ? (
+        <Text
+          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          numberOfLines={2}
+        >
+          {displayPlace}
+        </Text>
+      ) : null}
       {displayMemo ? (
         <Text
           style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}
@@ -229,6 +242,11 @@ export function StampSavePreview({
             <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
               {displayTitle}
             </Text>
+            {displayPlace ? (
+              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+                {displayPlace}
+              </Text>
+            ) : null}
             {displayMemo ? (
               <Text style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}>
                 {displayMemo}
@@ -268,6 +286,11 @@ export function StampSavePreview({
           <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
             {displayTitle}
           </Text>
+          {displayPlace ? (
+            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
+              {displayPlace}
+            </Text>
+          ) : null}
           {displayMemo ? (
             <Text style={[memoStyle, { textAlign: memoAlign }]} numberOfLines={2}>
               {displayMemo}
@@ -308,6 +331,9 @@ export function StampSavePreview({
           <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }]}>{displayOrgName}</Text>
         ) : null}
         <Text style={[titleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
+        {displayPlace ? (
+          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayPlace}</Text>
+        ) : null}
         {displayMemo ? (
           <Text style={[memoStyle, { textAlign: memoAlign }]}>{displayMemo}</Text>
         ) : null}
@@ -375,6 +401,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ffffff',
   },
+  thumbnailWatermarkPlace: {
+    marginTop: 2,
+    fontSize: 10,
+    color: '#f3f4f6',
+    lineHeight: 14,
+  },
   thumbnailWatermarkMemo: {
     marginTop: 4,
     fontSize: 11,
@@ -413,6 +445,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#111827',
+  },
+  thumbnailPlace: {
+    fontSize: 11,
+    color: '#374151',
+    lineHeight: 15,
   },
   thumbnailMemo: {
     fontSize: 11,
@@ -471,6 +508,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ffffff',
   },
+  fullscreenWatermarkPlace: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#f3f4f6',
+    lineHeight: 20,
+  },
   fullscreenWatermarkMemo: {
     marginTop: 6,
     fontSize: 15,
@@ -507,6 +550,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#111827',
+  },
+  fullscreenCaptionPlace: {
+    fontSize: 15,
+    color: '#374151',
+    lineHeight: 21,
   },
   fullscreenCaptionMemo: {
     fontSize: 15,

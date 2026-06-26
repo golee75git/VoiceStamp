@@ -79,6 +79,7 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
     { header: '미리보기', key: 'preview', width: 18 },
     { header: '순번', key: 'index', width: 8 },
     { header: '제목', key: 'title', width: 28 },
+    { header: '장소', key: 'place', width: 24 },
     { header: '메모', key: 'memo', width: 36 },
     { header: '층', key: 'floor', width: 10 },
     { header: '좌표', key: 'coords', width: 24 },
@@ -97,10 +98,11 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
     sheet.getRow(rowIndex).height = 72;
     sheet.getCell(rowIndex, 2).value = i + 1;
     sheet.getCell(rowIndex, 3).value = stamp.title;
-    sheet.getCell(rowIndex, 4).value = stamp.memo;
-    sheet.getCell(rowIndex, 5).value = formatFloor(stamp.floor);
-    sheet.getCell(rowIndex, 6).value = coords;
-    sheet.getCell(rowIndex, 7).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
+    sheet.getCell(rowIndex, 4).value = stamp.placeLabel?.trim() ?? '';
+    sheet.getCell(rowIndex, 5).value = stamp.memo;
+    sheet.getCell(rowIndex, 6).value = formatFloor(stamp.floor);
+    sheet.getCell(rowIndex, 7).value = coords;
+    sheet.getCell(rowIndex, 8).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
 
     try {
       const { base64, extension } = await readImageBase64(stamp.imagePath);

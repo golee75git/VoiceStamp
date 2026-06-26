@@ -10,6 +10,7 @@ import {
 import { resolveOverlayFooterPhrase, resolveOverlayOrgName } from './overlayText';
 import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
 import { getWatermarkTheme } from './watermarkStyle';
 import type { TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
@@ -47,6 +48,7 @@ export async function renderStampWatermarkNative(
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
   const title = stampDisplayTitle(stamp, options.showDatetime);
   const memo = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -61,6 +63,9 @@ export async function renderStampWatermarkNative(
     overlayLines.push(orgName);
   }
   overlayLines.push(title);
+  if (place) {
+    overlayLines.push(place);
+  }
   if (memo) {
     overlayLines.push(memo);
   }
