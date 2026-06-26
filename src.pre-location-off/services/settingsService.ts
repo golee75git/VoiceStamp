@@ -1,4 +1,4 @@
-import { getDatabase } from '../db/database';
+﻿import { getDatabase } from '../db/database';
 import {
   DEFAULT_FLOOR_DISPLAY_MODE,
   type FloorDisplayMode,
@@ -37,7 +37,6 @@ const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const WATERMARK_STYLE_KEY = 'watermark_style';
 const COORDS_LABEL_KEY = 'coords_label';
-const LOCATION_MODE_KEY = 'location_mode';
 const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CONTINUOUS_CAPTURE_CAMERA_KEY = 'continuous_capture_camera';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
@@ -75,7 +74,6 @@ export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
-export const DEFAULT_LOCATION_MODE = 'auto' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export {
@@ -111,25 +109,12 @@ export type WatermarkStyle =
   | 'red'
   | 'rose';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
-export type LocationMode = 'auto' | 'off';
 export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
 export type ContinuousCaptureCamera = 'system' | 'in_app';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
 
-export function locationModeLabel(mode: LocationMode): string {
-  return mode === 'off' ? '사용 안 함' : '사용';
-}
-
-export function sanitizeLocationMode(value: string): LocationMode {
-  return value === 'off' ? 'off' : 'auto';
-}
-
-export async function isLocationLookupEnabled(): Promise<boolean> {
-  return (await getLocationMode()) === 'auto';
-}
-
 export function continuousCaptureCameraLabel(mode: ContinuousCaptureCamera): string {
-  return mode === 'in_app' ? '앱 내 (빠름)' : '시스템';
+  return mode === 'in_app' ? '????(鍮좊쫫)' : '?쒖뒪??;
 }
 
 export function sanitizeContinuousCaptureCamera(value: string): ContinuousCaptureCamera {
@@ -142,11 +127,11 @@ export function sanitizeContinuousCaptureCamera(value: string): ContinuousCaptur
 export function floorPickerModeLabel(mode: FloorPickerMode): string {
   switch (mode) {
     case 'off':
-      return '사용 안 함';
+      return '?ъ슜 ????;
     case 'always':
-      return '항상 표시';
+      return '??긽 ?쒖떆';
     default:
-      return '학교일 때만';
+      return '?숆탳???뚮쭔';
   }
 }
 
@@ -158,7 +143,7 @@ export function sanitizeFloorPickerMode(value: string): FloorPickerMode {
 }
 
 export function stampTextLayoutLabel(layout: StampTextLayout): string {
-  return layout === 'watermark' ? '워터마크' : '별도 영역';
+  return layout === 'watermark' ? '?뚰꽣留덊겕' : '蹂꾨룄 ?곸뿭';
 }
 
 export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = [
@@ -177,25 +162,25 @@ export const WATERMARK_STYLE_OPTIONS: WatermarkStyle[] = [
 export function watermarkStyleLabel(style: WatermarkStyle): string {
   switch (style) {
     case 'solid_light':
-      return '흰색';
+      return '?곗깋';
     case 'slate':
-      return '슬레이트';
+      return '?щ젅?댄듃';
     case 'blue':
-      return '파랑';
+      return '?뚮옉';
     case 'indigo':
-      return '남보라';
+      return '?⑤낫??;
     case 'green':
-      return '초록';
+      return '珥덈줉';
     case 'teal':
-      return '청록';
+      return '泥?줉';
     case 'amber':
-      return '호박';
+      return '?몃컯';
     case 'red':
-      return '빨강';
+      return '鍮④컯';
     case 'rose':
-      return '로즈';
+      return '濡쒖쫰';
     default:
-      return '검정';
+      return '寃??;
   }
 }
 
@@ -211,9 +196,9 @@ export function coordsLabelModeLabel(mode: CoordsLabelMode): string {
     case 'gps':
       return 'GPS';
     case 'coords':
-      return '좌표';
+      return '醫뚰몴';
     default:
-      return '없음';
+      return '?놁쓬';
   }
 }
 
@@ -234,11 +219,11 @@ export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
 export function gallerySaveModeLabel(mode: GallerySaveMode): string {
   switch (mode) {
     case 'caption_only':
-      return '캡션만';
+      return '罹≪뀡留?;
     case 'original_and_caption':
-      return '원본+캡션';
+      return '?먮낯+罹≪뀡';
     default:
-      return '원본만';
+      return '?먮낯留?;
   }
 }
 
@@ -251,11 +236,11 @@ export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
 export function textAlignLabel(align: TextAlign): string {
   switch (align) {
     case 'center':
-      return '가운데';
+      return '媛?대뜲';
     case 'right':
-      return '오른쪽';
+      return '?ㅻⅨ履?;
     default:
-      return '왼쪽';
+      return '?쇱そ';
   }
 }
 
@@ -473,20 +458,6 @@ export async function getCoordsLabelMode(): Promise<CoordsLabelMode> {
 export async function setCoordsLabelMode(mode: CoordsLabelMode): Promise<CoordsLabelMode> {
   const safeMode = sanitizeCoordsLabelMode(mode);
   await writeSetting(COORDS_LABEL_KEY, safeMode);
-  return safeMode;
-}
-
-export async function getLocationMode(): Promise<LocationMode> {
-  const value = await readSetting(LOCATION_MODE_KEY);
-  if (!value) {
-    return DEFAULT_LOCATION_MODE;
-  }
-  return sanitizeLocationMode(value);
-}
-
-export async function setLocationMode(mode: LocationMode): Promise<LocationMode> {
-  const safeMode = sanitizeLocationMode(mode);
-  await writeSetting(LOCATION_MODE_KEY, safeMode);
   return safeMode;
 }
 

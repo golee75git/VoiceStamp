@@ -1,9 +1,8 @@
-import * as Location from 'expo-location';
+﻿import * as Location from 'expo-location';
 
 import { getPlaceLabelFromCoords } from './kakaoLocal';
 import {
   getLastCapturePlaceCache,
-  isLocationLookupEnabled,
   PLACE_CACHE_NEARBY_METERS,
 } from './settingsService';
 import { haversineMeters } from '../utils/geoDistance';
@@ -48,10 +47,6 @@ async function getCoordsWithCacheFallback(): Promise<Location.LocationObjectCoor
 }
 
 export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | null> {
-  if (!(await isLocationLookupEnabled())) {
-    return null;
-  }
-
   const permission = await Location.requestForegroundPermissionsAsync();
   if (permission.status !== 'granted') {
     return null;
@@ -79,10 +74,6 @@ export async function getQuickLastKnownCoords(): Promise<{
   latitude: number;
   longitude: number;
 } | null> {
-  if (!(await isLocationLookupEnabled())) {
-    return null;
-  }
-
   const permission = await Location.requestForegroundPermissionsAsync();
   if (permission.status !== 'granted') {
     return null;
@@ -105,10 +96,6 @@ export async function getNearbyCachedPlaceLabel(coords: {
   latitude: number;
   longitude: number;
 }): Promise<string | null> {
-  if (!(await isLocationLookupEnabled())) {
-    return null;
-  }
-
   const cache = await getLastCapturePlaceCache();
   if (!cache) {
     return null;
