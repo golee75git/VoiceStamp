@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.0 |
 | 작성일 | 2026-06-26 |
-| 기준 커밋 | `6f95aa8` (main) |
+| 기준 커밋 | `1940314` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -273,8 +273,16 @@
 | 185 | GitHub APK `releases/20260626_172205` · 랜딩·`/info` | `fb0363b` | `restore-apk-download-20260626-place-road-poi.bat` |
 | 186 | 촬영 후 3버튼 **눌림 배경·Android 리플** (`CaptureActionSheet`) | `a780b27` | `restore-capture-button-press.bat` |
 | 187 | GitHub APK `releases/20260626_184823` · 랜딩·`/info` | `6f95aa8` | `restore-apk-download-20260626-184823.bat` |
+| 188 | 설정 **위치 조회 끔** (`location_mode`) | `ab0a015` | `restore-location-off.bat` |
+| 189 | GitHub APK `releases/20260626_194421` · 랜딩·`/info` | `bdf4376` | `restore-apk-download-20260626-194421.bat` |
+| 190 | 학교·POI 반경 **300m→200m** | `a546968` | `restore-school-radius-200.bat` |
+| 191 | GitHub APK `releases/20260626_225833` · 랜딩·`/info` | `26e8975` | `restore-apk-download-20260626-225833.bat` |
+| 192 | **층 칩→장소** 표기·수정 모달 입력 안정화 | `86a2637` | `restore-floor-on-place.bat` |
+| 193 | GitHub APK `releases/20260626_231436` · 랜딩·`/info` | `480e01f` | `restore-apk-download-20260626-231436.bat` |
+| 194 | 음성 **수동 커서** 위치 존중 | `250a97d` | `restore-speech-cursor-respect.bat` |
+| 195 | GitHub APK `releases/20260626_233248` · 랜딩·`/info` | `1940314` | `restore-apk-download-20260626-233248.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_184823.apk` (`6f95aa8`).
+> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`).
 
 ### 2.1 문서 동기화 이력
 
@@ -310,6 +318,7 @@
 | (본 갱신) | `847ea63` 반영 — 도로·지번·POI·DISPLAY_NAME 한글·캡션 EXIF·APK `171805`·날짜별 이력 |
 | (본 갱신) | `fb0363b` 반영 — `place_label`·장소 마이크·음성 커서·도로+POI·ML Kit 되돌림·랜딩·APK `172205`·날짜별 이력 |
 | (본 갱신) | `6f95aa8` 반영 — 촬영 후 3버튼 눌림 배경·Android 리플·APK `184823`·날짜별 이력 |
+| (본 갱신) | `1940314` 반영 — 위치 조회 끔·학교 200m·층→장소·음성 수동 커서·APK `233248`·날짜별 이력 |
 
 ---
 
@@ -461,7 +470,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
 | 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
 | 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
-| 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · APK `184823` (`e330e7e`~`6f95aa8`) |
+| 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · **위치 조회 끔** · 학교 **200m** · **층→장소** · **음성 수동 커서** · APK `233248` (`e330e7e`~`1940314`) |
 
 ---
 
@@ -469,7 +478,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260626_184823.apk` | `6f95aa8` | **설치·GitHub 권장** — 촬영 후 3버튼 **눌림 배경·Android 리플** + `172205` 기능 전부 |
+| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | **설치·GitHub 권장** — 음성 **수동 커서** + `231436` 기능 전부 |
+| `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소**·수정 모달 입력 (수동 커서 **미포함**) |
+| `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
+| `releases/VoiceStamp_20260626_194421.apk` | `bdf4376` | **위치 조회 끔** (200m·층→장소 **미포함**) |
+| `releases/VoiceStamp_20260626_184823.apk` | `6f95aa8` | 촬영 후 3버튼 **눌림 배경·Android 리플** + `172205` 기능 전부 |
 | `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | 도로+POI·음성 커서·장소 마이크·`place_label` (버튼 눌림 **미포함**) |
 | `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
 | `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
