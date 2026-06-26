@@ -55,7 +55,6 @@ const OVERLAY_ORG_NAME_KEY = 'overlay_org_name';
 const OVERLAY_FOOTER_PHRASE_KEY = 'overlay_footer_phrase';
 const OVERLAY_SHOW_ORG_NAME_KEY = 'overlay_show_org_name';
 const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
-const MLKIT_SCENE_LABEL_ENABLED_KEY = 'mlkit_scene_label_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -77,7 +76,6 @@ export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
-export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -692,16 +690,6 @@ export async function setTitleDatetimeMode(mode: TitleDatetimeMode): Promise<Tit
   await writeSetting(TITLE_DATETIME_MODE_KEY, sanitized);
   setTitleDatetimeModeCache(sanitized);
   return sanitized;
-}
-
-export async function getMlkitSceneLabelEnabled(): Promise<boolean> {
-  const value = await readSetting(MLKIT_SCENE_LABEL_ENABLED_KEY);
-  return parseBooleanSetting(value, DEFAULT_MLKIT_SCENE_LABEL_ENABLED);
-}
-
-export async function setMlkitSceneLabelEnabled(enabled: boolean): Promise<boolean> {
-  await writeSetting(MLKIT_SCENE_LABEL_ENABLED_KEY, enabled ? 'true' : 'false');
-  return enabled;
 }
 
 export async function getLastFloor(): Promise<StampFloor | null> {

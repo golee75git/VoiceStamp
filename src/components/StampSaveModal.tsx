@@ -36,7 +36,6 @@ import {
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
-  getMlkitSceneLabelEnabled,
   getTitleTextAlign,
   setCurrentSiteName,
   setLastCapturePlaceCache,
@@ -53,7 +52,6 @@ import {
   type StampCropViewport,
 } from '../services/stampImageCrop';
 import { saveStamp, updateStamp } from '../services/saveStamp';
-import { suggestSceneMemo } from '../services/sceneLabelService';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { FLOOR_OPTIONS, isSchoolPlaceLabel } from '../services/stampFloor';
@@ -157,7 +155,6 @@ export function StampSaveModal({
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
   const [layoutSettingsLoaded, setLayoutSettingsLoaded] = useState(false);
   const [applyingCrop, setApplyingCrop] = useState(false);
-  const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{ title: SpeechInsertSlice; memo: SpeechInsertSlice }>({
     title: { prefix: '', suffix: '' },
@@ -166,7 +163,6 @@ export function StampSaveModal({
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
-  const memoTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
@@ -267,7 +263,6 @@ export function StampSaveModal({
       setFolderOptionsLoading(false);
       setDeleting(false);
       titleTouchedRef.current = false;
-      memoTouchedRef.current = false;
       placeTouchedRef.current = false;
       siteNameTouchedRef.current = false;
       floorTouchedRef.current = false;
@@ -278,7 +273,6 @@ export function StampSaveModal({
       setPreviewThumbUri(null);
       setLayoutSettingsLoaded(false);
       setApplyingCrop(false);
-      setSceneAnalyzing(false);
       setCaptureCoords(null);
       setFloor(null);
       setPlaceLabel(null);
@@ -448,44 +442,6 @@ export function StampSaveModal({
   }, [visible, imageUri, isEdit, prefetchedLocationSnapshot, locationPrefetchLoading]);
 
   useEffect(() => {
-    if (!visible || isEdit || !imageUri) {
-      return;
-    }
-
-    let cancelled = false;
-
-    void (async () => {
-      const enabled = await getMlkitSceneLabelEnabled();
-      if (cancelled || !enabled) {
-        return;
-      }
-
-      const uri = workingImageUri ?? imageUri;
-      if (!uri) {
-        return;
-      }
-
-      setSceneAnalyzing(true);
-      try {
-        const draft = await suggestSceneMemo(uri);
-        if (cancelled || memoTouchedRef.current || !draft) {
-          return;
-        }
-        setMemo((prev) => (prev.trim() ? prev : draft));
-      } finally {
-        if (!cancelled) {
-          setSceneAnalyzing(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      setSceneAnalyzing(false);
-    };
-  }, [visible, isEdit, imageUri, workingImageUri]);
-
-  useEffect(() => {
     if (!visible || !isEdit) {
       return;
     }
@@ -520,7 +476,6 @@ export function StampSaveModal({
         titleSelectionRef.current.end,
       );
     } else if (target === 'memo') {
-      memoTouchedRef.current = true;
       speechInsertRef.current.memo = speechSliceAtSelection(
         memo,
         memoSelectionRef.current.start,
@@ -880,10 +835,7 @@ export function StampSaveModal({
             <VoiceInputField
               label="메모"
               value={memo}
-              onChangeText={(text) => {
-                memoTouchedRef.current = true;
-                setMemo(text);
-              }}
+              onChangeText={setMemo}
               onMicPress={() => handleMicPress('memo')}
               listening={listening && speechTarget === 'memo'}
               speechAvailable={available}
@@ -895,9 +847,6 @@ export function StampSaveModal({
               textAlign={memoTextAlign}
               cameraHand={cameraHand}
             />
-            {sceneAnalyzing ? (
-              <Text style={styles.locationHint}>장면 분석 중…</Text>
-            ) : null}
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
           </View>
