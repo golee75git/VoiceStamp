@@ -69,7 +69,7 @@ import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
 
-type SpeechTarget = 'title' | 'memo' | null;
+type SpeechTarget = 'title' | 'memo' | 'place' | null;
 
 type SpeechInsertSlice = { prefix: string; suffix: string };
 
@@ -156,12 +156,18 @@ export function StampSaveModal({
   const [layoutSettingsLoaded, setLayoutSettingsLoaded] = useState(false);
   const [applyingCrop, setApplyingCrop] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
-  const speechInsertRef = useRef<{ title: SpeechInsertSlice; memo: SpeechInsertSlice }>({
+  const speechInsertRef = useRef<{
+    title: SpeechInsertSlice;
+    memo: SpeechInsertSlice;
+    place: SpeechInsertSlice;
+  }>({
     title: { prefix: '', suffix: '' },
     memo: { prefix: '', suffix: '' },
+    place: { prefix: '', suffix: '' },
   });
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
+  const placeSelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
@@ -194,6 +200,11 @@ export function StampSaveModal({
       } else if (target === 'memo') {
         const { prefix, suffix } = speechInsertRef.current.memo;
         setMemo(insertSpeechAtCursor(prefix, suffix, text));
+      } else if (target === 'place') {
+        const { prefix, suffix } = speechInsertRef.current.place;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        placeTouchedRef.current = true;
+        setPlaceLabel(merged.trim() ? merged : null);
       }
       if (isFinal) {
         setSpeechTarget(null);
@@ -480,6 +491,13 @@ export function StampSaveModal({
         memo,
         memoSelectionRef.current.start,
         memoSelectionRef.current.end,
+      );
+    } else if (target === 'place') {
+      placeTouchedRef.current = true;
+      speechInsertRef.current.place = speechSliceAtSelection(
+        placeLabel ?? '',
+        placeSelectionRef.current.start,
+        placeSelectionRef.current.end,
       );
     }
 
@@ -773,20 +791,23 @@ export function StampSaveModal({
               </View>
             )}
 
-            <View style={styles.siteField}>
-              <Text style={styles.siteLabel}>장소</Text>
-              <TextInput
-                style={styles.folderInput}
-                value={placeLabel ?? ''}
-                onChangeText={(text) => {
-                  placeTouchedRef.current = true;
-                  setPlaceLabel(text.trim() ? text : null);
-                }}
-                placeholder={locationLoading ? '위치 확인 중…' : '예: 역삼초등학교'}
-                onFocus={scrollFieldIntoView}
-                maxLength={120}
-              />
-            </View>
+            <VoiceInputField
+              label="장소"
+              value={placeLabel ?? ''}
+              onChangeText={(text) => {
+                placeTouchedRef.current = true;
+                setPlaceLabel(text.trim() ? text : null);
+              }}
+              onMicPress={() => handleMicPress('place')}
+              listening={listening && speechTarget === 'place'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              onSelectionChange={(selection) => {
+                placeSelectionRef.current = selection;
+              }}
+              textAlign="left"
+              cameraHand={cameraHand}
+            />
 
             {showFloorPicker ? (
               <View style={styles.siteField}>

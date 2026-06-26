@@ -1898,3 +1898,17 @@ restore-road-place-fallback.bat
 ```powershell
 Copy-Item src.pre-road-place-fallback\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 115. 저장 화면 장소 음성 입력 되돌리기 (선택)
+
+장소 필드 마이크 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-place-speech.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-place-speech\components\StampSaveModal.tsx src\components\ -Force
+```
