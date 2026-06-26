@@ -1,4 +1,4 @@
-import { Image, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+﻿import { Image, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 type CaptureActionSheetProps = {
   visible: boolean;
@@ -21,40 +21,25 @@ export function CaptureActionSheet({
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onRetake}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
-          <Text style={styles.title}>촬영한 사진</Text>
-          <Text style={styles.hint}>다음 중 하나를 선택하세요.</Text>
+          <Text style={styles.title}>珥ъ쁺???ъ쭊</Text>
+          <Text style={styles.hint}>?ㅼ쓬 以??섎굹瑜??좏깮?섏꽭??</Text>
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
           ) : null}
           {locationPrefetchLoading ? (
-            <Text style={styles.locationHint}>위치 확인 중…</Text>
+            <Text style={styles.locationHint}>?꾩튂 ?뺤씤 以묅?/Text>
           ) : null}
-          <Pressable
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryButtonPressed]}
-            android_ripple={{ color: 'rgba(255,255,255,0.2)' }}
-            onPress={onContinuous}
-            accessibilityLabel="연속 촬영"
-          >
-            <Text style={styles.primaryButtonText}>연속 촬영</Text>
-            <Text style={styles.buttonHint}>기본 제목으로 저장 후 바로 다음 촬영</Text>
+          <Pressable style={styles.primaryButton} onPress={onContinuous} accessibilityLabel="?곗냽 珥ъ쁺">
+            <Text style={styles.primaryButtonText}>?곗냽 珥ъ쁺</Text>
+            <Text style={styles.buttonHint}>湲곕낯 ?쒕ぉ?쇰줈 ?????諛붾줈 ?ㅼ쓬 珥ъ쁺</Text>
           </Pressable>
-          <Pressable
-            style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryButtonPressed]}
-            android_ripple={{ color: 'rgba(37,99,235,0.15)' }}
-            onPress={onSave}
-            accessibilityLabel="저장"
-          >
-            <Text style={styles.secondaryButtonText}>저장</Text>
-            <Text style={styles.buttonHintMuted}>제목·메모 입력 후 저장</Text>
+          <Pressable style={styles.secondaryButton} onPress={onSave} accessibilityLabel="???>
+            <Text style={styles.secondaryButtonText}>???/Text>
+            <Text style={styles.buttonHintMuted}>?쒕ぉ쨌硫붾え ?낅젰 ?????/Text>
           </Pressable>
-          <Pressable
-            style={({ pressed }) => [styles.ghostButton, pressed && styles.ghostButtonPressed]}
-            android_ripple={{ color: 'rgba(0,0,0,0.08)' }}
-            onPress={onRetake}
-            accessibilityLabel="다시 촬영"
-          >
-            <Text style={styles.ghostButtonText}>다시 촬영</Text>
-            <Text style={styles.buttonHintMuted}>저장하지 않고 다시 찍기</Text>
+          <Pressable style={styles.ghostButton} onPress={onRetake} accessibilityLabel="?ㅼ떆 珥ъ쁺">
+            <Text style={styles.ghostButtonText}>?ㅼ떆 珥ъ쁺</Text>
+            <Text style={styles.buttonHintMuted}>??ν븯吏 ?딄퀬 ?ㅼ떆 李띻린</Text>
           </Pressable>
         </View>
       </View>
@@ -101,10 +86,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     gap: 2,
-    overflow: 'hidden',
-  },
-  primaryButtonPressed: {
-    backgroundColor: '#1d4ed8',
   },
   primaryButtonText: {
     color: '#fff',
@@ -119,10 +100,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     gap: 2,
-    overflow: 'hidden',
-  },
-  secondaryButtonPressed: {
-    backgroundColor: '#eff6ff',
   },
   secondaryButtonText: {
     color: '#2563eb',
@@ -137,10 +114,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     alignItems: 'center',
     gap: 2,
-    overflow: 'hidden',
-  },
-  ghostButtonPressed: {
-    backgroundColor: '#f3f4f6',
   },
   ghostButtonText: {
     color: '#374151',
