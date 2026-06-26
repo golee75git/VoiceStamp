@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-25**  
-최신 커밋 기준: `847ea63` (main)
+문서 작성일: **2026-06-26**  
+최신 커밋 기준: `fb0363b` (main)
 
 ---
 
@@ -265,8 +265,21 @@ VoiceStamp/
 | 165 | 갤러리 **MediaStore DISPLAY_NAME** 한글 (`modules/voicestamp-gallery`) | `44997be` | `restore-gallery-display-name.bat` |
 | 166 | 캡션 갤러리 JPEG **EXIF 복사**(ISO·GPS·크기, `androidx.exifinterface`) | `847ea63` | `restore-caption-exif.bat` |
 | 167 | GitHub APK `releases/20260625_171805` · 랜딩·`/info` 링크 | `847ea63` | `restore-apk-download-20260625-171805.bat` |
+| 168 | 저장 모달 **별도 장소** 필드 (`place_label`) | `e330e7e` | `restore-place-label.bat` |
+| 169 | 마이크 **abort 무시**·`end` 이벤트 처리 | `565c089` | `restore-speech-mic-end.bat` |
+| 170 | 마이크 **silence 옵션 제거**·`end` 처리 | `62d9ab7` | — |
+| 171 | Android 음성 **silence 타임아웃** +1s | `ff6fee6` | `restore-speech-silence.bat` |
+| 172 | **ML Kit** 장면 키워드 메모 초안 (시도) | `43d1f13` | `restore-mlkit-scene.bat` |
+| 173 | ML Kit **되돌림** | `0869e93` | — |
+| 174 | 랜딩 **웹 테스트 안내** 패널 제거 | `467059d` | `restore-landing-no-webtest-box.bat` |
+| 175 | 랜딩 **사진 이용 책임** 안내 | `e79a4ac` | `restore-landing-photo-notice.bat` |
+| 176 | 랜딩 **앱 정보** 링크 제거 | `622398d` | `restore-landing-no-info-link.bat` |
+| 177 | **장소** 필드 마이크 | `b06310a` | `restore-place-speech.bat` §115 |
+| 178 | 음성 **끝 공백·커서** (장소·제목·메모) | `0b5c1b8` | `restore-speech-end-gap.bat` §116 |
+| 179 | **도로명+POI 근처** 장소 표기 | `fb0363b` | `restore-place-road-poi.bat` §117 |
+| 180 | GitHub APK `releases/20260626_172205` · 랜딩·`/info` 링크 | `fb0363b` | `restore-apk-download-20260626-place-road-poi.bat` |
 
-> **참고:** `143a140` APK `161125`는 캐시 경로 한글로 갤러리 저장 실패 가능 → **`165551` 이상** 권장.
+> **권장 APK:** `releases/VoiceStamp_20260626_172205.apk` (`fb0363b`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -332,7 +345,12 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260625_171805.apk`** | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 fallback |
+| **`releases/VoiceStamp_20260626_172205.apk`** | `fb0363b` | **설치·GitHub 권장** — 도로명+POI 근처·음성 커서·장소 마이크·`place_label` |
+| `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit **되돌림** |
+| `VoiceStamp_20260626_134226.apk` | `3037ffe` | `place_label` (장소 마이크 **미포함**) |
+| **`releases/VoiceStamp_20260625_171805.apk`** | `847ea63` | 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 (`place_label` **미포함**) |
 | `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
 | `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 저장 **불안정**, 사용 비권장 |
 | `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |
@@ -379,6 +397,18 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-26
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **권장** — **도로명+POI 근처**·음성 끝 공백·커서·장소 마이크·`place_label` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (`restore-speech-end-gap.bat`) | GitHub |
+| `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 필드 마이크 (`restore-place-speech.bat`) | GitHub |
+| `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit 장면 키워드 **되돌림** | GitHub |
+| `VoiceStamp_20260626_134226.apk` | `3037ffe` | `place_label` 별도 장소 필드 배포 | 로컬 |
+
+> 웹: `467059d`·`e79a4ac`·`622398d` 랜딩 패널·링크 정리 — APK 변경 없음.
 
 #### 2026-06-25
 
@@ -676,6 +706,27 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-06-26
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`fb0363b` 기준) |
+| `fb0363b` | APK `releases/VoiceStamp_20260626_172205` — **도로명+POI 근처** (`kakaoLocal.ts`) · `restore-place-road-poi.bat` §117 · Vercel |
+| `0b5c1b8` | 음성 **끝 공백·커서** (장소·제목·메모) · `restore-speech-end-gap.bat` §116 |
+| `b06310a` | **장소** 필드 마이크 · `restore-place-speech.bat` §115 |
+| `622398d` | 랜딩 **앱 정보** 링크 제거 · `restore-landing-no-info-link.bat` |
+| `e79a4ac` | 랜딩 **사진 이용 책임** 안내 · `restore-landing-photo-notice.bat` |
+| `467059d` | 랜딩 **웹 테스트** 안내 패널 제거 · `restore-landing-no-webtest-box.bat` |
+| `0869e93` | **ML Kit** 장면 키워드 되돌림 · APK `152305` |
+| `43d1f13` | ML Kit 장면 키워드 메모 초안 (시도) · `restore-mlkit-scene.bat` |
+| `565c089` | 마이크 `aborted` 무시·`start` 안정화 |
+| `62d9ab7` | 마이크 silence 옵션 제거·`end` 처리 |
+| `ff6fee6` | Android 음성 silence 타임아웃 +1s |
+| `3037ffe` | APK `134226` 배포 링크 갱신 |
+| `e330e7e` | **`place_label`** 별도 장소 필드 · `restore-place-label.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260626_172205.apk` (`fb0363b`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-06-25
 

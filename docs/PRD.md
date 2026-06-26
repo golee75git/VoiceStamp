@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-06-25 |
-| 최신 반영 커밋 | `847ea63` (main) |
+| 문서 작성일 | 2026-06-26 |
+| 최신 반영 커밋 | `fb0363b` (main) |
 
 ---
 
@@ -198,6 +198,8 @@
 | F-SAVE-23 | 저장 모달 미리보기: 720px 썸네일 + 레이아웃(별도 영역/워터마크) 오버레이 | ✅ |
 | F-SAVE-24 | **로컬 학교 DB** (전국초중등학교위치표준데이터, `schools.sqlite`) 200m 우선, 없으면 **카카오 SC4** fallback | ✅ `88671c1` |
 | F-SAVE-25 | **도로 촬영** 위치: 지번·**근처 POI**(CS2/CE7/FD6) fallback, 학교 반경 **300m** | ✅ `511a67c` |
+| F-SAVE-26 | 저장 모달 **별도 장소** 필드 (`place_label`), 제목과 분리·수정·목록·보내기 반영 | ✅ `e330e7e` |
+| F-SAVE-27 | 건물명 없을 때 **도로명(또는 지번)+근처 POI** 표기, POI 카테고리 확대 (100m) | ✅ `fb0363b` |
 | F-GAL-20 | 갤러리 **한글 DISPLAY_NAME** (ASCII 캐시 + MediaStore, `voicestamp-gallery`) | ✅ `44997be` |
 | F-GAL-21 | 갤러리 파일명 **한글 제목**·원본 `_orig` (경로 한글 시 저장 실패 → 20으로 해결) | ✅ `143a140` |
 | F-GAL-22 | 캡션 갤러리 JPEG **EXIF 복사**(ISO·GPS·크기, 원본·스탬프 좌표) | ✅ `847ea63` |
@@ -213,6 +215,8 @@
 | F-Voice-05 | 마이크 PNG 아이콘, 녹음 중 ● 표시 | ✅ |
 | F-Voice-06 | APK `RECORD_AUDIO` 유지 (`expo-image-picker`의 `microphonePermission: false` 제거) | ✅ |
 | F-Voice-07 | 음성 결과를 활성 필드 **커서 위치**에 삽입 (이어쓰기 대체 아님) | ✅ |
+| F-Voice-08 | **장소** 필드 마이크 (제목·메모와 동일 패턴) | ✅ `b06310a` |
+| F-Voice-09 | 음성 마이크·인식 종료 시 **끝 공백·커서 맨 뒤** (장소·제목·메모) | ✅ `0b5c1b8` |
 
 구현: `app.json` 플러그인 설정 (`b222581`). prebuild 후 manifest에 `RECORD_AUDIO` 포함. 되돌리기: `restore-mic-permission.bat` (RESTORE §56).
 
@@ -548,7 +552,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260625_171805.apk`** (`847ea63`). 이전 권장: `094846` (`64aa037`) |
+| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260626_172205.apk`** (`fb0363b`). 이전 권장: `171805` (`847ea63`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -558,7 +562,7 @@
 | UX-C | 구·동 먼저 표시, 건물명은 나중에 추가 | `kakaoLocal.ts` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
-| **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) 설계 완료 |
+| **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 (재설치 복구) | 로드맵 |
@@ -601,6 +605,7 @@
 | **2026-06-23** | 웹 **휴지통·비우기 확인**(`confirmAlert`) · 웹 **`/` APK 랜딩 + `/app` 테스트** · 빌드 후 `index.html` 스왑 · 랜딩 **개인정보·APK 권장** 안내 · Vercel 배포 | `fcbf747` · `4745255` · `0c7e2dd` · `0ab0f93` · `e6bb868` |
 | **2026-06-24** | **휴지통 비우기 → 휴지통 화면** · 목록 선택 **보내기 하단바**·헤더 축소 ·보내기 바 **Android 31px** · 비우기 후 **목록 복귀** · GitHub APK `094846` · Vercel | `64d6728` · `ecb3fe1` · `c5cbeec` · `64aa037` |
 | **2026-06-25** | 랜딩 **방문자 집계**·CountAPI 대체 · 랜딩 저작권 표기 · **도로·지번·POI** 위치 · 갤러리 **한글 DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` · Vercel | `4b71431`~`847ea63` |
+| **2026-06-26** | **별도 장소 필드**(`place_label`) · **장소 마이크** · **음성 끝 공백·커서** · **도로명+POI 근처** · 마이크 안정화 · ML Kit **되돌림** · 랜딩 정리(웹테스트·사진 책임·앱정보 링크) · APK `172205` | `e330e7e`~`fb0363b` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -610,7 +615,12 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 |
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **설치·GitHub 권장** — 도로명+POI 근처·음성 커서·장소 마이크·`place_label` |
+| `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit **되돌림** (`place_label`·마이크 수정 **미포함**) |
+| `VoiceStamp_20260626_134226.apk` | `3037ffe` | `place_label` 배포 (장소 마이크·음성 커서 **미포함**) |
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 (별도 장소 필드 **미포함**) |
 | `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
 | `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 **불안정**, 비권장 |
 | `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |

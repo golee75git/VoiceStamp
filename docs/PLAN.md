@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-06-25 |
-| 기준 커밋 | `847ea63` (main) |
+| 작성일 | 2026-06-26 |
+| 기준 커밋 | `fb0363b` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -256,6 +256,24 @@
 
 > **권장 APK:** `releases/VoiceStamp_20260625_171805.apk` (`847ea63`). `161125`(`143a140`)은 갤러리 경로 이슈로 비권장.
 
+## 2R. Phase 3 추가 완료 (2026-06-26)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 175 | 저장 모달 **별도 장소** (`place_label`) | `e330e7e` | `restore-place-label.bat` |
+| 176 | 마이크 안정화 (abort·end·silence) | `565c089`·`62d9ab7`·`ff6fee6` | `restore-speech-mic-end.bat` 등 |
+| 177 | **ML Kit** 장면 키워드 (시도) | `43d1f13` | `restore-mlkit-scene.bat` |
+| 178 | ML Kit **되돌림** | `0869e93` | — |
+| 179 | 랜딩 웹테스트 패널 제거 | `467059d` | `restore-landing-no-webtest-box.bat` |
+| 180 | 랜딩 사진 이용 책임 안내 | `e79a4ac` | `restore-landing-photo-notice.bat` |
+| 181 | 랜딩 앱 정보 링크 제거 | `622398d` | `restore-landing-no-info-link.bat` |
+| 182 | **장소** 필드 마이크 | `b06310a` | `restore-place-speech.bat` §115 |
+| 183 | 음성 **끝 공백·커서** | `0b5c1b8` | `restore-speech-end-gap.bat` §116 |
+| 184 | **도로명+POI 근처** 장소 표기 | `fb0363b` | `restore-place-road-poi.bat` §117 |
+| 185 | GitHub APK `releases/20260626_172205` · 랜딩·`/info` | `fb0363b` | `restore-apk-download-20260626-place-road-poi.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260626_172205.apk` (`fb0363b`).
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -288,6 +306,7 @@
 | (본 갱신) | `64aa037` 반영 — 휴지통 비우기 UX·목록보내기 하단바·APK `094846`·날짜별 이력 |
 | (본 갱신) | `608357d` 반영 — 랜딩 방문자 집계·CountAPI 대체·APK 변경 없음·날짜별 이력 |
 | (본 갱신) | `847ea63` 반영 — 도로·지번·POI·DISPLAY_NAME 한글·캡션 EXIF·APK `171805`·날짜별 이력 |
+| (본 갱신) | `fb0363b` 반영 — `place_label`·장소 마이크·음성 커서·도로+POI·ML Kit 되돌림·랜딩·APK `172205`·날짜별 이력 |
 
 ---
 
@@ -439,6 +458,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-23 | 2N·3 | 웹 **휴지통 confirm** · **`/` 랜딩 + `/app`** · 빌드 후 index 스왑 · 랜딩 개인정보 (`fcbf747`·`0c7e2dd`·`0ab0f93`·`e6bb868`) |
 | 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
 | 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
+| 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · APK `172205` (`e330e7e`~`fb0363b`) |
 
 ---
 
@@ -446,7 +466,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | **설치·GitHub 권장** — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 |
+| `releases/VoiceStamp_20260626_172205.apk` | `fb0363b` | **설치·GitHub 권장** — 도로+POI·음성 커서·장소 마이크·`place_label` |
+| `releases/VoiceStamp_20260626_170125.apk` | `0b5c1b8` | 음성 끝 공백·커서 (도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_163412.apk` | `b06310a` | 장소 마이크 (음성 커서·도로+POI **미포함**) |
+| `releases/VoiceStamp_20260626_152305.apk` | `0869e93` | ML Kit **되돌림** |
+| `VoiceStamp_20260626_134226.apk` | `3037ffe` | `place_label` (장소 마이크 **미포함**) |
+| `releases/VoiceStamp_20260625_171805.apk` | `847ea63` | 캡션 EXIF·DISPLAY_NAME·도로 위치 (`place_label` **미포함**) |
 | `releases/VoiceStamp_20260625_165551.apk` | `44997be` | DISPLAY_NAME 한글 (캡션 EXIF **미포함**) |
 | `VoiceStamp_20260625_161125.apk` | `143a140` | 한글 파일명 경로 — 갤러리 **불안정**, 비권장 |
 | `VoiceStamp_20260625_100743.apk` | `511a67c` | 도로·지번·POI 위치 (갤러리 한글 **미포함**) |
