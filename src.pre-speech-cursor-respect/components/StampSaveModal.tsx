@@ -85,21 +85,6 @@ function textWithTrailingGap(text: string): { text: string; selection: TextSelec
   return { text: withGap, selection: { start: pos, end: pos } };
 }
 
-function prepareSpeechTarget(
-  text: string,
-  selection: TextSelection,
-): { text: string; selection: TextSelection } {
-  if (selection.start !== selection.end) {
-    return { text, selection };
-  }
-  const atEnd = selection.start >= text.length;
-  const untouched = text.length > 0 && selection.start === 0 && selection.end === 0;
-  if (untouched || atEnd) {
-    return textWithTrailingGap(text);
-  }
-  return { text, selection };
-}
-
 function applyTextSelection(
   selection: TextSelection,
   ref: { current: TextSelection },
@@ -571,31 +556,30 @@ export function StampSaveModal({
 
     if (target === 'title') {
       titleTouchedRef.current = true;
-      const { text: prepared, selection } = prepareSpeechTarget(title, titleSelectionRef.current);
-      setTitle(prepared);
+      const { text: withGap, selection } = textWithTrailingGap(title);
+      setTitle(withGap);
       applyTextSelection(selection, titleSelectionRef, setTitleSelection);
       speechInsertRef.current.title = speechSliceAtSelection(
-        prepared,
+        withGap,
         selection.start,
         selection.end,
       );
     } else if (target === 'memo') {
-      const { text: prepared, selection } = prepareSpeechTarget(memo, memoSelectionRef.current);
-      setMemo(prepared);
+      const { text: withGap, selection } = textWithTrailingGap(memo);
+      setMemo(withGap);
       applyTextSelection(selection, memoSelectionRef, setMemoSelection);
       speechInsertRef.current.memo = speechSliceAtSelection(
-        prepared,
+        withGap,
         selection.start,
         selection.end,
       );
     } else if (target === 'place') {
       placeTouchedRef.current = true;
-      const placeText = placeLabel ?? '';
-      const { text: prepared, selection } = prepareSpeechTarget(placeText, placeSelectionRef.current);
-      setPlaceLabel(prepared.trim() ? prepared : null);
+      const { text: withGap, selection } = textWithTrailingGap(placeLabel ?? '');
+      setPlaceLabel(withGap.trim() ? withGap : null);
       applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
       speechInsertRef.current.place = speechSliceAtSelection(
-        prepared,
+        withGap,
         selection.start,
         selection.end,
       );
