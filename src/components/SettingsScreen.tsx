@@ -43,6 +43,7 @@ import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
+  DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
@@ -57,6 +58,7 @@ import {
   getTitleDatetimeMode,
   getCameraHand,
   getGallerySaveMode,
+  getMlkitSceneLabelEnabled,
   getContinuousCaptureCamera,
   getMemoTextAlign,
   getOverlayFooterPhrase,
@@ -81,6 +83,7 @@ import {
   setFloorPickerMode,
   setTitleDatetimeMode,
   setGallerySaveMode,
+  setMlkitSceneLabelEnabled,
   setContinuousCaptureCamera,
   setMemoTextAlign,
   setOverlayFooterPhrase,
@@ -166,6 +169,9 @@ export function SettingsScreen({
   const [gallerySaveMode, setGallerySaveModeState] = useState<GallerySaveMode>(
     DEFAULT_GALLERY_SAVE_MODE,
   );
+  const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabledState] = useState(
+    DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
+  );
   const [continuousCaptureCamera, setContinuousCaptureCameraState] = useState<ContinuousCaptureCamera>(
     DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
   );
@@ -196,7 +202,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, continuousCamera, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, mlkitSceneLabel, continuousCamera, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -208,6 +214,7 @@ export function SettingsScreen({
           getStampTextLayout(),
           getWatermarkStyle(),
           getGallerySaveMode(),
+          getMlkitSceneLabelEnabled(),
           getContinuousCaptureCamera(),
           getCameraHand(),
           getFloorPickerMode(),
@@ -229,6 +236,7 @@ export function SettingsScreen({
         setStampTextLayoutState(textLayout);
         setWatermarkStyleState(wmStyle);
         setGallerySaveModeState(galleryMode);
+        setMlkitSceneLabelEnabledState(mlkitSceneLabel);
         setContinuousCaptureCameraState(continuousCamera);
         setCameraHandState(hand);
         setFloorPickerModeState(floorMode);
@@ -259,6 +267,7 @@ export function SettingsScreen({
         savedTextLayout,
         savedWatermarkStyle,
         savedGalleryMode,
+        savedMlkitSceneLabelEnabled,
         savedContinuousCaptureCamera,
         savedCameraHand,
         savedFloorPickerMode,
@@ -280,6 +289,7 @@ export function SettingsScreen({
           setStampTextLayout(stampTextLayout),
           setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
+          setMlkitSceneLabelEnabled(mlkitSceneLabelEnabled),
           setContinuousCaptureCamera(continuousCaptureCamera),
           setCameraHand(cameraHand),
           setFloorPickerMode(floorPickerMode),
@@ -301,6 +311,7 @@ export function SettingsScreen({
       setStampTextLayoutState(savedTextLayout);
       setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
+      setMlkitSceneLabelEnabledState(savedMlkitSceneLabelEnabled);
       setContinuousCaptureCameraState(savedContinuousCaptureCamera);
       setCameraHandState(savedCameraHand);
       setFloorPickerModeState(savedFloorPickerMode);
@@ -337,6 +348,7 @@ export function SettingsScreen({
     setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
     setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
     setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
+    setMlkitSceneLabelEnabledState(DEFAULT_MLKIT_SCENE_LABEL_ENABLED);
     setContinuousCaptureCameraState(DEFAULT_CONTINUOUS_CAPTURE_CAMERA);
     setCameraHandState(DEFAULT_CAMERA_HAND);
   };
@@ -808,6 +820,41 @@ export function SettingsScreen({
                 );
               },
             )}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>촬영 후 장면 키워드 자동 입력</Text>
+          <Text style={styles.hint}>
+            사진을 폰 안에서만 분석해 메모에 키워드 초안을 넣습니다. 서버로 보내지 않습니다. Android APK에서만 동작합니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, mlkitSceneLabelEnabled && styles.optionButtonSelected]}
+              onPress={() => setMlkitSceneLabelEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  mlkitSceneLabelEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                사용
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !mlkitSceneLabelEnabled && styles.optionButtonSelected]}
+              onPress={() => setMlkitSceneLabelEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !mlkitSceneLabelEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                사용 안 함
+              </Text>
+            </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>

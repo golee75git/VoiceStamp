@@ -27,7 +27,8 @@
     "react-native-reanimated": "4.3.1",
     "react-native-view-shot": "5.1.0",
     "react-native-web": "^0.21.2",
-    "voicestamp-gallery": "file:./modules/voicestamp-gallery"
+    "voicestamp-gallery": "file:./modules/voicestamp-gallery",
+    "voicestamp-mlkit": "file:./modules/voicestamp-mlkit"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
