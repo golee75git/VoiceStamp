@@ -1,4 +1,5 @@
 import { pdfDisplayTitle } from './pdfTitleFormat';
+import { getFloorDisplayModeSync } from './floorDisplayMode';
 import type { StampFloor } from '../types/stamp';
 
 export const FLOOR_OPTIONS: { value: StampFloor | null; label: string }[] = [
@@ -42,5 +43,13 @@ export function stampDisplayTitle(
   stamp: { title: string; floor?: StampFloor | null },
   showDatetime: boolean,
 ): string {
-  return pdfDisplayTitle(stamp.title, showDatetime);
+  const base = pdfDisplayTitle(stamp.title, showDatetime);
+  if (getFloorDisplayModeSync() === 'cursor') {
+    return base;
+  }
+  const suffix = formatFloorSuffix(stamp.floor);
+  if (base === '(제목 없음)' && suffix) {
+    return suffix.trim();
+  }
+  return base + suffix;
 }

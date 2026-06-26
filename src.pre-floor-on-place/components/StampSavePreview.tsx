@@ -14,7 +14,6 @@ import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
-import { stampDisplayPlace } from '../services/stampPlace';
 import {
   overlayPhraseFontSize,
   resolveOverlayFooterPhrase,
@@ -105,7 +104,7 @@ export function StampSavePreview({
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
   const displayMemo = memo.trim();
-  const displayPlace = stampDisplayPlace({ placeLabel, floor }) ?? '';
+  const displayPlace = placeLabel?.trim() ?? '';
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });

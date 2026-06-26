@@ -17,5 +17,5 @@ export function sanitizeFloorDisplayMode(value: string): FloorDisplayMode {
 }
 
 export function floorDisplayModeLabel(mode: FloorDisplayMode): string {
-  return mode === 'cursor' ? '장소 커서에 삽입' : '장소 뒤에 붙이기';
+  return mode === 'cursor' ? '제목 커서에 삽입' : '제목 뒤에 붙이기';
 }

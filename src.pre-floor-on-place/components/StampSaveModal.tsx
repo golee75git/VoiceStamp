@@ -219,10 +219,6 @@ export function StampSaveModal({
     speechTargetRef.current = speechTarget;
   }, [speechTarget]);
 
-  const handleListeningEnd = useCallback(() => {
-    setSpeechTarget(null);
-  }, []);
-
   const { listening, available, start, stop } = useSpeechInput({
     onResult: (text, isFinal) => {
       const target = speechTargetRef.current;
@@ -262,11 +258,8 @@ export function StampSaveModal({
         setSpeechTarget(null);
       }
     },
-    onListeningEnd: handleListeningEnd,
+    onListeningEnd: () => setSpeechTarget(null),
   });
-
-  const stopRef = useRef(stop);
-  stopRef.current = stop;
 
   useEffect(() => {
     if (!visible) {
@@ -314,58 +307,52 @@ export function StampSaveModal({
   }, [visible]);
 
   useEffect(() => {
-    if (visible) {
-      return;
+    if (!visible) {
+      setSiteName('');
+      setGroupName('');
+      setTitle('');
+      setMemo('');
+      setSaving(false);
+      setLocationLoading(false);
+      setError(null);
+      setSpeechTarget(null);
+      setTitleSelection({ start: 0, end: 0 });
+      setPlaceSelection({ start: 0, end: 0 });
+      setMemoSelection({ start: 0, end: 0 });
+      titleSelectionRef.current = { start: 0, end: 0 };
+      placeSelectionRef.current = { start: 0, end: 0 };
+      memoSelectionRef.current = { start: 0, end: 0 };
+      setImageViewerVisible(false);
+      setFolderPickerVisible(false);
+      setFolderOptions([]);
+      setFolderOptionsLoading(false);
+      setDeleting(false);
+      titleTouchedRef.current = false;
+      placeTouchedRef.current = false;
+      siteNameTouchedRef.current = false;
+      floorTouchedRef.current = false;
+      captureCoordsRef.current = null;
+      cropViewportRef.current = null;
+      originalCameraUriRef.current = null;
+      setWorkingImageUri(null);
+      setPreviewThumbUri(null);
+      setLayoutSettingsLoaded(false);
+      setApplyingCrop(false);
+      setCaptureCoords(null);
+      setFloor(null);
+      setPlaceLabel(null);
+      stop();
+    } else if (stamp) {
+      setTitle(stamp.title);
+      setMemo(stamp.memo);
+      setFloor(stamp.floor ?? null);
+      setPlaceLabel(stamp.placeLabel ?? null);
+      setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
+      titleTouchedRef.current = true;
+      placeTouchedRef.current = true;
+      floorTouchedRef.current = Boolean(stamp.floor);
     }
-    setSiteName('');
-    setGroupName('');
-    setTitle('');
-    setMemo('');
-    setSaving(false);
-    setLocationLoading(false);
-    setError(null);
-    setSpeechTarget(null);
-    setTitleSelection({ start: 0, end: 0 });
-    setPlaceSelection({ start: 0, end: 0 });
-    setMemoSelection({ start: 0, end: 0 });
-    titleSelectionRef.current = { start: 0, end: 0 };
-    placeSelectionRef.current = { start: 0, end: 0 };
-    memoSelectionRef.current = { start: 0, end: 0 };
-    setImageViewerVisible(false);
-    setFolderPickerVisible(false);
-    setFolderOptions([]);
-    setFolderOptionsLoading(false);
-    setDeleting(false);
-    titleTouchedRef.current = false;
-    placeTouchedRef.current = false;
-    siteNameTouchedRef.current = false;
-    floorTouchedRef.current = false;
-    captureCoordsRef.current = null;
-    cropViewportRef.current = null;
-    originalCameraUriRef.current = null;
-    setWorkingImageUri(null);
-    setPreviewThumbUri(null);
-    setLayoutSettingsLoaded(false);
-    setApplyingCrop(false);
-    setCaptureCoords(null);
-    setFloor(null);
-    setPlaceLabel(null);
-    stopRef.current();
-  }, [visible]);
-
-  useEffect(() => {
-    if (!visible || !stamp) {
-      return;
-    }
-    setTitle(stamp.title);
-    setMemo(stamp.memo);
-    setFloor(stamp.floor ?? null);
-    setPlaceLabel(stamp.placeLabel ?? null);
-    setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
-    titleTouchedRef.current = true;
-    placeTouchedRef.current = true;
-    floorTouchedRef.current = Boolean(stamp.floor);
-  }, [visible, stamp?.id]);
+  }, [visible, stamp, stop]);
 
   useEffect(() => {
     if (!visible || !imageUri) {
@@ -767,17 +754,15 @@ export function StampSaveModal({
       if (floorDisplayMode !== 'cursor' || !value) {
         return;
       }
-      const placeText = placeLabel ?? '';
       const { prefix, suffix } = speechSliceAtSelection(
-        placeText,
-        placeSelectionRef.current.start,
-        placeSelectionRef.current.end,
+        title,
+        titleSelectionRef.current.start,
+        titleSelectionRef.current.end,
       );
-      placeTouchedRef.current = true;
-      const merged = insertSpeechAtCursor(prefix, suffix, `${value}층`);
-      setPlaceLabel(merged.trim() ? merged : null);
+      titleTouchedRef.current = true;
+      setTitle(insertSpeechAtCursor(prefix, suffix, `${value}층`));
     },
-    [floorDisplayMode, placeLabel],
+    [floorDisplayMode, title],
   );
 
   const showFloorPicker =

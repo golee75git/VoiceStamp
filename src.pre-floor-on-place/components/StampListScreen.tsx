@@ -49,7 +49,6 @@ import {
   type TextAlign,
 } from '../services/settingsService';
 import { stampDisplayTitle } from '../services/stampFloor';
-import { stampDisplayPlace } from '../services/stampPlace';
 import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
@@ -642,7 +641,6 @@ export function StampListScreen({
             scrollEventThrottle={16}
             renderItem={({ item }) => {
               const isSelected = selectedIds.has(item.id);
-              const displayPlace = stampDisplayPlace(item);
               return (
                 <Pressable
                   style={[
@@ -674,9 +672,9 @@ export function StampListScreen({
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
                       {stampDisplayTitle(item, pdfShowDatetime) || '(제목 없음)'}
                     </Text>
-                    {displayPlace ? (
+                    {item.placeLabel?.trim() ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
-                        {displayPlace}
+                        {item.placeLabel.trim()}
                       </Text>
                     ) : null}
                     <Text
