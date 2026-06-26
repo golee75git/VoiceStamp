@@ -1927,3 +1927,17 @@ restore-speech-end-gap.bat
 Copy-Item src.pre-speech-end-gap\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-speech-end-gap\components\VoiceInputField.tsx src\components\ -Force
 ```
+
+## 117. 도로명+POI 근처 장소 표기 되돌리기 (선택)
+
+건물명 없을 때 도로명·지번과 근처 POI를 함께 표시하도록 변경한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-place-road-poi.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-place-road-poi\services\kakaoLocal.ts src\services\ -Force
+```

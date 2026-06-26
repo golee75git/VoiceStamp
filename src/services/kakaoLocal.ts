@@ -44,7 +44,20 @@ type KakaoCategorySearchResponse = {
 const SCHOOL_NEAR_RADIUS_M = 300;
 const POI_SEARCH_RADIUS_M = 150;
 const POI_MAX_DISTANCE_M = 100;
-const POI_CATEGORY_CODES = ['CS2', 'CE7', 'FD6'] as const;
+const POI_CATEGORY_CODES = [
+  'CS2',
+  'CE7',
+  'FD6',
+  'MT1',
+  'HP8',
+  'PM9',
+  'BK9',
+  'OL7',
+  'SW8',
+  'PK6',
+  'CT1',
+  'PO3',
+] as const;
 
 type CoordAddress = {
   buildingName: string | null;
@@ -127,11 +140,14 @@ function isSchoolWithinRadius(school: KakaoCategoryDocument | null): boolean {
   return Boolean(schoolName && distance !== null && distance <= SCHOOL_NEAR_RADIUS_M);
 }
 
-function needsNearbyPoiFallback(address: CoordAddress, school: KakaoCategoryDocument | null): boolean {
+function needsNearbyPoiSearch(address: CoordAddress, school: KakaoCategoryDocument | null): boolean {
   if (isSchoolWithinRadius(school)) {
     return false;
   }
-  return !pickGeneralPlaceName(address.buildingName, address.roadAddressName, address.jibunTail);
+  if (address.buildingName) {
+    return false;
+  }
+  return true;
 }
 
 function pickPlaceName(
@@ -143,18 +159,23 @@ function pickPlaceName(
     return school?.place_name?.trim() || null;
   }
 
-  const general = pickGeneralPlaceName(address.buildingName, address.roadAddressName, address.jibunTail);
-  if (general) {
-    return general;
+  if (address.buildingName) {
+    return address.buildingName;
   }
 
   const poiName = nearbyPoi?.place_name?.trim() || null;
   const poiDistance = parseDistanceM(nearbyPoi);
   if (poiName && poiDistance !== null && poiDistance <= POI_MAX_DISTANCE_M) {
+    if (address.roadAddressName) {
+      return `${address.roadAddressName} ${poiName} 근처`;
+    }
+    if (address.jibunTail) {
+      return `${address.jibunTail} ${poiName} 근처`;
+    }
     return `${poiName} 근처`;
   }
 
-  return null;
+  return pickGeneralPlaceName(null, address.roadAddressName, address.jibunTail);
 }
 
 function combinePlaceLabel(region: string | null, placeName: string | null): string | null {
@@ -333,7 +354,7 @@ export async function getPlaceLabelFromCoords(
   ]);
 
   let nearbyPoi: KakaoCategoryDocument | null = null;
-  if (restKey && needsNearbyPoiFallback(address, school)) {
+  if (restKey && needsNearbyPoiSearch(address, school)) {
     nearbyPoi = await fetchNearestPoiFromKakao(restKey, longitude, latitude);
   }
 
