@@ -1,4 +1,4 @@
-import { findNearestSchool } from './schoolLookup';
+﻿import { findNearestSchool } from './schoolLookup';
 
 type KakaoRegionDocument = {
   region_type?: string;
@@ -41,7 +41,7 @@ type KakaoCategorySearchResponse = {
   documents?: KakaoCategoryDocument[];
 };
 
-const SCHOOL_NEAR_RADIUS_M = 200;
+const SCHOOL_NEAR_RADIUS_M = 300;
 const POI_SEARCH_RADIUS_M = 150;
 const POI_MAX_DISTANCE_M = 100;
 const POI_CATEGORY_CODES = [
@@ -103,7 +103,7 @@ function formatJibunTail(jibun: KakaoJibunAddress | null | undefined): string | 
   }
   const sub = jibun.sub_address_no?.trim();
   const lot = sub ? `${main}-${sub}` : main;
-  return jibun.mountain_yn === 'Y' ? `산 ${lot}` : lot;
+  return jibun.mountain_yn === 'Y' ? `??${lot}` : lot;
 }
 
 function pickCoordAddress(documents: KakaoCoord2AddressDocument[]): CoordAddress {
@@ -167,12 +167,12 @@ function pickPlaceName(
   const poiDistance = parseDistanceM(nearbyPoi);
   if (poiName && poiDistance !== null && poiDistance <= POI_MAX_DISTANCE_M) {
     if (address.roadAddressName) {
-      return `${address.roadAddressName} ${poiName} 근처`;
+      return `${address.roadAddressName} ${poiName} 洹쇱쿂`;
     }
     if (address.jibunTail) {
-      return `${address.jibunTail} ${poiName} 근처`;
+      return `${address.jibunTail} ${poiName} 洹쇱쿂`;
     }
-    return `${poiName} 근처`;
+    return `${poiName} 洹쇱쿂`;
   }
 
   return pickGeneralPlaceName(null, address.roadAddressName, address.jibunTail);
