@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-06-26 |
-| 기준 커밋 | `1940314` (main) |
+| 작성일 | 2026-06-27 |
+| 기준 커밋 | `4b6834d` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -282,7 +282,18 @@
 | 194 | 음성 **수동 커서** 위치 존중 | `250a97d` | `restore-speech-cursor-respect.bat` |
 | 195 | GitHub APK `releases/20260626_233248` · 랜딩·`/info` | `1940314` | `restore-apk-download-20260626-233248.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`).
+> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`). (이후 **`092959`** — §2S)
+
+## 2S. Phase 3 추가 완료 (2026-06-27)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 196 | 시스템 카메라 복귀 **busy 오버레이 깜빡임** (`AppState`) | `547b693` | `restore-camera-busy-overlay.bat` |
+| 197 | GitHub APK `releases/20260627_092959` · 랜딩·`/info` | `547b693` | `restore-apk-download-20260627_092959.bat` |
+| 198 | 랜딩 **QR·Web Share** (qrcodejs MIT 자체 호스팅) | `800971a` | `restore-landing-share.bat` |
+| 199 | `restore-landing-share.bat`에 `license.html` 포함 | `4b6834d` | — |
+
+> **권장 APK:** `releases/VoiceStamp_20260627_092959.apk` (`547b693`).
 
 ### 2.1 문서 동기화 이력
 
@@ -319,6 +330,7 @@
 | (본 갱신) | `fb0363b` 반영 — `place_label`·장소 마이크·음성 커서·도로+POI·ML Kit 되돌림·랜딩·APK `172205`·날짜별 이력 |
 | (본 갱신) | `6f95aa8` 반영 — 촬영 후 3버튼 눌림 배경·Android 리플·APK `184823`·날짜별 이력 |
 | (본 갱신) | `1940314` 반영 — 위치 조회 끔·학교 200m·층→장소·음성 수동 커서·APK `233248`·날짜별 이력 |
+| (본 갱신) | `4b6834d` 반영 — busy 오버레이·APK `092959`·랜딩 QR·Web Share·날짜별·APK별 이력 |
 
 ---
 
@@ -336,6 +348,7 @@
 | LEG-06 | OSS 목록·앱 내 오픈소스 라이선스·[LICENSE-NOTICE.md](./LICENSE-NOTICE.md) dual-license 검토(MIT/BSD 확정) | P2 | ✅ 2026-06-19 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 미구현 (정책 URL: `/privacy` 준비됨) |
 | DEP-04 | `/info` GitHub Releases APK 다운로드 링크 | P2 | ✅ `3468630` |
+| DEP-05 | 랜딩 **QR·Web Share** (qrcodejs MIT) | P2 | ✅ `800971a` |
 
 > **참고:** APK/Web만 배포할 때는 문서(`docs/`)만으로도 내부·테스터 배포는 가능. 스토어 등록 시 LEG-04·05 권장.
 
@@ -408,9 +421,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260625_171805.apk` (`847ea63`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260625_171805.apk |
-| 최신 소스 | `847ea63` — 캡션 EXIF·DISPLAY_NAME 한글·도로 위치 fallback |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260627_092959.apk` (`547b693`) |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260627_092959.apk |
+| 최신 소스 | `4b6834d` — busy 오버레이·랜딩 QR·Web Share (qrcodejs MIT) |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -471,6 +484,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-24 | 2O | **휴지통 비우기 화면** · 목록 **보내기 하단바** · 내비 31px · 비우기 후 목록 · APK `094846` (`64d6728`·`ecb3fe1`·`c5cbeec`·`64aa037`) |
 | 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
 | 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · **위치 조회 끔** · 학교 **200m** · **층→장소** · **음성 수동 커서** · APK `233248` (`e330e7e`~`1940314`) |
+| 2026-06-27 | 2S·3 | 시스템 카메라 **busy 오버레이 깜빡임** · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) (`547b693`~`4b6834d`) |
 
 ---
 
@@ -478,7 +492,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | **설치·GitHub 권장** — 음성 **수동 커서** + `231436` 기능 전부 |
+| `releases/VoiceStamp_20260627_092959.apk` | `547b693` | **설치·GitHub 권장** — busy 오버레이 깜빡임 수정 + `233248` 기능 전부 |
+| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | 음성 **수동 커서** + `231436` 기능 전부 (busy 수정 **미포함**) |
 | `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소**·수정 모달 입력 (수동 커서 **미포함**) |
 | `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
 | `releases/VoiceStamp_20260626_194421.apk` | `bdf4376` | **위치 조회 끔** (200m·층→장소 **미포함**) |

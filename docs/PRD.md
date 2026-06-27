@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-06-26 |
-| 최신 반영 커밋 | `1940314` (main) |
+| 문서 작성일 | 2026-06-27 |
+| 최신 반영 커밋 | `4b6834d` (main) |
 
 ---
 
@@ -170,6 +170,7 @@
 | F-CAM-13 | 연속 촬영 시 **인앱 CameraView** 옵션 (시스템 카메라 대안) | ✅ `e971934` |
 | F-CAM-14 | 카메라 홈 스플래시(`camera-home.png`) **flex 확대** (셔터 위 영역) | ✅ `a89e166` |
 | F-CAM-15 | 촬영 확인 시트 3버튼 **눌림 배경색·Android 리플** 터치 피드백 | ✅ `a780b27` |
+| F-CAM-16 | 시스템 카메라 복귀 시 **「시스템 카메라 여는 중」 오버레이 깜빡임** 제거 (`AppState`) | ✅ `547b693` |
 
 ### 3.2 스탬프 저장 (P0)
 
@@ -343,6 +344,7 @@
 | F-DEP-11 | `/info` 페이지 GitHub Releases APK 다운로드 링크 | ✅ |
 | F-DEP-12 | 랜딩(`/`) 하단 **방문자 집계** — `localStorage` 당일 1회 + `/api/visitor` + CountAPI 프록시 | ✅ `608357d` |
 | F-DEP-13 | 랜딩 푸터 저작권 **Lee Hyung Woo** (영문) | ✅ `f50a2fb` |
+| F-DEP-14 | 랜딩 **QR 코드·Web Share**(qrcodejs MIT 자체 호스팅, 개인정보 패널 위) | ✅ `800971a` |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
@@ -556,7 +558,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260626_233248.apk`** (`1940314`). 이전 권장: `231436` (`480e01f`) |
+| GitHub APK 지연 | `releases/` 최신은 **`VoiceStamp_20260627_092959.apk`** (`547b693`). 이전 권장: `233248` (`1940314`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -610,6 +612,7 @@
 | **2026-06-24** | **휴지통 비우기 → 휴지통 화면** · 목록 선택 **보내기 하단바**·헤더 축소 ·보내기 바 **Android 31px** · 비우기 후 **목록 복귀** · GitHub APK `094846` · Vercel | `64d6728` · `ecb3fe1` · `c5cbeec` · `64aa037` |
 | **2026-06-25** | 랜딩 **방문자 집계**·CountAPI 대체 · 랜딩 저작권 표기 · **도로·지번·POI** 위치 · 갤러리 **한글 DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` · Vercel | `4b71431`~`847ea63` |
 | **2026-06-26** | **별도 장소 필드**(`place_label`) · **장소 마이크** · **음성 끝 공백·커서** · **도로명+POI 근처** · 마이크 안정화 · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · **위치 조회 끔** · 학교 반경 **200m** · **층→장소 표기** · **음성 수동 커서** · 수정 모달 입력 수정 · APK `233248` | `e330e7e`~`1940314` |
+| **2026-06-27** | 시스템 카메라 확인 후 **「시스템 카메라 여는 중」 깜빡임 제거** (`AppState`) · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) · `restore-landing-share.bat` | `547b693`~`4b6834d` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -619,7 +622,8 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | **설치·GitHub 권장** — 음성 **수동 커서** + `231436` 기능 전부 |
+| `releases/VoiceStamp_20260627_092959.apk` | `547b693` | **설치·GitHub 권장** — 시스템 카메라 복귀 **busy 오버레이 깜빡임 수정** + `233248` 기능 전부 |
+| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | 음성 **수동 커서** + `231436` 기능 전부 (busy 수정 **미포함**) |
 | `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소** 표기·수정 모달 입력 수정 (수동 커서 **미포함**) |
 | `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
 | `releases/VoiceStamp_20260626_194421.apk` | `bdf4376` | **위치 조회 끔** 설정 (200m·층→장소 **미포함**) |

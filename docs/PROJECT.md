@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-26**  
-최신 커밋 기준: `1940314` (main)
+문서 작성일: **2026-06-27**
+최신 커밋 기준: `4b6834d` (main)
 
 ---
 
@@ -288,8 +288,12 @@ VoiceStamp/
 | 188 | GitHub APK `releases/20260626_231436` · 랜딩·`/info` | `480e01f` | `restore-apk-download-20260626-231436.bat` |
 | 189 | 음성 **수동 커서** 위치 존중 (`prepareSpeechTarget`) | `250a97d` | `restore-speech-cursor-respect.bat` |
 | 190 | GitHub APK `releases/20260626_233248` · 랜딩·`/info` | `1940314` | `restore-apk-download-20260626-233248.bat` |
+| 191 | 시스템 카메라 복귀 **busy 오버레이 깜빡임** (`AppState`) | `547b693` | `restore-camera-busy-overlay.bat` |
+| 192 | GitHub APK `releases/20260627_092959` · 랜딩·`/info` | `547b693` | `restore-apk-download-20260627_092959.bat` |
+| 193 | 랜딩 **QR·Web Share** (qrcodejs MIT 자체 호스팅) | `800971a` | `restore-landing-share.bat` |
+| 194 | `restore-landing-share.bat`에 `license.html` 포함 | `4b6834d` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`).
+> **권장 APK:** `releases/VoiceStamp_20260627_092959.apk` (`547b693`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -355,7 +359,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260626_233248.apk`** | `1940314` | **설치·GitHub 권장** — 음성 **수동 커서** + `231436` 기능 전부 |
+| **`releases/VoiceStamp_20260627_092959.apk`** | `547b693` | **설치·GitHub 권장** — 시스템 카메라 **busy 오버레이 깜빡임 수정** + `233248` 기능 전부 |
+| `releases/VoiceStamp_20260626_233248.apk` | `1940314` | 음성 **수동 커서** + `231436` 기능 전부 (busy 수정 **미포함**) |
 | `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소** 표기·수정 모달 입력 수정 (수동 커서 **미포함**) |
 | `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
 | `releases/VoiceStamp_20260626_194421.apk` | `bdf4376` | **위치 조회 끔** (200m·층→장소 **미포함**) |
@@ -412,6 +417,14 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-06-27
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260627_092959.apk` | `547b693` | **권장** — 시스템 카메라 확인 후 **「시스템 카메라 여는 중」 깜빡임 제거** (`AppState` + `restore-camera-busy-overlay.bat`) + `233248` 기능 전부 | **GitHub `releases/`** |
+| (웹만) | `800971a` | 랜딩 **QR·Web Share** — qrcodejs MIT 자체 호스팅 (`restore-landing-share.bat`) | Vercel |
+| (웹만) | `4b6834d` | `restore-landing-share.bat`에 `license.html` 복원 포함 | — |
 
 #### 2026-06-26
 
@@ -727,6 +740,19 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-06-27
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`4b6834d` 기준) |
+| `4b6834d` | `restore-landing-share.bat`에 `license.html` 복원 추가 |
+| `800971a` | 랜딩 **QR·Web Share** — qrcodejs MIT (`public/vendor/`) · `restore-landing-share.bat` · Vercel |
+| `547b693` | APK `releases/VoiceStamp_20260627_092959` — 시스템 카메라 **busy 오버레이 깜빡임 수정** · `restore-apk-download-20260627_092959.bat` · Vercel |
+| `547b693` | `CameraScreen` — `AppState` background 시 `cameraBusy` 해제 · `restore-camera-busy-overlay.bat` |
+| `fa5b7ac` | PRD·PROJECT·PLAN·README 문서 동기화 (`1940314` 기준) |
+
+> **권장 APK:** `releases/VoiceStamp_20260627_092959.apk` (`547b693`). 랜딩·`/info` 다운로드 링크·QR 공유 동기화됨.
+
 ### 2026-06-26
 
 | 커밋 | 내용 |
@@ -758,7 +784,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `3037ffe` | APK `134226` 배포 링크 갱신 |
 | `e330e7e` | **`place_label`** 별도 장소 필드 · `restore-place-label.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260626_233248.apk` (`1940314`). (이후 **`092959`** 권장 — §2026-06-27 참고)
 
 ### 2026-06-25
 
