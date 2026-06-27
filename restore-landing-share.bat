@@ -6,6 +6,7 @@ if not exist "public.pre-landing-share\landing.html" (
   exit /b 1
 )
 copy /Y "public.pre-landing-share\landing.html" "public\landing.html"
+copy /Y "public.pre-landing-share\license.html" "public\license.html"
 if exist "public\vendor\qrcode.min.js" del /Q "public\vendor\qrcode.min.js"
 if exist "public\vendor\qrcodejs-LICENSE.txt" del /Q "public\vendor\qrcodejs-LICENSE.txt"
 echo Restored landing share rollback
