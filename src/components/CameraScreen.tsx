@@ -1,5 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  AppState,
+  BackHandler,
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type AppStateStatus,
+} from 'react-native';
 import { CameraView } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -95,6 +107,21 @@ export function CameraScreen({
   useEffect(() => {
     getCameraHand().then(setCameraHand);
   }, [refreshKey]);
+
+  useEffect(() => {
+    if (isWeb) {
+      return;
+    }
+
+    const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      if (nextState !== 'active' && launchingRef.current) {
+        setCameraBusy(false);
+        setBusyHint(null);
+      }
+    });
+
+    return () => sub.remove();
+  }, [isWeb]);
 
   const openSaveModal = useCallback((uri: string) => {
     setCapturedUri(uri);
