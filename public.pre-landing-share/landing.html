@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VoiceStamp — Android 앱</title>
-  <script src="/vendor/qrcode.min.js"></script>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1.25rem; color: #111; line-height: 1.6; background: #fff; }
     a { color: #2563eb; }
@@ -12,34 +11,6 @@
     h1 { font-size: 1.75rem; margin: 0 0 0.5rem; }
     .lead { font-size: 1.05rem; margin: 0 0 1.25rem; }
     .cta { display: inline-block; margin: 0.5rem 0 1.25rem; padding: 0.75rem 1.25rem; background: #2563eb; color: #fff !important; text-decoration: none; border-radius: 10px; font-weight: 700; }
-    .share-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      gap: 1.25rem;
-      margin: 1rem 0 1.25rem;
-      padding: 1rem 1.1rem;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-    }
-    .share-qr-wrap { flex: 0 0 auto; text-align: center; }
-    #site-qr { display: inline-block; line-height: 0; }
-    #site-qr img { display: block; border-radius: 6px; }
-    .share-actions { flex: 1 1 12rem; min-width: 0; }
-    .share-btn {
-      display: inline-block;
-      padding: 0.6rem 1rem;
-      border: 1px solid #2563eb;
-      border-radius: 10px;
-      background: #fff;
-      color: #2563eb;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-    .share-btn:active { background: #eff6ff; }
-    .share-hint { margin: 0.35rem 0 0; font-size: 0.85rem; }
     .panel { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.1rem; margin: 1.25rem 0; }
     .panel h2 { font-size: 1rem; margin: 0 0 0.5rem; }
     ul { padding-left: 1.25rem; margin: 0.5rem 0 0; }
@@ -54,17 +25,6 @@
   <a class="cta" href="https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260627_092959.apk">Android APK 다운로드</a>
   <p class="muted">VoiceStamp_20260627_092959.apk</p>
   <p class="muted">설치 후 카메라·마이크·위치 권한을 허용해 주세요.</p>
-
-  <section class="share-bar" aria-label="홈페이지 공유">
-    <div class="share-qr-wrap">
-      <div id="site-qr" role="img" aria-label="https://voicestamp-gilt.vercel.app/ QR 코드"></div>
-      <p class="muted share-hint">QR 스캔 → 홈</p>
-    </div>
-    <div class="share-actions">
-      <button type="button" id="share-site" class="share-btn">링크 공유</button>
-      <p class="muted share-hint">휴대폰에서는 카카오톡 등으로 보낼 수 있습니다.</p>
-    </div>
-  </section>
 
   <section class="panel">
     <h2>개인정보·사용 안내</h2>
@@ -95,54 +55,6 @@
     <p id="visitor-stats" class="muted" aria-live="polite"></p>
     문의: <a href="https://github.com/golee75git/VoiceStamp/issues">GitHub Issues</a>
   </footer>
-  <script>
-    (function () {
-      var SITE_URL = 'https://voicestamp-gilt.vercel.app/';
-
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(document.getElementById('site-qr'), {
-          text: SITE_URL,
-          width: 120,
-          height: 120,
-          colorDark: '#111827',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.M,
-        });
-      }
-
-      var shareBtn = document.getElementById('share-site');
-      if (shareBtn) {
-        shareBtn.addEventListener('click', function () {
-          var payload = {
-            title: 'VoiceStamp',
-            text: 'VoiceStamp Android 앱 홈페이지',
-            url: SITE_URL,
-          };
-
-          if (navigator.share) {
-            navigator.share(payload).catch(function (err) {
-              if (err && err.name === 'AbortError') return;
-              fallbackCopy(SITE_URL);
-            });
-            return;
-          }
-          fallbackCopy(SITE_URL);
-        });
-      }
-
-      function fallbackCopy(url) {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(url).then(function () {
-            alert('링크를 복사했습니다.');
-          }).catch(function () {
-            window.prompt('아래 링크를 복사하세요.', url);
-          });
-          return;
-        }
-        window.prompt('아래 링크를 복사하세요.', url);
-      }
-    })();
-  </script>
   <script>
     (function () {
       var el = document.getElementById('visitor-stats');
