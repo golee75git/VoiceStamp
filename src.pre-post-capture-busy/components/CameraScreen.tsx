@@ -205,38 +205,6 @@ export function CameraScreen({
     [startLocationPrefetch],
   );
 
-  const clearCaptureBusy = useCallback(() => {
-    launchingRef.current = false;
-    setCameraBusy(false);
-    setBusyHint(null);
-  }, []);
-
-  const handleCapturedUri = useCallback(
-    async (uri: string) => {
-      setCameraBusy(true);
-      setBusyHint('처리 중…');
-      try {
-        const mode = await getCaptureAfterMode();
-        if (mode === 'save_modal') {
-          startLocationPrefetch(uri);
-          openSaveModal(uri);
-          return;
-        }
-        showCaptureActionSheet(uri);
-      } catch (error) {
-        handleCameraError(error);
-        clearCaptureBusy();
-      }
-    },
-    [clearCaptureBusy, handleCameraError, openSaveModal, showCaptureActionSheet, startLocationPrefetch],
-  );
-
-  useEffect(() => {
-    if (modalVisible || actionSheetVisible) {
-      clearCaptureBusy();
-    }
-  }, [actionSheetVisible, clearCaptureBusy, modalVisible]);
-
   const clearCaptureActionSheet = useCallback(() => {
     actionSheetVisibleRef.current = false;
     setActionSheetVisible(false);
@@ -380,6 +348,21 @@ export function CameraScreen({
     startLocationWarmup,
   ]);
 
+  const handleCapturedUri = useCallback(
+    (uri: string) => {
+      void (async () => {
+        const mode = await getCaptureAfterMode();
+        if (mode === 'save_modal') {
+          startLocationPrefetch(uri);
+          openSaveModal(uri);
+          return;
+        }
+        showCaptureActionSheet(uri);
+      })();
+    },
+    [openSaveModal, showCaptureActionSheet, startLocationPrefetch],
+  );
+
   const openSystemCamera = useCallback(async () => {
     if (
       cameraBusy ||
@@ -395,33 +378,22 @@ export function CameraScreen({
     setCameraBusy(true);
     setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
     startLocationWarmup();
-    let postCapturePending = false;
     try {
       const uri = await takePhotoWithSystemCamera();
       if (uri) {
-        postCapturePending = true;
-        await handleCapturedUri(uri);
-        return;
+        handleCapturedUri(uri);
+      } else {
+        setAutoLaunch(false);
       }
-      setAutoLaunch(false);
     } catch (error) {
       setAutoLaunch(false);
       handleCameraError(error);
     } finally {
-      if (!postCapturePending) {
-        clearCaptureBusy();
-      }
+      launchingRef.current = false;
+      setCameraBusy(false);
+      setBusyHint(null);
     }
-  }, [
-    cameraBusy,
-    modalVisible,
-    clearCaptureBusy,
-    handleCameraError,
-    handleCapturedUri,
-    inAppContinuousActive,
-    isWeb,
-    startLocationWarmup,
-  ]);
+  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, inAppContinuousActive, isWeb, startLocationWarmup]);
 
   const handleActionRetake = useCallback(() => {
     cancelLocationPrefetch();
@@ -497,7 +469,7 @@ export function CameraScreen({
           return;
         }
         if (pending && 'assets' in pending && !pending.canceled && pending.assets?.[0]?.uri) {
-          await handleCapturedUri(pending.assets[0].uri);
+          handleCapturedUri(pending.assets[0].uri);
           setAutoLaunch(false);
         }
       } finally {
