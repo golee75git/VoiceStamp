@@ -21,7 +21,6 @@ const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
 
 import { openInfoPage } from '../constants/infoUrls';
 import { APK_BUILD_FILENAME } from '../constants/apkBuildLabel';
-import { invalidateStampSaveModalLayoutCache } from '../services/stampSaveModalLayoutCache';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
@@ -338,7 +337,6 @@ export function SettingsScreen({
       setOverlayFooterPhraseState(savedFooterPhrase);
       setOverlayShowOrgNameState(savedShowOrgName);
       setOverlayShowFooterPhraseState(savedShowFooterPhrase);
-      invalidateStampSaveModalLayoutCache();
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',

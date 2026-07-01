@@ -22,7 +22,6 @@ import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCa
 import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
-import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
 import { StampSaveModal } from './StampSaveModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -160,15 +159,7 @@ export function CameraScreen({
 
   useEffect(() => {
     getCameraHand().then(setCameraHand);
-    void loadStampSaveModalLayoutSettings();
   }, [refreshKey]);
-
-  useEffect(() => {
-    if (isWeb || !permission?.granted) {
-      return;
-    }
-    startLocationWarmup();
-  }, [isWeb, permission?.granted, refreshKey, startLocationWarmup]);
 
   useEffect(() => {
     if (isWeb) {

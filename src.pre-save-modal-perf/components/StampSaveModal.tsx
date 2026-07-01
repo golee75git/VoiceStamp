@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  InteractionManager,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -25,13 +24,27 @@ import {
   refreshStampGroupDate,
 } from '../services/fileService';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
-import { getCurrentSiteName, setCurrentSiteName, setLastCapturePlaceCache } from '../services/settingsService';
-import type { CameraHand, CoordsLabelMode, StampTextLayout, TextAlign, WatermarkStyle } from '../services/settingsService';
 import {
-  loadStampSaveModalLayoutSettings,
-  peekStampSaveModalLayoutCache,
-  type StampSaveModalLayoutSettings,
-} from '../services/stampSaveModalLayoutCache';
+  getCameraHand,
+  getCurrentSiteName,
+  getMemoTextAlign,
+  getPdfShowDatetime,
+  getStampTextLayout,
+  getWatermarkStyle,
+  getCoordsLabelMode,
+  getOverlayFooterPhrase,
+  getOverlayOrgName,
+  getOverlayShowFooterPhrase,
+  getOverlayShowOrgName,
+  getTitleTextAlign,
+  setCurrentSiteName,
+  setLastCapturePlaceCache,
+  type CameraHand,
+  type CoordsLabelMode,
+  type StampTextLayout,
+  type WatermarkStyle,
+  type TextAlign,
+} from '../services/settingsService';
 import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
 import {
   cropStampImage,
@@ -122,37 +135,6 @@ function speechSliceAtSelection(text: string, start: number, end: number): Speec
   };
 }
 
-function applyStampSaveModalLayoutSettings(
-  settings: StampSaveModalLayoutSettings,
-  apply: {
-    setTitleTextAlign: (value: TextAlign) => void;
-    setMemoTextAlign: (value: TextAlign) => void;
-    setCameraHand: (value: CameraHand) => void;
-    setStampTextLayout: (value: StampTextLayout) => void;
-    setWatermarkStyle: (value: WatermarkStyle) => void;
-    setShowDatetime: (value: boolean) => void;
-    setCoordsLabel: (value: CoordsLabelMode) => void;
-    setFloorDisplayModeState: (value: FloorDisplayMode) => void;
-    setOverlayOrgName: (value: string) => void;
-    setOverlayFooterPhrase: (value: string) => void;
-    setOverlayShowOrgName: (value: boolean) => void;
-    setOverlayShowFooterPhrase: (value: boolean) => void;
-  },
-): void {
-  apply.setTitleTextAlign(settings.titleTextAlign);
-  apply.setMemoTextAlign(settings.memoTextAlign);
-  apply.setCameraHand(settings.cameraHand);
-  apply.setStampTextLayout(settings.stampTextLayout);
-  apply.setWatermarkStyle(settings.watermarkStyle);
-  apply.setShowDatetime(settings.showDatetime);
-  apply.setCoordsLabel(settings.coordsLabel);
-  apply.setFloorDisplayModeState(settings.floorDisplayMode);
-  apply.setOverlayOrgName(settings.overlayOrgName);
-  apply.setOverlayFooterPhrase(settings.overlayFooterPhrase);
-  apply.setOverlayShowOrgName(settings.overlayShowOrgName);
-  apply.setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
-}
-
 type StampSaveModalProps = {
   visible: boolean;
   imageUri: string | null;
@@ -217,6 +199,7 @@ export function StampSaveModal({
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
+  const [layoutSettingsLoaded, setLayoutSettingsLoaded] = useState(false);
   const [applyingCrop, setApplyingCrop] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
@@ -308,32 +291,40 @@ export function StampSaveModal({
       return;
     }
 
-    const apply = {
-      setTitleTextAlign,
-      setMemoTextAlign,
-      setCameraHand,
-      setStampTextLayout,
-      setWatermarkStyle,
-      setShowDatetime,
-      setCoordsLabel,
-      setFloorDisplayModeState,
-      setOverlayOrgName,
-      setOverlayFooterPhrase,
-      setOverlayShowOrgName,
-      setOverlayShowFooterPhrase,
-    };
-
-    const cached = peekStampSaveModalLayoutCache();
-    if (cached) {
-      applyStampSaveModalLayoutSettings(cached, apply);
-    }
-
     let cancelled = false;
-    void loadStampSaveModalLayoutSettings().then((settings) => {
+    setLayoutSettingsLoaded(false);
+    (async () => {
+      const [titleAlign, memoAlign, hand, textLayout, wmStyle, datetimeVisible, coordsLabelMode, displayMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
+        await Promise.all([
+        getTitleTextAlign(),
+        getMemoTextAlign(),
+        getCameraHand(),
+        getStampTextLayout(),
+        getWatermarkStyle(),
+        getPdfShowDatetime(),
+        getCoordsLabelMode(),
+        getFloorDisplayMode(),
+        getOverlayOrgName(),
+        getOverlayFooterPhrase(),
+        getOverlayShowOrgName(),
+        getOverlayShowFooterPhrase(),
+      ]);
       if (!cancelled) {
-        applyStampSaveModalLayoutSettings(settings, apply);
+        setTitleTextAlign(titleAlign);
+        setMemoTextAlign(memoAlign);
+        setCameraHand(hand);
+        setStampTextLayout(textLayout);
+        setWatermarkStyle(wmStyle);
+        setShowDatetime(datetimeVisible);
+        setCoordsLabel(coordsLabelMode);
+        setFloorDisplayModeState(displayMode);
+        setOverlayOrgName(orgName);
+        setOverlayFooterPhrase(footerPhrase);
+        setOverlayShowOrgName(showOrgName);
+        setOverlayShowFooterPhrase(showFooterPhrase);
+        setLayoutSettingsLoaded(true);
       }
-    });
+    })();
 
     return () => {
       cancelled = true;
@@ -372,6 +363,7 @@ export function StampSaveModal({
     originalCameraUriRef.current = null;
     setWorkingImageUri(null);
     setPreviewThumbUri(null);
+    setLayoutSettingsLoaded(false);
     setApplyingCrop(false);
     setCaptureCoords(null);
     setFloor(null);
@@ -414,26 +406,21 @@ export function StampSaveModal({
     }
 
     let cancelled = false;
-    const interactionTask = InteractionManager.runAfterInteractions(() => {
-      if (cancelled) {
-        return;
-      }
-      prepareStampPreviewThumb(sourceUri)
-        .then((uri) => {
-          if (!cancelled) {
-            setPreviewThumbUri(uri);
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setPreviewThumbUri(normalizeDisplayUri(sourceUri));
-          }
-        });
-    });
+
+    prepareStampPreviewThumb(sourceUri)
+      .then((uri) => {
+        if (!cancelled) {
+          setPreviewThumbUri(uri);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPreviewThumbUri(normalizeDisplayUri(sourceUri));
+        }
+      });
 
     return () => {
       cancelled = true;
-      interactionTask.cancel();
     };
   }, [visible, workingImageUri, imageUri]);
 
@@ -872,8 +859,8 @@ export function StampSaveModal({
             {photoUri ? (
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
                 <StampSavePreview
-                  imageUri={previewThumbUri ?? normalizeDisplayUri(photoUri)}
-                  imageLoading={false}
+                  imageUri={previewThumbUri ?? photoUri}
+                  imageLoading={!photoUri}
                   title={title}
                   memo={memo}
                   placeLabel={placeLabel}

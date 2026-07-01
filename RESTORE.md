@@ -2035,3 +2035,20 @@ restore-school-skip-region.bat
 ```powershell
 Copy-Item src.pre-school-skip-region\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 124. 저장 모달 성능(워밍·설정 캐시·미리보기 지연) 되돌리기 (선택)
+
+카메라 화면 위치 워밍 선행·저장 모달 설정 캐시·미리보기 썸네일 지연 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-modal-perf.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-modal-perf\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-save-modal-perf\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-modal-perf\components\SettingsScreen.tsx src\components\ -Force
+Remove-Item src\services\stampSaveModalLayoutCache.ts -ErrorAction SilentlyContinue
+```
