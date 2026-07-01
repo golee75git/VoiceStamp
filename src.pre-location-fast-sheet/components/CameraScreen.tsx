@@ -103,33 +103,22 @@ export function CameraScreen({
     }
     setLocationPrefetchLoading(true);
 
-    let fast: LocationSnapshot | null = null;
     try {
-      fast = await getFastLocationSnapshot();
-      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
-        if (fast) {
-          setPrefetchedLocation(fast);
+      const fast = await getFastLocationSnapshot();
+      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey && fast) {
+        setPrefetchedLocation(fast);
+        if (fast.placeLabel) {
+          setLocationPrefetchLoading(false);
         }
-        setLocationPrefetchLoading(false);
       }
-    } catch {
-      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
-        setLocationPrefetchLoading(false);
-      }
-    }
 
-    if (prefetchCancelledRef.current || prefetchForUriRef.current !== captureKey) {
-      locationPrefetchRunningRef.current = false;
-      return;
-    }
-
-    try {
       const refined = await getCurrentLocationSnapshot();
       if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
         setPrefetchedLocation(refined ?? fast ?? prefetchedLocationRef.current);
       }
     } finally {
       if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
+        setLocationPrefetchLoading(false);
         setLocationPrefetchFinished(true);
         locationPrefetchRunningRef.current = false;
       }

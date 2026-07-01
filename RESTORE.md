@@ -1991,3 +1991,17 @@ Copy-Item src.pre-location-warmup\components\CaptureActionSheet.tsx src\componen
 Copy-Item src.pre-location-warmup\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-location-warmup\services\locationService.ts src\services\ -Force
 ```
+
+## 121. 촬영 시트 빠른 위치 프리페치 되돌리기 (선택)
+
+3버튼 시트에서는 fast 위치만 표시하고 정밀 GPS는 백그라운드로 미룬 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-fast-sheet.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-fast-sheet\components\CameraScreen.tsx src\components\ -Force
+```
