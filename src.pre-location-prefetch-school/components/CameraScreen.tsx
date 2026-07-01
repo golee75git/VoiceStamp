@@ -63,7 +63,6 @@ export function CameraScreen({
   const prefetchCancelledRef = useRef(false);
   const [prefetchedLocation, setPrefetchedLocation] = useState<LocationSnapshot | null>(null);
   const [locationPrefetchLoading, setLocationPrefetchLoading] = useState(false);
-  const [locationPrefetchFinished, setLocationPrefetchFinished] = useState(false);
   const [inAppContinuousActive, setInAppContinuousActive] = useState(false);
   const [inAppCameraReady, setInAppCameraReady] = useState(false);
   const [inAppCapturing, setInAppCapturing] = useState(false);
@@ -77,7 +76,6 @@ export function CameraScreen({
     prefetchForUriRef.current = null;
     setPrefetchedLocation(null);
     setLocationPrefetchLoading(false);
-    setLocationPrefetchFinished(false);
   }, []);
 
   const startLocationPrefetch = useCallback((uri: string) => {
@@ -85,13 +83,9 @@ export function CameraScreen({
     prefetchCancelledRef.current = false;
     setPrefetchedLocation(null);
     setLocationPrefetchLoading(false);
-    setLocationPrefetchFinished(false);
 
     void (async () => {
       if (!(await isLocationLookupEnabled())) {
-        if (!prefetchCancelledRef.current && prefetchForUriRef.current === uri) {
-          setLocationPrefetchFinished(true);
-        }
         return;
       }
       prefetchForUriRef.current = uri;
@@ -105,7 +99,6 @@ export function CameraScreen({
       } finally {
         if (!prefetchCancelledRef.current && prefetchForUriRef.current === uri) {
           setLocationPrefetchLoading(false);
-          setLocationPrefetchFinished(true);
         }
       }
     })();
@@ -592,7 +585,6 @@ export function CameraScreen({
         captureStampForExport={captureStampForExport}
         prefetchedLocationSnapshot={prefetchedLocation}
         locationPrefetchLoading={locationPrefetchLoading}
-        locationPrefetchFinished={locationPrefetchFinished}
         onClose={() => {
           setModalVisible(false);
           setCapturedUri(null);

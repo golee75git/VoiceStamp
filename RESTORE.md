@@ -1941,3 +1941,19 @@ restore-place-road-poi.bat
 ```powershell
 Copy-Item src.pre-place-road-poi\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 118. 위치 prefetch 중복 조회·학교 카카오 축소 되돌리기 (선택)
+
+저장 모달에서 prefetch 완료 후 GPS·카카오 전체 조회를 반복하지 않도록 한 변경과, 로컬 학교 DB 매칭 시 카카오 주소·POI 호출을 건너뛰도록 한 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-prefetch-school.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-prefetch-school\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-location-prefetch-school\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-location-prefetch-school\services\kakaoLocal.ts src\services\ -Force
+```

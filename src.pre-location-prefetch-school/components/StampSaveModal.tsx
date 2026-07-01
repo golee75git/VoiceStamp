@@ -142,8 +142,6 @@ type StampSaveModalProps = {
   captureStampForExport?: CaptureStampForExport;
   prefetchedLocationSnapshot?: LocationSnapshot | null;
   locationPrefetchLoading?: boolean;
-  /** 촬영 직후 prefetch가 끝났으면 모달에서 GPS·카카오 전체 조회를 반복하지 않습니다. */
-  locationPrefetchFinished?: boolean;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -156,7 +154,6 @@ export function StampSaveModal({
   captureStampForExport,
   prefetchedLocationSnapshot = null,
   locationPrefetchLoading = false,
-  locationPrefetchFinished = false,
   onClose,
   onSaved,
   onTrashed,
@@ -474,31 +471,16 @@ export function StampSaveModal({
       }
     };
 
-    const applyQuickLocationCache = async () => {
-      const quickCoords = await getQuickLastKnownCoords();
-      if (cancelled || !quickCoords) {
-        return;
-      }
-      if (!placeTouchedRef.current) {
-        const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-        if (cachedPlace) {
-          setPlaceLabel(cachedPlace);
-        }
-      }
-      if (!captureCoordsRef.current) {
-        const coords = {
-          latitude: quickCoords.latitude,
-          longitude: quickCoords.longitude,
-        };
-        captureCoordsRef.current = coords;
-        setCaptureCoords(coords);
-      }
-    };
-
     const fetchLocationFallback = async () => {
       setLocationLoading(true);
       try {
-        await applyQuickLocationCache();
+        const quickCoords = await getQuickLastKnownCoords();
+        if (!cancelled && quickCoords && !placeTouchedRef.current) {
+          const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
+          if (cachedPlace) {
+            setPlaceLabel(cachedPlace);
+          }
+        }
 
         const snapshot = await getCurrentLocationSnapshot();
         if (cancelled) {
@@ -538,13 +520,17 @@ export function StampSaveModal({
 
       if (locationPrefetchLoading) {
         setLocationLoading(true);
-        void applyQuickLocationCache();
-        return;
-      }
-
-      if (locationPrefetchFinished) {
-        setLocationLoading(false);
-        void applyQuickLocationCache();
+        void (async () => {
+          const quickCoords = await getQuickLastKnownCoords();
+          if (cancelled || !quickCoords || placeTouchedRef.current) {
+            return;
+          }
+          const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
+          if (cancelled || !cachedPlace) {
+            return;
+          }
+          setPlaceLabel(cachedPlace);
+        })();
         return;
       }
 
@@ -554,14 +540,7 @@ export function StampSaveModal({
     return () => {
       cancelled = true;
     };
-  }, [
-    visible,
-    imageUri,
-    isEdit,
-    prefetchedLocationSnapshot,
-    locationPrefetchLoading,
-    locationPrefetchFinished,
-  ]);
+  }, [visible, imageUri, isEdit, prefetchedLocationSnapshot, locationPrefetchLoading]);
 
   useEffect(() => {
     if (!visible || !isEdit) {

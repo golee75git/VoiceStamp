@@ -347,12 +347,6 @@ export async function getPlaceLabelFromCoords(
 ): Promise<string | null> {
   const restKey = getKakaoRestKey();
 
-  const localSchool = await findNearestSchool(latitude, longitude, SCHOOL_NEAR_RADIUS_M);
-  if (localSchool) {
-    const region = restKey ? await fetchRegionLabel(restKey, longitude, latitude) : null;
-    return combinePlaceLabel(region, localSchool.name);
-  }
-
   const [region, address, school] = await Promise.all([
     restKey ? fetchRegionLabel(restKey, longitude, latitude) : Promise.resolve(null),
     restKey ? fetchCoordAddress(restKey, longitude, latitude) : Promise.resolve(EMPTY_COORD_ADDRESS),
