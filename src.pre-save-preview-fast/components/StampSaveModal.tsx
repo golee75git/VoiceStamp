@@ -406,6 +406,7 @@ export function StampSaveModal({
     }
 
     let cancelled = false;
+    setPreviewThumbUri(null);
 
     prepareStampPreviewThumb(sourceUri)
       .then((uri) => {
@@ -423,21 +424,6 @@ export function StampSaveModal({
       cancelled = true;
     };
   }, [visible, workingImageUri, imageUri]);
-
-  useEffect(() => {
-    if (!visible || isEdit || !prefetchedLocationSnapshot) {
-      return;
-    }
-    if (!placeTouchedRef.current) {
-      setPlaceLabel(prefetchedLocationSnapshot.placeLabel);
-    }
-    const coords = {
-      latitude: prefetchedLocationSnapshot.latitude,
-      longitude: prefetchedLocationSnapshot.longitude,
-    };
-    captureCoordsRef.current = coords;
-    setCaptureCoords(coords);
-  }, [visible, isEdit, prefetchedLocationSnapshot]);
 
   useEffect(() => {
     if (!visible || isEdit || !imageUri) {
@@ -862,8 +848,8 @@ export function StampSaveModal({
             {photoUri ? (
               <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
                 <StampSavePreview
-                  imageUri={previewThumbUri ?? photoUri}
-                  imageLoading={!photoUri}
+                  imageUri={previewThumbUri ?? ''}
+                  imageLoading={!layoutSettingsLoaded || !previewThumbUri}
                   title={title}
                   memo={memo}
                   placeLabel={placeLabel}

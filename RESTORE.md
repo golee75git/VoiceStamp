@@ -1957,3 +1957,20 @@ Copy-Item src.pre-location-prefetch-school\components\CameraScreen.tsx src\compo
 Copy-Item src.pre-location-prefetch-school\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-location-prefetch-school\services\kakaoLocal.ts src\services\ -Force
 ```
+
+## 119. 저장 미리보기 즉시 표시·APK 빌드 라벨 되돌리기 (선택)
+
+저장 모달 원본 즉시 미리보기 + prefetch 장소 즉시 반영 + 설정 APK 파일명 표시 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-preview-fast.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-preview-fast\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-fast\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-save-preview-fast\build-apk.bat build-apk.bat -Force
+Set-Content src\constants\apkBuildLabel.ts "export const APK_BUILD_FILENAME = '';"
+```

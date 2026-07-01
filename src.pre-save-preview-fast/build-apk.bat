@@ -5,18 +5,15 @@ set ORG_GRADLE_PROJECT_reactNativeArchitectures=arm64-v8a
 
 if /I "%~1"=="debug" goto :debug
 
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set STAMP=%%i
-set APK_NAME=VoiceStamp_%STAMP%.apk
-echo export const APK_BUILD_FILENAME = '%APK_NAME%';> src\constants\apkBuildLabel.ts
-
 echo [1/3] Release APK build (arm64, standalone)
 echo      First build may take 10-30 minutes.
-echo      Build label: %APK_NAME%
 cd android
 call gradlew.bat assembleRelease --no-daemon
 if errorlevel 1 exit /b 1
 cd ..
 
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set STAMP=%%i
+set APK_NAME=VoiceStamp_%STAMP%.apk
 copy /Y "android\app\build\outputs\apk\release\app-release.apk" "%APK_NAME%" >nul
 copy /Y "android\app\build\outputs\apk\release\app-release.apk" "VoiceStamp.apk" >nul
 echo.

@@ -20,7 +20,6 @@ const BACK_ICON_SIZE = 83;
 const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
 
 import { openInfoPage } from '../constants/infoUrls';
-import { APK_BUILD_FILENAME } from '../constants/apkBuildLabel';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
@@ -905,10 +904,7 @@ export function SettingsScreen({
           </Pressable>
 
           <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>
-          <Text style={styles.hint}>
-            VoiceStamp {appVersion}
-            {Platform.OS === 'android' && APK_BUILD_FILENAME ? ` · ${APK_BUILD_FILENAME}` : ''}
-          </Text>
+          <Text style={styles.hint}>VoiceStamp {appVersion}</Text>
           <Pressable
             style={styles.secondaryButton}
             onPress={() => void openInfoPage('/privacy')}
