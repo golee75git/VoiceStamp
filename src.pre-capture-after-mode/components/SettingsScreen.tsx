@@ -33,7 +33,6 @@ import {
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
-  DEFAULT_CAPTURE_AFTER_MODE,
   DEFAULT_COORDS_LABEL_MODE,
   DEFAULT_LOCATION_MODE,
   DEFAULT_FLOOR_PICKER_MODE,
@@ -50,7 +49,6 @@ import {
   OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
-  captureAfterModeLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -64,7 +62,6 @@ import {
   getCameraHand,
   getGallerySaveMode,
   getContinuousCaptureCamera,
-  getCaptureAfterMode,
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
@@ -91,7 +88,6 @@ import {
   setTitleDatetimeMode,
   setGallerySaveMode,
   setContinuousCaptureCamera,
-  setCaptureAfterMode,
   setMemoTextAlign,
   setOverlayFooterPhrase,
   setOverlayOrgName,
@@ -114,7 +110,6 @@ import {
   type TitleDatetimeMode,
   type GallerySaveMode,
   type ContinuousCaptureCamera,
-  type CaptureAfterMode,
   type StampTextLayout,
   type WatermarkStyle,
   type TextAlign,
@@ -181,9 +176,6 @@ export function SettingsScreen({
   const [continuousCaptureCamera, setContinuousCaptureCameraState] = useState<ContinuousCaptureCamera>(
     DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
   );
-  const [captureAfterMode, setCaptureAfterModeState] = useState<CaptureAfterMode>(
-    DEFAULT_CAPTURE_AFTER_MODE,
-  );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -212,7 +204,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, continuousCamera, afterCapture, hand, floorMode, floorDisplay, titleDatetime, coordsMode, locMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, continuousCamera, hand, floorMode, floorDisplay, titleDatetime, coordsMode, locMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -225,7 +217,6 @@ export function SettingsScreen({
           getWatermarkStyle(),
           getGallerySaveMode(),
           getContinuousCaptureCamera(),
-          getCaptureAfterMode(),
           getCameraHand(),
           getFloorPickerMode(),
           getFloorDisplayMode(),
@@ -248,7 +239,6 @@ export function SettingsScreen({
         setWatermarkStyleState(wmStyle);
         setGallerySaveModeState(galleryMode);
         setContinuousCaptureCameraState(continuousCamera);
-        setCaptureAfterModeState(afterCapture);
         setCameraHandState(hand);
         setFloorPickerModeState(floorMode);
         setFloorDisplayModeState(floorDisplay);
@@ -280,7 +270,6 @@ export function SettingsScreen({
         savedWatermarkStyle,
         savedGalleryMode,
         savedContinuousCaptureCamera,
-        savedCaptureAfterMode,
         savedCameraHand,
         savedFloorPickerMode,
         savedFloorDisplayMode,
@@ -303,7 +292,6 @@ export function SettingsScreen({
           setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
           setContinuousCaptureCamera(continuousCaptureCamera),
-          setCaptureAfterMode(captureAfterMode),
           setCameraHand(cameraHand),
           setFloorPickerMode(floorPickerMode),
           setFloorDisplayMode(floorDisplayMode),
@@ -326,7 +314,6 @@ export function SettingsScreen({
       setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
       setContinuousCaptureCameraState(savedContinuousCaptureCamera);
-      setCaptureAfterModeState(savedCaptureAfterMode);
       setCameraHandState(savedCameraHand);
       setFloorPickerModeState(savedFloorPickerMode);
       setFloorDisplayModeState(savedFloorDisplayMode);
@@ -340,7 +327,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -804,30 +791,6 @@ export function SettingsScreen({
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
                     {floorDisplayModeLabel(option)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>촬영 후</Text>
-          <Text style={styles.hint}>
-            「선택 화면」은 연속 촬영·저장·다시 촬영 중 고릅니다. 「저장 화면 바로」는 런처 없이 제목·메모 입력 화면으로 바로 갑니다.
-          </Text>
-          <View style={styles.optionRow}>
-            {(['action_sheet', 'save_modal'] as CaptureAfterMode[]).map((option) => {
-              const selected = captureAfterMode === option;
-              return (
-                <Pressable
-                  key={option}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => setCaptureAfterModeState(option)}
-                  disabled={saving}
-                >
-                  <Text
-                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
-                  >
-                    {captureAfterModeLabel(option)}
                   </Text>
                 </Pressable>
               );

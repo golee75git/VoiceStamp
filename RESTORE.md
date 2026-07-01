@@ -2005,3 +2005,19 @@ restore-location-fast-sheet.bat
 ```powershell
 Copy-Item src.pre-location-fast-sheet\components\CameraScreen.tsx src\components\ -Force
 ```
+
+## 122. 촬영 후 모드(선택 화면 / 저장 화면 바로) 되돌리기 (선택)
+
+설정 「촬영 후」 토글 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-capture-after-mode.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-capture-after-mode\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-capture-after-mode\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-capture-after-mode\services\settingsService.ts src\services\ -Force
+```

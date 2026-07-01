@@ -19,7 +19,7 @@ import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getContinuousCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { StampSaveModal } from './StampSaveModal';
@@ -341,17 +341,9 @@ export function CameraScreen({
 
   const handleCapturedUri = useCallback(
     (uri: string) => {
-      void (async () => {
-        const mode = await getCaptureAfterMode();
-        if (mode === 'save_modal') {
-          startLocationPrefetch(uri);
-          openSaveModal(uri);
-          return;
-        }
-        showCaptureActionSheet(uri);
-      })();
+      showCaptureActionSheet(uri);
     },
-    [openSaveModal, showCaptureActionSheet, startLocationPrefetch],
+    [showCaptureActionSheet],
   );
 
   const openSystemCamera = useCallback(async () => {

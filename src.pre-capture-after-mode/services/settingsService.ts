@@ -135,14 +135,6 @@ export function continuousCaptureCameraLabel(mode: ContinuousCaptureCamera): str
   return mode === 'in_app' ? '앱 내 (빠름)' : '시스템';
 }
 
-export function captureAfterModeLabel(mode: CaptureAfterMode): string {
-  return mode === 'save_modal' ? '저장 화면 바로' : '선택 화면';
-}
-
-export function sanitizeCaptureAfterMode(value: string): CaptureAfterMode {
-  return value === 'save_modal' ? 'save_modal' : 'action_sheet';
-}
-
 export function sanitizeContinuousCaptureCamera(value: string): ContinuousCaptureCamera {
   if (value === 'system') {
     return 'system';
@@ -528,20 +520,6 @@ export async function setContinuousCaptureCamera(
 ): Promise<ContinuousCaptureCamera> {
   const safeMode = sanitizeContinuousCaptureCamera(mode);
   await writeSetting(CONTINUOUS_CAPTURE_CAMERA_KEY, safeMode);
-  return safeMode;
-}
-
-export async function getCaptureAfterMode(): Promise<CaptureAfterMode> {
-  const value = await readSetting(CAPTURE_AFTER_MODE_KEY);
-  if (!value) {
-    return DEFAULT_CAPTURE_AFTER_MODE;
-  }
-  return sanitizeCaptureAfterMode(value);
-}
-
-export async function setCaptureAfterMode(mode: CaptureAfterMode): Promise<CaptureAfterMode> {
-  const safeMode = sanitizeCaptureAfterMode(mode);
-  await writeSetting(CAPTURE_AFTER_MODE_KEY, safeMode);
   return safeMode;
 }
 
