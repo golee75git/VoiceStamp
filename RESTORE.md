@@ -2021,3 +2021,17 @@ Copy-Item src.pre-capture-after-mode\components\CameraScreen.tsx src\components\
 Copy-Item src.pre-capture-after-mode\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-capture-after-mode\services\settingsService.ts src\services\ -Force
 ```
+
+## 123. 로컬 학교명만 표시(Kakao region 생략) 되돌리기 (선택)
+
+로컬 학교 DB 매칭 시 Kakao `fetchRegionLabel` 생략 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-school-skip-region.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-school-skip-region\services\kakaoLocal.ts src\services\ -Force
+```

@@ -349,7 +349,8 @@ export async function getPlaceLabelFromCoords(
 
   const localSchool = await findNearestSchool(latitude, longitude, SCHOOL_NEAR_RADIUS_M);
   if (localSchool) {
-    return localSchool.name;
+    const region = restKey ? await fetchRegionLabel(restKey, longitude, latitude) : null;
+    return combinePlaceLabel(region, localSchool.name);
   }
 
   const [region, address, school] = await Promise.all([
