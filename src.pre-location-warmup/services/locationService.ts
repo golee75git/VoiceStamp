@@ -26,14 +26,6 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
   ]);
 }
 
-async function ensureLocationPermission(): Promise<boolean> {
-  if (!(await isLocationLookupEnabled())) {
-    return false;
-  }
-  const permission = await Location.requestForegroundPermissionsAsync();
-  return permission.status === 'granted';
-}
-
 async function getCoordsWithCacheFallback(): Promise<Location.LocationObjectCoords | null> {
   const lastKnown = await Location.getLastKnownPositionAsync({
     maxAge: LAST_KNOWN_MAX_AGE_MS,
@@ -55,45 +47,13 @@ async function getCoordsWithCacheFallback(): Promise<Location.LocationObjectCoor
   return null;
 }
 
-/** Last-known GPS, nearby place cache, or local school DB — no fresh GPS wait. */
-export async function getFastLocationSnapshot(): Promise<LocationSnapshot | null> {
-  if (!(await ensureLocationPermission())) {
-    return null;
-  }
-
-  const [lastKnown, placeCache] = await Promise.all([
-    Location.getLastKnownPositionAsync({ maxAge: LAST_KNOWN_MAX_AGE_MS }),
-    getLastCapturePlaceCache(),
-  ]);
-
-  if (!lastKnown && placeCache) {
-    return {
-      latitude: placeCache.latitude,
-      longitude: placeCache.longitude,
-      placeLabel: placeCache.placeLabel,
-    };
-  }
-
-  if (!lastKnown) {
-    return null;
-  }
-
-  const coords = {
-    latitude: lastKnown.coords.latitude,
-    longitude: lastKnown.coords.longitude,
-  };
-
-  const cachedPlace = await getNearbyCachedPlaceLabel(coords);
-  if (cachedPlace) {
-    return { ...coords, placeLabel: cachedPlace };
-  }
-
-  const placeLabel = await getPlaceLabelFromCoords(coords.longitude, coords.latitude);
-  return { ...coords, placeLabel };
-}
-
 export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | null> {
-  if (!(await ensureLocationPermission())) {
+  if (!(await isLocationLookupEnabled())) {
+    return null;
+  }
+
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (permission.status !== 'granted') {
     return null;
   }
 
@@ -111,19 +71,20 @@ export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | n
 }
 
 export async function getCurrentPlaceLabel(): Promise<string | null> {
-  const snapshot = await getFastLocationSnapshot();
-  if (snapshot?.placeLabel) {
-    return snapshot.placeLabel;
-  }
-  const refined = await getCurrentLocationSnapshot();
-  return refined?.placeLabel ?? null;
+  const snapshot = await getCurrentLocationSnapshot();
+  return snapshot?.placeLabel ?? null;
 }
 
 export async function getQuickLastKnownCoords(): Promise<{
   latitude: number;
   longitude: number;
 } | null> {
-  if (!(await ensureLocationPermission())) {
+  if (!(await isLocationLookupEnabled())) {
+    return null;
+  }
+
+  const permission = await Location.requestForegroundPermissionsAsync();
+  if (permission.status !== 'granted') {
     return null;
   }
 

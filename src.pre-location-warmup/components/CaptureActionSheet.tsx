@@ -4,7 +4,6 @@ type CaptureActionSheetProps = {
   visible: boolean;
   imageUri: string | null;
   locationPrefetchLoading?: boolean;
-  placeLabel?: string | null;
   onRetake: () => void;
   onSave: () => void;
   onContinuous: () => void;
@@ -14,7 +13,6 @@ export function CaptureActionSheet({
   visible,
   imageUri,
   locationPrefetchLoading = false,
-  placeLabel = null,
   onRetake,
   onSave,
   onContinuous,
@@ -28,11 +26,8 @@ export function CaptureActionSheet({
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
           ) : null}
-          {locationPrefetchLoading && !placeLabel?.trim() ? (
+          {locationPrefetchLoading ? (
             <Text style={styles.locationHint}>위치 확인 중…</Text>
-          ) : null}
-          {placeLabel?.trim() ? (
-            <Text style={styles.placeHint}>{placeLabel.trim()}</Text>
           ) : null}
           <Pressable
             style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryButtonPressed]}
@@ -163,12 +158,6 @@ const styles = StyleSheet.create({
   locationHint: {
     color: '#2563eb',
     fontSize: 13,
-    textAlign: 'center',
-  },
-  placeHint: {
-    color: '#111827',
-    fontSize: 14,
-    fontWeight: '600',
     textAlign: 'center',
   },
 });

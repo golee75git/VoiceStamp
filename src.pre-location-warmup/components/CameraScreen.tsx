@@ -17,7 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
-import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
+import { getCurrentLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
 import { getCameraHand, getContinuousCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
@@ -70,81 +70,46 @@ export function CameraScreen({
   const [inAppPictureSize, setInAppPictureSize] = useState<string | undefined>();
   const cameraRef = useRef<CameraView>(null);
   const reuseLocationRef = useRef<QuickCaptureLocation | null>(null);
-  const prefetchedLocationRef = useRef<LocationSnapshot | null>(null);
-  const locationPrefetchRunningRef = useRef(false);
   const isWeb = Platform.OS === 'web';
-
-  useEffect(() => {
-    prefetchedLocationRef.current = prefetchedLocation;
-  }, [prefetchedLocation]);
 
   const cancelLocationPrefetch = useCallback(() => {
     prefetchCancelledRef.current = true;
     prefetchForUriRef.current = null;
-    locationPrefetchRunningRef.current = false;
     setPrefetchedLocation(null);
     setLocationPrefetchLoading(false);
     setLocationPrefetchFinished(false);
   }, []);
 
-  const runLocationPrefetch = useCallback(async (captureKey: string, clearSnapshot: boolean) => {
-    if (!(await isLocationLookupEnabled())) {
-      setLocationPrefetchFinished(true);
-      setLocationPrefetchLoading(false);
-      return;
-    }
-
+  const startLocationPrefetch = useCallback((uri: string) => {
+    prefetchForUriRef.current = uri;
     prefetchCancelledRef.current = false;
-    prefetchForUriRef.current = captureKey;
-    locationPrefetchRunningRef.current = true;
-    if (clearSnapshot) {
-      setPrefetchedLocation(null);
-      setLocationPrefetchFinished(false);
-    }
-    setLocationPrefetchLoading(true);
+    setPrefetchedLocation(null);
+    setLocationPrefetchLoading(false);
+    setLocationPrefetchFinished(false);
 
-    try {
-      const fast = await getFastLocationSnapshot();
-      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey && fast) {
-        setPrefetchedLocation(fast);
-        if (fast.placeLabel) {
-          setLocationPrefetchLoading(false);
-        }
-      }
-
-      const refined = await getCurrentLocationSnapshot();
-      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
-        setPrefetchedLocation(refined ?? fast ?? prefetchedLocationRef.current);
-      }
-    } finally {
-      if (!prefetchCancelledRef.current && prefetchForUriRef.current === captureKey) {
-        setLocationPrefetchLoading(false);
-        setLocationPrefetchFinished(true);
-        locationPrefetchRunningRef.current = false;
-      }
-    }
-  }, []);
-
-  const startLocationWarmup = useCallback(() => {
-    if (locationPrefetchRunningRef.current) {
-      return;
-    }
-    void runLocationPrefetch('warmup', !prefetchedLocationRef.current);
-  }, [runLocationPrefetch]);
-
-  const startLocationPrefetch = useCallback(
-    (uri: string) => {
-      if (prefetchedLocationRef.current?.placeLabel) {
-        prefetchForUriRef.current = uri;
-        if (!locationPrefetchRunningRef.current) {
-          void runLocationPrefetch(uri, false);
+    void (async () => {
+      if (!(await isLocationLookupEnabled())) {
+        if (!prefetchCancelledRef.current && prefetchForUriRef.current === uri) {
+          setLocationPrefetchFinished(true);
         }
         return;
       }
-      void runLocationPrefetch(uri, !prefetchedLocationRef.current);
-    },
-    [runLocationPrefetch],
-  );
+      prefetchForUriRef.current = uri;
+      setLocationPrefetchLoading(true);
+      try {
+        const snapshot = await getCurrentLocationSnapshot();
+        if (prefetchCancelledRef.current || prefetchForUriRef.current !== uri) {
+          return;
+        }
+        setPrefetchedLocation(snapshot);
+      } finally {
+        if (!prefetchCancelledRef.current && prefetchForUriRef.current === uri) {
+          setLocationPrefetchLoading(false);
+          setLocationPrefetchFinished(true);
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     getCameraHand().then(setCameraHand);
@@ -292,7 +257,6 @@ export function CameraScreen({
     setInAppCapturing(true);
     setCameraBusy(true);
     setBusyHint('저장 중…');
-    startLocationWarmup();
     try {
       const photo = await cameraRef.current.takePictureAsync({
         quality: 1,
@@ -325,7 +289,6 @@ export function CameraScreen({
     inAppCameraReady,
     inAppCapturing,
     onSaved,
-    startLocationWarmup,
   ]);
 
   const handleCapturedUri = useCallback(
@@ -349,7 +312,6 @@ export function CameraScreen({
     launchingRef.current = true;
     setCameraBusy(true);
     setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
-    startLocationWarmup();
     try {
       const uri = await takePhotoWithSystemCamera();
       if (uri) {
@@ -365,7 +327,7 @@ export function CameraScreen({
       setCameraBusy(false);
       setBusyHint(null);
     }
-  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, inAppContinuousActive, isWeb, startLocationWarmup]);
+  }, [cameraBusy, modalVisible, handleCameraError, handleCapturedUri, inAppContinuousActive, isWeb]);
 
   const handleActionRetake = useCallback(() => {
     cancelLocationPrefetch();
@@ -619,7 +581,6 @@ export function CameraScreen({
         visible={actionSheetVisible}
         imageUri={pendingCaptureUri}
         locationPrefetchLoading={locationPrefetchLoading}
-        placeLabel={prefetchedLocation?.placeLabel ?? null}
         onRetake={handleActionRetake}
         onSave={handleActionSave}
         onContinuous={handleActionContinuous}

@@ -1974,3 +1974,19 @@ Copy-Item src.pre-save-preview-fast\components\SettingsScreen.tsx src\components
 Copy-Item src.pre-save-preview-fast\build-apk.bat build-apk.bat -Force
 Set-Content src\constants\apkBuildLabel.ts "export const APK_BUILD_FILENAME = '';"
 ```
+
+## 120. 카메라 위치 워밍업·빠른 장소 조회 되돌리기 (선택)
+
+시스템 카메라 열 때 위치 워밍업 + `getFastLocationSnapshot` 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-warmup.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-warmup\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-location-warmup\components\CaptureActionSheet.tsx src\components\ -Force
+Copy-Item src.pre-location-warmup\services\locationService.ts src\services\ -Force
+```
