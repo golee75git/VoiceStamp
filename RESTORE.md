@@ -1988,5 +1988,6 @@ restore-location-warmup.bat
 ```powershell
 Copy-Item src.pre-location-warmup\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-location-warmup\components\CaptureActionSheet.tsx src\components\ -Force
+Copy-Item src.pre-location-warmup\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-location-warmup\services\locationService.ts src\services\ -Force
 ```
