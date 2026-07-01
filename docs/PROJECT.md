@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-06-27**
-최신 커밋 기준: `4b6834d` (main)
+문서 작성일: **2026-07-01**
+최신 커밋 기준: `61ca32a` (main)
 
 ---
 
@@ -292,8 +292,18 @@ VoiceStamp/
 | 192 | GitHub APK `releases/20260627_092959` · 랜딩·`/info` | `547b693` | `restore-apk-download-20260627_092959.bat` |
 | 193 | 랜딩 **QR·Web Share** (qrcodejs MIT 자체 호스팅) | `800971a` | `restore-landing-share.bat` |
 | 194 | `restore-landing-share.bat`에 `license.html` 포함 | `4b6834d` | — |
+| 195 | 촬영 prefetch 후 저장 모달 **중복 위치 조회 생략**·학교 DB fast path | `2b830ba` | `restore-location-prefetch-school.bat` |
+| 196 | GitHub APK `releases/20260701_145618` · 랜딩·`/info` | `ff22c24` | `restore-apk-download-20260701_145618.bat` |
+| 197 | 저장 모달 **즉시 미리보기**·prefetch 스냅샷·설정 **APK 파일명** | `a7e7504` | `restore-save-preview-fast.bat` |
+| 198 | GitHub APK `releases/20260701_153110` · 랜딩·`/info` | `9e1821c` | `restore-apk-download-20260701_153110.bat` |
+| 199 | 카메라 **위치 워밍업**·lastKnown GPS 우선·촬영 시트 장소 표시 | `0f53afe` | `restore-location-warmup.bat` |
+| 200 | GitHub APK `releases/20260701_160259` · 랜딩·`/info` | `5f63f07` | `restore-apk-download-20260701_160259.bat` |
+| 201 | 3버튼 시트 **fast 위치만**·정밀 GPS 백그라운드 | `a072bc4` | `restore-location-fast-sheet.bat` |
+| 202 | GitHub APK `releases/20260701_163737` · 랜딩·`/info` | `5b150a3` | `restore-apk-download-20260701_163737.bat` |
+| 203 | 설정 **촬영 후** (선택 화면 / 저장 화면 바로) | `b8c4406` | `restore-capture-after-mode.bat` |
+| 204 | GitHub APK `releases/20260701_165406` · 랜딩·`/info` | `61ca32a` | `restore-apk-download-20260701_165406.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260627_092959.apk` (`547b693`).
+> **권장 APK:** `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -359,7 +369,12 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260627_092959.apk`** | `547b693` | **설치·GitHub 권장** — 시스템 카메라 **busy 오버레이 깜빡임 수정** + `233248` 기능 전부 |
+| **`releases/VoiceStamp_20260701_165406.apk`** | `61ca32a` | **설치·GitHub 권장** — **촬영 후 선택/저장 바로** + 07-01 위치·미리보기 전부 |
+| `releases/VoiceStamp_20260701_163737.apk` | `5b150a3` | 3버튼 시트 fast 위치 (촬영 후 모드 **미포함**) |
+| `releases/VoiceStamp_20260701_160259.apk` | `5f63f07` | 카메라 위치 워밍업 (fast 시트 **미포함**) |
+| `releases/VoiceStamp_20260701_153110.apk` | `9e1821c` | 저장 모달 즉시 미리보기 (워밍업 **미포함**) |
+| `releases/VoiceStamp_20260701_145618.apk` | `ff22c24` | prefetch 중복 생략·학교 fast (미리보기 **미포함**) |
+| **`releases/VoiceStamp_20260627_092959.apk`** | `547b693` | busy 오버레이 깜빡임 수정 + `233248` (07-01 개선 **미포함**) |
 | `releases/VoiceStamp_20260626_233248.apk` | `1940314` | 음성 **수동 커서** + `231436` 기능 전부 (busy 수정 **미포함**) |
 | `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소** 표기·수정 모달 입력 수정 (수동 커서 **미포함**) |
 | `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
@@ -417,6 +432,17 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-07-01
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260701_165406.apk` | `61ca32a` | **권장** — 설정 **촬영 후: 선택 화면 / 저장 화면 바로** (`restore-capture-after-mode.bat`) + `163737` 기능 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260701_163737.apk` | `5b150a3` | 3버튼 시트 **fast 위치만**·정밀 GPS 백그라운드 (`restore-location-fast-sheet.bat`) | GitHub |
+| `releases/VoiceStamp_20260701_160259.apk` | `5f63f07` | 카메라 **위치 워밍업**·lastKnown 우선 (`restore-location-warmup.bat`) | GitHub |
+| `releases/VoiceStamp_20260701_153110.apk` | `9e1821c` | 저장 모달 **즉시 미리보기**·APK 파일명 설정 (`restore-save-preview-fast.bat`) | GitHub |
+| `releases/VoiceStamp_20260701_145618.apk` | `ff22c24` | prefetch **중복 생략**·학교 DB fast path (`restore-location-prefetch-school.bat`) | GitHub |
+| (문서) | `9d0b85d` | PRD·PROJECT·PLAN·README `4b6834d` 동기화 | — |
 
 #### 2026-06-27
 
@@ -739,6 +765,25 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-01
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`61ca32a` 기준) |
+| `61ca32a` | APK `releases/VoiceStamp_20260701_165406` — **촬영 후 모드** 배포 · `restore-apk-download-20260701_165406.bat` · Vercel |
+| `b8c4406` | 설정 **촬영 후** (선택 화면 / 저장 화면 바로) · `restore-capture-after-mode.bat` |
+| `5b150a3` | APK `releases/VoiceStamp_20260701_163737` — fast 시트 위치 배포 · `restore-apk-download-20260701_163737.bat` · Vercel |
+| `a072bc4` | 3버튼 시트 **fast 위치만**·정밀 GPS 백그라운드 · `restore-location-fast-sheet.bat` |
+| `5f63f07` | APK `releases/VoiceStamp_20260701_160259` — 위치 워밍업 배포 · `restore-apk-download-20260701_160259.bat` · Vercel |
+| `0f53afe` | 카메라 **위치 워밍업**·lastKnown GPS 우선·촬영 시트 장소 · `restore-location-warmup.bat` |
+| `9e1821c` | APK `releases/VoiceStamp_20260701_153110` — 저장 미리보기 배포 · `restore-apk-download-20260701_153110.bat` · Vercel |
+| `a7e7504` | 저장 모달 **즉시 미리보기**·설정 APK 파일명 · `restore-save-preview-fast.bat` |
+| `ff22c24` | APK `releases/VoiceStamp_20260701_145618` — 학교 fast path 배포 · `restore-apk-download-20260701_145618.bat` · Vercel |
+| `2b830ba` | prefetch **중복 생략**·학교 DB 우선 fast path · `restore-location-prefetch-school.bat` |
+| `9d0b85d` | PRD·PROJECT·PLAN·README 문서 동기화 (`4b6834d` 기준) |
+
+> **권장 APK:** `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-06-27
 
@@ -1114,7 +1159,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~112) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~122) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |

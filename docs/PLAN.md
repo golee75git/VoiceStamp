@@ -293,7 +293,24 @@
 | 198 | 랜딩 **QR·Web Share** (qrcodejs MIT 자체 호스팅) | `800971a` | `restore-landing-share.bat` |
 | 199 | `restore-landing-share.bat`에 `license.html` 포함 | `4b6834d` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260627_092959.apk` (`547b693`).
+> **권장 APK:** `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`).
+
+## 2T. Phase 3 추가 완료 (2026-07-01)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 200 | 촬영 prefetch 후 저장 모달 **중복 위치 조회 생략**·학교 DB fast path | `2b830ba` | `restore-location-prefetch-school.bat` |
+| 201 | GitHub APK `releases/20260701_145618` · 랜딩·`/info` | `ff22c24` | `restore-apk-download-20260701_145618.bat` |
+| 202 | 저장 모달 **즉시 미리보기**·설정 **APK 파일명** | `a7e7504` | `restore-save-preview-fast.bat` |
+| 203 | GitHub APK `releases/20260701_153110` · 랜딩·`/info` | `9e1821c` | `restore-apk-download-20260701_153110.bat` |
+| 204 | 카메라 **위치 워밍업**·lastKnown GPS 우선 | `0f53afe` | `restore-location-warmup.bat` |
+| 205 | GitHub APK `releases/20260701_160259` · 랜딩·`/info` | `5f63f07` | `restore-apk-download-20260701_160259.bat` |
+| 206 | 3버튼 시트 **fast 위치만**·정밀 GPS 백그라운드 | `a072bc4` | `restore-location-fast-sheet.bat` |
+| 207 | GitHub APK `releases/20260701_163737` · 랜딩·`/info` | `5b150a3` | `restore-apk-download-20260701_163737.bat` |
+| 208 | 설정 **촬영 후** (선택 화면 / 저장 화면 바로) | `b8c4406` | `restore-capture-after-mode.bat` |
+| 209 | GitHub APK `releases/20260701_165406` · 랜딩·`/info` | `61ca32a` | `restore-apk-download-20260701_165406.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`).
 
 ### 2.1 문서 동기화 이력
 
@@ -331,6 +348,7 @@
 | (본 갱신) | `6f95aa8` 반영 — 촬영 후 3버튼 눌림 배경·Android 리플·APK `184823`·날짜별 이력 |
 | (본 갱신) | `1940314` 반영 — 위치 조회 끔·학교 200m·층→장소·음성 수동 커서·APK `233248`·날짜별 이력 |
 | (본 갱신) | `4b6834d` 반영 — busy 오버레이·APK `092959`·랜딩 QR·Web Share·날짜별·APK별 이력 |
+| (본 갱신) | `61ca32a` 반영 — 위치 속도·저장 미리보기·촬영 후 모드·APK `165406`·날짜별·APK별 이력 |
 
 ---
 
@@ -421,9 +439,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260627_092959.apk` (`547b693`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260627_092959.apk |
-| 최신 소스 | `4b6834d` — busy 오버레이·랜딩 QR·Web Share (qrcodejs MIT) |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`) |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260701_165406.apk |
+| 최신 소스 | `61ca32a` — 촬영 후 모드·fast 위치·워밍업·저장 미리보기 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -448,7 +466,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~112 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~122 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
@@ -485,6 +503,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
 | 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · **위치 조회 끔** · 학교 **200m** · **층→장소** · **음성 수동 커서** · APK `233248` (`e330e7e`~`1940314`) |
 | 2026-06-27 | 2S·3 | 시스템 카메라 **busy 오버레이 깜빡임** · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) (`547b693`~`4b6834d`) |
+| 2026-07-01 | 2T·3 | **위치 속도**(prefetch·워밍업·fast 시트) · 저장 **즉시 미리보기** · **촬영 후 모드** · APK 파일명 설정 · APK `165406` (`2b830ba`~`61ca32a`) |
 
 ---
 
@@ -492,7 +511,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260627_092959.apk` | `547b693` | **설치·GitHub 권장** — busy 오버레이 깜빡임 수정 + `233248` 기능 전부 |
+| `releases/VoiceStamp_20260701_165406.apk` | `61ca32a` | **설치·GitHub 권장** — **촬영 후 선택/저장 바로** + 07-01 위치·미리보기 전부 |
+| `releases/VoiceStamp_20260701_163737.apk` | `5b150a3` | 3버튼 시트 **fast 위치** (촬영 후 모드 **미포함**) |
+| `releases/VoiceStamp_20260701_160259.apk` | `5f63f07` | 카메라 **위치 워밍업** (fast 시트 **미포함**) |
+| `releases/VoiceStamp_20260701_153110.apk` | `9e1821c` | 저장 모달 **즉시 미리보기** (워밍업 **미포함**) |
+| `releases/VoiceStamp_20260701_145618.apk` | `ff22c24` | prefetch **중복 생략**·학교 fast (미리보기 **미포함**) |
+| `releases/VoiceStamp_20260627_092959.apk` | `547b693` | busy 오버레이 깜빡임 수정 + `233248` (07-01 **미포함**) |
 | `releases/VoiceStamp_20260626_233248.apk` | `1940314` | 음성 **수동 커서** + `231436` 기능 전부 (busy 수정 **미포함**) |
 | `releases/VoiceStamp_20260626_231436.apk` | `480e01f` | **층→장소**·수정 모달 입력 (수동 커서 **미포함**) |
 | `releases/VoiceStamp_20260626_225833.apk` | `26e8975` | 학교 반경 **200m** (층→장소 **미포함**) |
