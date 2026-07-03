@@ -1,0 +1,486 @@
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
+
+import { readImageDataUriForPdf } from './pdfImageForExport';
+import { stampDisplayTitle } from './stampFloor';
+import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
+import {
+  getMemoTextAlign,
+  getOverlayFooterPhrase,
+  getOverlayOrgName,
+  getOverlayShowFooterPhrase,
+  getOverlayShowOrgName,
+  getPdfImageQuality,
+  getPdfPhotosPerPage,
+  getPdfShowDatetime,
+  getStampTextLayout,
+  getWatermarkStyle,
+  getCoordsLabelMode,
+  getTitleTextAlign,
+  type PdfPhotosPerPage,
+  type StampTextLayout,
+  type CoordsLabelMode,
+  type TextAlign,
+  type WatermarkStyle,
+} from './settingsService';
+import {
+  overlayPhraseFontSize,
+  resolveOverlayFooterPhrase,
+  resolveOverlayOrgName,
+  type OverlayTextFields,
+} from './overlayText';
+import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
+import type { Stamp } from '../types/stamp';
+
+const WEB_PDF_URI = 'web:print-ready';
+
+let lastWebPrintHtml: string | null = null;
+
+function sanitizePdfFileName(name: string): string {
+  const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
+  return cleaned || 'VoiceStamp';
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function imageMaxHeight(photosPerPage: PdfPhotosPerPage, shrinkForReportHeader: boolean): string {
+  switch (photosPerPage) {
+    case 1:
+      return shrinkForReportHeader ? '72vh' : '80vh';
+    case 2:
+      return shrinkForReportHeader ? '40vh' : '45vh';
+    case 3:
+      return shrinkForReportHeader ? '30vh' : '34vh';
+    default:
+      return shrinkForReportHeader ? '26vh' : '30vh';
+  }
+}
+
+function imageMarginStyle(align: TextAlign): string {
+  switch (align) {
+    case 'left':
+      return 'margin-left: 0; margin-right: auto;';
+    case 'right':
+      return 'margin-left: auto; margin-right: 0;';
+    default:
+      return 'margin-left: auto; margin-right: auto;';
+  }
+}
+
+function buildStampItem(
+  stamp: Stamp,
+  imageDataUri: string,
+  photosPerPage: PdfPhotosPerPage,
+  titleAlign: TextAlign,
+  memoAlign: TextAlign,
+  showDatetime: boolean,
+  shrinkForReportHeader: boolean,
+  textLayout: StampTextLayout,
+  coordsLabel: CoordsLabelMode,
+  watermarkStyle: WatermarkStyle,
+  overlay: OverlayTextFields,
+): string {
+  const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
+  const memoTrimmed = stamp.memo?.trim() ?? '';
+  const place = stampPlaceLine(stamp);
+  const coords = stampCoordinatesLine(stamp, coordsLabel);
+  const orgName = resolveOverlayOrgName(overlay);
+  const footerPhrase = resolveOverlayFooterPhrase(overlay);
+  const phraseSize = overlayPhraseFontSize(11);
+  const coordsBlock = coords
+    ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
+    : '';
+  const placeBlock = place
+    ? `<div class="stamp-place" style="text-align: ${titleAlign};">${escapeHtml(place)}</div>`
+    : '';
+  const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
+  const imageMargin = imageMarginStyle(titleAlign);
+
+  if (textLayout === 'watermark') {
+    const theme = getWatermarkTheme(watermarkStyle);
+    const memoBlock = memoTrimmed
+      ? `<div class="watermark-memo" style="text-align: ${memoAlign}; color: ${theme.memoColor};">${escapeHtml(memoTrimmed)}</div>`
+      : '';
+    const watermarkPlaceBlock = place
+      ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(place)}</div>`
+      : '';
+    const watermarkCoordsBlock = coords
+      ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
+      : '';
+    const orgBlock = orgName
+      ? `<div class="watermark-org" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${escapeHtml(orgName)}</div>`
+      : '';
+    const phraseBlock = footerPhrase
+      ? `<div class="watermark-phrase" style="text-align: ${memoAlign}; color: ${theme.coordsColor}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</div>`
+      : '';
+    return `
+      <div class="item item-watermark">
+        <div class="photo-wrap">
+          <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
+          <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
+            ${orgBlock}
+            <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
+            ${watermarkPlaceBlock}
+            ${memoBlock}
+            ${watermarkCoordsBlock}
+            ${phraseBlock}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const orgBlock = orgName
+    ? `<p class="caption-org" style="text-align: ${titleAlign};">${escapeHtml(orgName)}</p>`
+    : '';
+  const memoBlock = memoTrimmed
+    ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
+    : '';
+  const placeCaptionBlock = place
+    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(place)}</p>`
+    : '';
+  const phraseBlock = footerPhrase
+    ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
+    : '';
+  const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
+  const dateBlock = showDatetime
+    ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
+    : '';
+
+  return `
+      <div class="item item-caption" style="text-align: ${titleAlign};">
+        <figure class="stamp-figure">
+          <img src="${imageDataUri}" alt="stamp" style="max-width: 100%; max-height: ${maxHeight}; width: auto; height: auto;" />
+          <figcaption class="stamp-caption">
+            ${orgBlock}
+            <h1 style="text-align: ${titleAlign};">${title}</h1>
+            ${placeCaptionBlock}
+            ${memoBlock}
+            ${coordsBlock}
+            ${phraseBlock}
+            ${dateBlock}
+          </figcaption>
+        </figure>
+      </div>`;
+}
+
+function chunkStamps<T>(items: T[], size: number): T[][] {
+  const pages: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    pages.push(items.slice(i, i + size));
+  }
+  return pages;
+}
+
+function buildHtml(
+  stamps: Stamp[],
+  imageDataUris: string[],
+  documentTitle: string,
+  photosPerPage: PdfPhotosPerPage,
+  titleAlign: TextAlign,
+  memoAlign: TextAlign,
+  showDatetime: boolean,
+  reportTitle: string,
+  textLayout: StampTextLayout,
+  coordsLabel: CoordsLabelMode,
+  watermarkStyle: WatermarkStyle,
+  overlay: OverlayTextFields,
+): string {
+  const reportTitleTrimmed = reportTitle.trim();
+  const stampPages = chunkStamps(
+    stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
+    photosPerPage,
+  );
+
+  const pages = stampPages
+    .map((group, pageIndex) => {
+      const shrinkImages = pageIndex === 0 && reportTitleTrimmed.length > 0;
+      const items = group
+        .map(({ stamp, imageDataUri }) =>
+          buildStampItem(
+            stamp,
+            imageDataUri,
+            photosPerPage,
+            titleAlign,
+            memoAlign,
+            showDatetime,
+            shrinkImages,
+            textLayout,
+            coordsLabel,
+            watermarkStyle,
+            overlay,
+          ),
+        )
+        .join('');
+      const reportHeader =
+        pageIndex === 0 && reportTitleTrimmed
+          ? `<h1 class="report-title" style="text-align: ${titleAlign};">${escapeHtml(reportTitleTrimmed)}</h1>`
+          : '';
+      return `
+      <div class="page">
+        ${reportHeader}
+        <div class="grid grid-${photosPerPage}">
+          ${items}
+        </div>
+      </div>`;
+    })
+    .join('');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>${escapeHtml(documentTitle)}</title>
+<style>
+  body { font-family: sans-serif; margin: 0; padding: 0; }
+  .page { page-break-after: always; padding: 12px; }
+  .page:last-child { page-break-after: auto; }
+  .grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .item { box-sizing: border-box; padding: 4px; }
+  .grid-1 .item { width: 100%; }
+  .grid-2 .item { width: calc(50% - 6px); }
+  .grid-3 .item { width: calc(33.333% - 8px); }
+  .grid-4 .item { width: calc(50% - 6px); }
+  .item-caption .stamp-figure {
+    display: inline-block;
+    max-width: 100%;
+    margin: 0;
+    vertical-align: top;
+    text-align: left;
+  }
+  .item-caption .stamp-figure img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .item-caption .stamp-caption { display: block; }
+  img { display: block; max-width: 100%; object-fit: contain; }
+  h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+  .item h1, .item-caption h1 { font-size: 16px; margin: 8px 0 4px; }
+  .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
+  .date { font-size: 11px; color: #888; margin-top: 6px; }
+  .item-watermark .photo-wrap { position: relative; display: block; width: 100%; }
+  .watermark-bar {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.55); padding: 8px 10px; color: #fff;
+  }
+  .watermark-bar-top { top: 0; bottom: auto; }
+  .watermark-org { font-size: 12px; font-weight: 700; }
+  .watermark-phrase { margin-top: 4px; opacity: 0.9; }
+  .caption-org { font-size: 13px; font-weight: 700; margin: 8px 0 4px; color: #111827; }
+  .caption-phrase { font-size: 11px; color: #6b7280; margin: 4px 0 0; }
+  .watermark-title { font-size: 14px; font-weight: 700; }
+  .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
+  .stamp-coords { font-size: 11px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
+  .item-watermark .stamp-coords { color: #e5e7eb; opacity: 0.95; }
+</style>
+</head>
+<body>${pages}</body>
+</html>`;
+}
+
+async function waitForImages(doc: Document): Promise<void> {
+  const images = Array.from(doc.images);
+  if (images.length === 0) {
+    return;
+  }
+
+  await Promise.all(
+    images.map(
+      (img) =>
+        new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve();
+            return;
+          }
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+        }),
+    ),
+  );
+}
+
+async function printHtmlInIframe(html: string, documentTitle: string): Promise<void> {
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = 'none';
+  document.body.appendChild(iframe);
+
+  try {
+    const doc = iframe.contentDocument ?? iframe.contentWindow?.document;
+    if (!doc) {
+      throw new Error('인쇄 프레임을 열 수 없습니다.');
+    }
+
+    doc.open();
+    doc.write(html);
+    doc.close();
+    doc.title = documentTitle;
+
+    await waitForImages(doc);
+
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+  } finally {
+    setTimeout(() => {
+      iframe.remove();
+    }, 1000);
+  }
+}
+
+async function printWebPdf(fileName: string): Promise<void> {
+  if (!lastWebPrintHtml) {
+    throw new Error('PDF가 준비되지 않았습니다.');
+  }
+
+  const safeName = sanitizePdfFileName(fileName);
+  await printHtmlInIframe(lastWebPrintHtml, safeName);
+}
+
+async function safeCopyAsync(from: string, to: string): Promise<void> {
+  if (from === to) {
+    return;
+  }
+
+  const destInfo = await FileSystem.getInfoAsync(to);
+  if (destInfo.exists) {
+    await FileSystem.deleteAsync(to, { idempotent: true });
+  }
+
+  await FileSystem.copyAsync({ from, to });
+}
+
+async function namePdfFile(uri: string, fileName: string): Promise<string> {
+  const safeName = sanitizePdfFileName(fileName);
+  const base = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
+  if (!base) {
+    return uri;
+  }
+
+  const dest = `${base}${safeName}.pdf`;
+  await safeCopyAsync(uri, dest);
+  return dest;
+}
+
+async function archivePdf(uri: string, fileName: string): Promise<void> {
+  if (!FileSystem.documentDirectory) {
+    return;
+  }
+
+  const dir = `${FileSystem.documentDirectory}exports/`;
+  const info = await FileSystem.getInfoAsync(dir);
+  if (!info.exists) {
+    await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+  }
+
+  const dest = `${dir}${sanitizePdfFileName(fileName)}.pdf`;
+  await safeCopyAsync(uri, dest);
+}
+
+export async function createStampsPdf(
+  stamps: Stamp[],
+  fileName: string,
+  reportTitle = '',
+): Promise<string> {
+  if (stamps.length === 0) {
+    throw new Error('보낼 스탬프가 없습니다.');
+  }
+
+  const safeName = sanitizePdfFileName(fileName);
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+    getPdfPhotosPerPage(),
+    getPdfImageQuality(),
+    getTitleTextAlign(),
+    getMemoTextAlign(),
+    getPdfShowDatetime(),
+    getStampTextLayout(),
+    getCoordsLabelMode(),
+    getWatermarkStyle(),
+    getOverlayOrgName(),
+    getOverlayFooterPhrase(),
+    getOverlayShowOrgName(),
+    getOverlayShowFooterPhrase(),
+  ]);
+  const imageDataUris = await Promise.all(
+    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
+  );
+
+  const html = buildHtml(
+    stamps,
+    imageDataUris,
+    safeName,
+    photosPerPage,
+    titleAlign,
+    memoAlign,
+    showDatetime,
+    reportTitle,
+    textLayout,
+    coordsLabel,
+    watermarkStyle,
+    { orgName, footerPhrase, showOrgName, showFooterPhrase },
+  );
+
+  if (Platform.OS === 'web') {
+    lastWebPrintHtml = html;
+    return WEB_PDF_URI;
+  }
+
+  const { uri } = await Print.printToFileAsync({ html });
+  const namedUri = await namePdfFile(uri, safeName);
+  await archivePdf(namedUri, safeName);
+  return namedUri;
+}
+
+export async function savePdf(uri: string, fileName: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    await printWebPdf(fileName);
+    return;
+  }
+
+  const available = await Sharing.isAvailableAsync();
+  if (!available) {
+    throw new Error('저장 기능을 사용할 수 없습니다.');
+  }
+
+  const shareUri = await namePdfFile(uri, fileName);
+
+  await Sharing.shareAsync(shareUri, {
+    mimeType: 'application/pdf',
+    UTI: 'com.adobe.pdf',
+    dialogTitle: 'PDF 저장',
+  });
+}
+
+export async function sharePdf(uri: string, fileName: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    await printWebPdf(fileName);
+    return;
+  }
+
+  const available = await Sharing.isAvailableAsync();
+  if (!available) {
+    throw new Error('공유 기능을 사용할 수 없습니다.');
+  }
+
+  const shareUri = await namePdfFile(uri, fileName);
+
+  await Sharing.shareAsync(shareUri, {
+    mimeType: 'application/pdf',
+    UTI: 'com.adobe.pdf',
+    dialogTitle: 'PDF 공유',
+  });
+}

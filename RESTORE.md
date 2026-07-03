@@ -2110,3 +2110,17 @@ restore-pdf-caption-fit.bat
 ```powershell
 Copy-Item src.pre-pdf-caption-fit\services\exportPdf.ts src\services\ -Force
 ```
+
+## 129. PDF 페이지內 동일 사진 박스 되돌리기 (선택)
+
+PDF 사진 슬롯(고정 박스 + object-fit contain) 적용 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-photo-slot.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-photo-slot\services\exportPdf.ts src\services\ -Force
+```

@@ -53,7 +53,7 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function imageMaxHeight(photosPerPage: PdfPhotosPerPage, shrinkForReportHeader: boolean): string {
+function photoSlotHeight(photosPerPage: PdfPhotosPerPage, shrinkForReportHeader: boolean): string {
   switch (photosPerPage) {
     case 1:
       return shrinkForReportHeader ? '72vh' : '80vh';
@@ -63,17 +63,6 @@ function imageMaxHeight(photosPerPage: PdfPhotosPerPage, shrinkForReportHeader: 
       return shrinkForReportHeader ? '30vh' : '34vh';
     default:
       return shrinkForReportHeader ? '26vh' : '30vh';
-  }
-}
-
-function imageMarginStyle(align: TextAlign): string {
-  switch (align) {
-    case 'left':
-      return 'margin-left: 0; margin-right: auto;';
-    case 'right':
-      return 'margin-left: auto; margin-right: 0;';
-    default:
-      return 'margin-left: auto; margin-right: auto;';
   }
 }
 
@@ -103,8 +92,8 @@ function buildStampItem(
   const placeBlock = place
     ? `<div class="stamp-place" style="text-align: ${titleAlign};">${escapeHtml(place)}</div>`
     : '';
-  const maxHeight = imageMaxHeight(photosPerPage, shrinkForReportHeader);
-  const imageMargin = imageMarginStyle(titleAlign);
+  const slotHeight = photoSlotHeight(photosPerPage, shrinkForReportHeader);
+  const photoSlot = `<div class="photo-slot" style="height: ${slotHeight};"><img src="${imageDataUri}" alt="stamp" /></div>`;
 
   if (textLayout === 'watermark') {
     const theme = getWatermarkTheme(watermarkStyle);
@@ -125,8 +114,8 @@ function buildStampItem(
       : '';
     return `
       <div class="item item-watermark">
-        <div class="photo-wrap">
-          <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
+        <div class="photo-slot photo-slot-watermark" style="height: ${slotHeight};">
+          <img src="${imageDataUri}" alt="stamp" />
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
             ${orgBlock}
             <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
@@ -157,9 +146,9 @@ function buildStampItem(
     : '';
 
   return `
-      <div class="item item-caption" style="text-align: ${titleAlign};">
+      <div class="item item-caption">
         <figure class="stamp-figure">
-          <img src="${imageDataUri}" alt="stamp" style="max-width: 100%; max-height: ${maxHeight}; width: auto; height: auto;" />
+          ${photoSlot}
           <figcaption class="stamp-caption">
             ${orgBlock}
             <h1 style="text-align: ${titleAlign};">${title}</h1>
@@ -250,27 +239,35 @@ function buildHtml(
   .grid-2 .item { width: calc(50% - 6px); }
   .grid-3 .item { width: calc(33.333% - 8px); }
   .grid-4 .item { width: calc(50% - 6px); }
-  .item-caption .stamp-figure {
-    display: inline-block;
-    max-width: 100%;
-    margin: 0;
-    vertical-align: top;
-    text-align: left;
+  .photo-slot {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9fafb;
+    overflow: hidden;
+    box-sizing: border-box;
   }
-  .item-caption .stamp-figure img {
-    width: auto;
+  .photo-slot > img {
+    display: block;
     max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
     object-fit: contain;
   }
+  .item-caption .stamp-figure {
+    width: 100%;
+    margin: 0;
+    text-align: left;
+  }
   .item-caption .stamp-caption { display: block; }
-  img { display: block; max-width: 100%; object-fit: contain; }
   h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
   .item h1, .item-caption h1 { font-size: 16px; margin: 8px 0 4px; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
-  .item-watermark .photo-wrap { position: relative; display: block; width: 100%; }
-  .watermark-bar {
+  .photo-slot-watermark .watermark-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.55); padding: 8px 10px; color: #fff;
   }
