@@ -114,7 +114,7 @@ export type WatermarkStyle =
   | 'rose';
 export type CoordsLabelMode = 'gps' | 'coords' | 'off';
 export type LocationMode = 'auto' | 'off';
-export type GallerySaveMode = 'original_only' | 'caption_only' | 'original_and_caption';
+export type GallerySaveMode = 'app_only' | 'original_only' | 'caption_only' | 'original_and_caption';
 export type ContinuousCaptureCamera = 'system' | 'in_app';
 export type CaptureAfterMode = 'action_sheet' | 'save_modal';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
@@ -236,6 +236,9 @@ export function sanitizeCoordsLabelMode(value: string): CoordsLabelMode {
 }
 
 export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
+  if (value === 'app_only') {
+    return 'app_only';
+  }
   if (value === 'caption_only' || value === 'original_and_caption') {
     return value;
   }
@@ -244,6 +247,8 @@ export function sanitizeGallerySaveMode(value: string): GallerySaveMode {
 
 export function gallerySaveModeLabel(mode: GallerySaveMode): string {
   switch (mode) {
+    case 'app_only':
+      return '앱만';
     case 'caption_only':
       return '캡션만';
     case 'original_and_caption':

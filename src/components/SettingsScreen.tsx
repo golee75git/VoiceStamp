@@ -862,10 +862,11 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
           <Text style={styles.hint}>
-            스탬프 저장 시 갤러리 앨범에 넣을 사진입니다. 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
+            스탬프는 항상 앱 목록에 저장됩니다. 앱만: 갤러리에 넣지 않습니다 (연속 촬영에 가장 빠름). 그 외는
+            갤러리 앨범에 저장하며, 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
           </Text>
           <View style={styles.optionRow}>
-            {(['original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(
+            {(['app_only', 'original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(
               (option) => {
                 const selected = gallerySaveMode === option;
                 return (

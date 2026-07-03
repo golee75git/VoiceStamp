@@ -127,6 +127,9 @@ function scheduleNewStampGallerySave(
   void (async () => {
     try {
       const mode = await getGallerySaveMode();
+      if (mode === 'app_only') {
+        return;
+      }
       const galleryAssetId = await saveNewStampToGallery(
         stamp,
         groupName,
@@ -149,7 +152,7 @@ async function saveEditStampCaptionToGallery(
   captureForExport?: SaveStampInput['captureForExport'],
 ): Promise<string | null> {
   const mode = await getGallerySaveMode();
-  if (mode === 'original_only') {
+  if (mode === 'app_only' || mode === 'original_only') {
     return stamp.galleryAssetId ?? null;
   }
 
