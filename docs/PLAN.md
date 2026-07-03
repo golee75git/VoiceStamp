@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-06-27 |
-| 기준 커밋 | `4b6834d` (main) |
+| 작성일 | 2026-07-03 |
+| 기준 커밋 | `baf6a30` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -309,8 +309,29 @@
 | 207 | GitHub APK `releases/20260701_163737` · 랜딩·`/info` | `5b150a3` | `restore-apk-download-20260701_163737.bat` |
 | 208 | 설정 **촬영 후** (선택 화면 / 저장 화면 바로) | `b8c4406` | `restore-capture-after-mode.bat` |
 | 209 | GitHub APK `releases/20260701_165406` · 랜딩·`/info` | `61ca32a` | `restore-apk-download-20260701_165406.bat` |
+| 210 | 로컬 **학교명만** (Kakao region 생략) | `85460bf` | `restore-school-skip-region.bat` |
+| 211 | GitHub APK `releases/20260701_221146` · 랜딩·`/info` | `d809e99` | `restore-apk-download-20260701_221146.bat` |
+| 212 | 저장 모달 **성능** (워밍·설정 캐시·미리보기 지연) | `cff5cf3` | `restore-save-modal-perf.bat` |
+| 213 | GitHub APK `releases/20260701_225211` · 랜딩·`/info` | `b641d78` | `restore-apk-download-20260701_225211.bat` |
+| 214 | 촬영 후 **처리 중 오버레이** (런처 깜빡임 방지) | `52c8578` | `restore-post-capture-busy.bat` |
+| 215 | GitHub APK `releases/20260701_230340` · 랜딩·`/info` | `376368b` | `restore-apk-download-20260701_230340.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`).
+> **07-01 권장 APK:** `releases/VoiceStamp_20260701_230340.apk` (`376368b`).
+
+## 2U. Phase 3 추가 완료 (2026-07-03)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 216 | 갤러리 **앱만** 저장 모드 | `61bb13a` | `restore-gallery-app-only.bat` |
+| 217 | GitHub APK `releases/20260703_143138` · 랜딩·`/info` | `61bb13a` | — |
+| 218 | **위치 끔**이어도 저장 모달 **장소 입력** | `c3b1bef` | `restore-place-field-always.bat` |
+| 219 | GitHub APK `releases/20260703_152212` · 랜딩·`/info` | `c3b1bef` | — |
+| 220 | PDF **캡션 너비=사진** (별도 영역) | `af6609e` | `restore-pdf-caption-fit.bat` |
+| 221 | GitHub APK `releases/20260703_154800` · 랜딩·`/info` | `af6609e` | — |
+| 222 | PDF **페이지内 동일 photo-slot**·`object-fit: contain` | `baf6a30` | `restore-pdf-photo-slot.bat` |
+| 223 | GitHub APK `releases/20260703_162433` · 랜딩·`/info` | `baf6a30` | — |
+
+> **권장 APK:** `releases/VoiceStamp_20260703_162433.apk` (`baf6a30`).
 
 ### 2.1 문서 동기화 이력
 
@@ -349,6 +370,7 @@
 | (본 갱신) | `1940314` 반영 — 위치 조회 끔·학교 200m·층→장소·음성 수동 커서·APK `233248`·날짜별 이력 |
 | (본 갱신) | `4b6834d` 반영 — busy 오버레이·APK `092959`·랜딩 QR·Web Share·날짜별·APK별 이력 |
 | (본 갱신) | `61ca32a` 반영 — 위치 속도·저장 미리보기·촬영 후 모드·APK `165406`·날짜별·APK별 이력 |
+| (본 갱신) | `baf6a30` 반영 — 갤러리 **앱만**·장소 필드·PDF 캡션·photo-slot·APK `162433`·날짜별·APK별 이력 |
 
 ---
 
@@ -503,7 +525,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-25 | 2P·3 | 랜딩 **방문자 집계**·CountAPI · 저작권 · **도로·지번·POI** · 갤러리 **DISPLAY_NAME**·`_orig` · 캡션 **EXIF** · APK `171805` (`4b71431`~`847ea63`) |
 | 2026-06-26 | 2R·3 | **`place_label`** · **장소 마이크** · **음성 커서** · **도로+POI** · ML Kit **되돌림** · 랜딩 정리 · **촬영 후 3버튼 눌림·리플** · **위치 조회 끔** · 학교 **200m** · **층→장소** · **음성 수동 커서** · APK `233248` (`e330e7e`~`1940314`) |
 | 2026-06-27 | 2S·3 | 시스템 카메라 **busy 오버레이 깜빡임** · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) (`547b693`~`4b6834d`) |
-| 2026-07-01 | 2T·3 | **위치 속도**(prefetch·워밍업·fast 시트) · 저장 **즉시 미리보기** · **촬영 후 모드** · APK 파일명 설정 · APK `165406` (`2b830ba`~`61ca32a`) |
+| 2026-07-01 | 2T·3 | **위치 속도**·저장 **즉시 미리보기**·**촬영 후 모드** · **학교명만**·저장 **성능**·**처리 중 오버레이** · APK `165406`·`221146`·`225211`·`230340` (`2b830ba`~`376368b`) |
+| 2026-07-03 | 2U·3 | 갤러리 **앱만** · **위치 끔**이어도 **장소 입력** · PDF **캡션 너비**·**동일 photo-slot** · APK `143138`·`152212`·`154800`·`162433` (`61bb13a`~`baf6a30`) |
 
 ---
 
@@ -511,7 +534,14 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260701_165406.apk` | `61ca32a` | **설치·GitHub 권장** — **촬영 후 선택/저장 바로** + 07-01 위치·미리보기 전부 |
+| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | **설치·GitHub 권장** — PDF **동일 photo-slot** + 07-03 전부 |
+| `releases/VoiceStamp_20260703_154800.apk` | `af6609e` | PDF **캡션 너비=사진** (photo-slot **미포함**) |
+| `releases/VoiceStamp_20260703_152212.apk` | `c3b1bef` | **위치 끔**이어도 **장소 입력** (PDF **미포함**) |
+| `releases/VoiceStamp_20260703_143138.apk` | `61bb13a` | 갤러리 **앱만** 저장 (장소·PDF **미포함**) |
+| `releases/VoiceStamp_20260701_230340.apk` | `376368b` | 저장 **성능**·**처리 중 오버레이**·학교명만 (07-03 **미포함**) |
+| `releases/VoiceStamp_20260701_225211.apk` | `b641d78` | **처리 중 오버레이** (`230340` **미포함**) |
+| `releases/VoiceStamp_20260701_221146.apk` | `d809e99` | 저장 모달 **성능**·학교명만 (오버레이 **미포함**) |
+| `releases/VoiceStamp_20260701_165406.apk` | `61ca32a` | **촬영 후 선택/저장 바로** + 07-01 위치·미리보기 (저장 성능·오버레이 **미포함**) |
 | `releases/VoiceStamp_20260701_163737.apk` | `5b150a3` | 3버튼 시트 **fast 위치** (촬영 후 모드 **미포함**) |
 | `releases/VoiceStamp_20260701_160259.apk` | `5f63f07` | 카메라 **위치 워밍업** (fast 시트 **미포함**) |
 | `releases/VoiceStamp_20260701_153110.apk` | `9e1821c` | 저장 모달 **즉시 미리보기** (워밍업 **미포함**) |
