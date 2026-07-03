@@ -940,7 +940,6 @@ export function StampSaveModal({
               </View>
             )}
 
-            {locationLookupEnabled || isEdit ? (
             <VoiceInputField
               label="장소"
               value={placeLabel ?? ''}
@@ -960,7 +959,6 @@ export function StampSaveModal({
               textAlign="left"
               cameraHand={cameraHand}
             />
-            ) : null}
 
             {showFloorPicker ? (
               <View style={styles.siteField}>

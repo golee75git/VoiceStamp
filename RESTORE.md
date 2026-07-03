@@ -2082,3 +2082,17 @@ Copy-Item src.pre-gallery-app-only\components\SettingsScreen.tsx src\components\
 Copy-Item src.pre-gallery-app-only\services\saveStamp.ts src\services\ -Force
 Copy-Item src.pre-gallery-app-only\services\settingsService.ts src\services\ -Force
 ```
+
+## 127. 저장 모달 장소 필드 항상 표시 되돌리기 (선택)
+
+「위치 사용 안 함」에서도 장소 입력란을 보이게 한 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-place-field-always.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-place-field-always\components\StampSaveModal.tsx src\components\ -Force
+```
