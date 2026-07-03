@@ -2096,3 +2096,17 @@ restore-place-field-always.bat
 ```powershell
 Copy-Item src.pre-place-field-always\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 128. PDF 별도 영역 캡션 너비 맞춤 되돌리기 (선택)
+
+별도 영역 PDF에서 캡션 너비를 사진에 맞춘 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-pdf-caption-fit.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-pdf-caption-fit\services\exportPdf.ts src\services\ -Force
+```

@@ -157,15 +157,19 @@ function buildStampItem(
     : '';
 
   return `
-      <div class="item">
-        <img src="${imageDataUri}" alt="stamp" style="width: 100%; max-height: ${maxHeight}; ${imageMargin}" />
-        ${orgBlock}
-        <h1 style="text-align: ${titleAlign};">${title}</h1>
-        ${placeCaptionBlock}
-        ${memoBlock}
-        ${coordsBlock}
-        ${phraseBlock}
-        ${dateBlock}
+      <div class="item item-caption" style="text-align: ${titleAlign};">
+        <figure class="stamp-figure">
+          <img src="${imageDataUri}" alt="stamp" style="max-width: 100%; max-height: ${maxHeight}; width: auto; height: auto;" />
+          <figcaption class="stamp-caption">
+            ${orgBlock}
+            <h1 style="text-align: ${titleAlign};">${title}</h1>
+            ${placeCaptionBlock}
+            ${memoBlock}
+            ${coordsBlock}
+            ${phraseBlock}
+            ${dateBlock}
+          </figcaption>
+        </figure>
       </div>`;
 }
 
@@ -246,9 +250,23 @@ function buildHtml(
   .grid-2 .item { width: calc(50% - 6px); }
   .grid-3 .item { width: calc(33.333% - 8px); }
   .grid-4 .item { width: calc(50% - 6px); }
+  .item-caption .stamp-figure {
+    display: inline-block;
+    max-width: 100%;
+    margin: 0;
+    vertical-align: top;
+    text-align: left;
+  }
+  .item-caption .stamp-figure img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .item-caption .stamp-caption { display: block; }
   img { display: block; max-width: 100%; object-fit: contain; }
   h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-  .item h1 { font-size: 16px; margin: 8px 0 4px; }
+  .item h1, .item-caption h1 { font-size: 16px; margin: 8px 0 4px; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
   .item-watermark .photo-wrap { position: relative; display: block; width: 100%; }
