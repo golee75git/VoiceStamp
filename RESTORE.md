@@ -2139,3 +2139,17 @@ restore-stamp-preview-zoom-badge.bat
 Copy-Item src.pre-stamp-preview-zoom-badge\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-stamp-preview-zoom-badge\assets\zoomedit.png assets\ -Force
 ```
+
+## 131. 스탬프 미리보기 배지 zoom.png 되돌리기 (선택)
+
+미리보기 배지 에셋을 `zoomedit.png`에서 `zoom.png`로 바꾼 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-zoom-png.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-zoom-png\components\StampSaveModal.tsx src\components\ -Force
+```

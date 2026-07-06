@@ -59,7 +59,7 @@ import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
-const zoomEditIcon = require('../../assets/zoomedit.png');
+const zoomEditIcon = require('../../assets/zoom.png');
 
 type SpeechTarget = 'title' | 'memo' | 'place' | null;
 
