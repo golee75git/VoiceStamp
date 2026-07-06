@@ -2168,3 +2168,17 @@ restore-list-export-name-modal.bat
 Copy-Item src.pre-list-export-name-modal\components\StampListScreen.tsx src\components\ -Force
 Remove-Item src\components\ExportNameModal.tsx -ErrorAction SilentlyContinue
 ```
+
+## 133. zoom.png 투명 배경 되돌리기 (선택)
+
+미리보기 배지 `zoom.png` 배경을 투명 처리한 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-zoom-transparent.bat
+```
+
+또는:
+
+```powershell
+Copy-Item assets.pre-zoom-transparent\zoom.png assets\ -Force
+```
