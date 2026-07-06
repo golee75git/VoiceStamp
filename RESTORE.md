@@ -2153,3 +2153,18 @@ restore-stamp-zoom-png.bat
 ```powershell
 Copy-Item src.pre-stamp-zoom-png\components\StampSaveModal.tsx src\components\ -Force
 ```
+
+## 132. 목록 내보내기 파일명·보고서 제목 모달 되돌리기 (선택)
+
+목록 선택 후 **파일명·보고서 제목**을 모달로 편집하도록 바꾼 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-export-name-modal.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-export-name-modal\components\StampListScreen.tsx src\components\ -Force
+Remove-Item src\components\ExportNameModal.tsx -ErrorAction SilentlyContinue
+```

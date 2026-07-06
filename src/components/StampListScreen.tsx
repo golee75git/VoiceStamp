@@ -17,6 +17,7 @@ import { openInfoPage } from '../constants/infoUrls';
 import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
+import { ExportNameModal } from './ExportNameModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const micIcon = require('../../assets/mic-icon.png');
@@ -103,7 +104,9 @@ export function StampListScreen({
   const [albumBusy, setAlbumBusy] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [exportDetailsExpanded, setExportDetailsExpanded] = useState(false);
+  const [exportNameModalVisible, setExportNameModalVisible] = useState(false);
+  const [draftFileName, setDraftFileName] = useState('');
+  const [draftReportTitle, setDraftReportTitle] = useState('');
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
@@ -203,7 +206,24 @@ export function StampListScreen({
     setPdfUri(null);
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
-    setExportDetailsExpanded(false);
+    setExportNameModalVisible(false);
+  };
+
+  const openExportNameModal = () => {
+    setDraftFileName(pdfFileName);
+    setDraftReportTitle(pdfReportTitle);
+    setExportNameModalVisible(true);
+  };
+
+  const confirmExportNameModal = () => {
+    setPdfFileName(draftFileName.trim() || 'VoiceStamp');
+    setPdfReportTitle(draftReportTitle);
+    setPdfUri(null);
+    setExportNameModalVisible(false);
+  };
+
+  const cancelExportNameModal = () => {
+    setExportNameModalVisible(false);
   };
 
   const toggleSelect = (id: string) => {
@@ -810,33 +830,15 @@ export function StampListScreen({
           </View>
           <Pressable
             style={styles.exportDetailsToggle}
-            onPress={() => setExportDetailsExpanded((expanded) => !expanded)}
+            onPress={openExportNameModal}
             disabled={exportBusy}
           >
-            <Text style={styles.exportDetailsToggleText}>
-              파일명·보고서 제목 {exportDetailsExpanded ? '▲' : '▼'}
+            <Text style={styles.exportDetailsToggleText}>파일명·보고서 제목 편집</Text>
+            <Text style={styles.exportNameSummary} numberOfLines={1}>
+              {pdfFileName || 'VoiceStamp'}
+              {pdfReportTitle.trim() ? ` · ${pdfReportTitle.trim()}` : ''}
             </Text>
           </Pressable>
-          {exportDetailsExpanded ? (
-            <View style={styles.pdfNameRow}>
-              <Text style={styles.pdfNameLabel}>PDF·이미지 파일명</Text>
-              <TextInput
-                style={styles.pdfNameInput}
-                value={pdfFileName}
-                onChangeText={setPdfFileName}
-                placeholder="VoiceStamp"
-                editable={!exportBusy}
-              />
-              <Text style={[styles.pdfNameLabel, styles.pdfReportTitleLabel]}>보고서 제목</Text>
-              <TextInput
-                style={styles.pdfNameInput}
-                value={pdfReportTitle}
-                onChangeText={setPdfReportTitle}
-                placeholder="1페이지 상단 제목 (비우면 표시 안 함)"
-                editable={!exportBusy}
-              />
-            </View>
-          ) : null}
           <Pressable
             style={[styles.deleteButton, exportBusy && styles.pdfBarButtonDisabled]}
             onPress={handleDeleteSelected}
@@ -850,6 +852,17 @@ export function StampListScreen({
           </Pressable>
         </View>
       ) : null}
+
+      <ExportNameModal
+        visible={exportNameModalVisible}
+        fileName={draftFileName}
+        reportTitle={draftReportTitle}
+        onChangeFileName={setDraftFileName}
+        onChangeReportTitle={setDraftReportTitle}
+        onConfirm={confirmExportNameModal}
+        onCancel={cancelExportNameModal}
+        disabled={exportBusy}
+      />
 
       <StampSaveModal
         visible={editingStamp != null}
@@ -1034,11 +1047,17 @@ const styles = StyleSheet.create({
   exportDetailsToggle: {
     alignItems: 'center',
     paddingVertical: 4,
+    gap: 2,
   },
   exportDetailsToggleText: {
     color: '#2563eb',
     fontWeight: '600',
     fontSize: 14,
+  },
+  exportNameSummary: {
+    color: '#6b7280',
+    fontSize: 12,
+    maxWidth: '100%',
   },
   pdfBarButton: {
     flex: 1,
@@ -1071,27 +1090,6 @@ const styles = StyleSheet.create({
   },
   pdfBarButtonTextDisabled: {
     color: '#9ca3af',
-  },
-  pdfNameRow: {
-    gap: 4,
-  },
-  pdfNameLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#4b5563',
-  },
-  pdfReportTitleLabel: {
-    marginTop: 8,
-  },
-  pdfNameInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 15,
-    backgroundColor: '#fff',
-    color: '#111',
   },
   deleteButton: {
     backgroundColor: '#dc2626',
