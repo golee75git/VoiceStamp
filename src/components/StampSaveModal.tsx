@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -56,6 +57,9 @@ import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
+
+/* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
+const zoomEditIcon = require('../../assets/zoomedit.png');
 
 type SpeechTarget = 'title' | 'memo' | 'place' | null;
 
@@ -870,28 +874,41 @@ export function StampSaveModal({
             <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
             {photoUri ? (
-              <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
-                <StampSavePreview
-                  imageUri={previewThumbUri ?? normalizeDisplayUri(photoUri)}
-                  imageLoading={false}
-                  title={title}
-                  memo={memo}
-                  placeLabel={placeLabel}
-                  titleAlign={titleTextAlign}
-                  memoAlign={memoTextAlign}
-                  textLayout={stampTextLayout}
-                  watermarkStyle={watermarkStyle}
-                  coordsLabel={coordsLabel}
-                  showDatetime={showDatetime}
-                  orgName={overlayOrgName}
-                  footerPhrase={overlayFooterPhrase}
-                  showOrgName={overlayShowOrgName}
-                  showFooterPhrase={overlayShowFooterPhrase}
-                  floor={floor}
-                  latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
-                  longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
-                  variant="thumbnail"
-                />
+              <Pressable
+                onPress={() => setImageViewerVisible(true)}
+                accessibilityLabel="사진 크게 보기 및 수정"
+                accessibilityHint="탭하면 확대·잘라내기 화면이 열립니다"
+              >
+                <View style={styles.previewWrap}>
+                  <StampSavePreview
+                    imageUri={previewThumbUri ?? normalizeDisplayUri(photoUri)}
+                    imageLoading={false}
+                    title={title}
+                    memo={memo}
+                    placeLabel={placeLabel}
+                    titleAlign={titleTextAlign}
+                    memoAlign={memoTextAlign}
+                    textLayout={stampTextLayout}
+                    watermarkStyle={watermarkStyle}
+                    coordsLabel={coordsLabel}
+                    showDatetime={showDatetime}
+                    orgName={overlayOrgName}
+                    footerPhrase={overlayFooterPhrase}
+                    showOrgName={overlayShowOrgName}
+                    showFooterPhrase={overlayShowFooterPhrase}
+                    floor={floor}
+                    latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
+                    longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+                    variant="thumbnail"
+                  />
+                  <Image
+                    source={zoomEditIcon}
+                    style={styles.zoomEditBadge}
+                    pointerEvents="none"
+                    accessibilityElementsHidden
+                    importantForAccessibility="no-hide-descendants"
+                  />
+                </View>
               </Pressable>
             ) : null}
 
@@ -1181,6 +1198,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#111',
+  },
+  /* STAMP_PREVIEW_ZOOM_BADGE */
+  previewWrap: {
+    position: 'relative',
+  },
+  zoomEditBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 44,
+    height: 44,
   },
   imageViewerRoot: {
     flex: 1,

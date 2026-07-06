@@ -105,6 +105,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 
 - 앱 아이콘 (`assets/icon.png` 등)
 - 온보딩·UI PNG (`img/`, `assets/`)
+- 스탬프 미리보기 확대/수정 배지 (`assets/zoomedit.png`) — VoiceStamp UI용, Copyright © 2026 이형우
 - HWPX 템플릿 (`public/templates/report.hwpx`)
 
 ---
@@ -126,3 +127,4 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 날짜 | 변경 |
 |------|------|
 | 2026-06-19 | 최초 작성 — OSS JSON·dual-license 검토 결론(MIT/BSD 확정) |
+| 2026-07-06 | `assets/zoomedit.png` UI 배지 에셋 고지 추가 |
