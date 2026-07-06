@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-03**
-최신 커밋 기준: `baf6a30` (main)
+문서 작성일: **2026-07-06**
+최신 커밋 기준: `f6d33fd` (main)
 
 ---
 
@@ -76,7 +76,7 @@ VoiceStamp/
 | 헤더 | 마이크 아이콘 · 저장 목록 · 선택/취소 · ⋮ 메뉴 (휴지통·설정·앱 정보) |
 | 본문 | 스탬프 카드 (600px+ 2열) |
 | 하단 | **갤러리** 캡슐 이미지 (`gallery.png`) · **촬영** 캡슐 이미지 (`capture.png`) — 시스템 내비 위 31px |
-| 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 · 프로젝트·엑셀·HWPX |
+| 선택 모드 | PDF·이미지 파일명 · 보고서 제목 · PDF 만들기/저장/공유 · 이미지 저장 · 프로젝트·엑셀·HWPX · **파일명·보고서 제목 편집** 모달 |
 
 ### 3.2 Android 하드웨어 뒤로 (`MainScreen`)
 
@@ -316,8 +316,12 @@ VoiceStamp/
 | 216 | GitHub APK `releases/20260703_154800` · 랜딩·`/info` | `af6609e` | — |
 | 217 | PDF **페이지内 동일 photo-slot**·`object-fit: contain` | `baf6a30` | `restore-pdf-photo-slot.bat` |
 | 218 | GitHub APK `releases/20260703_162433` · 랜딩·`/info` | `baf6a30` | — |
+| 219 | 저장·수정 미리보기 **확대/수정 배지** (`zoomedit.png`) | `e04ce17` | `restore-stamp-preview-zoom-badge.bat` §130 |
+| 220 | 미리보기 배지 **`zoom.png`** + 투명 배경 처리 | `08cf91b`·`822e830`·`f6d33fd` | `restore-stamp-zoom-png.bat` §131 · `restore-zoom-transparent.bat` §133 |
+| 221 | 목록 내보내기 **파일명·보고서 제목 모달** (`ExportNameModal`) | `91ce71f` | `restore-list-export-name-modal.bat` §132 |
+| 222 | GitHub APK `releases/20260706_112756` · 랜딩·`/info` | `f6d33fd` | `restore-apk-download-20260706_112756.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260703_162433.apk` (`baf6a30`).
+> **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -383,7 +387,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260703_162433.apk`** | `baf6a30` | **설치·GitHub 권장** — PDF **동일 photo-slot** + 07-03 전부 |
+| **`releases/VoiceStamp_20260706_112756.apk`** | `f6d33fd` | **설치·GitHub 권장** — **zoom.png 투명 배지** + 07-06 전부 |
+| `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** (투명 zoom **미포함**) |
+| `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** |
+| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | PDF **동일 photo-slot** + 07-03 (07-06 **미포함**) |
 | `releases/VoiceStamp_20260703_154800.apk` | `af6609e` | PDF **캡션 너비=사진** (photo-slot **미포함**) |
 | `releases/VoiceStamp_20260703_152212.apk` | `c3b1bef` | **위치 끔**이어도 **장소 입력** (PDF **미포함**) |
 | `releases/VoiceStamp_20260703_143138.apk` | `61bb13a` | 갤러리 **앱만** 저장 (장소·PDF **미포함**) |
@@ -453,6 +460,18 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-07-06
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260706_112756.apk` | `f6d33fd` | **권장** — **zoom.png** 재업로드·투명 배경 + 07-06 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260706_111021.apk` | `4d6eeab` | **zoom.png** 투명 처리(수정본) | GitHub |
+| `releases/VoiceStamp_20260706_105242.apk` | `822e830` | **zoom.png** 최초 투명 배경 | GitHub |
+| `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** | GitHub |
+| `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** | GitHub |
+| `releases/VoiceStamp_20260706_095128.apk` | `fe2ee58` | 미리보기 **`zoomedit.png`** 투명 배지 | GitHub |
+| (소스) | `e04ce17` | 저장·수정 미리보기 **확대/수정 배지** 추가 | 소스 |
 
 #### 2026-07-03
 
@@ -798,6 +817,22 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-06
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`f6d33fd` 기준) |
+| `f6d33fd` | APK `releases/VoiceStamp_20260706_112756` — **zoom.png** 재업로드·투명 배경 · Vercel |
+| `4d6eeab` | APK `releases/VoiceStamp_20260706_111021` — **zoom.png** 투명(수정본) · Vercel |
+| `822e830` | APK `releases/VoiceStamp_20260706_105242` — **zoom.png** 투명 배경 · Vercel |
+| `91ce71f` | APK `releases/VoiceStamp_20260706_103245` — 목록 내보내기 **파일명·보고서 제목 모달** · `ExportNameModal` · `restore-list-export-name-modal.bat` §132 · Vercel |
+| `08cf91b` | APK `releases/VoiceStamp_20260706_101457` — 미리보기 배지 **`zoom.png`** · `restore-stamp-zoom-png.bat` §131 · Vercel |
+| `fe2ee58` | APK `releases/VoiceStamp_20260706_095128` — **`zoomedit.png`** 투명 배지 · Vercel |
+| `e04ce17` | 저장·수정 모달 미리보기 **확대/수정 배지** · `restore-stamp-preview-zoom-badge.bat` §130 |
+| `f6a685a` | PRD·PROJECT·PLAN·README 문서 동기화 (`baf6a30` 기준) |
+
+> **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-03
 

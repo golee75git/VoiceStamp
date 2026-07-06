@@ -36,4 +36,8 @@ build-apk.bat
 
 ## 되돌리기
 
-기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md) (§8~112)
+기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md) (§8~133)
+
+## 최신 APK
+
+권장: `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`) — 상세는 [docs/README.md](./docs/README.md)

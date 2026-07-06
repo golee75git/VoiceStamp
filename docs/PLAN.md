@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-07-03 |
-| 기준 커밋 | `baf6a30` (main) |
+| 작성일 | 2026-07-06 |
+| 기준 커밋 | `f6d33fd` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -331,7 +331,19 @@
 | 222 | PDF **페이지内 동일 photo-slot**·`object-fit: contain` | `baf6a30` | `restore-pdf-photo-slot.bat` |
 | 223 | GitHub APK `releases/20260703_162433` · 랜딩·`/info` | `baf6a30` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260703_162433.apk` (`baf6a30`).
+> **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`).
+
+## 2V. Phase 3 추가 완료 (2026-07-06)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 224 | 저장·수정 미리보기 **확대/수정 배지** (`zoomedit.png`) | `e04ce17` | `restore-stamp-preview-zoom-badge.bat` §130 |
+| 225 | 미리보기 배지 **`zoom.png`** (에셋 교체) | `08cf91b` | `restore-stamp-zoom-png.bat` §131 |
+| 226 | **`zoom.png` 투명 배경** (flood-fill) | `822e830`·`4d6eeab`·`f6d33fd` | `restore-zoom-transparent.bat` §133 |
+| 227 | 목록 내보내기 **파일명·보고서 제목 모달** | `91ce71f` | `restore-list-export-name-modal.bat` §132 |
+| 228 | GitHub APK `releases/20260706_112756` · 랜딩·`/info` | `f6d33fd` | `restore-apk-download-20260706_112756.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`).
 
 ### 2.1 문서 동기화 이력
 
@@ -371,6 +383,7 @@
 | (본 갱신) | `4b6834d` 반영 — busy 오버레이·APK `092959`·랜딩 QR·Web Share·날짜별·APK별 이력 |
 | (본 갱신) | `61ca32a` 반영 — 위치 속도·저장 미리보기·촬영 후 모드·APK `165406`·날짜별·APK별 이력 |
 | (본 갱신) | `baf6a30` 반영 — 갤러리 **앱만**·장소 필드·PDF 캡션·photo-slot·APK `162433`·날짜별·APK별 이력 |
+| (본 갱신) | `f6d33fd` 반영 — **zoom 배지**·목록 내보내기 **이름 모달**·APK `112756`·날짜별·APK별 이력 |
 
 ---
 
@@ -461,9 +474,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260701_165406.apk` (`61ca32a`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260701_165406.apk |
-| 최신 소스 | `61ca32a` — 촬영 후 모드·fast 위치·워밍업·저장 미리보기 |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`) |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260706_112756.apk |
+| 최신 소스 | `f6d33fd` — zoom 투명 배지·목록 내보내기 이름 모달 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -527,6 +540,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-06-27 | 2S·3 | 시스템 카메라 **busy 오버레이 깜빡임** · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) (`547b693`~`4b6834d`) |
 | 2026-07-01 | 2T·3 | **위치 속도**·저장 **즉시 미리보기**·**촬영 후 모드** · **학교명만**·저장 **성능**·**처리 중 오버레이** · APK `165406`·`221146`·`225211`·`230340` (`2b830ba`~`376368b`) |
 | 2026-07-03 | 2U·3 | 갤러리 **앱만** · **위치 끔**이어도 **장소 입력** · PDF **캡션 너비**·**동일 photo-slot** · APK `143138`·`152212`·`154800`·`162433` (`61bb13a`~`baf6a30`) |
+| 2026-07-06 | 2V·3 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `095128`~`112756` (`e04ce17`~`f6d33fd`) |
 
 ---
 
@@ -534,7 +548,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | **설치·GitHub 권장** — PDF **동일 photo-slot** + 07-03 전부 |
+| `releases/VoiceStamp_20260706_112756.apk` | `f6d33fd` | **설치·GitHub 권장** — **zoom.png 투명 배지** + 07-06 전부 |
+| `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** |
+| `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** |
+| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | PDF **동일 photo-slot** + 07-03 (07-06 **미포함**) |
 | `releases/VoiceStamp_20260703_154800.apk` | `af6609e` | PDF **캡션 너비=사진** (photo-slot **미포함**) |
 | `releases/VoiceStamp_20260703_152212.apk` | `c3b1bef` | **위치 끔**이어도 **장소 입력** (PDF **미포함**) |
 | `releases/VoiceStamp_20260703_143138.apk` | `61bb13a` | 갤러리 **앱만** 저장 (장소·PDF **미포함**) |

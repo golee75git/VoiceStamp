@@ -25,19 +25,19 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~129) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~133) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-03)
+## 현재 상태 스냅샷 (2026-07-06)
 
-- **최신 커밋:** `baf6a30` (main)
+- **최신 커밋:** `f6d33fd` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260703_162433.apk` — PDF **동일 photo-slot** + 07-03 전부
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260703_162433.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260701_230340.apk` (`376368b`, 저장 성능·처리 중 오버레이)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260706_112756.apk` — **zoom.png 투명 배지**·목록 내보내기 **이름 모달** + 07-03 전부
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260706_112756.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260703_162433.apk` (`baf6a30`, PDF photo-slot)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
@@ -71,12 +71,16 @@
 | 06-27 | 시스템 카메라 **busy 오버레이 깜빡임** · APK `092959` · 랜딩 **QR·Web Share** (qrcodejs MIT) |
 | 07-01 | **위치 속도**·저장 **즉시 미리보기**·**촬영 후 모드** · **학교명만**·저장 **성능**·**처리 중 오버레이** · APK `165406`·`230340` |
 | 07-03 | 갤러리 **앱만** · **위치 끔**이어도 **장소 입력** · PDF **캡션 너비**·**동일 photo-slot** · APK `162433` |
+| 07-06 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `112756` |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | **설치·GitHub 권장** — PDF **동일 photo-slot** + 07-03 전부 |
+| `releases/VoiceStamp_20260706_112756.apk` | `f6d33fd` | **설치·GitHub 권장** — **zoom.png 투명 배지** + 07-06 전부 |
+| `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** |
+| `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** |
+| `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | PDF **동일 photo-slot** + 07-03 (07-06 **미포함**) |
 | `releases/VoiceStamp_20260703_154800.apk` | `af6609e` | PDF **캡션 너비=사진** (photo-slot **미포함**) |
 | `releases/VoiceStamp_20260703_152212.apk` | `c3b1bef` | **위치 끔**이어도 **장소 입력** (PDF **미포함**) |
 | `releases/VoiceStamp_20260703_143138.apk` | `61bb13a` | 갤러리 **앱만** 저장 (장소·PDF **미포함**) |
