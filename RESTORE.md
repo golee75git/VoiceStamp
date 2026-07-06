@@ -2124,3 +2124,18 @@ restore-pdf-photo-slot.bat
 ```powershell
 Copy-Item src.pre-pdf-photo-slot\services\exportPdf.ts src\services\ -Force
 ```
+
+## 130. 스탬프 미리보기 확대/수정 배지(zoomedit) 되돌리기 (선택)
+
+저장·수정 모달 미리보기에 `zoomedit.png` 배지를 오버레이한 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-preview-zoom-badge.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-preview-zoom-badge\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-stamp-preview-zoom-badge\assets\zoomedit.png assets\ -Force
+```

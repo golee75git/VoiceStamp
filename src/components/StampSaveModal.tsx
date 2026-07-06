@@ -904,6 +904,7 @@ export function StampSaveModal({
                   <Image
                     source={zoomEditIcon}
                     style={styles.zoomEditBadge}
+                    resizeMode="contain"
                     pointerEvents="none"
                     accessibilityElementsHidden
                     importantForAccessibility="no-hide-descendants"
@@ -1209,6 +1210,7 @@ const styles = StyleSheet.create({
     right: 8,
     width: 44,
     height: 44,
+    backgroundColor: 'transparent',
   },
   imageViewerRoot: {
     flex: 1,
