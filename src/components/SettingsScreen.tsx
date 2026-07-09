@@ -125,7 +125,6 @@ import {
   type TextAlign,
   textAlignLabel,
 } from '../services/settingsService';
-import { confirmAlert, showAlert } from '../utils/confirmAlert';
 
 const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
 const FLOOR_DISPLAY_OPTIONS: FloorDisplayMode[] = ['suffix', 'cursor'];
@@ -142,6 +141,10 @@ const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
 
 function pdfQualityLabel(quality: PdfImageQuality): string {
   return PDF_QUALITY_OPTIONS.find((option) => option.value === quality)?.label ?? '원본';
+}
+
+function chipLabel(label: string, isDefault: boolean): string {
+  return isDefault ? `${label} · 기본` : label;
 }
 
 type SettingsScreenProps = {
@@ -366,22 +369,6 @@ export function SettingsScreen({
     }
   };
 
-  const handleReset = () => {
-    setFolderName(DEFAULT_STAMPS_FOLDER);
-    setPdfPhotosPerPageState(DEFAULT_PDF_PHOTOS_PER_PAGE);
-    setPdfImageQualityState(DEFAULT_PDF_IMAGE_QUALITY);
-    setTitleTextAlignState(DEFAULT_TITLE_TEXT_ALIGN);
-    setMemoTextAlignState(DEFAULT_MEMO_TEXT_ALIGN);
-    setPdfShowDatetimeState(DEFAULT_PDF_SHOW_DATETIME);
-    setPdfFilenameIncludeDatetimeState(DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
-    setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
-    setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
-    setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
-    setPrimaryCaptureCameraState(DEFAULT_PRIMARY_CAPTURE_CAMERA);
-    setContinuousCaptureCameraState(DEFAULT_CONTINUOUS_CAPTURE_CAMERA);
-    setCameraHandState(DEFAULT_CAMERA_HAND);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -402,7 +389,7 @@ export function SettingsScreen({
           >
           <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
-            앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다.
+            앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다. 기본값: {DEFAULT_STAMPS_FOLDER}
           </Text>
           {Platform.OS === 'web' && (
             <Text style={styles.webNote}>웹에서는 사진이 DB에 저장되어 이 설정이 적용되지 않습니다.</Text>
@@ -433,7 +420,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {locationModeLabel(option)}
+                    {chipLabel(locationModeLabel(option), option === DEFAULT_LOCATION_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -457,7 +444,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {titleDatetimeModeLabel(option)}
+                    {chipLabel(titleDatetimeModeLabel(option), option === DEFAULT_TITLE_DATETIME_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -477,7 +464,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, cameraHand === 'left' && styles.optionButtonTextSelected]}
               >
-                왼손
+                {chipLabel('왼손', DEFAULT_CAMERA_HAND === 'left')}
               </Text>
             </Pressable>
             <Pressable
@@ -488,7 +475,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, cameraHand === 'right' && styles.optionButtonTextSelected]}
               >
-                오른손
+                {chipLabel('오른손', DEFAULT_CAMERA_HAND === 'right')}
               </Text>
             </Pressable>
           </View>
@@ -506,7 +493,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option}
+                    {chipLabel(String(option), option === DEFAULT_PDF_PHOTOS_PER_PAGE)}
                   </Text>
                 </Pressable>
               );
@@ -526,7 +513,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option.label}
+                    {chipLabel(option.label, option.value === DEFAULT_PDF_IMAGE_QUALITY)}
                   </Text>
                 </Pressable>
               );
@@ -546,7 +533,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_PDF_SHOW_DATETIME)}
               </Text>
             </Pressable>
             <Pressable
@@ -557,7 +544,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, !pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_PDF_SHOW_DATETIME)}
               </Text>
             </Pressable>
           </View>
@@ -576,7 +563,7 @@ export function SettingsScreen({
                   pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                포함
+                {chipLabel('포함', DEFAULT_PDF_FILENAME_INCLUDE_DATETIME)}
               </Text>
             </Pressable>
             <Pressable
@@ -590,7 +577,7 @@ export function SettingsScreen({
                   !pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                제외
+                {chipLabel('제외', !DEFAULT_PDF_FILENAME_INCLUDE_DATETIME)}
               </Text>
             </Pressable>
           </View>
@@ -620,7 +607,7 @@ export function SettingsScreen({
                   overlayShowOrgName && styles.optionButtonTextSelected,
                 ]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_ORG_NAME)}
               </Text>
             </Pressable>
             <Pressable
@@ -634,7 +621,7 @@ export function SettingsScreen({
                   !overlayShowOrgName && styles.optionButtonTextSelected,
                 ]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_ORG_NAME)}
               </Text>
             </Pressable>
           </View>
@@ -660,7 +647,7 @@ export function SettingsScreen({
                   overlayShowFooterPhrase && styles.optionButtonTextSelected,
                 ]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE)}
               </Text>
             </Pressable>
             <Pressable
@@ -674,7 +661,7 @@ export function SettingsScreen({
                   !overlayShowFooterPhrase && styles.optionButtonTextSelected,
                 ]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE)}
               </Text>
             </Pressable>
           </View>
@@ -695,7 +682,7 @@ export function SettingsScreen({
                   stampTextLayout === 'caption' && styles.optionButtonTextSelected,
                 ]}
               >
-                별도 영역
+                {chipLabel('별도 영역', DEFAULT_STAMP_TEXT_LAYOUT === 'caption')}
               </Text>
             </Pressable>
             <Pressable
@@ -709,7 +696,7 @@ export function SettingsScreen({
                   stampTextLayout === 'watermark' && styles.optionButtonTextSelected,
                 ]}
               >
-                워터마크
+                {chipLabel('워터마크', DEFAULT_STAMP_TEXT_LAYOUT === 'watermark')}
               </Text>
             </Pressable>
           </View>
@@ -745,7 +732,7 @@ export function SettingsScreen({
                         style={[styles.paletteLabel, selected && styles.paletteLabelSelected]}
                         numberOfLines={1}
                       >
-                        {watermarkStyleLabel(option)}
+                        {chipLabel(watermarkStyleLabel(option), option === DEFAULT_WATERMARK_STYLE)}
                       </Text>
                     </Pressable>
                   );
@@ -771,7 +758,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {coordsLabelModeLabel(option)}
+                    {chipLabel(coordsLabelModeLabel(option), option === DEFAULT_COORDS_LABEL_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -795,7 +782,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {floorPickerModeLabel(option)}
+                    {chipLabel(floorPickerModeLabel(option), option === DEFAULT_FLOOR_PICKER_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -819,7 +806,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {floorDisplayModeLabel(option)}
+                    {chipLabel(floorDisplayModeLabel(option), option === DEFAULT_FLOOR_DISPLAY_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -843,7 +830,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {primaryCaptureCameraLabel(option)}
+                    {chipLabel(primaryCaptureCameraLabel(option), option === DEFAULT_PRIMARY_CAPTURE_CAMERA)}
                   </Text>
                 </Pressable>
               );
@@ -867,7 +854,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {captureAfterModeLabel(option)}
+                    {chipLabel(captureAfterModeLabel(option), option === DEFAULT_CAPTURE_AFTER_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -891,7 +878,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {continuousCaptureCameraLabel(option)}
+                    {chipLabel(continuousCaptureCameraLabel(option), option === DEFAULT_CONTINUOUS_CAPTURE_CAMERA)}
                   </Text>
                 </Pressable>
               );
@@ -917,7 +904,7 @@ export function SettingsScreen({
                     <Text
                       style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                     >
-                      {gallerySaveModeLabel(option)}
+                      {chipLabel(gallerySaveModeLabel(option), option === DEFAULT_GALLERY_SAVE_MODE)}
                     </Text>
                   </Pressable>
                 );
@@ -938,7 +925,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
+                    {chipLabel(textAlignLabel(option), option === DEFAULT_TITLE_TEXT_ALIGN)}
                   </Text>
                 </Pressable>
               );
@@ -958,7 +945,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
+                    {chipLabel(textAlignLabel(option), option === DEFAULT_MEMO_TEXT_ALIGN)}
                   </Text>
                 </Pressable>
               );
@@ -1016,11 +1003,6 @@ export function SettingsScreen({
               ) : (
                 <Text style={styles.primaryButtonText}>저장</Text>
               )}
-            </Pressable>
-            <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
-              <Text style={styles.secondaryButtonText}>
-                기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
-              </Text>
             </Pressable>
           </View>
         </View>
@@ -1144,9 +1126,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#eff6ff',
   },
   optionButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#4b5563',
+    textAlign: 'center',
   },
   optionButtonTextSelected: {
     color: '#2563eb',
@@ -1177,7 +1160,7 @@ const styles = StyleSheet.create({
     borderColor: '#2563eb',
   },
   paletteLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#6b7280',
     textAlign: 'center',
   },

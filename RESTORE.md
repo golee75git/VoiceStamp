@@ -2248,3 +2248,18 @@ restore-settings-sticky-save.bat
 Copy-Item src.pre-settings-sticky-save\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-settings-sticky-save\help.html public\ -Force
 ```
+
+## 138. 설정 기본값 칩 표시·기본값 버튼 제거 되돌리기 (선택)
+
+설정 칩에 「· 기본」 표시 및 기본값 버튼 제거 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings-default-chips.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-default-chips\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings-default-chips\help.html public\ -Force
+```
