@@ -2233,3 +2233,18 @@ Remove-Item src\components\InAppCameraPreview.tsx -ErrorAction SilentlyContinue
 Copy-Item src.pre-in-app-camera-zoom\help.html public\ -Force
 Copy-Item src.pre-in-app-camera-zoom\components\SettingsScreen.tsx src\components\ -Force
 ```
+
+## 137. 설정 하단 고정 저장 버튼 되돌리기 (선택)
+
+설정 화면 저장 버튼을 하단에 고정한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings-sticky-save.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-sticky-save\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings-sticky-save\help.html public\ -Force
+```

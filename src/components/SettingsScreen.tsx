@@ -393,12 +393,13 @@ export function SettingsScreen({
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.body}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-        >
+        <View style={styles.content}>
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.body}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+          >
           <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
             앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다.
@@ -964,23 +965,6 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Pressable
-            style={[styles.primaryButton, saving && styles.buttonDisabled]}
-            onPress={handleSave}
-            disabled={saving}
-          >
-            {saving ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.primaryButtonText}>저장</Text>
-            )}
-          </Pressable>
-          <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
-            <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
-            </Text>
-          </Pressable>
-
           <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>
           <Text style={styles.hint}>
             VoiceStamp {appVersion}
@@ -1019,7 +1003,27 @@ export function SettingsScreen({
             <Text style={styles.secondaryButtonText}>도움말</Text>
           </Pressable>
           <Text style={styles.copyright}>© 2026 이형우</Text>
-        </ScrollView>
+          </ScrollView>
+
+          <View style={styles.saveFooter}>
+            <Pressable
+              style={[styles.primaryButton, saving && styles.buttonDisabled]}
+              onPress={handleSave}
+              disabled={saving}
+            >
+              {saving ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.primaryButtonText}>저장</Text>
+              )}
+            </Pressable>
+            <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
+              <Text style={styles.secondaryButtonText}>
+                기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
+              </Text>
+            </Pressable>
+          </View>
+        </View>
       )}
 
       <Pressable
@@ -1058,13 +1062,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  content: {
+    flex: 1,
+  },
   scroll: {
     flex: 1,
   },
   body: {
     padding: 20,
-    paddingBottom: 100,
+    paddingBottom: 24,
     gap: 12,
+  },
+  saveFooter: {
+    paddingTop: 12,
+    paddingRight: 20,
+    paddingLeft: 100,
+    paddingBottom: BACK_ICON_BOTTOM,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    gap: 8,
   },
   bottomBackButton: {
     position: 'absolute',
