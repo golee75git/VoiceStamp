@@ -2216,3 +2216,20 @@ Copy-Item src.pre-primary-capture-camera\components\CameraScreen.tsx src\compone
 Copy-Item src.pre-primary-capture-camera\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-primary-capture-camera\help.html public\ -Force
 ```
+
+## 136. 앱 내 카메라 핀치·더블탭 확대 되돌리기 (선택)
+
+앱 내 카메라 촬영 전 확대 기능 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-in-app-camera-zoom.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-in-app-camera-zoom\components\CameraScreen.tsx src\components\ -Force
+Remove-Item src\components\InAppCameraPreview.tsx -ErrorAction SilentlyContinue
+Copy-Item src.pre-in-app-camera-zoom\help.html public\ -Force
+Copy-Item src.pre-in-app-camera-zoom\components\SettingsScreen.tsx src\components\ -Force
+```

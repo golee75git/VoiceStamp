@@ -827,7 +827,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>일반 촬영 카메라</Text>
           <Text style={styles.hint}>
-            홈에서 사진 1장을 찍을 때 사용합니다. 시스템은 화질·줌에 유리하고, 앱 내는 확인 화면 없이 빠릅니다.
+            홈에서 사진 1장을 찍을 때 사용합니다. 시스템은 화질·줌에 유리하고, 앱 내는 확인 화면 없이 빠르며 핀치·더블탭으로 확대할 수 있습니다.
           </Text>
           <View style={styles.optionRow}>
             {(['system', 'in_app'] as ContinuousCaptureCamera[]).map((option) => {
@@ -875,7 +875,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>연속 촬영 카메라</Text>
           <Text style={styles.hint}>
-            연속 촬영 2장째부터 사용합니다. 1장은 일반 촬영 카메라 설정으로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠릅니다.
+            연속 촬영 2장째부터 사용합니다. 1장은 일반 촬영 카메라 설정으로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠르며 핀치·더블탭 확대를 지원합니다.
           </Text>
           <View style={styles.optionRow}>
             {(['in_app', 'system'] as ContinuousCaptureCamera[]).map((option) => {

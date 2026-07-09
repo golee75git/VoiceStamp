@@ -24,6 +24,7 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
 import { StampSaveModal } from './StampSaveModal';
+import { InAppCameraPreview } from './InAppCameraPreview';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const listIcon = require('../../assets/list-icon.png');
@@ -609,18 +610,19 @@ export function CameraScreen({
     const isContinuous = inAppCameraMode === 'continuous';
     return (
       <View style={styles.container}>
-        <CameraView
-          ref={cameraRef}
-          style={styles.inAppCamera}
-          facing="back"
+        <InAppCameraPreview
+          cameraRef={cameraRef}
           pictureSize={inAppPictureSize}
+          style={styles.inAppCamera}
           onCameraReady={() => void handleInAppCameraReady()}
         />
 
         <View style={styles.inAppTopBar}>
           <Text style={styles.inAppTitle}>{isContinuous ? '연속 촬영' : '사진 촬영'}</Text>
           <Text style={styles.inAppHint}>
-            {isContinuous ? '셔터 → 저장 · 완료로 종료' : '셔터 → 확인 · 취소로 돌아가기'}
+            {isContinuous
+              ? '핀치·더블탭 확대 · 셔터 → 저장 · 완료로 종료'
+              : '핀치·더블탭 확대 · 셔터 → 확인 · 취소로 돌아가기'}
           </Text>
         </View>
 
