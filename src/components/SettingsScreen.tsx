@@ -34,6 +34,7 @@ import {
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
+  DEFAULT_PRIMARY_CAPTURE_CAMERA,
   DEFAULT_CAPTURE_AFTER_MODE,
   DEFAULT_COORDS_LABEL_MODE,
   DEFAULT_LOCATION_MODE,
@@ -51,6 +52,7 @@ import {
   OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
+  primaryCaptureCameraLabel,
   captureAfterModeLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
@@ -65,6 +67,7 @@ import {
   getCameraHand,
   getGallerySaveMode,
   getContinuousCaptureCamera,
+  getPrimaryCaptureCamera,
   getCaptureAfterMode,
   getMemoTextAlign,
   getOverlayFooterPhrase,
@@ -92,6 +95,7 @@ import {
   setTitleDatetimeMode,
   setGallerySaveMode,
   setContinuousCaptureCamera,
+  setPrimaryCaptureCamera,
   setCaptureAfterMode,
   setMemoTextAlign,
   setOverlayFooterPhrase,
@@ -182,6 +186,9 @@ export function SettingsScreen({
   const [continuousCaptureCamera, setContinuousCaptureCameraState] = useState<ContinuousCaptureCamera>(
     DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
   );
+  const [primaryCaptureCamera, setPrimaryCaptureCameraState] = useState<ContinuousCaptureCamera>(
+    DEFAULT_PRIMARY_CAPTURE_CAMERA,
+  );
   const [captureAfterMode, setCaptureAfterModeState] = useState<CaptureAfterMode>(
     DEFAULT_CAPTURE_AFTER_MODE,
   );
@@ -213,7 +220,7 @@ export function SettingsScreen({
     (async () => {
       setLoading(true);
       try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, continuousCamera, afterCapture, hand, floorMode, floorDisplay, titleDatetime, coordsMode, locMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
+        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, primaryCamera, continuousCamera, afterCapture, hand, floorMode, floorDisplay, titleDatetime, coordsMode, locMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
           await Promise.all([
           getStampsFolderName(),
           getPdfPhotosPerPage(),
@@ -225,6 +232,7 @@ export function SettingsScreen({
           getStampTextLayout(),
           getWatermarkStyle(),
           getGallerySaveMode(),
+          getPrimaryCaptureCamera(),
           getContinuousCaptureCamera(),
           getCaptureAfterMode(),
           getCameraHand(),
@@ -248,6 +256,7 @@ export function SettingsScreen({
         setStampTextLayoutState(textLayout);
         setWatermarkStyleState(wmStyle);
         setGallerySaveModeState(galleryMode);
+        setPrimaryCaptureCameraState(primaryCamera);
         setContinuousCaptureCameraState(continuousCamera);
         setCaptureAfterModeState(afterCapture);
         setCameraHandState(hand);
@@ -280,6 +289,7 @@ export function SettingsScreen({
         savedTextLayout,
         savedWatermarkStyle,
         savedGalleryMode,
+        savedPrimaryCaptureCamera,
         savedContinuousCaptureCamera,
         savedCaptureAfterMode,
         savedCameraHand,
@@ -303,6 +313,7 @@ export function SettingsScreen({
           setStampTextLayout(stampTextLayout),
           setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
+          setPrimaryCaptureCamera(primaryCaptureCamera),
           setContinuousCaptureCamera(continuousCaptureCamera),
           setCaptureAfterMode(captureAfterMode),
           setCameraHand(cameraHand),
@@ -326,6 +337,7 @@ export function SettingsScreen({
       setStampTextLayoutState(savedTextLayout);
       setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
+      setPrimaryCaptureCameraState(savedPrimaryCaptureCamera);
       setContinuousCaptureCameraState(savedContinuousCaptureCamera);
       setCaptureAfterModeState(savedCaptureAfterMode);
       setCameraHandState(savedCameraHand);
@@ -342,7 +354,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -365,6 +377,7 @@ export function SettingsScreen({
     setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
     setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
     setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
+    setPrimaryCaptureCameraState(DEFAULT_PRIMARY_CAPTURE_CAMERA);
     setContinuousCaptureCameraState(DEFAULT_CONTINUOUS_CAPTURE_CAMERA);
     setCameraHandState(DEFAULT_CAMERA_HAND);
   };
@@ -812,6 +825,30 @@ export function SettingsScreen({
             })}
           </View>
 
+          <Text style={[styles.label, styles.sectionGap]}>일반 촬영 카메라</Text>
+          <Text style={styles.hint}>
+            홈에서 사진 1장을 찍을 때 사용합니다. 시스템은 화질·줌에 유리하고, 앱 내는 확인 화면 없이 빠릅니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {(['system', 'in_app'] as ContinuousCaptureCamera[]).map((option) => {
+              const selected = primaryCaptureCamera === option;
+              return (
+                <Pressable
+                  key={`primary-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setPrimaryCaptureCameraState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {primaryCaptureCameraLabel(option)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
           <Text style={[styles.label, styles.sectionGap]}>촬영 후</Text>
           <Text style={styles.hint}>
             「선택 화면」은 연속 촬영·저장·다시 촬영 중 고릅니다. 「저장 화면 바로」는 런처 없이 제목·메모 입력 화면으로 바로 갑니다.
@@ -838,14 +875,14 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>연속 촬영 카메라</Text>
           <Text style={styles.hint}>
-            연속 촬영 2장째부터 사용합니다. 1장은 시스템 카메라로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠릅니다. 일반 촬영은 항상 시스템 카메라입니다.
+            연속 촬영 2장째부터 사용합니다. 1장은 일반 촬영 카메라 설정으로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠릅니다.
           </Text>
           <View style={styles.optionRow}>
             {(['in_app', 'system'] as ContinuousCaptureCamera[]).map((option) => {
               const selected = continuousCaptureCamera === option;
               return (
                 <Pressable
-                  key={option}
+                  key={`continuous-${option}`}
                   style={[styles.optionButton, selected && styles.optionButtonSelected]}
                   onPress={() => setContinuousCaptureCameraState(option)}
                   disabled={saving}

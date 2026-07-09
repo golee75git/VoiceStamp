@@ -2199,3 +2199,20 @@ Copy-Item src.pre-last-place-off\components\StampSaveModal.tsx src\components\ -
 Copy-Item src.pre-last-place-off\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-last-place-off\help.html public\ -Force
 ```
+
+## 135. 일반 촬영 카메라(시스템/앱 내) 되돌리기 (선택)
+
+일반 촬영 카메라 설정 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-primary-capture-camera.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-primary-capture-camera\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-primary-capture-camera\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-primary-capture-camera\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-primary-capture-camera\help.html public\ -Force
+```

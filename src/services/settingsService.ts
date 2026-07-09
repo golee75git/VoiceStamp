@@ -40,6 +40,7 @@ const COORDS_LABEL_KEY = 'coords_label';
 const LOCATION_MODE_KEY = 'location_mode';
 const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CONTINUOUS_CAPTURE_CAMERA_KEY = 'continuous_capture_camera';
+const PRIMARY_CAPTURE_CAMERA_KEY = 'primary_capture_camera';
 const CAPTURE_AFTER_MODE_KEY = 'capture_after_mode';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
@@ -79,6 +80,7 @@ export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_LOCATION_MODE = 'auto' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
+export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
@@ -131,8 +133,16 @@ export async function isLocationLookupEnabled(): Promise<boolean> {
   return (await getLocationMode()) === 'auto';
 }
 
-export function continuousCaptureCameraLabel(mode: ContinuousCaptureCamera): string {
+export function captureCameraLabel(mode: ContinuousCaptureCamera): string {
   return mode === 'in_app' ? '앱 내 (빠름)' : '시스템';
+}
+
+export function continuousCaptureCameraLabel(mode: ContinuousCaptureCamera): string {
+  return captureCameraLabel(mode);
+}
+
+export function primaryCaptureCameraLabel(mode: ContinuousCaptureCamera): string {
+  return captureCameraLabel(mode);
 }
 
 export function captureAfterModeLabel(mode: CaptureAfterMode): string {
@@ -533,6 +543,22 @@ export async function setContinuousCaptureCamera(
 ): Promise<ContinuousCaptureCamera> {
   const safeMode = sanitizeContinuousCaptureCamera(mode);
   await writeSetting(CONTINUOUS_CAPTURE_CAMERA_KEY, safeMode);
+  return safeMode;
+}
+
+export async function getPrimaryCaptureCamera(): Promise<ContinuousCaptureCamera> {
+  const value = await readSetting(PRIMARY_CAPTURE_CAMERA_KEY);
+  if (!value) {
+    return DEFAULT_PRIMARY_CAPTURE_CAMERA;
+  }
+  return sanitizeContinuousCaptureCamera(value);
+}
+
+export async function setPrimaryCaptureCamera(
+  mode: ContinuousCaptureCamera,
+): Promise<ContinuousCaptureCamera> {
+  const safeMode = sanitizeContinuousCaptureCamera(mode);
+  await writeSetting(PRIMARY_CAPTURE_CAMERA_KEY, safeMode);
   return safeMode;
 }
 

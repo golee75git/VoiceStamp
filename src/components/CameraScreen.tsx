@@ -19,7 +19,7 @@ import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
@@ -39,6 +39,8 @@ type CameraScreenProps = {
   onSaved: () => void;
   captureStampForExport: CaptureStampForExport;
 };
+
+type InAppCameraMode = 'single' | 'continuous';
 
 export function CameraScreen({
   refreshKey,
@@ -65,7 +67,7 @@ export function CameraScreen({
   const [prefetchedLocation, setPrefetchedLocation] = useState<LocationSnapshot | null>(null);
   const [locationPrefetchLoading, setLocationPrefetchLoading] = useState(false);
   const [locationPrefetchFinished, setLocationPrefetchFinished] = useState(false);
-  const [inAppContinuousActive, setInAppContinuousActive] = useState(false);
+  const [inAppCameraMode, setInAppCameraMode] = useState<InAppCameraMode | null>(null);
   const [inAppCameraReady, setInAppCameraReady] = useState(false);
   const [inAppCapturing, setInAppCapturing] = useState(false);
   const [inAppPictureSize, setInAppPictureSize] = useState<string | undefined>();
@@ -287,8 +289,8 @@ export function CameraScreen({
     [captureStampForExport, handleCameraError, isWeb, onSaved, openSaveModal],
   );
 
-  const exitInAppContinuous = useCallback(() => {
-    setInAppContinuousActive(false);
+  const exitInAppCamera = useCallback(() => {
+    setInAppCameraMode(null);
     setInAppCameraReady(false);
     setInAppCapturing(false);
     reuseLocationRef.current = null;
@@ -311,7 +313,7 @@ export function CameraScreen({
         }
         reuseLocationRef.current = reuseLocation;
         onSaved();
-        setInAppContinuousActive(true);
+        setInAppCameraMode('continuous');
       } catch (error) {
         handleCameraError(error);
         openSaveModal(firstUri);
@@ -336,14 +338,14 @@ export function CameraScreen({
     }
   }, []);
 
-  const handleInAppContinuousShutter = useCallback(async () => {
-    if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy) {
+  const handleInAppShutter = useCallback(async () => {
+    if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy || !inAppCameraMode) {
       return;
     }
 
     setInAppCapturing(true);
     setCameraBusy(true);
-    setBusyHint('저장 중…');
+    setBusyHint(inAppCameraMode === 'continuous' ? '저장 중…' : '처리 중…');
     startLocationWarmup();
     try {
       const photo = await cameraRef.current.takePictureAsync({
@@ -351,6 +353,13 @@ export function CameraScreen({
         skipProcessing: false,
       });
       if (!photo?.uri) {
+        return;
+      }
+
+      if (inAppCameraMode === 'single') {
+        setInAppCameraMode(null);
+        setInAppCameraReady(false);
+        await handleCapturedUri(photo.uri);
         return;
       }
 
@@ -374,6 +383,8 @@ export function CameraScreen({
     cameraBusy,
     captureStampForExport,
     handleCameraError,
+    handleCapturedUri,
+    inAppCameraMode,
     inAppCameraReady,
     inAppCapturing,
     onSaved,
@@ -386,7 +397,7 @@ export function CameraScreen({
       modalVisible ||
       actionSheetVisibleRef.current ||
       launchingRef.current ||
-      inAppContinuousActive
+      inAppCameraMode !== null
     ) {
       return;
     }
@@ -418,16 +429,47 @@ export function CameraScreen({
     clearCaptureBusy,
     handleCameraError,
     handleCapturedUri,
-    inAppContinuousActive,
+    inAppCameraMode,
     isWeb,
     startLocationWarmup,
   ]);
 
+  const openInAppCamera = useCallback(
+    (mode: InAppCameraMode) => {
+      if (
+        cameraBusy ||
+        modalVisible ||
+        actionSheetVisibleRef.current ||
+        launchingRef.current ||
+        inAppCameraMode !== null
+      ) {
+        return;
+      }
+      startLocationWarmup();
+      setInAppCameraReady(false);
+      setInAppCameraMode(mode);
+    },
+    [cameraBusy, inAppCameraMode, modalVisible, startLocationWarmup],
+  );
+
+  const openPrimaryCapture = useCallback(async () => {
+    if (isWeb) {
+      await openSystemCamera();
+      return;
+    }
+    const mode = await getPrimaryCaptureCamera();
+    if (mode === 'in_app') {
+      openInAppCamera('single');
+      return;
+    }
+    await openSystemCamera();
+  }, [isWeb, openInAppCamera, openSystemCamera]);
+
   const handleActionRetake = useCallback(() => {
     cancelLocationPrefetch();
     clearCaptureActionSheet();
-    void openSystemCamera();
-  }, [cancelLocationPrefetch, clearCaptureActionSheet, openSystemCamera]);
+    void openPrimaryCapture();
+  }, [cancelLocationPrefetch, clearCaptureActionSheet, openPrimaryCapture]);
 
   const handleActionSave = useCallback(() => {
     const uri = pendingCaptureUri;
@@ -472,17 +514,17 @@ export function CameraScreen({
   ]);
 
   useEffect(() => {
-    if (!inAppContinuousActive) {
+    if (!inAppCameraMode) {
       return;
     }
 
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      exitInAppContinuous();
+      exitInAppCamera();
       return true;
     });
 
     return () => sub.remove();
-  }, [exitInAppContinuous, inAppContinuousActive]);
+  }, [exitInAppCamera, inAppCameraMode]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -520,7 +562,7 @@ export function CameraScreen({
       modalVisible ||
       cameraBusy ||
       actionSheetVisible ||
-      inAppContinuousActive
+      inAppCameraMode !== null
     ) {
       return;
     }
@@ -528,7 +570,7 @@ export function CameraScreen({
       return;
     }
 
-    void openSystemCamera();
+    void openPrimaryCapture();
   }, [
     readyToLaunch,
     permission?.granted,
@@ -536,8 +578,8 @@ export function CameraScreen({
     modalVisible,
     cameraBusy,
     actionSheetVisible,
-    inAppContinuousActive,
-    openSystemCamera,
+    inAppCameraMode,
+    openPrimaryCapture,
     refreshKey,
   ]);
 
@@ -563,7 +605,8 @@ export function CameraScreen({
     );
   }
 
-  if (inAppContinuousActive && !isWeb) {
+  if (inAppCameraMode && !isWeb) {
+    const isContinuous = inAppCameraMode === 'continuous';
     return (
       <View style={styles.container}>
         <CameraView
@@ -575,8 +618,10 @@ export function CameraScreen({
         />
 
         <View style={styles.inAppTopBar}>
-          <Text style={styles.inAppTitle}>연속 촬영</Text>
-          <Text style={styles.inAppHint}>셔터 → 저장 · 완료로 종료</Text>
+          <Text style={styles.inAppTitle}>{isContinuous ? '연속 촬영' : '사진 촬영'}</Text>
+          <Text style={styles.inAppHint}>
+            {isContinuous ? '셔터 → 저장 · 완료로 종료' : '셔터 → 확인 · 취소로 돌아가기'}
+          </Text>
         </View>
 
         <View
@@ -587,18 +632,18 @@ export function CameraScreen({
         >
           <Pressable
             style={styles.inAppDoneButton}
-            onPress={exitInAppContinuous}
+            onPress={exitInAppCamera}
             disabled={cameraBusy || inAppCapturing}
-            accessibilityLabel="연속 촬영 완료"
+            accessibilityLabel={isContinuous ? '연속 촬영 완료' : '촬영 취소'}
           >
-            <Text style={styles.inAppDoneButtonText}>완료</Text>
+            <Text style={styles.inAppDoneButtonText}>{isContinuous ? '완료' : '취소'}</Text>
           </Pressable>
         </View>
 
         <View style={styles.inAppBottomBar}>
           <Pressable
             style={styles.inAppShutterOuter}
-            onPress={() => void handleInAppContinuousShutter()}
+            onPress={() => void handleInAppShutter()}
             disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
             accessibilityRole="button"
             accessibilityLabel="촬영"
@@ -610,7 +655,7 @@ export function CameraScreen({
         {cameraBusy ? (
           <View style={styles.busyOverlay}>
             <ActivityIndicator size="large" color="#fff" />
-            <Text style={styles.launcherHint}>{busyHint ?? '저장 중…'}</Text>
+            <Text style={styles.launcherHint}>{busyHint ?? (isContinuous ? '저장 중…' : '처리 중…')}</Text>
           </View>
         ) : null}
       </View>
@@ -630,7 +675,7 @@ export function CameraScreen({
         </View>
         <Pressable
           style={styles.launchCaptureButton}
-          onPress={() => void openSystemCamera()}
+          onPress={() => void openPrimaryCapture()}
           disabled={cameraBusy || actionSheetVisible}
           accessibilityRole="button"
           accessibilityLabel="사진 촬영"
