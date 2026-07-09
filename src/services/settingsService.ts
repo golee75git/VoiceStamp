@@ -334,6 +334,152 @@ async function writeSetting(key: string, value: string): Promise<void> {
   );
 }
 
+async function readAllSettingsMap(): Promise<Map<string, string>> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{ key: string; value: string }>(
+    'SELECT key, value FROM app_settings',
+  );
+  return new Map(rows.map((row) => [row.key, row.value]));
+}
+
+function pickSetting(map: Map<string, string>, key: string): string | null {
+  return map.get(key) ?? null;
+}
+
+export type SettingsScreenSnapshot = {
+  folderName: string;
+  pdfPhotosPerPage: PdfPhotosPerPage;
+  pdfImageQuality: PdfImageQuality;
+  titleTextAlign: TextAlign;
+  memoTextAlign: TextAlign;
+  pdfShowDatetime: boolean;
+  pdfFilenameIncludeDatetime: boolean;
+  stampTextLayout: StampTextLayout;
+  watermarkStyle: WatermarkStyle;
+  gallerySaveMode: GallerySaveMode;
+  primaryCaptureCamera: ContinuousCaptureCamera;
+  continuousCaptureCamera: ContinuousCaptureCamera;
+  captureAfterMode: CaptureAfterMode;
+  cameraHand: CameraHand;
+  floorPickerMode: FloorPickerMode;
+  floorDisplayMode: FloorDisplayMode;
+  titleDatetimeMode: TitleDatetimeMode;
+  coordsLabelMode: CoordsLabelMode;
+  locationMode: LocationMode;
+  overlayOrgName: string;
+  overlayFooterPhrase: string;
+  overlayShowOrgName: boolean;
+  overlayShowFooterPhrase: boolean;
+};
+
+export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
+  const map = await readAllSettingsMap();
+
+  const folderRaw = pickSetting(map, STAMPS_FOLDER_KEY);
+  const perPageRaw = pickSetting(map, PDF_PHOTOS_PER_PAGE_KEY);
+  const perPageParsed = perPageRaw ? Number.parseInt(perPageRaw, 10) : Number.NaN;
+
+  const floorDisplayMode = (() => {
+    const raw = pickSetting(map, FLOOR_DISPLAY_MODE_KEY);
+    return raw ? sanitizeFloorDisplayMode(raw) : DEFAULT_FLOOR_DISPLAY_MODE;
+  })();
+  setFloorDisplayModeCache(floorDisplayMode);
+
+  const titleDatetimeMode = (() => {
+    const raw = pickSetting(map, TITLE_DATETIME_MODE_KEY);
+    return raw ? sanitizeTitleDatetimeMode(raw) : DEFAULT_TITLE_DATETIME_MODE;
+  })();
+  setTitleDatetimeModeCache(titleDatetimeMode);
+
+  return {
+    folderName: folderRaw ? sanitizeStampsFolderName(folderRaw) : DEFAULT_STAMPS_FOLDER,
+    pdfPhotosPerPage:
+      perPageRaw && !Number.isNaN(perPageParsed)
+        ? sanitizePdfPhotosPerPage(perPageParsed)
+        : DEFAULT_PDF_PHOTOS_PER_PAGE,
+    pdfImageQuality: (() => {
+      const raw = pickSetting(map, PDF_IMAGE_QUALITY_KEY);
+      return raw ? sanitizePdfImageQuality(raw) : DEFAULT_PDF_IMAGE_QUALITY;
+    })(),
+    titleTextAlign: (() => {
+      const raw = pickSetting(map, TITLE_TEXT_ALIGN_KEY);
+      return raw ? sanitizeTextAlign(raw) : DEFAULT_TITLE_TEXT_ALIGN;
+    })(),
+    memoTextAlign: (() => {
+      const raw = pickSetting(map, MEMO_TEXT_ALIGN_KEY);
+      return raw ? sanitizeTextAlign(raw) : DEFAULT_MEMO_TEXT_ALIGN;
+    })(),
+    pdfShowDatetime: parseBooleanSetting(
+      pickSetting(map, PDF_SHOW_DATETIME_KEY),
+      DEFAULT_PDF_SHOW_DATETIME,
+    ),
+    pdfFilenameIncludeDatetime: parseBooleanSetting(
+      pickSetting(map, PDF_FILENAME_INCLUDE_DATETIME_KEY),
+      DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
+    ),
+    stampTextLayout: (() => {
+      const raw = pickSetting(map, STAMP_TEXT_LAYOUT_KEY);
+      return raw ? sanitizeStampTextLayout(raw) : DEFAULT_STAMP_TEXT_LAYOUT;
+    })(),
+    watermarkStyle: (() => {
+      const raw = pickSetting(map, WATERMARK_STYLE_KEY);
+      return raw ? sanitizeWatermarkStyle(raw) : DEFAULT_WATERMARK_STYLE;
+    })(),
+    gallerySaveMode: (() => {
+      const raw = pickSetting(map, GALLERY_SAVE_MODE_KEY);
+      return raw ? sanitizeGallerySaveMode(raw) : DEFAULT_GALLERY_SAVE_MODE;
+    })(),
+    primaryCaptureCamera: (() => {
+      const raw = pickSetting(map, PRIMARY_CAPTURE_CAMERA_KEY);
+      return raw ? sanitizeContinuousCaptureCamera(raw) : DEFAULT_PRIMARY_CAPTURE_CAMERA;
+    })(),
+    continuousCaptureCamera: (() => {
+      const raw = pickSetting(map, CONTINUOUS_CAPTURE_CAMERA_KEY);
+      return raw ? sanitizeContinuousCaptureCamera(raw) : DEFAULT_CONTINUOUS_CAPTURE_CAMERA;
+    })(),
+    captureAfterMode: (() => {
+      const raw = pickSetting(map, CAPTURE_AFTER_MODE_KEY);
+      return raw ? sanitizeCaptureAfterMode(raw) : DEFAULT_CAPTURE_AFTER_MODE;
+    })(),
+    cameraHand: (() => {
+      const raw = pickSetting(map, CAMERA_HAND_KEY);
+      return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
+    })(),
+    floorPickerMode: (() => {
+      const raw = pickSetting(map, FLOOR_PICKER_MODE_KEY);
+      return raw ? sanitizeFloorPickerMode(raw) : DEFAULT_FLOOR_PICKER_MODE;
+    })(),
+    floorDisplayMode,
+    titleDatetimeMode,
+    coordsLabelMode: (() => {
+      const raw = pickSetting(map, COORDS_LABEL_KEY);
+      return raw ? sanitizeCoordsLabelMode(raw) : DEFAULT_COORDS_LABEL_MODE;
+    })(),
+    locationMode: (() => {
+      const raw = pickSetting(map, LOCATION_MODE_KEY);
+      return raw ? sanitizeLocationMode(raw) : DEFAULT_LOCATION_MODE;
+    })(),
+    overlayOrgName: (() => {
+      const raw = pickSetting(map, OVERLAY_ORG_NAME_KEY);
+      return raw ? sanitizeOverlayText(raw, OVERLAY_ORG_MAX_LENGTH) : DEFAULT_OVERLAY_ORG_NAME;
+    })(),
+    overlayFooterPhrase: (() => {
+      const raw = pickSetting(map, OVERLAY_FOOTER_PHRASE_KEY);
+      return raw
+        ? sanitizeOverlayText(raw, OVERLAY_PHRASE_MAX_LENGTH)
+        : DEFAULT_OVERLAY_FOOTER_PHRASE;
+    })(),
+    overlayShowOrgName: (() => {
+      const raw = pickSetting(map, OVERLAY_SHOW_ORG_NAME_KEY);
+      return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_ORG_NAME;
+    })(),
+    overlayShowFooterPhrase: (() => {
+      const raw = pickSetting(map, OVERLAY_SHOW_FOOTER_PHRASE_KEY);
+      return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE;
+    })(),
+  };
+}
+
 export async function getStampsFolderName(): Promise<string> {
   const value = await readSetting(STAMPS_FOLDER_KEY);
   if (!value) {

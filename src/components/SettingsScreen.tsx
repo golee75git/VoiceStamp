@@ -59,30 +59,8 @@ import {
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
   coordsLabelModeLabel,
-  getLocationMode,
   locationModeLabel,
-  getCoordsLabelMode,
-  getFloorDisplayMode,
-  getFloorPickerMode,
-  getTitleDatetimeMode,
-  getCameraHand,
-  getGallerySaveMode,
-  getContinuousCaptureCamera,
-  getPrimaryCaptureCamera,
-  getCaptureAfterMode,
-  getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
-  getPdfFilenameIncludeDatetime,
-  getPdfImageQuality,
-  getPdfPhotosPerPage,
-  getPdfShowDatetime,
-  getStampTextLayout,
-  getWatermarkStyle,
-  getStampsFolderName,
-  getTitleTextAlign,
+  loadSettingsForScreen,
   type CameraHand,
   type CoordsLabelMode,
   type LocationMode,
@@ -216,67 +194,42 @@ export function SettingsScreen({
   const [overlayShowFooterPhrase, setOverlayShowFooterPhraseState] = useState(
     DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   );
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, primaryCamera, continuousCamera, afterCapture, hand, floorMode, floorDisplay, titleDatetime, coordsMode, locMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
-          await Promise.all([
-          getStampsFolderName(),
-          getPdfPhotosPerPage(),
-          getPdfImageQuality(),
-          getTitleTextAlign(),
-          getMemoTextAlign(),
-          getPdfShowDatetime(),
-          getPdfFilenameIncludeDatetime(),
-          getStampTextLayout(),
-          getWatermarkStyle(),
-          getGallerySaveMode(),
-          getPrimaryCaptureCamera(),
-          getContinuousCaptureCamera(),
-          getCaptureAfterMode(),
-          getCameraHand(),
-          getFloorPickerMode(),
-          getFloorDisplayMode(),
-          getTitleDatetimeMode(),
-          getCoordsLabelMode(),
-          getLocationMode(),
-          getOverlayOrgName(),
-          getOverlayFooterPhrase(),
-          getOverlayShowOrgName(),
-          getOverlayShowFooterPhrase(),
-        ]);
-        setFolderName(name);
-        setPdfPhotosPerPageState(perPage);
-        setPdfImageQualityState(quality);
-        setTitleTextAlignState(titleAlign);
-        setMemoTextAlignState(memoAlign);
-        setPdfShowDatetimeState(showDatetime);
-        setPdfFilenameIncludeDatetimeState(filenameDatetime);
-        setStampTextLayoutState(textLayout);
-        setWatermarkStyleState(wmStyle);
-        setGallerySaveModeState(galleryMode);
-        setPrimaryCaptureCameraState(primaryCamera);
-        setContinuousCaptureCameraState(continuousCamera);
-        setCaptureAfterModeState(afterCapture);
-        setCameraHandState(hand);
-        setFloorPickerModeState(floorMode);
-        setFloorDisplayModeState(floorDisplay);
-        setTitleDatetimeModeState(titleDatetime);
-        setCoordsLabelModeState(coordsMode);
-        setLocationModeState(locMode);
-        setOverlayOrgNameState(orgName);
-        setOverlayFooterPhraseState(footerPhrase);
-        setOverlayShowOrgNameState(showOrgName);
-        setOverlayShowFooterPhraseState(showFooterPhrase);
-      } finally {
-        setLoading(false);
+    let cancelled = false;
+    void loadSettingsForScreen().then((snapshot) => {
+      if (cancelled) {
+        return;
       }
-    })();
+      setFolderName(snapshot.folderName);
+      setPdfPhotosPerPageState(snapshot.pdfPhotosPerPage);
+      setPdfImageQualityState(snapshot.pdfImageQuality);
+      setTitleTextAlignState(snapshot.titleTextAlign);
+      setMemoTextAlignState(snapshot.memoTextAlign);
+      setPdfShowDatetimeState(snapshot.pdfShowDatetime);
+      setPdfFilenameIncludeDatetimeState(snapshot.pdfFilenameIncludeDatetime);
+      setStampTextLayoutState(snapshot.stampTextLayout);
+      setWatermarkStyleState(snapshot.watermarkStyle);
+      setGallerySaveModeState(snapshot.gallerySaveMode);
+      setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
+      setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
+      setCaptureAfterModeState(snapshot.captureAfterMode);
+      setCameraHandState(snapshot.cameraHand);
+      setFloorPickerModeState(snapshot.floorPickerMode);
+      setFloorDisplayModeState(snapshot.floorDisplayMode);
+      setTitleDatetimeModeState(snapshot.titleDatetimeMode);
+      setCoordsLabelModeState(snapshot.coordsLabelMode);
+      setLocationModeState(snapshot.locationMode);
+      setOverlayOrgNameState(snapshot.overlayOrgName);
+      setOverlayFooterPhraseState(snapshot.overlayFooterPhrase);
+      setOverlayShowOrgNameState(snapshot.overlayShowOrgName);
+      setOverlayShowFooterPhraseState(snapshot.overlayShowFooterPhrase);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [refreshKey]);
 
   const handleSave = async () => {
@@ -376,17 +329,12 @@ export function SettingsScreen({
         <Text style={styles.title}>설정</Text>
       </View>
 
-      {loading ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={[styles.body, styles.bodyWithBottomBar]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator
-          >
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.body, styles.bodyWithBottomBar]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator
+      >
           <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
             앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다. 기본값: {DEFAULT_STAMPS_FOLDER}
@@ -990,11 +938,9 @@ export function SettingsScreen({
             <Text style={styles.secondaryButtonText}>도움말</Text>
           </Pressable>
           <Text style={styles.copyright}>© 2026 이형우</Text>
-          </ScrollView>
-      )}
+      </ScrollView>
 
-      {!loading ? (
-        <View style={styles.bottomBar}>
+      <View style={styles.bottomBar}>
           <Pressable
             style={styles.bottomBackSlot}
             onPress={onBack}
@@ -1014,8 +960,7 @@ export function SettingsScreen({
               <Text style={styles.primaryButtonText}>저장</Text>
             )}
           </Pressable>
-        </View>
-      ) : null}
+      </View>
     </View>
   );
 }
@@ -1038,11 +983,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#111',
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   scroll: {
     flex: 1,

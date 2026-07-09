@@ -2278,3 +2278,19 @@ restore-settings-bottom-bar.bat
 Copy-Item src.pre-settings-bottom-bar\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-settings-bottom-bar\help.html public\ -Force
 ```
+
+## 140. 설정 빠른 로드(한 번에 읽기·스피너 제거) 되돌리기 (선택)
+
+설정 DB 일괄 로드 및 즉시 표시 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings-fast-load.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-fast-load\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-settings-fast-load\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings-fast-load\help.html public\ -Force
+```
