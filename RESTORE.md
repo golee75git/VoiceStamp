@@ -2182,3 +2182,20 @@ restore-zoom-transparent.bat
 ```powershell
 Copy-Item assets.pre-zoom-transparent\zoom.png assets\ -Force
 ```
+
+## 134. 위치 끔 시 직전 장소 자동 채움 되돌리기 (선택)
+
+위치 조회를 끈 상태에서 저장 모달 장소란에 직전 장소를 자동 표시하는 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-last-place-off.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-last-place-off\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-last-place-off\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-last-place-off\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-last-place-off\help.html public\ -Force
+```

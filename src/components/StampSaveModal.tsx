@@ -26,7 +26,13 @@ import {
   refreshStampGroupDate,
 } from '../services/fileService';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
-import { getCurrentSiteName, setCurrentSiteName, setLastCapturePlaceCache } from '../services/settingsService';
+import {
+  getCurrentSiteName,
+  getLastPlaceLabel,
+  setCurrentSiteName,
+  setLastCapturePlaceCache,
+  setLastPlaceLabel,
+} from '../services/settingsService';
 import type { CameraHand, CoordsLabelMode, StampTextLayout, TextAlign, WatermarkStyle } from '../services/settingsService';
 import {
   loadStampSaveModalLayoutSettings,
@@ -555,6 +561,12 @@ export function StampSaveModal({
       setLocationLookupEnabled(locationEnabled);
       if (!locationEnabled) {
         setLocationLoading(false);
+        if (!placeTouchedRef.current) {
+          const lastPlace = await getLastPlaceLabel();
+          if (lastPlace) {
+            setPlaceLabel(lastPlace);
+          }
+        }
         return;
       }
 
@@ -800,6 +812,9 @@ export function StampSaveModal({
           placeLabel,
           captureForExport: captureStampForExport,
         });
+        if (placeLabel?.trim()) {
+          await setLastPlaceLabel(placeLabel);
+        }
         const coords = captureCoordsRef.current;
         if (coords && placeLabel) {
           await setLastCapturePlaceCache({

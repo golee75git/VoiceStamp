@@ -791,10 +791,24 @@ export async function getLastCapturePlaceCache(): Promise<LastCapturePlaceCache 
   };
 }
 
+export async function getLastPlaceLabel(): Promise<string | null> {
+  const raw = await readSetting(LAST_PLACE_LABEL_KEY);
+  const trimmed = raw?.trim();
+  return trimmed || null;
+}
+
+export async function setLastPlaceLabel(placeLabel: string): Promise<void> {
+  const trimmed = placeLabel.trim();
+  if (!trimmed) {
+    return;
+  }
+  await writeSetting(LAST_PLACE_LABEL_KEY, trimmed);
+}
+
 export async function setLastCapturePlaceCache(cache: LastCapturePlaceCache): Promise<void> {
   await Promise.all([
     writeSetting(LAST_CAPTURE_LAT_KEY, String(cache.latitude)),
     writeSetting(LAST_CAPTURE_LON_KEY, String(cache.longitude)),
-    writeSetting(LAST_PLACE_LABEL_KEY, cache.placeLabel.trim()),
+    setLastPlaceLabel(cache.placeLabel),
   ]);
 }
