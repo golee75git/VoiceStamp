@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-07-06 |
-| 기준 커밋 | `f6d33fd` (main) |
+| 작성일 | 2026-07-09 |
+| 기준 커밋 | `ed2f7ec` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -345,6 +345,27 @@
 
 > **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`).
 
+## 2W. Phase 3 추가 완료 (2026-07-09)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 229 | **위치 끔** 시 **직전 장소** 자동 채움 | `392e611` | `restore-last-place-off.bat` §134 |
+| 230 | GitHub APK `releases/20260709_140843` · 랜딩·`/info` | `392e611` | — |
+| 231 | **일반 촬영 카메라** (시스템/앱 내) | `fc076c8` | `restore-primary-capture-camera.bat` §135 |
+| 232 | GitHub APK `releases/20260709_145528` · 랜딩·`/info` | `fc076c8` | — |
+| 233 | 앱 내 카메라 **핀치·더블탭 확대** | `3c3ee0f` | `restore-in-app-camera-zoom.bat` §136 |
+| 234 | GitHub APK `releases/20260709_151301` · 랜딩·`/info` | `3c3ee0f` | — |
+| 235 | 설정 **저장 버튼 하단 고정** | `9fb7e16` | `restore-settings-sticky-save.bat` §137 |
+| 236 | GitHub APK `releases/20260709_153137` · 랜딩·`/info` | `9fb7e16` | — |
+| 237 | 설정 칩 **· 기본**·**기본값 버튼 제거** | `d68edeb` | `restore-settings-default-chips.bat` §138 |
+| 238 | GitHub APK `releases/20260709_163343` · 랜딩·`/info` | `d68edeb` | — |
+| 239 | 설정 **하단 바**(뒤로·저장, `bottom: 31`) | `9903447` | `restore-settings-bottom-bar.bat` §139 |
+| 240 | GitHub APK `releases/20260709_164922` · 랜딩·`/info` | `9903447` | — |
+| 241 | 설정 **`loadSettingsForScreen()`**·스피너 제거 | `ed2f7ec` | `restore-settings-fast-load.bat` §140 |
+| 242 | GitHub APK `releases/20260709_170409` · 랜딩·`/info` | `ed2f7ec` | `restore-apk-download-20260709_170409.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`).
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -384,6 +405,7 @@
 | (본 갱신) | `61ca32a` 반영 — 위치 속도·저장 미리보기·촬영 후 모드·APK `165406`·날짜별·APK별 이력 |
 | (본 갱신) | `baf6a30` 반영 — 갤러리 **앱만**·장소 필드·PDF 캡션·photo-slot·APK `162433`·날짜별·APK별 이력 |
 | (본 갱신) | `f6d33fd` 반영 — **zoom 배지**·목록 내보내기 **이름 모달**·APK `112756`·날짜별·APK별 이력 |
+| (본 갱신) | `ed2f7ec` 반영 — **직전 장소**·**일반 촬영 카메라**·**인앱 확대**·설정 UI·**빠른 로드**·APK `170409`·날짜별·APK별 이력 |
 
 ---
 
@@ -474,7 +496,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`) |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`) |
 | GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260706_112756.apk |
 | 최신 소스 | `f6d33fd` — zoom 투명 배지·목록 내보내기 이름 모달 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
@@ -501,7 +523,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~122 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~140 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
@@ -541,6 +563,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-01 | 2T·3 | **위치 속도**·저장 **즉시 미리보기**·**촬영 후 모드** · **학교명만**·저장 **성능**·**처리 중 오버레이** · APK `165406`·`221146`·`225211`·`230340` (`2b830ba`~`376368b`) |
 | 2026-07-03 | 2U·3 | 갤러리 **앱만** · **위치 끔**이어도 **장소 입력** · PDF **캡션 너비**·**동일 photo-slot** · APK `143138`·`152212`·`154800`·`162433` (`61bb13a`~`baf6a30`) |
 | 2026-07-06 | 2V·3 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `095128`~`112756` (`e04ce17`~`f6d33fd`) |
+| 2026-07-09 | 2W·3 | **직전 장소**·**일반 촬영 카메라**·**인앱 핀치/더블탭 확대**·설정 **저장 고정**·**· 기본 칩**·**하단 바**·**빠른 로드** · APK 140843~170409 (392e611~ed2f7ec) |
 
 ---
 
@@ -548,7 +571,14 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260706_112756.apk` | `f6d33fd` | **설치·GitHub 권장** — **zoom.png 투명 배지** + 07-06 전부 |
+| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | **설치·GitHub 권장** — 설정 **빠른 로드** + 07-09 전부 |
+| `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |
+| `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·기본값 버튼 제거 (하단 바 **미포함**) |
+| `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 하단 고정** (칩·하단 바 **미포함**) |
+| `releases/VoiceStamp_20260709_151301.apk` | `3c3ee0f` | 앱 내 카메라 **핀치·더블탭 확대** (설정 UI **미포함**) |
+| `releases/VoiceStamp_20260709_145528.apk` | `fc076c8` | **일반 촬영 카메라**(시스템/앱 내) (인앱 확대 **미포함**) |
+| `releases/VoiceStamp_20260709_140843.apk` | `392e611` | **위치 끔** 시 **직전 장소** (07-09 카메라·설정 **미포함**) |
+| `releases/VoiceStamp_20260706_112756.apk` | `f6d33fd` | **zoom.png 투명 배지** + 07-06 (07-09 **미포함**) |
 | `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** |
 | `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** |
 | `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | PDF **동일 photo-slot** + 07-03 (07-06 **미포함**) |

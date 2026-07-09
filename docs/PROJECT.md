@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-06**
-최신 커밋 기준: `f6d33fd` (main)
+문서 작성일: **2026-07-09**
+최신 커밋 기준: `ed2f7ec` (main)
 
 ---
 
@@ -321,7 +321,22 @@ VoiceStamp/
 | 221 | 목록 내보내기 **파일명·보고서 제목 모달** (`ExportNameModal`) | `91ce71f` | `restore-list-export-name-modal.bat` §132 |
 | 222 | GitHub APK `releases/20260706_112756` · 랜딩·`/info` | `f6d33fd` | `restore-apk-download-20260706_112756.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260706_112756.apk` (`f6d33fd`).
+| 223 | **위치 끔** 시 **직전 장소** 자동 채움 | `392e611` | `restore-last-place-off.bat` §134 |
+| 224 | GitHub APK `releases/20260709_140843` · 랜딩·`/info` | `392e611` | — |
+| 225 | **일반 촬영 카메라** (시스템/앱 내) 설정 | `fc076c8` | `restore-primary-capture-camera.bat` §135 |
+| 226 | GitHub APK `releases/20260709_145528` · 랜딩·`/info` | `fc076c8` | — |
+| 227 | 앱 내 카메라 **핀치·더블탭 확대** (`InAppCameraPreview`) | `3c3ee0f` | `restore-in-app-camera-zoom.bat` §136 |
+| 228 | GitHub APK `releases/20260709_151301` · 랜딩·`/info` | `3c3ee0f` | — |
+| 229 | 설정 **저장 버튼 하단 고정** | `9fb7e16` | `restore-settings-sticky-save.bat` §137 |
+| 230 | GitHub APK `releases/20260709_153137` · 랜딩·`/info` | `9fb7e16` | — |
+| 231 | 설정 칩 **· 기본**·**기본값 버튼 제거** | `d68edeb` | `restore-settings-default-chips.bat` §138 |
+| 232 | GitHub APK `releases/20260709_163343` · 랜딩·`/info` | `d68edeb` | — |
+| 233 | 설정 **하단 바**(뒤로·저장 한 줄, `bottom: 31`) | `9903447` | `restore-settings-bottom-bar.bat` §139 |
+| 234 | GitHub APK `releases/20260709_164922` · 랜딩·`/info` | `9903447` | — |
+| 235 | 설정 **`loadSettingsForScreen()`** 일괄 로드·스피너 제거 | `ed2f7ec` | `restore-settings-fast-load.bat` §140 |
+| 236 | GitHub APK `releases/20260709_170409` · 랜딩·`/info` | `ed2f7ec` | `restore-apk-download-20260709_170409.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -387,7 +402,14 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260706_112756.apk`** | `f6d33fd` | **설치·GitHub 권장** — **zoom.png 투명 배지** + 07-06 전부 |
+| **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | **설치·GitHub 권장** — 설정 **빠른 로드** + 07-09 전부 |
+| `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |
+| `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·기본값 버튼 제거 (하단 바 **미포함**) |
+| `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 하단 고정** (칩·하단 바 **미포함**) |
+| `releases/VoiceStamp_20260709_151301.apk` | `3c3ee0f` | 앱 내 카메라 **핀치·더블탭 확대** (설정 UI **미포함**) |
+| `releases/VoiceStamp_20260709_145528.apk` | `fc076c8` | **일반 촬영 카메라**(시스템/앱 내) (인앱 확대 **미포함**) |
+| `releases/VoiceStamp_20260709_140843.apk` | `392e611` | **위치 끔** 시 **직전 장소** (07-09 카메라·설정 **미포함**) |
+| **`releases/VoiceStamp_20260706_112756.apk`** | `f6d33fd` | **zoom.png 투명 배지** + 07-06 (07-09 **미포함**) |
 | `releases/VoiceStamp_20260706_103245.apk` | `91ce71f` | 목록 내보내기 **파일명·보고서 제목 모달** (투명 zoom **미포함**) |
 | `releases/VoiceStamp_20260706_101457.apk` | `08cf91b` | 미리보기 배지 **`zoom.png`** |
 | `releases/VoiceStamp_20260703_162433.apk` | `baf6a30` | PDF **동일 photo-slot** + 07-03 (07-06 **미포함**) |
@@ -460,6 +482,18 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-07-09
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | **권장** — 설정 **`loadSettingsForScreen()`**·스피너 제거 + 07-09 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장, `bottom: 31`) | GitHub |
+| `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·**기본값 버튼 제거** | GitHub |
+| `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 버튼 하단 고정** | GitHub |
+| `releases/VoiceStamp_20260709_151301.apk` | `3c3ee0f` | 앱 내 카메라 **핀치·더블탭 확대** | GitHub |
+| `releases/VoiceStamp_20260709_145528.apk` | `fc076c8` | **일반 촬영 카메라** (시스템/앱 내) | GitHub |
+| `releases/VoiceStamp_20260709_140843.apk` | `392e611` | **위치 끔** 시 **직전 장소** 자동 채움 | GitHub |
 
 #### 2026-07-06
 
@@ -817,6 +851,22 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-09
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`ed2f7ec` 기준) |
+| `ed2f7ec` | APK `releases/VoiceStamp_20260709_170409` — 설정 **`loadSettingsForScreen()`**·스피너 제거 · `restore-settings-fast-load.bat` §140 · Vercel |
+| `9903447` | APK `releases/VoiceStamp_20260709_164922` — 설정 **하단 바**(뒤로·저장) · `restore-settings-bottom-bar.bat` §139 · Vercel |
+| `d68edeb` | APK `releases/VoiceStamp_20260709_163343` — 설정 칩 **· 기본**·기본값 버튼 제거 · `restore-settings-default-chips.bat` §138 · Vercel |
+| `9fb7e16` | APK `releases/VoiceStamp_20260709_153137` — 설정 **저장 하단 고정** · `restore-settings-sticky-save.bat` §137 · Vercel |
+| `3c3ee0f` | APK `releases/VoiceStamp_20260709_151301` — 앱 내 카메라 **핀치·더블탭 확대** · `restore-in-app-camera-zoom.bat` §136 · Vercel |
+| `fc076c8` | APK `releases/VoiceStamp_20260709_145528` — **일반 촬영 카메라** 설정 · `restore-primary-capture-camera.bat` §135 · Vercel |
+| `392e611` | APK `releases/VoiceStamp_20260709_140843` — **위치 끔** 시 **직전 장소** · `restore-last-place-off.bat` §134 · Vercel |
+| `e1bce7a` | PRD·PROJECT·PLAN·README 문서 동기화 (`f6d33fd` 기준) |
+
+> **권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-06
 
@@ -1228,6 +1278,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+ed2f7ec Load settings in one query and show settings screen immediately, publish VoiceStamp_20260709_170409.apk.
+9903447 Align settings back and save buttons on one bottom bar and publish VoiceStamp_20260709_164922.apk.
+d68edeb Show default markers on settings chips, remove reset button, and publish VoiceStamp_20260709_163343.apk.
+9fb7e16 Pin settings save button to bottom footer and publish VoiceStamp_20260709_153137.apk.
+3c3ee0f Add in-app camera pinch and double-tap zoom and publish VoiceStamp_20260709_151301.apk.
+fc076c8 Add primary capture camera setting (system or in-app) and publish VoiceStamp_20260709_145528.apk.
+392e611 Remember last place when location lookup is off and publish VoiceStamp_20260709_140843.apk.
 7e453ea Use full capture pill image for the list screen bottom capture button.
 0d7e72d Use full gallery pill image for the list screen bottom gallery button.
 72ccc32 Replace list bottom attach button with full-size gallery icon and 갤러리 label.
@@ -1249,7 +1306,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | [PLAN.md](./PLAN.md) | 개발 계획·로드맵 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 (`a4a55d2`) |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 처리 안내 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~122) |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 절차 (§1~140) |
 | [../BUILD-APK.md](../BUILD-APK.md) | APK 빌드 |
 | [../README.md](../README.md) | 프로젝트 루트 소개 |
 | [../LICENSE](../LICENSE) | MIT 라이선스 |
