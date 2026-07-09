@@ -2263,3 +2263,18 @@ restore-settings-default-chips.bat
 Copy-Item src.pre-settings-default-chips\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-settings-default-chips\help.html public\ -Force
 ```
+
+## 139. 설정 하단 바(뒤로가기·저장 한 줄) 되돌리기 (선택)
+
+설정 화면 하단 바 정렬 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-settings-bottom-bar.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-bottom-bar\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings-bottom-bar\help.html public\ -Force
+```

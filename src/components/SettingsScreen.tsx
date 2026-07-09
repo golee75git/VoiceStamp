@@ -17,7 +17,8 @@ import {
 const backButtonImage = require('../../assets/back-icon.png');
 
 const BACK_ICON_SIZE = 83;
-const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
+const BOTTOM_BAR_OFFSET = 31;
+const SCROLL_BOTTOM_INSET = BOTTOM_BAR_OFFSET + 12 + BACK_ICON_SIZE + (Platform.OS === 'ios' ? 28 : 16);
 
 import { openInfoPage } from '../constants/infoUrls';
 import { APK_BUILD_FILENAME } from '../constants/apkBuildLabel';
@@ -380,10 +381,9 @@ export function SettingsScreen({
           <ActivityIndicator size="large" />
         </View>
       ) : (
-        <View style={styles.content}>
-          <ScrollView
+        <ScrollView
             style={styles.scroll}
-            contentContainerStyle={styles.body}
+            contentContainerStyle={[styles.body, styles.bodyWithBottomBar]}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator
           >
@@ -991,31 +991,31 @@ export function SettingsScreen({
           </Pressable>
           <Text style={styles.copyright}>© 2026 이형우</Text>
           </ScrollView>
-
-          <View style={styles.saveFooter}>
-            <Pressable
-              style={[styles.primaryButton, saving && styles.buttonDisabled]}
-              onPress={handleSave}
-              disabled={saving}
-            >
-              {saving ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.primaryButtonText}>저장</Text>
-              )}
-            </Pressable>
-          </View>
-        </View>
       )}
 
-      <Pressable
-        style={styles.bottomBackButton}
-        onPress={onBack}
-        accessibilityRole="button"
-        accessibilityLabel={`뒤로가기, ${backLabel}`}
-      >
-        <Image source={backButtonImage} style={styles.bottomBackButtonImage} resizeMode="contain" />
-      </Pressable>
+      {!loading ? (
+        <View style={styles.bottomBar}>
+          <Pressable
+            style={styles.bottomBackSlot}
+            onPress={onBack}
+            accessibilityRole="button"
+            accessibilityLabel={`뒤로가기, ${backLabel}`}
+          >
+            <Image source={backButtonImage} style={styles.bottomBackButtonImage} resizeMode="contain" />
+          </Pressable>
+          <Pressable
+            style={[styles.primaryButton, styles.saveInBar, saving && styles.buttonDisabled]}
+            onPress={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.primaryButtonText}>저장</Text>
+            )}
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -1044,9 +1044,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  content: {
-    flex: 1,
-  },
   scroll: {
     flex: 1,
   },
@@ -1055,26 +1052,33 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     gap: 12,
   },
-  saveFooter: {
+  bodyWithBottomBar: {
+    paddingBottom: SCROLL_BOTTOM_INSET,
+  },
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: BOTTOM_BAR_OFFSET,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 8,
     paddingTop: 12,
-    paddingRight: 20,
-    paddingLeft: 100,
-    paddingBottom: BACK_ICON_BOTTOM,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 16,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
-    gap: 8,
   },
-  bottomBackButton: {
-    position: 'absolute',
-    left: 8,
-    bottom: BACK_ICON_BOTTOM + BACK_ICON_SIZE * 0.5,
-    backgroundColor: 'transparent',
-    padding: 4,
-    minWidth: BACK_ICON_SIZE,
-    minHeight: BACK_ICON_SIZE,
+  bottomBackSlot: {
+    width: BACK_ICON_SIZE,
+    height: BACK_ICON_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  saveInBar: {
+    flex: 1,
+    marginTop: 0,
   },
   bottomBackButtonImage: {
     width: BACK_ICON_SIZE,
