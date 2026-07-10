@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-11**
-최신 커밋 기준: `46d6a41` (main) · 문서동기화 `bf61c92`
+최신 커밋 기준: `b588d83` (main)
 
 ---
 
@@ -347,8 +347,10 @@ VoiceStamp/
 | 246 | GitHub APK `releases/20260711_081130` · 랜딩·`/info` | `4e0fce6` | `restore-apk-download-20260711_081130.bat` |
 | 247 | **목록 검색 음성** 마이크 | `46d6a41` | `restore-list-search-mic.bat` §146 |
 | 248 | GitHub APK `releases/20260711_082557` · 랜딩·`/info` | `46d6a41` | `restore-apk-download-20260711_082557.bat` |
+| 249 | **내보내기 파일명·제목 음성** 손잡이 쪽 마이크 | `b588d83` | `restore-export-name-mic.bat` §147 |
+| 250 | GitHub APK `releases/20260711_084109` · 랜딩·`/info` | `b588d83` | `restore-apk-download-20260711_084109.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_084109.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -414,7 +416,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260711_082557.apk`** | `46d6a41` | **설치·GitHub 권장** — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
+| **`releases/VoiceStamp_20260711_084109.apk`** | `b588d83` | **설치·GitHub 권장** — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
+| **`releases/VoiceStamp_20260711_082557.apk`** | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
 | **`releases/VoiceStamp_20260711_081130.apk`** | `4e0fce6` | **목록 성능 A+B** + school_only 층 가드 |
 | **`releases/VoiceStamp_20260711_074726.apk`** | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
 | **`releases/VoiceStamp_20260710_233524.apk`** | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
@@ -505,7 +508,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **권장** — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260711_084109.apk` | `b588d83` | **권장** — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 | GitHub |
 | `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **목록 성능 A+B**(썸네일·스탬프 우선) + school_only 층 가드 | GitHub |
 | `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 | GitHub |
 
@@ -890,15 +894,16 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`46d6a41` / APK `082557` 기준) — 날짜별·APK별 이력 |
-| `f745eb0` · `bf61c92` | APK `releases/VoiceStamp_20260711_082557` 게시 · 랜딩·`/info` · 문서 표 정리 · Vercel |
+| (본 문서) | APK `releases/VoiceStamp_20260711_084109` · 랜딩·`/info` · Vercel |
+| `b588d83` | **내보내기 파일명·제목 음성** — 손잡이 쪽 마이크 · `restore-export-name-mic.bat` §147 |
+| `f745eb0` · `bf61c92` · `b64be78` | APK `082557` 게시·문서 동기화 |
 | `46d6a41` | **목록 검색 음성** — 헤더 장식 마이크 제거, 제목·메모 검색창 앞 음성 마이크 · `restore-list-search-mic.bat` §146 |
 | `d50534d` | APK `releases/VoiceStamp_20260711_081130` 게시 · 랜딩·`/info` |
 | `4e0fce6` | **목록 성능 A+B** — 스탬프 우선 표시·FlatList 튜닝·디스크 썸네일 · `restore-list-perf-ab.bat` §145 |
 | `d574ac9` | APK `releases/VoiceStamp_20260711_074726` 게시 · 랜딩·`/info` |
 | `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장/빠른저장 가드 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk` (`46d6a41`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260711_084109.apk` (`b588d83`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-10
 

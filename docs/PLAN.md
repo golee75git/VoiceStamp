@@ -376,7 +376,7 @@
 | 253 | **목록 검색 음성** 마이크 | `46d6a41` | `restore-list-search-mic.bat` §146 |
 | 254 | GitHub APK `releases/20260711_082557` · 랜딩·`/info` | `46d6a41` | `restore-apk-download-20260711_082557.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_084109.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -511,9 +511,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_082557.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_082557.apk |
-| 최신 소스 | `46d6a41` — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 (문서 `bf61c92`) |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_084109.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_084109.apk |
+| 최신 소스 | `b588d83` — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -588,7 +588,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **설치·GitHub 권장** — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
+| `releases/VoiceStamp_20260711_084109.apk` | `b588d83` | **설치·GitHub 권장** — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
+| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **목록 성능 A+B** + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
 | `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
