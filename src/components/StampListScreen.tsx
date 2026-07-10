@@ -39,6 +39,7 @@ import {
   type StampTextLayout,
   type WatermarkStyle,
   type TextAlign,
+  type CameraHand,
 } from '../services/settingsService';
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampDisplayPlace } from '../services/stampPlace';
@@ -92,6 +93,7 @@ export function StampListScreen({
   const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
   const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
   const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
+  const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
@@ -173,6 +175,7 @@ export function StampListScreen({
       setOverlayFooterPhrase(settings.overlayFooterPhrase);
       setOverlayShowOrgName(settings.overlayShowOrgName);
       setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
+      setCameraHand(settings.cameraHand);
     } catch {
       // 목록은 이미 표시됨
     }
@@ -884,6 +887,7 @@ export function StampListScreen({
         onConfirm={confirmExportNameModal}
         onCancel={cancelExportNameModal}
         disabled={exportBusy}
+        cameraHand={cameraHand}
       />
 
       <StampSaveModal

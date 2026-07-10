@@ -2395,3 +2395,19 @@ restore-list-search-mic.bat
 Copy-Item src.pre-list-search-mic\components\StampListScreen.tsx src\components\ -Force
 Copy-Item src.pre-list-search-mic\help.html public\ -Force
 ```
+
+## 147. 내보내기 파일명·보고서 제목 음성 마이크 되돌리기 (선택)
+
+파일명·보고서 제목 모달에 손잡이 쪽 음성 마이크를 추가한 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-export-name-mic.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-export-name-mic\components\ExportNameModal.tsx src\components\ -Force
+Copy-Item src.pre-export-name-mic\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-export-name-mic\help.html public\ -Force
+```
