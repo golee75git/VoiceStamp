@@ -1086,7 +1086,23 @@ export function StampSaveModal({
     >
       <GestureHandlerRootView style={styles.imageViewerRoot}>
         <View style={styles.imageViewerOverlay}>
-          <View style={styles.imageViewerTopBar}>
+          {workingImageUri ?? imageUri ? (
+            <View style={styles.imageViewerContent}>
+              <StampSaveZoomViewer
+                imageUri={workingImageUri ?? imageUri!}
+                onCropChange={handleCropChange}
+              />
+            </View>
+          ) : null}
+          {/* VIEWER_ACTION_HAND: 닫기·적용을 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 되돌리: restore-viewer-action-hand.bat */}
+          <View
+            style={[
+              styles.imageViewerActionBar,
+              cameraHand === 'left'
+                ? styles.imageViewerActionBarLeft
+                : styles.imageViewerActionBarRight,
+            ]}
+          >
             <Pressable
               style={styles.imageViewerCloseButton}
               onPress={handleCloseViewer}
@@ -1107,14 +1123,6 @@ export function StampSaveModal({
               )}
             </Pressable>
           </View>
-          {workingImageUri ?? imageUri ? (
-            <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                imageUri={workingImageUri ?? imageUri!}
-                onCropChange={handleCropChange}
-              />
-            </View>
-          ) : null}
           <View style={styles.imageViewerDeleteBar}>
             <Pressable
               style={[styles.imageViewerDeleteButton, deleting && styles.imageViewerDeleteButtonDisabled]}
@@ -1234,16 +1242,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  imageViewerTopBar: {
+  imageViewerActionBar: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    bottom: 108,
     zIndex: 2,
-    paddingTop: 48,
-    paddingHorizontal: 16,
-    alignItems: 'flex-end',
     gap: 8,
+  },
+  imageViewerActionBarLeft: {
+    left: 20,
+    alignItems: 'flex-start',
+  },
+  imageViewerActionBarRight: {
+    right: 20,
+    alignItems: 'flex-end',
   },
   imageViewerCloseButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
@@ -1275,8 +1286,8 @@ const styles = StyleSheet.create({
   imageViewerContent: {
     flex: 1,
     width: '100%',
-    paddingTop: 96,
-    paddingBottom: 96,
+    paddingTop: 48,
+    paddingBottom: 168,
   },
   imageViewerDeleteBar: {
     position: 'absolute',

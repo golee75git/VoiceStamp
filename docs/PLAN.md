@@ -367,8 +367,10 @@
 | 244 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | `879658d` | `restore-apk-download-20260710_165146.bat` |
 | 245 | 설정 **앱 내 촬영음** 켜기/끄기 | `76aca1f` | `restore-shutter-sound.bat` |
 | 246 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
+| 247 | 확대 뷰어 **닫기·적용** 손잡이 하단 | (본 커밋) | `restore-viewer-action-hand.bat` §143 |
+| 248 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_233524.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_171301.apk` (`76aca1f`).
+> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -501,8 +503,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260710_171301.apk` (`76aca1f`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_171301.apk |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260710_233524.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_233524.apk |
 | 최신 소스 | `76aca1f` — 앱 내 **촬영음** 켜기/끄기 + **1x·3x·5x** 배율 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
@@ -577,7 +579,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | **설치·GitHub 권장** — 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
+| `releases/VoiceStamp_20260710_233524.apk` | (본 커밋) | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
+| `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
 | `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |

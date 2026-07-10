@@ -2328,3 +2328,19 @@ Copy-Item src.pre-shutter-sound\components\SettingsScreen.tsx src\components\ -F
 Copy-Item src.pre-shutter-sound\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-shutter-sound\help.html public\ -Force
 ```
+
+## 143. 확대 뷰어 닫기·적용 손잡이 위치 되돌리기 (선택)
+
+스탬프 저장·수정 확대 화면의 닫기·적용 버튼을 카메라 손잡이 쪽 하단(사진 버리기 위)에 둔 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-viewer-action-hand.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-viewer-action-hand\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-viewer-action-hand\components\StampSaveZoomViewer.tsx src\components\ -Force
+Copy-Item src.pre-viewer-action-hand\help.html public\ -Force
+```

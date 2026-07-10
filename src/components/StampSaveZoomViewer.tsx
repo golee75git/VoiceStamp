@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   hintSub: {
     position: 'absolute',
-    bottom: 8,
+    top: 30,
     left: 16,
     right: 16,
     color: '#9ca3af',
