@@ -1,6 +1,6 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-10**
+문서 작성일: **2026-07-11**
 최신 커밋 기준: `a0d05b9` (main)
 
 ---
@@ -341,8 +341,10 @@ VoiceStamp/
 | 240 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
 | 241 | 확대 뷰어 **닫기·적용** 손잡이 하단 | `a0d05b9` | `restore-viewer-action-hand.bat` §143 |
 | 242 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | `a0d05b9` | `restore-apk-download-20260710_233524.bat` |
+| 243 | **층 school_only** 비학교 lastFloor/저장 가드 | `40805e9` | `restore-floor-school-only.bat` §144 |
+| 244 | GitHub APK `releases/20260711_074726` · 랜딩·`/info` | `40805e9` | `restore-apk-download-20260711_074726.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -408,7 +410,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260710_233524.apk`** | `a0d05b9` | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
+| **`releases/VoiceStamp_20260711_074726.apk`** | `40805e9` | **설치·GitHub 권장** — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
+| **`releases/VoiceStamp_20260710_233524.apk`** | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_171301.apk`** | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_165146.apk`** | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
@@ -492,11 +495,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-11
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **권장** — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 | **GitHub `releases/`** |
+
 #### 2026-07-10
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | **권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 | GitHub |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 | GitHub |
 
@@ -869,6 +878,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-11
+
+| 커밋 | 내용 |
+|------|------|
+| `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장 시 층 제거·빠른 저장 동일 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
+| (본 문서) | APK `releases/VoiceStamp_20260711_074726` · 랜딩·`/info` 다운로드 링크 · Vercel |
+
+> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk` (`40805e9`). 랜딩·`/info` 다운로드 링크 동기화됨.
+
 ### 2026-07-10
 
 | 커밋 | 내용 |
@@ -880,7 +898,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `879658d` | APK `releases/VoiceStamp_20260710_165146` — 앱 내 카메라 **1x·3x·5x** 배율 · `restore-camera-zoom-presets.bat` §141 · Vercel |
 | `5af6203` | PRD·PROJECT·PLAN·README 문서 동기화 (`ed2f7ec` 기준) |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk` (`a0d05b9`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk` (`40805e9`). 이전: `releases/VoiceStamp_20260710_233524.apk` (`a0d05b9`).
 
 ### 2026-07-09
 

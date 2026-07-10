@@ -369,8 +369,10 @@
 | 246 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
 | 247 | 확대 뷰어 **닫기·적용** 손잡이 하단 | `a0d05b9` | `restore-viewer-action-hand.bat` §143 |
 | 248 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | `a0d05b9` | `restore-apk-download-20260710_233524.bat` |
+| 249 | **층 school_only** 비학교 lastFloor/저장 가드 | `40805e9` | `restore-floor-school-only.bat` §144 |
+| 250 | GitHub APK `releases/20260711_074726` · 랜딩·`/info` | `40805e9` | `restore-apk-download-20260711_074726.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -504,9 +506,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260710_233524.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_233524.apk |
-| 최신 소스 | `a0d05b9` — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_074726.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_074726.apk |
+| 최신 소스 | `40805e9` — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -580,7 +582,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
+| `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **설치·GitHub 권장** — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
+| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
