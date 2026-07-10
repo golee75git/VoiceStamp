@@ -2380,3 +2380,18 @@ Copy-Item src.pre-list-perf-ab\services\stampTrash.ts src\services\ -Force
 Remove-Item src\services\stampThumb.ts, src\components\StampListThumb.tsx -ErrorAction SilentlyContinue
 Copy-Item src.pre-list-perf-ab\help.html public\ -Force
 ```
+
+## 146. 목록 검색 음성 마이크 되돌리기 (선택)
+
+저장 목록 헤더 장식 마이크를 제거하고 제목·메모 검색창 앞에 음성 검색 마이크를 둔 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-search-mic.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-search-mic\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-list-search-mic\help.html public\ -Force
+```

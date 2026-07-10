@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { openInfoPage } from '../constants/infoUrls';
+import { useSpeechInput } from '../hooks/useSpeechInput';
 import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
@@ -102,6 +103,29 @@ export function StampListScreen({
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
+
+  const { listening: searchListening, available: searchSpeechAvailable, start: startSearchSpeech, stop: stopSearchSpeech } =
+    useSpeechInput({
+      onResult: (text) => {
+        setSearchQuery(text.trim());
+      },
+    });
+
+  const handleSearchMicPress = useCallback(async () => {
+    if (searchListening) {
+      stopSearchSpeech();
+      return;
+    }
+    const started = await startSearchSpeech();
+    if (!started) {
+      Alert.alert(
+        '음성 검색',
+        searchSpeechAvailable
+          ? '마이크 권한을 허용하거나 잠시 후 다시 시도해 주세요.'
+          : '이 기기에서는 음성 검색을 사용할 수 없습니다.',
+      );
+    }
+  }, [searchListening, searchSpeechAvailable, startSearchSpeech, stopSearchSpeech]);
 
   const restoreListScroll = useCallback(() => {
     const offset = scrollOffsetRef.current;
@@ -505,9 +529,6 @@ export function StampListScreen({
       <View style={[styles.header, selectionCompact && styles.headerCompact]}>
         <View style={styles.headerRow}>
           <View style={styles.headerTitleGroup}>
-            {!selectionCompact ? (
-              <Image source={micIcon} style={styles.headerMicIcon} resizeMode="contain" />
-            ) : null}
             <Text style={styles.title}>
               {selectionCompact ? `${selectedCount}개 선택` : '저장 목록'}
             </Text>
@@ -537,6 +558,17 @@ export function StampListScreen({
         </View>
         {!selecting ? (
           <View style={styles.searchRow}>
+            <Pressable
+              style={[styles.searchMicButton, searchListening && styles.searchMicButtonActive]}
+              onPress={handleSearchMicPress}
+              accessibilityLabel={searchListening ? '음성 검색 중지' : '음성으로 제목·메모 검색'}
+            >
+              {searchListening ? (
+                <Text style={styles.searchMicDot}>●</Text>
+              ) : (
+                <Image source={micIcon} style={styles.searchMicIcon} resizeMode="contain" />
+              )}
+            </Pressable>
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
@@ -905,10 +937,6 @@ const styles = StyleSheet.create({
     gap: 8,
     flex: 1,
   },
-  headerMicIcon: {
-    width: 28,
-    height: 28,
-  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -967,6 +995,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     gap: 8,
+  },
+  searchMicButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f3f4f6',
+  },
+  searchMicButtonActive: {
+    backgroundColor: '#fee2e2',
+  },
+  searchMicIcon: {
+    width: 22,
+    height: 22,
+  },
+  searchMicDot: {
+    color: '#dc2626',
+    fontSize: 16,
+    fontWeight: '700',
   },
   searchInput: {
     flex: 1,
