@@ -367,8 +367,8 @@
 | 244 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | `879658d` | `restore-apk-download-20260710_165146.bat` |
 | 245 | 설정 **앱 내 촬영음** 켜기/끄기 | `76aca1f` | `restore-shutter-sound.bat` |
 | 246 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
-| 247 | 확대 뷰어 **닫기·적용** 손잡이 하단 | (본 커밋) | `restore-viewer-action-hand.bat` §143 |
-| 248 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_233524.bat` |
+| 247 | 확대 뷰어 **닫기·적용** 손잡이 하단 | `a0d05b9` | `restore-viewer-action-hand.bat` §143 |
+| 248 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | `a0d05b9` | `restore-apk-download-20260710_233524.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`.
 
@@ -413,6 +413,7 @@
 | (본 갱신) | `f6d33fd` 반영 — **zoom 배지**·목록 내보내기 **이름 모달**·APK `112756`·날짜별·APK별 이력 |
 | (본 갱신) | `ed2f7ec` 반영 — **직전 장소**·**일반 촬영 카메라**·**인앱 확대**·설정 UI·**빠른 로드**·APK `170409`·날짜별·APK별 이력 |
 | (본 갱신) | `76aca1f` 반영 — **1x·3x·5x** 배율·**앱 내 촬영음**·APK `165146`·`171301`·날짜별·APK별 이력 |
+| (본 갱신) | `a0d05b9` 반영 — 확대 뷰어 **닫기·적용** 손잡이 하단·APK `233524`·날짜별·APK별 이력 |
 
 ---
 
@@ -505,7 +506,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | Vercel | https://voicestamp-gilt.vercel.app |
 | 최신 APK (문서 기준) | `releases/VoiceStamp_20260710_233524.apk` |
 | GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_233524.apk |
-| 최신 소스 | `76aca1f` — 앱 내 **촬영음** 켜기/끄기 + **1x·3x·5x** 배율 |
+| 최신 소스 | `a0d05b9` — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -571,7 +572,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-03 | 2U·3 | 갤러리 **앱만** · **위치 끔**이어도 **장소 입력** · PDF **캡션 너비**·**동일 photo-slot** · APK `143138`·`152212`·`154800`·`162433` (`61bb13a`~`baf6a30`) |
 | 2026-07-06 | 2V·3 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `095128`~`112756` (`e04ce17`~`f6d33fd`) |
 | 2026-07-09 | 2W·3 | **직전 장소**·**일반 촬영 카메라**·**인앱 핀치/더블탭 확대**·설정 **저장 고정**·**· 기본 칩**·**하단 바**·**빠른 로드** · APK 140843~170409 (392e611~ed2f7ec) |
-| 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** 켜기/끄기 · APK `165146`·`171301` (`879658d`·`76aca1f`) |
+| 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `165146`·`171301`·`233524` (`879658d`·`76aca1f`·`a0d05b9`) |
 
 ---
 
@@ -579,7 +580,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260710_233524.apk` | (본 커밋) | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
+| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |

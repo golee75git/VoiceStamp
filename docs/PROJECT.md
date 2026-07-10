@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-09**
-최신 커밋 기준: `ed2f7ec` (main)
+문서 작성일: **2026-07-10**
+최신 커밋 기준: `a0d05b9` (main)
 
 ---
 
@@ -339,8 +339,8 @@ VoiceStamp/
 | 238 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | `879658d` | `restore-apk-download-20260710_165146.bat` |
 | 239 | 설정 **앱 내 촬영음** 켜기/끄기 | `76aca1f` | `restore-shutter-sound.bat` §142 |
 | 240 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
-| 241 | 확대 뷰어 **닫기·적용** 손잡이 하단 | (본 커밋) | `restore-viewer-action-hand.bat` §143 |
-| 242 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_233524.bat` |
+| 241 | 확대 뷰어 **닫기·적용** 손잡이 하단 | `a0d05b9` | `restore-viewer-action-hand.bat` §143 |
+| 242 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | `a0d05b9` | `restore-apk-download-20260710_233524.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`.
 
@@ -408,7 +408,7 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260710_233524.apk`** | (본 커밋) | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
+| **`releases/VoiceStamp_20260710_233524.apk`** | `a0d05b9` | **설치·GitHub 권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_171301.apk`** | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_165146.apk`** | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
@@ -496,7 +496,7 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260710_233524.apk` | (본 커밋) | **권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | **권장** — 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 | GitHub |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 | GitHub |
 
@@ -873,13 +873,14 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 커밋) | 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `releases/VoiceStamp_20260710_233524` · `restore-viewer-action-hand.bat` §143 · Vercel |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`a0d05b9` 기준) — 날짜별·APK별 이력 |
+| `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `releases/VoiceStamp_20260710_233524` · `restore-viewer-action-hand.bat` §143 · Vercel |
 | (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`76aca1f` 기준) |
 | `76aca1f` | APK `releases/VoiceStamp_20260710_171301` — 설정 **앱 내 촬영음** 켜기/끄기 · `restore-shutter-sound.bat` §142 · Vercel |
 | `879658d` | APK `releases/VoiceStamp_20260710_165146` — 앱 내 카메라 **1x·3x·5x** 배율 · `restore-camera-zoom-presets.bat` §141 · Vercel |
 | `5af6203` | PRD·PROJECT·PLAN·README 문서 동기화 (`ed2f7ec` 기준) |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260710_233524.apk` (`a0d05b9`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-09
 
@@ -1307,6 +1308,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+a0d05b9 Place stamp zoom viewer Close/Apply by camera hand and publish VoiceStamp_20260710_233524.apk.
+baf9c7c Sync PRD, PROJECT, PLAN, and README docs to commit 76aca1f.
 76aca1f Add in-app shutter sound setting and publish VoiceStamp_20260710_171301.apk.
 879658d Add 1x/3x/5x zoom presets on in-app camera and publish VoiceStamp_20260710_165146.apk.
 5af6203 Sync PRD, PROJECT, PLAN, and README docs to commit ed2f7ec.
@@ -1317,13 +1320,6 @@ d68edeb Show default markers on settings chips, remove reset button, and publish
 3c3ee0f Add in-app camera pinch and double-tap zoom and publish VoiceStamp_20260709_151301.apk.
 fc076c8 Add primary capture camera setting (system or in-app) and publish VoiceStamp_20260709_145528.apk.
 392e611 Remember last place when location lookup is off and publish VoiceStamp_20260709_140843.apk.
-7e453ea Use full capture pill image for the list screen bottom capture button.
-0d7e72d Use full gallery pill image for the list screen bottom gallery button.
-72ccc32 Replace list bottom attach button with full-size gallery icon and 갤러리 label.
-9ceb325 Fill list screen attach icon to the full 28px circle in the bottom bar.
-109bfa3 Raise list screen bottom bar by 0.6x button height so attach/capture buttons clear the system navigation area.
-285f2d0 Sync PRD, PROJECT, PLAN, and README docs to commit 7c127aa.
-7c127aa Restyle list screen header, cards, and bottom action bar.
 … (이전 커밋은 `git log` 참고)
 ```
 
