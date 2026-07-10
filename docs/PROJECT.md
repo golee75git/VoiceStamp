@@ -345,8 +345,10 @@ VoiceStamp/
 | 244 | GitHub APK `releases/20260711_074726` · 랜딩·`/info` | `40805e9` | `restore-apk-download-20260711_074726.bat` |
 | 245 | **목록 성능 A+B** 스탬프 우선·FlatList·디스크 썸네일 | `4e0fce6` | `restore-list-perf-ab.bat` §145 |
 | 246 | GitHub APK `releases/20260711_081130` · 랜딩·`/info` | `4e0fce6` | `restore-apk-download-20260711_081130.bat` |
+| 247 | **목록 검색 음성** 마이크 | `46d6a41` | `restore-list-search-mic.bat` §146 |
+| 248 | GitHub APK `releases/20260711_082557` · 랜딩·`/info` | `46d6a41` | `restore-apk-download-20260711_082557.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_081130.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -887,10 +889,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 커밋 | 내용 |
 |------|------|
 | `4e0fce6` | **목록 성능 A+B** — 스탬프 우선 표시·FlatList 튜닝·디스크 썸네일 · `restore-list-perf-ab.bat` §145 |
+| `46d6a41` | **목록 검색 음성** — 헤더 마이크 제거, 검색창 앞 마이크 · `restore-list-search-mic.bat` §146 |
 | `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장 시 층 제거·빠른 저장 동일 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
-| (본 문서) | APK `releases/VoiceStamp_20260711_081130` · 랜딩·`/info` 다운로드 링크 · Vercel |
+| (본 문서) | APK `releases/VoiceStamp_20260711_082557` · 랜딩·`/info` 다운로드 링크 · Vercel |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_081130.apk` (`4e0fce6`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk` (`46d6a41`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-10
 

@@ -373,8 +373,10 @@
 | 250 | GitHub APK `releases/20260711_074726` · 랜딩·`/info` | `40805e9` | `restore-apk-download-20260711_074726.bat` |
 | 251 | **목록 성능 A+B** 스탬프 우선·FlatList·디스크 썸네일 | `4e0fce6` | `restore-list-perf-ab.bat` §145 |
 | 252 | GitHub APK `releases/20260711_081130` · 랜딩·`/info` | `4e0fce6` | `restore-apk-download-20260711_081130.bat` |
+| 253 | **목록 검색 음성** 마이크 | `46d6a41` | `restore-list-search-mic.bat` §146 |
+| 254 | GitHub APK `releases/20260711_082557` · 랜딩·`/info` | `46d6a41` | `restore-apk-download-20260711_082557.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_081130.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_082557.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -508,9 +510,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_081130.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_081130.apk |
-| 최신 소스 | `4e0fce6` — **목록 성능 A+B** + school_only 층 가드 |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_082557.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_082557.apk |
+| 최신 소스 | `46d6a41` — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |

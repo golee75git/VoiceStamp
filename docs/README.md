@@ -32,12 +32,12 @@
 
 ## 현재 상태 스냅샷 (2026-07-10)
 
-- **최신 커밋:** `4e0fce6` (main)
+- **최신 커밋:** `46d6a41` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260711_081130.apk` (`4e0fce6`) — **목록 성능 A+B**(썸네일·스탬프 우선) + school_only 층 가드
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_081130.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260711_074726.apk` (`40805e9`, school_only 층)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260711_082557.apk` (`46d6a41`) — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_082557.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260711_081130.apk` (`4e0fce6`, 목록 성능)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
@@ -74,13 +74,14 @@
 | 07-06 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `112756` |
 | 07-09 | **직전 장소**·**일반 촬영 카메라**·**인앱 핀치/더블탭**·설정 **저장 고정**·**· 기본 칩**·**하단 바**·**빠른 로드** · APK `170409` |
 | 07-10 | 앱 내 **1x·3x·5x**·**촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `233524` |
-| 07-11 | **층 school_only** · **목록 성능 A+B**(썸네일) · APK `081130` |
+| 07-11 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · APK `082557` |
 
 ### APK별 (권장·주요)
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **설치·GitHub 권장** — **목록 성능 A+B** + school_only 층 가드 |
+| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **설치·GitHub 권장** — **목록 검색 음성** + 목록 성능 A+B |
+| `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **목록 성능 A+B** + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 |
 | `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x |
