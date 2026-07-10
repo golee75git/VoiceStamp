@@ -5,8 +5,10 @@ import {
 } from './fileService';
 import { getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from './locationService';
 import { saveStamp } from './saveStamp';
+import { resolveStampFloor } from './stampFloor';
 import {
   getCurrentSiteName,
+  getFloorPickerMode,
   getLastCapturePlaceCache,
   getLastFloor,
   setCurrentSiteName,
@@ -74,7 +76,11 @@ export async function saveQuickCapture(
   input: QuickCaptureSaveInput,
 ): Promise<QuickCaptureLocation | null> {
   const capturedAt = Date.now();
-  const [savedSiteName, lastFloor] = await Promise.all([getCurrentSiteName(), getLastFloor()]);
+  const [savedSiteName, lastFloor, pickerMode] = await Promise.all([
+    getCurrentSiteName(),
+    getLastFloor(),
+    getFloorPickerMode(),
+  ]);
   const siteName = savedSiteName
     ? refreshStampGroupDate(savedSiteName, capturedAt)
     : formatStampGroupName(capturedAt);
@@ -82,6 +88,7 @@ export async function saveQuickCapture(
   const { latitude, longitude, placeLabel } = await resolveQuickCaptureLocation(input.reuseLocation);
 
   const title = formatDefaultStampTitle(capturedAt);
+  const floor = resolveStampFloor(pickerMode, lastFloor, placeLabel, siteName);
 
   await setCurrentSiteName(siteName);
   await saveStamp({
@@ -91,7 +98,7 @@ export async function saveQuickCapture(
     groupName: siteName,
     latitude,
     longitude,
-    floor: lastFloor,
+    floor,
     placeLabel: placeLabel ?? null,
     captureForExport: input.captureForExport,
   });

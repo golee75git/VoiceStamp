@@ -2344,3 +2344,20 @@ Copy-Item src.pre-viewer-action-hand\components\StampSaveModal.tsx src\component
 Copy-Item src.pre-viewer-action-hand\components\StampSaveZoomViewer.tsx src\components\ -Force
 Copy-Item src.pre-viewer-action-hand\help.html public\ -Force
 ```
+
+## 144. 층 school_only lastFloor/저장 가드 되돌리기 (선택)
+
+「학교일 때만」에서 비학교 장소에 직전 층이 따라붙거나 저장되던 문제를 막은 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-floor-school-only.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-floor-school-only\services\stampFloor.ts src\services\ -Force
+Copy-Item src.pre-floor-school-only\services\quickCaptureSave.ts src\services\ -Force
+Copy-Item src.pre-floor-school-only\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-floor-school-only\help.html public\ -Force
+```

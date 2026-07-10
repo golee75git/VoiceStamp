@@ -48,7 +48,12 @@ import {
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
-import { FLOOR_OPTIONS, isSchoolPlaceLabel } from '../services/stampFloor';
+import {
+  FLOOR_OPTIONS,
+  isFloorAllowedForLabels,
+  isSchoolPlaceLabel,
+  resolveStampFloor,
+} from '../services/stampFloor';
 import {
   getFloorDisplayMode,
   getFloorPickerMode,
@@ -245,6 +250,7 @@ export function StampSaveModal({
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
+  const lastFloorRef = useRef<StampFloor | null>(null);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
   const cropViewportRef = useRef<StampCropViewport | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
@@ -377,6 +383,7 @@ export function StampSaveModal({
     placeTouchedRef.current = false;
     siteNameTouchedRef.current = false;
     floorTouchedRef.current = false;
+    lastFloorRef.current = null;
     captureCoordsRef.current = null;
     cropViewportRef.current = null;
     originalCameraUriRef.current = null;
@@ -503,7 +510,9 @@ export function StampSaveModal({
         return;
       }
       setFloorPickerModeState(pickerMode);
-      if (!floorTouchedRef.current && lastFloor) {
+      lastFloorRef.current = lastFloor;
+      // always만 즉시 적용. school_only는 장소 확정 후 useEffect에서 적용(비학교 lastFloor 오염 방지)
+      if (!floorTouchedRef.current && lastFloor && pickerMode === 'always') {
         setFloor(lastFloor);
       }
       if (!siteNameTouchedRef.current) {
@@ -618,6 +627,36 @@ export function StampSaveModal({
       cancelled = true;
     };
   }, [visible, isEdit]);
+
+  // school_only: 장소·폴더가 학교일 때만 lastFloor 적용, 아니면 층 제거
+  useEffect(() => {
+    if (!visible || isEdit || floorTouchedRef.current) {
+      return;
+    }
+    if (floorPickerMode === 'off') {
+      setFloor(null);
+      return;
+    }
+    if (floorPickerMode === 'always') {
+      if (lastFloorRef.current) {
+        setFloor(lastFloorRef.current);
+      }
+      return;
+    }
+    const allowed = isFloorAllowedForLabels(
+      'school_only',
+      placeLabel,
+      siteName,
+      groupName,
+    );
+    if (allowed) {
+      if (lastFloorRef.current) {
+        setFloor(lastFloorRef.current);
+      }
+    } else {
+      setFloor(null);
+    }
+  }, [visible, isEdit, floorPickerMode, placeLabel, siteName, groupName]);
 
   const handleMicPress = async (target: SpeechTarget) => {
     if (listening && speechTarget === target) {
@@ -779,6 +818,13 @@ export function StampSaveModal({
     setError(null);
 
     try {
+      const folderLabel = isEdit ? groupName : siteName;
+      const effectiveFloor = resolveStampFloor(
+        floorPickerMode,
+        floor,
+        placeLabel,
+        folderLabel,
+      );
       if (isEdit && stamp) {
         const croppedImageUri = photoUri !== imageUri ? photoUri : undefined;
         await updateStamp({
@@ -786,15 +832,15 @@ export function StampSaveModal({
           title,
           memo,
           groupName,
-          floor,
+          floor: effectiveFloor,
           placeLabel,
           croppedImageUri,
           captureForExport: captureStampForExport,
         });
       } else {
         await setCurrentSiteName(siteName);
-        if (floor) {
-          await setLastFloor(floor);
+        if (effectiveFloor) {
+          await setLastFloor(effectiveFloor);
         }
         const originalTempUri =
           originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
@@ -808,7 +854,7 @@ export function StampSaveModal({
           groupName: siteName,
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
-          floor,
+          floor: effectiveFloor,
           placeLabel,
           captureForExport: captureStampForExport,
         });

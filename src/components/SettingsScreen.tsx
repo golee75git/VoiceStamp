@@ -723,7 +723,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>층 선택</Text>
           <Text style={styles.hint}>
-            학교 근처 촬영 시 저장·수정 모달에 1~5층 칩을 표시합니다.
+            「학교일 때만」은 장소·폴더명에 학교가 있을 때만 층 칩을 보이고, 직전 층도 학교에만 이어집니다. 비학교에는 층을 저장하지 않습니다.
           </Text>
           <View style={styles.optionRow}>
             {FLOOR_PICKER_OPTIONS.map((option) => {
