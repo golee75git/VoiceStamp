@@ -2361,3 +2361,22 @@ Copy-Item src.pre-floor-school-only\services\quickCaptureSave.ts src\services\ -
 Copy-Item src.pre-floor-school-only\components\StampSaveModal.tsx src\components\ -Force
 Copy-Item src.pre-floor-school-only\help.html public\ -Force
 ```
+
+## 145. 저장 목록 성능 A+B 되돌리기 (선택)
+
+목록 스탬프 우선 표시·FlatList 튜닝·디스크 썸네일 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-perf-ab.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-perf-ab\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-list-perf-ab\components\TrashScreen.tsx src\components\ -Force
+Copy-Item src.pre-list-perf-ab\services\saveStamp.ts src\services\ -Force
+Copy-Item src.pre-list-perf-ab\services\stampTrash.ts src\services\ -Force
+Remove-Item src\services\stampThumb.ts, src\components\StampListThumb.tsx -ErrorAction SilentlyContinue
+Copy-Item src.pre-list-perf-ab\help.html public\ -Force
+```

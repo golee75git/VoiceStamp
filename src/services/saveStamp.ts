@@ -41,6 +41,7 @@ import {
   updateStampMetadata,
   updateStampRecord,
 } from './stampRepository';
+import { ensureStampThumb } from './stampThumb';
 import type { Stamp } from '../types/stamp';
 import { generateId } from '../utils/id';
 
@@ -221,6 +222,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
   await insertStamp(stamp);
 
   if (Platform.OS !== 'web') {
+    void ensureStampThumb(id, resolveImageUri(imagePath)).catch(() => {});
     const galleryOriginalUri =
       input.originalTempUri && input.originalTempUri !== input.tempImageUri
         ? input.originalTempUri
@@ -305,6 +307,7 @@ export async function updateStamp(input: {
   }
 
   if (imageCropped && Platform.OS !== 'web') {
+    void ensureStampThumb(stamp.id, resolveImageUri(imagePath), { force: true }).catch(() => {});
     const updatedStamp: Stamp = {
       ...stamp,
       title,

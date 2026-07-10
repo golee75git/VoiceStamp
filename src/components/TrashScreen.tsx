@@ -3,7 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Image,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import { resolveImageUri } from '../services/fileService';
+import { StampListThumb } from './StampListThumb';
 import { getMemoTextAlign, getTitleTextAlign, type TextAlign } from '../services/settingsService';
 import { listTrashedStamps } from '../services/stampRepository';
 import { emptyTrash, restoreStampFromTrash } from '../services/stampTrash';
@@ -143,14 +143,19 @@ export function TrashScreen({ onBack, refreshKey, onChanged }: TrashScreenProps)
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={styles.list}
+            initialNumToRender={8}
+            maxToRenderPerBatch={6}
+            windowSize={5}
+            removeClippedSubviews={Platform.OS === 'android'}
             renderItem={({ item }) => (
               <Pressable
                 style={[styles.card, isGrid && styles.cardGrid]}
                 onPress={() => handleRestore(item)}
                 disabled={busyId === item.id}
               >
-                <Image
-                  source={{ uri: resolveImageUri(item.imagePath) }}
+                <StampListThumb
+                  id={item.id}
+                  imagePath={item.imagePath}
                   style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                 />
                 <View style={styles.meta}>

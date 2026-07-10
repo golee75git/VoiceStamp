@@ -33,17 +33,7 @@ import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
-  getMemoTextAlign,
-  getPdfFilenameIncludeDatetime,
-  getPdfShowDatetime,
-  getStampTextLayout,
-  getWatermarkStyle,
-  getCoordsLabelMode,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
-  getTitleTextAlign,
+  loadSettingsForScreen,
   type CoordsLabelMode,
   type StampTextLayout,
   type WatermarkStyle,
@@ -52,10 +42,12 @@ import {
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampDisplayPlace } from '../services/stampPlace';
 import { listStamps } from '../services/stampRepository';
+import { scheduleStampThumbs } from '../services/stampThumb';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
 import type { Stamp } from '../types/stamp';
 import { filterStampsByQuery } from '../utils/stampListSearch';
+import { StampListThumb } from './StampListThumb';
 
 type StampListScreenProps = {
   onBack: () => void;
@@ -138,34 +130,27 @@ export function StampListScreen({
       setLoading(true);
     }
     try {
-      const [rows, titleAlign, memoAlign, filenameDatetime, showDatetime, textLayout, wmStyle, coordsLabelMode, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
-        listStamps(),
-        getTitleTextAlign(),
-        getMemoTextAlign(),
-        getPdfFilenameIncludeDatetime(),
-        getPdfShowDatetime(),
-        getStampTextLayout(),
-        getWatermarkStyle(),
-        getCoordsLabelMode(),
-        getOverlayOrgName(),
-        getOverlayFooterPhrase(),
-        getOverlayShowOrgName(),
-        getOverlayShowFooterPhrase(),
-      ]);
+      const rows = await listStamps();
       setStamps(rows);
-      setTitleTextAlign(titleAlign);
-      setMemoTextAlign(memoAlign);
-      setPdfFilenameIncludeDatetime(filenameDatetime);
-      setPdfShowDatetime(showDatetime);
-      setStampTextLayout(textLayout);
-      setWatermarkStyle(wmStyle);
-      setCoordsLabel(coordsLabelMode);
-      setOverlayOrgName(orgName);
-      setOverlayFooterPhrase(footerPhrase);
-      setOverlayShowOrgName(showOrgName);
-      setOverlayShowFooterPhrase(showFooterPhrase);
+      scheduleStampThumbs(rows, resolveImageUri);
     } finally {
       setLoading(false);
+    }
+    try {
+      const settings = await loadSettingsForScreen();
+      setTitleTextAlign(settings.titleTextAlign);
+      setMemoTextAlign(settings.memoTextAlign);
+      setPdfFilenameIncludeDatetime(settings.pdfFilenameIncludeDatetime);
+      setPdfShowDatetime(settings.pdfShowDatetime);
+      setStampTextLayout(settings.stampTextLayout);
+      setWatermarkStyle(settings.watermarkStyle);
+      setCoordsLabel(settings.coordsLabelMode);
+      setOverlayOrgName(settings.overlayOrgName);
+      setOverlayFooterPhrase(settings.overlayFooterPhrase);
+      setOverlayShowOrgName(settings.overlayShowOrgName);
+      setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
+    } catch {
+      // 목록은 이미 표시됨
     }
   }, []);
 
@@ -656,6 +641,10 @@ export function StampListScreen({
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+            initialNumToRender={8}
+            maxToRenderPerBatch={6}
+            windowSize={5}
+            removeClippedSubviews={Platform.OS === 'android'}
             onScroll={(event) => {
               scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
             }}
@@ -686,8 +675,9 @@ export function StampListScreen({
                       </View>
                     </View>
                   )}
-                  <Image
-                    source={{ uri: resolveImageUri(item.imagePath) }}
+                  <StampListThumb
+                    id={item.id}
+                    imagePath={item.imagePath}
                     style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                   />
                   <View style={styles.meta}>
