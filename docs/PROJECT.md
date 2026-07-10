@@ -335,8 +335,10 @@ VoiceStamp/
 | 234 | GitHub APK `releases/20260709_164922` · 랜딩·`/info` | `9903447` | — |
 | 235 | 설정 **`loadSettingsForScreen()`** 일괄 로드·스피너 제거 | `ed2f7ec` | `restore-settings-fast-load.bat` §140 |
 | 236 | GitHub APK `releases/20260709_170409` · 랜딩·`/info` | `ed2f7ec` | `restore-apk-download-20260709_170409.bat` |
+| 237 | 앱 내 카메라 **1x·3x·5x** 배율 버튼 | (본 커밋) | `restore-camera-zoom-presets.bat` §141 |
+| 238 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_165146.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`).
+> **권장 APK:** `releases/VoiceStamp_20260710_165146.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -402,7 +404,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | **설치·GitHub 권장** — 설정 **빠른 로드** + 07-09 전부 |
+| **`releases/VoiceStamp_20260710_165146.apk`** | (본 커밋) | **설치·GitHub 권장** — 앱 내 카메라 **1x·3x·5x** 배율 + 07-09 전부 |
+| **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
 | `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |
 | `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·기본값 버튼 제거 (하단 바 **미포함**) |
 | `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 하단 고정** (칩·하단 바 **미포함**) |
@@ -483,11 +486,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-10
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260710_165146.apk` | (본 커밋) | **권장** — 앱 내 카메라 **1x·3x·5x** 배율 + 07-09 전부 | **GitHub `releases/`** |
+
 #### 2026-07-09
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | **권장** — 설정 **`loadSettingsForScreen()`**·스피너 제거 + 07-09 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | 설정 **`loadSettingsForScreen()`**·스피너 제거 + 07-09 전부 (1x·3x·5x **미포함**) | GitHub |
 | `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장, `bottom: 31`) | GitHub |
 | `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·**기본값 버튼 제거** | GitHub |
 | `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 버튼 하단 고정** | GitHub |
@@ -851,6 +860,14 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-10
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | 앱 내 카메라 **1x·3x·5x** 배율 · APK `releases/VoiceStamp_20260710_165146` · `restore-camera-zoom-presets.bat` §141 · Vercel |
+
+> **권장 APK:** `releases/VoiceStamp_20260710_165146.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-09
 

@@ -363,8 +363,10 @@
 | 240 | GitHub APK `releases/20260709_164922` · 랜딩·`/info` | `9903447` | — |
 | 241 | 설정 **`loadSettingsForScreen()`**·스피너 제거 | `ed2f7ec` | `restore-settings-fast-load.bat` §140 |
 | 242 | GitHub APK `releases/20260709_170409` · 랜딩·`/info` | `ed2f7ec` | `restore-apk-download-20260709_170409.bat` |
+| 243 | 앱 내 카메라 **1x·3x·5x** 배율 버튼 | (본 커밋) | `restore-camera-zoom-presets.bat` |
+| 244 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_165146.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`).
+> **권장 APK:** `releases/VoiceStamp_20260710_165146.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -496,8 +498,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`) |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260706_112756.apk |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260710_165146.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_165146.apk |
 | 최신 소스 | `f6d33fd` — zoom 투명 배지·목록 내보내기 이름 모달 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
@@ -571,7 +573,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | **설치·GitHub 권장** — 설정 **빠른 로드** + 07-09 전부 |
+| `releases/VoiceStamp_20260710_165146.apk` | (본 커밋) | **설치·GitHub 권장** — 앱 내 카메라 **1x·3x·5x** 배율 + 07-09 전부 |
+| `releases/VoiceStamp_20260709_170409.apk` | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
 | `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |
 | `releases/VoiceStamp_20260709_163343.apk` | `d68edeb` | 설정 칩 **· 기본**·기본값 버튼 제거 (하단 바 **미포함**) |
 | `releases/VoiceStamp_20260709_153137.apk` | `9fb7e16` | 설정 **저장 하단 고정** (칩·하단 바 **미포함**) |

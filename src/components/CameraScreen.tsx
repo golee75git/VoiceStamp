@@ -24,7 +24,12 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
 import { StampSaveModal } from './StampSaveModal';
-import { InAppCameraPreview } from './InAppCameraPreview';
+import {
+  InAppCameraPreview,
+  type InAppCameraPreviewHandle,
+  type ZoomPreset,
+  ZOOM_PRESET_VALUES,
+} from './InAppCameraPreview';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const listIcon = require('../../assets/list-icon.png');
@@ -73,6 +78,8 @@ export function CameraScreen({
   const [inAppCapturing, setInAppCapturing] = useState(false);
   const [inAppPictureSize, setInAppPictureSize] = useState<string | undefined>();
   const cameraRef = useRef<CameraView>(null);
+  const previewRef = useRef<InAppCameraPreviewHandle>(null);
+  const [zoomPreset, setZoomPreset] = useState<ZoomPreset | null>(1);
   const reuseLocationRef = useRef<QuickCaptureLocation | null>(null);
   const prefetchedLocationRef = useRef<LocationSnapshot | null>(null);
   const locationPrefetchRunningRef = useRef(false);
@@ -293,6 +300,7 @@ export function CameraScreen({
   const exitInAppCamera = useCallback(() => {
     setInAppCameraMode(null);
     setInAppCameraReady(false);
+    setZoomPreset(1);
     setInAppCapturing(false);
     reuseLocationRef.current = null;
     setAutoLaunch(false);
@@ -611,18 +619,20 @@ export function CameraScreen({
     return (
       <View style={styles.container}>
         <InAppCameraPreview
+          ref={previewRef}
           cameraRef={cameraRef}
           pictureSize={inAppPictureSize}
           style={styles.inAppCamera}
           onCameraReady={() => void handleInAppCameraReady()}
+          onZoomChange={(_zoom, preset) => setZoomPreset(preset)}
         />
 
         <View style={styles.inAppTopBar}>
           <Text style={styles.inAppTitle}>{isContinuous ? '연속 촬영' : '사진 촬영'}</Text>
           <Text style={styles.inAppHint}>
             {isContinuous
-              ? '핀치·더블탭 확대 · 셔터 → 저장 · 완료로 종료'
-              : '핀치·더블탭 확대 · 셔터 → 확인 · 취소로 돌아가기'}
+              ? '1x·3x·5x · 핀치·더블탭 · 셔터 → 저장 · 완료로 종료'
+              : '1x·3x·5x · 핀치·더블탭 · 셔터 → 확인 · 취소로 돌아가기'}
           </Text>
         </View>
 
@@ -643,6 +653,31 @@ export function CameraScreen({
         </View>
 
         <View style={styles.inAppBottomBar}>
+          <View style={styles.zoomPresetRow} accessibilityRole="adjustable" accessibilityLabel="배율">
+            {(Object.keys(ZOOM_PRESET_VALUES).map(Number) as ZoomPreset[]).map((preset) => {
+              const selected = zoomPreset === preset;
+              return (
+                <Pressable
+                  key={preset}
+                  style={[styles.zoomPresetButton, selected && styles.zoomPresetButtonSelected]}
+                  onPress={() => {
+                    previewRef.current?.setZoomPreset(preset);
+                    setZoomPreset(preset);
+                  }}
+                  disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`${preset}배 줌`}
+                >
+                  <Text
+                    style={[styles.zoomPresetText, selected && styles.zoomPresetTextSelected]}
+                  >
+                    {preset}x
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
           <Pressable
             style={styles.inAppShutterOuter}
             onPress={() => void handleInAppShutter()}
@@ -899,7 +934,7 @@ const styles = StyleSheet.create({
   },
   inAppSideNav: {
     position: 'absolute',
-    bottom: 120,
+    bottom: 160,
     zIndex: 10,
   },
   inAppDoneButton: {
@@ -919,6 +954,34 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: 'center',
+    gap: 14,
+  },
+  zoomPresetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  zoomPresetButton: {
+    minWidth: 48,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+    alignItems: 'center',
+  },
+  zoomPresetButtonSelected: {
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    borderColor: '#fff',
+  },
+  zoomPresetText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  zoomPresetTextSelected: {
+    color: '#111',
   },
   inAppShutterOuter: {
     width: 76,

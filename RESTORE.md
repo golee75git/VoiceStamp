@@ -2294,3 +2294,20 @@ Copy-Item src.pre-settings-fast-load\services\settingsService.ts src\services\ -
 Copy-Item src.pre-settings-fast-load\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-settings-fast-load\help.html public\ -Force
 ```
+
+## 141. 앱 내 카메라 1x·3x·5x 배율 버튼 되돌리기 (선택)
+
+앱 내 카메라 셔터 위 배율 프리셋 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-zoom-presets.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-zoom-presets\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-zoom-presets\components\InAppCameraPreview.tsx src\components\ -Force
+Copy-Item src.pre-camera-zoom-presets\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-zoom-presets\help.html public\ -Force
+```
