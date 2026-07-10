@@ -343,8 +343,10 @@ VoiceStamp/
 | 242 | GitHub APK `releases/20260710_233524` · 랜딩·`/info` | `a0d05b9` | `restore-apk-download-20260710_233524.bat` |
 | 243 | **층 school_only** 비학교 lastFloor/저장 가드 | `40805e9` | `restore-floor-school-only.bat` §144 |
 | 244 | GitHub APK `releases/20260711_074726` · 랜딩·`/info` | `40805e9` | `restore-apk-download-20260711_074726.bat` |
+| 245 | **목록 성능 A+B** 스탬프 우선·FlatList·디스크 썸네일 | `4e0fce6` | `restore-list-perf-ab.bat` §145 |
+| 246 | GitHub APK `releases/20260711_081130` · 랜딩·`/info` | `4e0fce6` | `restore-apk-download-20260711_081130.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_081130.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -410,7 +412,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260711_074726.apk`** | `40805e9` | **설치·GitHub 권장** — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
+| **`releases/VoiceStamp_20260711_081130.apk`** | `4e0fce6` | **설치·GitHub 권장** — **목록 성능 A+B** + school_only 층 가드 |
+| **`releases/VoiceStamp_20260711_074726.apk`** | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
 | **`releases/VoiceStamp_20260710_233524.apk`** | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_171301.apk`** | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_165146.apk`** | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
@@ -499,7 +502,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **권장** — **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **권장** — **목록 성능 A+B**(썸네일·스탬프 우선) + school_only 층 가드 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 | GitHub |
 
 #### 2026-07-10
 
@@ -882,10 +886,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
+| `4e0fce6` | **목록 성능 A+B** — 스탬프 우선 표시·FlatList 튜닝·디스크 썸네일 · `restore-list-perf-ab.bat` §145 |
 | `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장 시 층 제거·빠른 저장 동일 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
-| (본 문서) | APK `releases/VoiceStamp_20260711_074726` · 랜딩·`/info` 다운로드 링크 · Vercel |
+| (본 문서) | APK `releases/VoiceStamp_20260711_081130` · 랜딩·`/info` 다운로드 링크 · Vercel |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_074726.apk` (`40805e9`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260711_081130.apk` (`4e0fce6`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-10
 
