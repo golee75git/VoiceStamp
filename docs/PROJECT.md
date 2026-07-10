@@ -335,12 +335,12 @@ VoiceStamp/
 | 234 | GitHub APK `releases/20260709_164922` · 랜딩·`/info` | `9903447` | — |
 | 235 | 설정 **`loadSettingsForScreen()`** 일괄 로드·스피너 제거 | `ed2f7ec` | `restore-settings-fast-load.bat` §140 |
 | 236 | GitHub APK `releases/20260709_170409` · 랜딩·`/info` | `ed2f7ec` | `restore-apk-download-20260709_170409.bat` |
-| 237 | 앱 내 카메라 **1x·3x·5x** 배율 버튼 | (본 커밋) | `restore-camera-zoom-presets.bat` §141 |
-| 238 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_165146.bat` |
-| 239 | 설정 **앱 내 촬영음** 켜기/끄기 | (본 커밋) | `restore-shutter-sound.bat` §142 |
-| 240 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260710_171301.bat` |
+| 237 | 앱 내 카메라 **1x·3x·5x** 배율 버튼 | `879658d` | `restore-camera-zoom-presets.bat` §141 |
+| 238 | GitHub APK `releases/20260710_165146` · 랜딩·`/info` | `879658d` | `restore-apk-download-20260710_165146.bat` |
+| 239 | 설정 **앱 내 촬영음** 켜기/끄기 | `76aca1f` | `restore-shutter-sound.bat` §142 |
+| 240 | GitHub APK `releases/20260710_171301` · 랜딩·`/info` | `76aca1f` | `restore-apk-download-20260710_171301.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_171301.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260710_171301.apk` (`76aca1f`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -406,7 +406,7 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260710_171301.apk`** | (본 커밋) | **설치·GitHub 권장** — 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
+| **`releases/VoiceStamp_20260710_171301.apk`** | `76aca1f` | **설치·GitHub 권장** — 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
 | **`releases/VoiceStamp_20260710_165146.apk`** | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 (촬영음 설정 **미포함**) |
 | **`releases/VoiceStamp_20260709_170409.apk`** | `ed2f7ec` | 설정 **빠른 로드** + 07-09 (1x·3x·5x **미포함**) |
 | `releases/VoiceStamp_20260709_164922.apk` | `9903447` | 설정 **하단 바**(뒤로·저장) (빠른 로드 **미포함**) |
@@ -493,7 +493,7 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260710_171301.apk` | (본 커밋) | **권장** — 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | **권장** — 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260710_165146.apk` | `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 | GitHub |
 
 #### 2026-07-09
@@ -869,10 +869,12 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | 설정 **앱 내 촬영음** · APK `releases/VoiceStamp_20260710_171301` · `restore-shutter-sound.bat` §142 · Vercel |
-| `879658d` | 앱 내 카메라 **1x·3x·5x** 배율 · APK `releases/VoiceStamp_20260710_165146` · `restore-camera-zoom-presets.bat` §141 · Vercel |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`76aca1f` 기준) |
+| `76aca1f` | APK `releases/VoiceStamp_20260710_171301` — 설정 **앱 내 촬영음** 켜기/끄기 · `restore-shutter-sound.bat` §142 · Vercel |
+| `879658d` | APK `releases/VoiceStamp_20260710_165146` — 앱 내 카메라 **1x·3x·5x** 배율 · `restore-camera-zoom-presets.bat` §141 · Vercel |
+| `5af6203` | PRD·PROJECT·PLAN·README 문서 동기화 (`ed2f7ec` 기준) |
 
-> **권장 APK:** `releases/VoiceStamp_20260710_171301.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260710_171301.apk` (`76aca1f`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-09
 
@@ -1300,6 +1302,9 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
+76aca1f Add in-app shutter sound setting and publish VoiceStamp_20260710_171301.apk.
+879658d Add 1x/3x/5x zoom presets on in-app camera and publish VoiceStamp_20260710_165146.apk.
+5af6203 Sync PRD, PROJECT, PLAN, and README docs to commit ed2f7ec.
 ed2f7ec Load settings in one query and show settings screen immediately, publish VoiceStamp_20260709_170409.apk.
 9903447 Align settings back and save buttons on one bottom bar and publish VoiceStamp_20260709_164922.apk.
 d68edeb Show default markers on settings chips, remove reset button, and publish VoiceStamp_20260709_163343.apk.

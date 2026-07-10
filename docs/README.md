@@ -25,7 +25,7 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~140) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~142) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
@@ -35,7 +35,7 @@
 - **최신 커밋:** `ed2f7ec` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260710_171301.apk` — 앱 내 **촬영음** 켜기/끄기 + **1x·3x·5x** + 07-09 전부
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260710_171301.apk` (`76aca1f`) — 앱 내 **촬영음** 켜기/끄기 + **1x·3x·5x** + 07-09 전부
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_171301.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260710_165146.apk` (`879658d`, 1x·3x·5x)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
