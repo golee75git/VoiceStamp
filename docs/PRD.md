@@ -669,7 +669,8 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **설치·GitHub 권장** — **목록 성능 A+B**(썸네일·스탬프 우선) + school_only 층 가드 |
+| `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **설치·GitHub 권장** — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
+| `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **목록 성능 A+B**(썸네일·스탬프 우선) + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
 | `releases/VoiceStamp_20260710_233524.apk` | `a0d05b9` | 확대 뷰어 **닫기·적용** 손잡이 하단 + 촬영음·1x·3x·5x + 07-09 전부 |
 | `releases/VoiceStamp_20260710_171301.apk` | `76aca1f` | 앱 내 **촬영음** 켜기/끄기 + 1x·3x·5x + 07-09 전부 |
