@@ -49,12 +49,14 @@ import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
+  DEFAULT_SHUTTER_SOUND,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
   primaryCaptureCameraLabel,
   captureAfterModeLabel,
+  shutterSoundLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -76,6 +78,7 @@ import {
   setContinuousCaptureCamera,
   setPrimaryCaptureCamera,
   setCaptureAfterMode,
+  setShutterSoundEnabled,
   setMemoTextAlign,
   setOverlayFooterPhrase,
   setOverlayOrgName,
@@ -174,6 +177,7 @@ export function SettingsScreen({
   const [captureAfterMode, setCaptureAfterModeState] = useState<CaptureAfterMode>(
     DEFAULT_CAPTURE_AFTER_MODE,
   );
+  const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -216,6 +220,7 @@ export function SettingsScreen({
       setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
       setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
       setCaptureAfterModeState(snapshot.captureAfterMode);
+      setShutterSoundState(snapshot.shutterSound);
       setCameraHandState(snapshot.cameraHand);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
@@ -249,6 +254,7 @@ export function SettingsScreen({
         savedPrimaryCaptureCamera,
         savedContinuousCaptureCamera,
         savedCaptureAfterMode,
+        savedShutterSound,
         savedCameraHand,
         savedFloorPickerMode,
         savedFloorDisplayMode,
@@ -273,6 +279,7 @@ export function SettingsScreen({
           setPrimaryCaptureCamera(primaryCaptureCamera),
           setContinuousCaptureCamera(continuousCaptureCamera),
           setCaptureAfterMode(captureAfterMode),
+          setShutterSoundEnabled(shutterSound),
           setCameraHand(cameraHand),
           setFloorPickerMode(floorPickerMode),
           setFloorDisplayMode(floorDisplayMode),
@@ -297,6 +304,7 @@ export function SettingsScreen({
       setPrimaryCaptureCameraState(savedPrimaryCaptureCamera);
       setContinuousCaptureCameraState(savedContinuousCaptureCamera);
       setCaptureAfterModeState(savedCaptureAfterMode);
+      setShutterSoundState(savedShutterSound);
       setCameraHandState(savedCameraHand);
       setFloorPickerModeState(savedFloorPickerMode);
       setFloorDisplayModeState(savedFloorDisplayMode);
@@ -311,7 +319,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n앱 내 촬영음: ${shutterSoundLabel(savedShutterSound)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -831,6 +839,35 @@ export function SettingsScreen({
                 </Pressable>
               );
             })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>앱 내 촬영음</Text>
+          <Text style={styles.hint}>
+            앱 내 카메라로 찍을 때만 적용됩니다. 시스템 카메라는 기기 설정을 따릅니다. 일부 기기에서는 OS 정책으로 끌 수 없을 수 있습니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, shutterSound && styles.optionButtonSelected]}
+              onPress={() => setShutterSoundState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[styles.optionButtonText, shutterSound && styles.optionButtonTextSelected]}
+              >
+                {chipLabel('켜기', DEFAULT_SHUTTER_SOUND)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !shutterSound && styles.optionButtonSelected]}
+              onPress={() => setShutterSoundState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[styles.optionButtonText, !shutterSound && styles.optionButtonTextSelected]}
+              >
+                {chipLabel('끄기', !DEFAULT_SHUTTER_SOUND)}
+              </Text>
+            </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>

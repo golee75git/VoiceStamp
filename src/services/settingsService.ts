@@ -42,6 +42,7 @@ const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CONTINUOUS_CAPTURE_CAMERA_KEY = 'continuous_capture_camera';
 const PRIMARY_CAPTURE_CAMERA_KEY = 'primary_capture_camera';
 const CAPTURE_AFTER_MODE_KEY = 'capture_after_mode';
+const SHUTTER_SOUND_KEY = 'shutter_sound';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
 const GALLERY_ALBUM_IDS_KEY = 'gallery_album_ids';
 const ONBOARDING_SEEN_KEY = 'onboarding_seen';
@@ -82,6 +83,7 @@ export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
+export const DEFAULT_SHUTTER_SOUND = true;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -360,6 +362,7 @@ export type SettingsScreenSnapshot = {
   primaryCaptureCamera: ContinuousCaptureCamera;
   continuousCaptureCamera: ContinuousCaptureCamera;
   captureAfterMode: CaptureAfterMode;
+  shutterSound: boolean;
   cameraHand: CameraHand;
   floorPickerMode: FloorPickerMode;
   floorDisplayMode: FloorDisplayMode;
@@ -441,6 +444,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       const raw = pickSetting(map, CAPTURE_AFTER_MODE_KEY);
       return raw ? sanitizeCaptureAfterMode(raw) : DEFAULT_CAPTURE_AFTER_MODE;
     })(),
+    shutterSound: parseBooleanSetting(
+      pickSetting(map, SHUTTER_SOUND_KEY),
+      DEFAULT_SHUTTER_SOUND,
+    ),
     cameraHand: (() => {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
@@ -720,6 +727,20 @@ export async function setCaptureAfterMode(mode: CaptureAfterMode): Promise<Captu
   const safeMode = sanitizeCaptureAfterMode(mode);
   await writeSetting(CAPTURE_AFTER_MODE_KEY, safeMode);
   return safeMode;
+}
+
+export function shutterSoundLabel(enabled: boolean): string {
+  return enabled ? '켜기' : '끄기';
+}
+
+export async function getShutterSoundEnabled(): Promise<boolean> {
+  const value = await readSetting(SHUTTER_SOUND_KEY);
+  return parseBooleanSetting(value, DEFAULT_SHUTTER_SOUND);
+}
+
+export async function setShutterSoundEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(SHUTTER_SOUND_KEY, enabled ? 'true' : 'false');
+  return enabled;
 }
 
 export function sanitizeSiteName(name: string): string {

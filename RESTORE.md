@@ -2311,3 +2311,20 @@ Copy-Item src.pre-camera-zoom-presets\components\InAppCameraPreview.tsx src\comp
 Copy-Item src.pre-camera-zoom-presets\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-zoom-presets\help.html public\ -Force
 ```
+
+## 142. 앱 내 촬영음 켜기/끄기 되돌리기 (선택)
+
+설정 「앱 내 촬영음」 옵션 추가 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-shutter-sound.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-shutter-sound\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-shutter-sound\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-shutter-sound\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-shutter-sound\help.html public\ -Force
+```

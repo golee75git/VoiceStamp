@@ -35,9 +35,9 @@
 - **최신 커밋:** `ed2f7ec` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260710_165146.apk` — 앱 내 카메라 **1x·3x·5x** 배율 + 07-09 전부
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_165146.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260709_170409.apk` (`ed2f7ec`, 설정 빠른 로드)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260710_171301.apk` — 앱 내 **촬영음** 켜기/끄기 + **1x·3x·5x** + 07-09 전부
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260710_171301.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260710_165146.apk` (`879658d`, 1x·3x·5x)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`

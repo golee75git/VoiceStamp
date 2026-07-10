@@ -19,7 +19,7 @@ import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
@@ -357,9 +357,11 @@ export function CameraScreen({
     setBusyHint(inAppCameraMode === 'continuous' ? '저장 중…' : '처리 중…');
     startLocationWarmup();
     try {
+      const shutterSound = await getShutterSoundEnabled();
       const photo = await cameraRef.current.takePictureAsync({
         quality: 1,
         skipProcessing: false,
+        shutterSound,
       });
       if (!photo?.uri) {
         return;
