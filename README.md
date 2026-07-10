@@ -36,7 +36,7 @@ build-apk.bat
 
 ## 되돌리기
 
-기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md) (§8~143)
+기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md) (§8~146)
 
 ## 최신 APK
 

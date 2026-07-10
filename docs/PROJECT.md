@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-11**
-최신 커밋 기준: `a0d05b9` (main)
+최신 커밋 기준: `46d6a41` (main) · 문서동기화 `bf61c92`
 
 ---
 
@@ -890,10 +890,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`46d6a41` / APK `082557` 기준) — 날짜별·APK별 이력 |
+| `f745eb0` · `bf61c92` | APK `releases/VoiceStamp_20260711_082557` 게시 · 랜딩·`/info` · 문서 표 정리 · Vercel |
+| `46d6a41` | **목록 검색 음성** — 헤더 장식 마이크 제거, 제목·메모 검색창 앞 음성 마이크 · `restore-list-search-mic.bat` §146 |
+| `d50534d` | APK `releases/VoiceStamp_20260711_081130` 게시 · 랜딩·`/info` |
 | `4e0fce6` | **목록 성능 A+B** — 스탬프 우선 표시·FlatList 튜닝·디스크 썸네일 · `restore-list-perf-ab.bat` §145 |
-| `46d6a41` | **목록 검색 음성** — 헤더 마이크 제거, 검색창 앞 마이크 · `restore-list-search-mic.bat` §146 |
-| `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장 시 층 제거·빠른 저장 동일 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
-| (본 문서) | APK `releases/VoiceStamp_20260711_082557` · 랜딩·`/info` 다운로드 링크 · Vercel |
+| `d574ac9` | APK `releases/VoiceStamp_20260711_074726` 게시 · 랜딩·`/info` |
+| `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장/빠른저장 가드 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
 
 > **권장 APK:** `releases/VoiceStamp_20260711_082557.apk` (`46d6a41`). 랜딩·`/info` 다운로드 링크 동기화됨.
 

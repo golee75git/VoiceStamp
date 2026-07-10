@@ -25,14 +25,14 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~143) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~146) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-10)
+## 현재 상태 스냅샷 (2026-07-11)
 
-- **최신 커밋:** `46d6a41` (main)
+- **최신 커밋:** `46d6a41` (main) · 문서동기화 `bf61c92`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260711_082557.apk` (`46d6a41`) — **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드
