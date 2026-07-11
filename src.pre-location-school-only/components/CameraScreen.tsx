@@ -19,7 +19,7 @@ import { CaptureActionSheet } from './CaptureActionSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isLocationLookupEnabled, type CameraHand } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
@@ -99,7 +99,7 @@ export function CameraScreen({
   }, []);
 
   const runLocationPrefetch = useCallback(async (captureKey: string, clearSnapshot: boolean) => {
-    if (!(await isGpsPlaceEnabled())) {
+    if (!(await isLocationLookupEnabled())) {
       setLocationPrefetchFinished(true);
       setLocationPrefetchLoading(false);
       return;

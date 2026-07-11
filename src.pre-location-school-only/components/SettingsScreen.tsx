@@ -361,7 +361,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>위치 조회</Text>
           <Text style={styles.hint}>
-            사용: GPS·로컬 학교 DB·카카오 주소/POI로 장소를 채웁니다. 사용 안 함: GPS와 로컬 학교 DB만 비교해 학교 근처면 학교명을 넣고, 카카오(네트워크) 조회는 하지 않습니다. 학교 밖이면 장소란을 비웁니다. 촬영 후 3버튼(연속·저장·다시 촬영)은 그대로입니다.
+            사용 안 함이면 GPS·장소명을 조회하지 않습니다. 저장 화면의 장소란에는 직전에 입력·저장한 장소가 자동으로 채워집니다. 제목·메모·음성 입력만으로 일반 카메라처럼 촬영할 수 있습니다. 촬영 후 3버튼(연속·저장·다시 촬영)은 그대로입니다.
           </Text>
           <View style={styles.optionRow}>
             {LOCATION_MODE_OPTIONS.map((option) => {

@@ -28,6 +28,7 @@ import {
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import {
   getCurrentSiteName,
+  getLastPlaceLabel,
   setCurrentSiteName,
   setLastCapturePlaceCache,
   setLastPlaceLabel,
@@ -57,7 +58,7 @@ import {
   getFloorDisplayMode,
   getFloorPickerMode,
   getLastFloor,
-  isGpsPlaceEnabled,
+  isLocationLookupEnabled,
   setLastFloor,
   type FloorDisplayMode,
   type FloorPickerMode,
@@ -562,14 +563,19 @@ export function StampSaveModal({
     void loadSiteSettings();
 
     void (async () => {
-      const gpsEnabled = await isGpsPlaceEnabled();
+      const locationEnabled = await isLocationLookupEnabled();
       if (cancelled) {
         return;
       }
-      // 층 칩·로딩: GPS 장소 조회(사용/사용 안 함 모두). 카카오는 locationService에서만 분기.
-      setLocationLookupEnabled(gpsEnabled);
-      if (!gpsEnabled) {
+      setLocationLookupEnabled(locationEnabled);
+      if (!locationEnabled) {
         setLocationLoading(false);
+        if (!placeTouchedRef.current) {
+          const lastPlace = await getLastPlaceLabel();
+          if (lastPlace) {
+            setPlaceLabel(lastPlace);
+          }
+        }
         return;
       }
 

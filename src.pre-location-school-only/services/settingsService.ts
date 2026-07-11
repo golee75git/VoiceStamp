@@ -131,19 +131,8 @@ export function sanitizeLocationMode(value: string): LocationMode {
   return value === 'off' ? 'off' : 'auto';
 }
 
-/** GPS·로컬 학교 DB 장소 조회. 「사용」「사용 안 함」모두 허용. */
-export async function isGpsPlaceEnabled(): Promise<boolean> {
-  return true;
-}
-
-/** 카카오 네트워크 주소·POI 조회. 「사용」만. */
-export async function isKakaoPlaceEnabled(): Promise<boolean> {
-  return (await getLocationMode()) === 'auto';
-}
-
-/** 카카오 포함 전체 위치 조회(「사용」). GPS·학교는 isGpsPlaceEnabled. */
 export async function isLocationLookupEnabled(): Promise<boolean> {
-  return isKakaoPlaceEnabled();
+  return (await getLocationMode()) === 'auto';
 }
 
 export function captureCameraLabel(mode: ContinuousCaptureCamera): string {

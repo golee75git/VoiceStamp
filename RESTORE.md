@@ -2411,3 +2411,19 @@ Copy-Item src.pre-export-name-mic\components\ExportNameModal.tsx src\components\
 Copy-Item src.pre-export-name-mic\components\StampListScreen.tsx src\components\ -Force
 Copy-Item src.pre-export-name-mic\help.html public\ -Force
 ```
+
+## 148. 위치 조회 「사용 안 함」= GPS+학교 DB만 되돌리기 (선택)
+
+「사용 안 함」을 직전 장소 재사용에서 GPS·로컬 학교 DB만으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-location-school-only.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-location-school-only\services\*.ts src\services\ -Force
+Copy-Item src.pre-location-school-only\components\StampSaveModal.tsx,src.pre-location-school-only\components\CameraScreen.tsx,src.pre-location-school-only\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-location-school-only\help.html public\ -Force
+```

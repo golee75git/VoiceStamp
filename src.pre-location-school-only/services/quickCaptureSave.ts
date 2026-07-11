@@ -4,7 +4,6 @@ import {
   refreshStampGroupDate,
 } from './fileService';
 import { getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from './locationService';
-import { findNearestSchool } from './schoolLookup';
 import { saveStamp } from './saveStamp';
 import { resolveStampFloor } from './stampFloor';
 import {
@@ -12,13 +11,10 @@ import {
   getFloorPickerMode,
   getLastCapturePlaceCache,
   getLastFloor,
-  isKakaoPlaceEnabled,
   setCurrentSiteName,
   setLastCapturePlaceCache,
 } from './settingsService';
 import type { CaptureStampForExport } from './exportStampImage';
-
-const SCHOOL_NEAR_RADIUS_M = 200;
 
 export type QuickCaptureLocation = {
   latitude: number;
@@ -46,7 +42,6 @@ async function resolveQuickCaptureLocation(reuseLocation?: QuickCaptureLocation)
     };
   }
 
-  const kakaoEnabled = await isKakaoPlaceEnabled();
   let latitude: number | null = null;
   let longitude: number | null = null;
   let placeLabel: string | undefined;
@@ -55,48 +50,21 @@ async function resolveQuickCaptureLocation(reuseLocation?: QuickCaptureLocation)
   if (quickCoords) {
     latitude = quickCoords.latitude;
     longitude = quickCoords.longitude;
-    if (kakaoEnabled) {
-      const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-      if (cachedPlace) {
-        placeLabel = cachedPlace;
-      }
-    } else {
-      const school = await findNearestSchool(
-        quickCoords.latitude,
-        quickCoords.longitude,
-        SCHOOL_NEAR_RADIUS_M,
-      );
-      if (school) {
-        placeLabel = school.name;
-      }
+    const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
+    if (cachedPlace) {
+      placeLabel = cachedPlace;
     }
   }
 
   if (latitude == null || longitude == null || !placeLabel) {
-    if (kakaoEnabled) {
-      const cache = await getLastCapturePlaceCache();
-      if (cache) {
-        if (latitude == null || longitude == null) {
-          latitude = cache.latitude;
-          longitude = cache.longitude;
-        }
-        if (!placeLabel) {
-          placeLabel = cache.placeLabel;
-        }
-      }
-    } else {
+    const cache = await getLastCapturePlaceCache();
+    if (cache) {
       if (latitude == null || longitude == null) {
-        const cache = await getLastCapturePlaceCache();
-        if (cache) {
-          latitude = cache.latitude;
-          longitude = cache.longitude;
-        }
+        latitude = cache.latitude;
+        longitude = cache.longitude;
       }
-      if (!placeLabel && latitude != null && longitude != null) {
-        const school = await findNearestSchool(latitude, longitude, SCHOOL_NEAR_RADIUS_M);
-        if (school) {
-          placeLabel = school.name;
-        }
+      if (!placeLabel) {
+        placeLabel = cache.placeLabel;
       }
     }
   }
