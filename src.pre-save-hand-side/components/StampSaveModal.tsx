@@ -958,10 +958,7 @@ export function StampSaveModal({
                   />
                   <Image
                     source={zoomEditIcon}
-                    style={[
-                      styles.zoomEditBadge,
-                      cameraHand === 'left' ? styles.zoomEditBadgeLeft : styles.zoomEditBadgeRight,
-                    ]}
+                    style={styles.zoomEditBadge}
                     resizeMode="contain"
                     pointerEvents="none"
                     accessibilityElementsHidden
@@ -975,11 +972,6 @@ export function StampSaveModal({
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
                 <View style={styles.folderInputRow}>
-                  {cameraHand === 'left' ? (
-                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                      <Text style={styles.folderPickButtonText}>선택</Text>
-                    </Pressable>
-                  ) : null}
                   <TextInput
                     style={styles.folderInput}
                     value={siteName}
@@ -991,11 +983,9 @@ export function StampSaveModal({
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
-                  {cameraHand === 'right' ? (
-                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                      <Text style={styles.folderPickButtonText}>선택</Text>
-                    </Pressable>
-                  ) : null}
+                  <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                    <Text style={styles.folderPickButtonText}>선택</Text>
+                  </Pressable>
                 </View>
                 {locationLookupEnabled && locationLoading ? (
                   <Text style={styles.locationHint}>위치 확인 중…</Text>
@@ -1005,11 +995,6 @@ export function StampSaveModal({
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
                 <View style={styles.folderInputRow}>
-                  {cameraHand === 'left' ? (
-                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                      <Text style={styles.folderPickButtonText}>선택</Text>
-                    </Pressable>
-                  ) : null}
                   <TextInput
                     style={styles.folderInput}
                     value={groupName}
@@ -1018,11 +1003,9 @@ export function StampSaveModal({
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
-                  {cameraHand === 'right' ? (
-                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                      <Text style={styles.folderPickButtonText}>선택</Text>
-                    </Pressable>
-                  ) : null}
+                  <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                    <Text style={styles.folderPickButtonText}>선택</Text>
+                  </Pressable>
                 </View>
                 <Text style={styles.locationHint}>
                   선택한 스탬프만 이동합니다. 앱 폴더와 갤러리 앨범이 함께 변경됩니다.
@@ -1280,22 +1263,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
-  /* STAMP_PREVIEW_ZOOM_BADGE — 손잡이 쪽 상단(왼손=좌, 오른손=우) */
+  /* STAMP_PREVIEW_ZOOM_BADGE */
   previewWrap: {
     position: 'relative',
   },
   zoomEditBadge: {
     position: 'absolute',
     top: 8,
+    right: 8,
     width: 44,
     height: 44,
     backgroundColor: 'transparent',
-  },
-  zoomEditBadgeLeft: {
-    left: 8,
-  },
-  zoomEditBadgeRight: {
-    right: 8,
   },
   imageViewerRoot: {
     flex: 1,

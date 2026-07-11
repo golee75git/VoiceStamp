@@ -2427,3 +2427,18 @@ Copy-Item src.pre-location-school-only\services\*.ts src\services\ -Force
 Copy-Item src.pre-location-school-only\components\StampSaveModal.tsx,src.pre-location-school-only\components\CameraScreen.tsx,src.pre-location-school-only\components\SettingsScreen.tsx src\components\ -Force
 Copy-Item src.pre-location-school-only\help.html public\ -Force
 ```
+
+## 149. 저장 화면 손잡이쪽 확대 아이콘·폴더 선택 되돌리기 (선택)
+
+미리보기 확대 아이콘·저장 폴더 [선택]을 카메라 손잡이 쪽에 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-hand-side.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-hand-side\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-hand-side\help.html public\ -Force
+```
