@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260711_084109.apk` (`b588d83`) — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260711_101055.apk` (`831030e`) — 상세는 [docs/README.md](./docs/README.md)

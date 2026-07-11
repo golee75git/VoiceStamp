@@ -1,10 +1,10 @@
-# VoiceStamp 개발 계획 (Plan)
+﻿# VoiceStamp 개발 계획 (Plan)
 
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.0 |
-| 작성일 | 2026-07-10 |
-| 기준 커밋 | `76aca1f` (main) |
+| 작성일 | 2026-07-11 |
+| 기준 커밋 | `831030e` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -375,8 +375,14 @@
 | 252 | GitHub APK `releases/20260711_081130` · 랜딩·`/info` | `4e0fce6` | `restore-apk-download-20260711_081130.bat` |
 | 253 | **목록 검색 음성** 마이크 | `46d6a41` | `restore-list-search-mic.bat` §146 |
 | 254 | GitHub APK `releases/20260711_082557` · 랜딩·`/info` | `46d6a41` | `restore-apk-download-20260711_082557.bat` |
+| 255 | **내보내기 파일명·제목 음성** 손잡이 쪽 마이크 | `b588d83` | `restore-export-name-mic.bat` §147 |
+| 256 | GitHub APK `releases/20260711_084109` · 랜딩·`/info` | `bc32a8e` | `restore-apk-download-20260711_084109.bat` |
+| 257 | **위치 끔=GPS+로컬 학교 DB만** | `3914d32` | `restore-location-school-only.bat` §148 |
+| 258 | GitHub APK `releases/20260711_092106` · 랜딩·`/info` | `c0e0a32` | `restore-apk-download-20260711_092106.bat` |
+| 259 | 저장 화면 **확대 아이콘·폴더 선택** 손잡이 쪽 | `d0dcdf9` | `restore-save-hand-side.bat` §149 |
+| 260 | GitHub APK `releases/20260711_101055` · 랜딩·`/info` | `831030e` | `restore-apk-download-20260711_101055.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_084109.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260711_101055.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -421,6 +427,7 @@
 | (본 갱신) | `76aca1f` 반영 — **1x·3x·5x** 배율·**앱 내 촬영음**·APK `165146`·`171301`·날짜별·APK별 이력 |
 | (본 갱신) | `a0d05b9` 반영 — 확대 뷰어 **닫기·적용** 손잡이 하단·APK `233524`·날짜별·APK별 이력 |
 | (본 갱신) | `46d6a41` 반영 — **층 school_only**·**목록 성능 A+B**·**목록 검색 음성**·APK `082557`·날짜별·APK별 이력 |
+| (본 갱신) | `831030e` 반영 — **위치 끔=GPS+학교**·**저장 손잡이**(확대·폴더 선택)·APK `092106`·`101055`·날짜별·APK별 이력 |
 
 ---
 
@@ -511,9 +518,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_084109.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_084109.apk |
-| 최신 소스 | `b588d83` — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_101055.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_101055.apk |
+| 최신 소스 | `831030e` — **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -580,7 +587,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-06 | 2V·3 | 저장·수정 미리보기 **zoom 배지** · 목록 내보내기 **파일명·보고서 제목 모달** · APK `095128`~`112756` (`e04ce17`~`f6d33fd`) |
 | 2026-07-09 | 2W·3 | **직전 장소**·**일반 촬영 카메라**·**인앱 핀치/더블탭 확대**·설정 **저장 고정**·**· 기본 칩**·**하단 바**·**빠른 로드** · APK 140843~170409 (392e611~ed2f7ec) |
 | 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `165146`·`171301`·`233524` (`879658d`·`76aca1f`·`a0d05b9`) |
-| 2026-07-11 | 2Y·3 | **층 school_only** 가드 · **목록 성능 A+B**(썸네일) · **목록 검색 음성** · APK `074726`·`081130`·`082557` (`40805e9`·`4e0fce6`·`46d6a41`) |
+| 2026-07-11 | 2Y·3 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이**(확대·폴더 선택) · APK `074726`~`101055` (`40805e9`~`831030e`) |
 
 ---
 
@@ -588,7 +595,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260711_084109.apk` | `b588d83` | **설치·GitHub 권장** — **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
+| `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **설치·GitHub 권장** — **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
+| `releases/VoiceStamp_20260711_092106.apk` | `c0e0a32` | **위치 끔=GPS+학교 DB만** + `084109` 기능 |
+| `releases/VoiceStamp_20260711_084109.apk` | `b588d83` | **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
 | `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_081130.apk` | `4e0fce6` | **목록 성능 A+B** + school_only 층 가드 |
 | `releases/VoiceStamp_20260711_074726.apk` | `40805e9` | **층 school_only** 비학교 lastFloor/저장 가드 + 07-10 전부 |
