@@ -381,19 +381,18 @@ export function StampListScreen({
 
     setProjectBusy(true);
     try {
-      // PDF는 넣지 않음 — 생성 비용이 커서 ZIP은 이미지·manifest만 포함. PDF는 목록 「PDF」로 별도 저장.
       const result = await createStampsProjectZip(
         selected,
         pdfFileName,
         pdfReportTitle,
-        { includePdf: false },
+        { includePdf: true },
       );
       await shareProjectZip(result);
       Alert.alert(
         '프로젝트 저장 완료',
         Platform.OS === 'web'
-          ? 'ZIP(사진·메타)을 다운로드했습니다. PC /report 에서 편집·PDF 인쇄할 수 있습니다.'
-          : '프로젝트 ZIP(사진·메타)을 공유했습니다. PC voicestamp-gilt.vercel.app/report 에서 편집하세요. PDF는 목록 「PDF」로 따로 저장합니다.',
+          ? 'ZIP 파일을 다운로드했습니다. PC에서 압축을 풀거나 /report 페이지에서 편집할 수 있습니다.'
+          : '프로젝트 ZIP을 공유했습니다. PC로 보낸 뒤 압축을 풀거나 voicestamp-gilt.vercel.app/report 에서 편집할 수 있습니다.',
       );
     } catch (e) {
       Alert.alert(

@@ -2456,3 +2456,18 @@ restore-report-row-delete.bat
 ```powershell
 Copy-Item public.pre-report-row-delete\report.html,public.pre-report-row-delete\help.html,public.pre-report-row-delete\landing.html,public.pre-report-row-delete\info.html public\ -Force
 ```
+
+## 151. 프로젝트 ZIP PDF 미포함 되돌리기 (선택)
+
+목록 「프로젝트」저장에서 ZIP 내 report.pdf 생성을 끈 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-project-zip-no-pdf.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-project-zip-no-pdf\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-project-zip-no-pdf\help.html public\ -Force
+```
