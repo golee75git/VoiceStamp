@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.1 |
 | 작성일 | 2026-07-13 |
-| 기준 커밋 | `73dcb4f` (main) |
+| 기준 커밋 | `afb5e88` (main) |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
 
 ---
@@ -393,8 +393,10 @@
 | 263 | GitHub APK `releases/20260713_163836` · 랜딩·`/info` | `66c5d5b` | `restore-apk-download-20260713_163836.bat` |
 | 264 | 프로젝트·엑셀·HWPX **바이너리/청크 저장** (OOM 완화) | `f68b363` | `restore-export-binary-write.bat` §152 |
 | 265 | GitHub APK `releases/20260713_171406` · 랜딩·`/info` | `73dcb4f` | `restore-apk-download-20260713_171406.bat` |
+| 266 | **카메라 권한 확인 중 화면 생략** — 홈 즉시 표시 | `89941c6` | `restore-camera-permission-skip.bat` §153 |
+| 267 | GitHub APK `releases/20260713_231004` · 랜딩·`/info` | `afb5e88` | `restore-apk-download-20260713_231004.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260713_171406.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260713_231004.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -440,6 +442,7 @@
 | (본 갱신) | `a0d05b9` 반영 — 확대 뷰어 **닫기·적용** 손잡이 하단·APK `233524`·날짜별·APK별 이력 |
 | (본 갱신) | `46d6a41` 반영 — **층 school_only**·**목록 성능 A+B**·**목록 검색 음성**·APK `082557`·날짜별·APK별 이력 |
 | (본 갱신) | `831030e` 반영 — **위치 끔=GPS+학교**·**저장 손잡이**(확대·폴더 선택)·APK `092106`·`101055`·날짜별·APK별 이력 |
+| (본 갱신) | `afb5e88` 반영 — **카메라 권한 확인 중 생략**·APK `231004`·`171406`·`163836`·날짜별·APK별 이력 |
 
 ---
 
@@ -530,9 +533,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260711_101055.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260711_101055.apk |
-| 최신 소스 | `831030e` — **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260713_231004.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260713_231004.apk |
+| 최신 소스 | `afb5e88` — **카메라 권한 확인 중 생략** + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -600,7 +603,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-09 | 2W·3 | **직전 장소**·**일반 촬영 카메라**·**인앱 핀치/더블탭 확대**·설정 **저장 고정**·**· 기본 칩**·**하단 바**·**빠른 로드** · APK 140843~170409 (392e611~ed2f7ec) |
 | 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `165146`·`171301`·`233524` (`879658d`·`76aca1f`·`a0d05b9`) |
 | 2026-07-11 | 2Y·3 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이**(확대·폴더 선택) · APK `074726`~`101055` (`40805e9`~`831030e`) |
-| 2026-07-13 | 2Z·3 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · APK `163836`·`171406` (`61a32ca`~`73dcb4f`) |
+| 2026-07-13 | 2Z·3 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `163836`·`171406`·`231004` (`61a32ca`~`afb5e88`) |
 
 ---
 
@@ -608,7 +611,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **설치·GitHub 권장** — **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **설치·GitHub 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
 | `releases/VoiceStamp_20260711_092106.apk` | `c0e0a32` | **위치 끔=GPS+학교 DB만** + `084109` 기능 |
