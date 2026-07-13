@@ -7,7 +7,6 @@ import { resolveImageUri } from './fileService';
 import { renderHwpxFromTemplate } from './hwpxTemplate';
 import { stampCoordinatesLine } from './stampCoords';
 import { getCoordsLabelMode } from './settingsService';
-import { writeUint8ArrayToCacheFile } from './writeCacheFile';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
 
@@ -17,6 +16,15 @@ const reportTemplateAsset = require('../../assets/templates/report.hwpx');
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
   return cleaned || 'VoiceStamp';
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 function base64ToUint8Array(base64: string): Uint8Array {
@@ -140,7 +148,16 @@ export async function createStampsHwpx(
     return { uri: 'web', fileName: hwpxFileName, webBlobUrl };
   }
 
-  const hwpxPath = writeUint8ArrayToCacheFile(bytes, hwpxFileName);
+  const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
+  if (!dir) {
+    throw new Error('저장 경로를 사용할 수 없습니다.');
+  }
+
+  const hwpxPath = `${dir}${hwpxFileName}`;
+  await FileSystem.writeAsStringAsync(hwpxPath, arrayBufferToBase64(arrayBuffer), {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
   return { uri: hwpxPath, fileName: hwpxFileName };
 }
 

@@ -6,7 +6,6 @@ import { Platform } from 'react-native';
 import { resolveImageUri } from './fileService';
 import { stampCoordinatesLine } from './stampCoords';
 import { getCoordsLabelMode } from './settingsService';
-import { writeUint8ArrayToCacheFile } from './writeCacheFile';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
 
@@ -26,17 +25,6 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
-}
-
-function bufferToUint8Array(buffer: ExcelJS.Buffer): Uint8Array {
-  if (buffer instanceof ArrayBuffer) {
-    return new Uint8Array(buffer);
-  }
-  if (buffer instanceof Uint8Array) {
-    return buffer;
-  }
-  // Node Buffer-like
-  return new Uint8Array(buffer as ArrayBuffer);
 }
 
 function downloadBlobOnWeb(blob: Blob, fileName: string): void {
@@ -135,15 +123,23 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
   const buffer = await workbook.xlsx.writeBuffer();
 
   if (Platform.OS === 'web') {
-    const bytesForBlob = bufferToUint8Array(buffer);
-    const blob = new Blob([bytesForBlob], {
+    const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     const webBlobUrl = URL.createObjectURL(blob);
     return { uri: 'web', fileName: xlsxFileName, webBlobUrl };
   }
 
-  const xlsxPath = writeUint8ArrayToCacheFile(bufferToUint8Array(buffer), xlsxFileName);
+  const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
+  if (!dir) {
+    throw new Error('저장 경로를 사용할 수 없습니다.');
+  }
+
+  const xlsxPath = `${dir}${xlsxFileName}`;
+  await FileSystem.writeAsStringAsync(xlsxPath, arrayBufferToBase64(buffer), {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
   return { uri: xlsxPath, fileName: xlsxFileName };
 }
 

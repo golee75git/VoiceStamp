@@ -1,12 +1,10 @@
 import JSZip from 'jszip';
 import * as FileSystem from 'expo-file-system/legacy';
-import { File } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { createStampsPdf } from './exportPdf';
 import { resolveImageUri, sanitizeStampFileBaseName } from './fileService';
-import { writeJsZipToCacheFile } from './writeCacheFile';
 import {
   getCoordsLabelMode,
   getMemoTextAlign,
@@ -84,18 +82,22 @@ function stampZipImageName(index: number, stamp: Stamp): string {
   return `${padIndex(index)}_${base}_${shortIdFromStampId(stamp.id)}.${ext}`;
 }
 
-async function readImageForZip(imagePath: string): Promise<Uint8Array> {
+async function readImageForZip(
+  imagePath: string,
+): Promise<{ data: string | Uint8Array; base64: boolean }> {
   const uri = resolveImageUri(imagePath);
 
   if (Platform.OS === 'web') {
     const response = await fetch(uri);
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
-    return new Uint8Array(arrayBuffer);
+    return { data: new Uint8Array(arrayBuffer), base64: false };
   }
 
-  // Binary read — avoid holding a large base64 string in JS.
-  return new File(uri).bytes();
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return { data: base64, base64: true };
 }
 
 function downloadBlobOnWeb(blobUrl: string, fileName: string): void {
@@ -139,8 +141,13 @@ export async function createStampsProjectZip(
   for (let i = 0; i < stamps.length; i++) {
     const stamp = stamps[i];
     const imageFile = stampZipImageName(i, stamp);
-    const data = await readImageForZip(stamp.imagePath);
-    stampsFolder.file(imageFile, data);
+    const { data, base64 } = await readImageForZip(stamp.imagePath);
+
+    if (base64 && typeof data === 'string') {
+      stampsFolder.file(imageFile, data, { base64: true });
+    } else if (data instanceof Uint8Array) {
+      stampsFolder.file(imageFile, data);
+    }
 
     manifestStamps.push({
       id: stamp.id,
@@ -197,8 +204,17 @@ export async function createStampsProjectZip(
     return { uri: 'web', fileName: zipFileName, webBlobUrl };
   }
 
-  // Stream ZIP chunks to disk — do not build one giant base64 string (OOM).
-  const zipPath = await writeJsZipToCacheFile(zip, zipFileName);
+  const base64Zip = await zip.generateAsync({ type: 'base64' });
+  const dir = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
+  if (!dir) {
+    throw new Error('저장 경로를 사용할 수 없습니다.');
+  }
+
+  const zipPath = `${dir}${zipFileName}`;
+  await FileSystem.writeAsStringAsync(zipPath, base64Zip, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
   return { uri: zipPath, fileName: zipFileName };
 }
 

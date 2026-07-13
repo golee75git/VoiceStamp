@@ -2471,3 +2471,19 @@ restore-project-zip-no-pdf.bat
 Copy-Item src.pre-project-zip-no-pdf\components\StampListScreen.tsx src\components\ -Force
 Copy-Item src.pre-project-zip-no-pdf\help.html public\ -Force
 ```
+
+## 152. 내보내기 바이너리/청크 저장 되돌리기 (선택)
+
+프로젝트·엑셀·HWPX의 base64 통짜 쓰기를 바이너리/스트리밍으로 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-export-binary-write.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-export-binary-write\services\*.ts src\services\ -Force
+Remove-Item src\services\writeCacheFile.ts -ErrorAction SilentlyContinue
+Copy-Item src.pre-export-binary-write\help.html public\ -Force
+```
