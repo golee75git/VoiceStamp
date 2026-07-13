@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-11**
-최신 커밋 기준: `831030e` (main)
+문서 작성일: **2026-07-13**
+최신 커밋 기준: `73dcb4f` (main)
 
 ---
 
@@ -353,8 +353,13 @@ VoiceStamp/
 | 252 | GitHub APK `releases/20260711_092106` · 랜딩·`/info` | `c0e0a32` | `restore-apk-download-20260711_092106.bat` |
 | 253 | 저장 화면 **확대 아이콘·폴더 선택** 손잡이 쪽 | `d0dcdf9` | `restore-save-hand-side.bat` §149 |
 | 254 | GitHub APK `releases/20260711_101055` · 랜딩·`/info` | `831030e` | `restore-apk-download-20260711_101055.bat` |
+| 255 | `/report` **행 삭제** | `61a32ca` | `restore-report-row-delete.bat` §150 |
+| 256 | 프로젝트 ZIP **PDF 미포함** (속도) | `a58157f` | `restore-project-zip-no-pdf.bat` §151 |
+| 257 | GitHub APK `releases/20260713_163836` · 랜딩·`/info` | `66c5d5b` | `restore-apk-download-20260713_163836.bat` |
+| 258 | 프로젝트·엑셀·HWPX **바이너리/청크 저장** (OOM 완화) | `f68b363` | `restore-export-binary-write.bat` §152 |
+| 259 | GitHub APK `releases/20260713_171406` · 랜딩·`/info` | `73dcb4f` | `restore-apk-download-20260713_171406.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_101055.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260713_171406.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -420,7 +425,9 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260711_101055.apk`** | `831030e` | **설치·GitHub 권장** — **저장 손잡이**(확대·폴더 선택) + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
+| **`releases/VoiceStamp_20260713_171406.apk`** | `73dcb4f` | **설치·GitHub 권장** — **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
+| `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
+| `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이**(확대·폴더 선택) + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
 | **`releases/VoiceStamp_20260711_092106.apk`** | `c0e0a32` | **위치 끔=GPS+학교 DB만** + `084109` 기능 |
 | **`releases/VoiceStamp_20260711_084109.apk`** | `b588d83` | **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B |
 | **`releases/VoiceStamp_20260711_082557.apk`** | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 |
@@ -510,11 +517,18 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-13
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **권장** — **내보내기 OOM 수정**(바이너리/청크 ZIP·XLSX·HWPX) + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) | GitHub |
+
 #### 2026-07-11
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **권장** — **저장 손잡이**(확대 아이콘·폴더 선택) + **위치 끔=GPS+학교** + `084109` 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이**(확대 아이콘·폴더 선택) + **위치 끔=GPS+학교** + `084109` 전부 | GitHub |
 | `releases/VoiceStamp_20260711_092106.apk` | `c0e0a32` | **위치 끔=GPS+로컬 학교 DB만** (카카오·직전 장소 없음) | GitHub |
 | `releases/VoiceStamp_20260711_084109.apk` | `b588d83` | **내보내기 파일명·제목 음성** + 목록 검색 음성 + 목록 성능 A+B | GitHub |
 | `releases/VoiceStamp_20260711_082557.apk` | `46d6a41` | **목록 검색 음성** + 목록 성능 A+B + school_only 층 가드 | GitHub |
@@ -898,6 +912,19 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-13
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`73dcb4f` 기준) — 날짜별·APK별 이력 |
+| `73dcb4f` | APK `releases/VoiceStamp_20260713_171406` 게시 · 랜딩·`/info` · Vercel |
+| `f68b363` | 프로젝트·엑셀·HWPX **바이너리/청크 저장** (OOM 완화) · `restore-export-binary-write.bat` §152 |
+| `66c5d5b` | APK `releases/VoiceStamp_20260713_163836` 게시 · 랜딩·`/info` |
+| `a58157f` | 프로젝트 ZIP **PDF 미포함** (속도) · `restore-project-zip-no-pdf.bat` §151 |
+| `61a32ca` | `/report` **행 삭제** · `restore-report-row-delete.bat` §150 · Vercel |
+
+> **권장 APK:** `releases/VoiceStamp_20260713_171406.apk` (`73dcb4f`). 랜딩·`/info` 다운로드 링크 동기화됨.
+
 ### 2026-07-11
 
 | 커밋 | 내용 |
@@ -916,7 +943,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `d574ac9` | APK `releases/VoiceStamp_20260711_074726` 게시 · 랜딩·`/info` |
 | `40805e9` | **층 school_only** — 비학교에 `lastFloor` 미적용·저장/빠른저장 가드 · `restore-floor-school-only.bat` §144 · 도움말·설정 힌트 |
 
-> **권장 APK:** `releases/VoiceStamp_20260711_101055.apk` (`831030e`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **이전 권장 APK:** `releases/VoiceStamp_20260711_101055.apk` (`831030e`).
 
 ### 2026-07-10
 
