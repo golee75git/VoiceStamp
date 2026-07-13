@@ -15,9 +15,7 @@
     .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
     button, .file-btn { border: 1px solid #2563eb; background: #fff; color: #2563eb; border-radius: 8px; padding: 0.55rem 0.9rem; font-weight: 600; cursor: pointer; }
     button.primary { background: #2563eb; color: #fff; }
-    button.danger { border-color: #b91c1c; color: #b91c1c; padding: 0.35rem 0.55rem; font-size: 0.85rem; }
     button:disabled { opacity: 0.45; cursor: not-allowed; }
-    th.col-actions, td.col-actions { width: 4.5rem; white-space: nowrap; text-align: center; }
     input[type="file"] { display: none; }
     table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
     th, td { border: 1px solid #e5e7eb; padding: 0.45rem; vertical-align: top; }
@@ -69,7 +67,7 @@
 <body>
   <nav><a href="/">← 홈</a> · <a href="/app">웹 테스트</a> · <a href="/info">앱 정보</a></nav>
   <h1>VoiceStamp 보고서 편집</h1>
-  <p class="muted">앱에서 보낸 <code>.voicestamp.zip</code>을 PC에서 열어 제목·메모·층을 수정하거나 행을 삭제한 뒤, 합성 JPEG·PDF를 저장할 수 있습니다. <strong>파일은 서버로 전송되지 않으며</strong> 브라우저에서만 처리됩니다.</p>
+  <p class="muted">앱에서 보낸 <code>.voicestamp.zip</code>을 PC에서 열어 제목·메모·층을 수정하고, 합성 JPEG·PDF를 저장할 수 있습니다. <strong>파일은 서버로 전송되지 않으며</strong> 브라우저에서만 처리됩니다.</p>
 
   <section class="panel upload">
     <label class="file-btn" for="zipInput">프로젝트 ZIP 열기</label>
@@ -157,7 +155,6 @@
             <th>층</th>
             <th>좌표</th>
             <th>촬영일시</th>
-            <th class="col-actions">삭제</th>
           </tr>
         </thead>
         <tbody id="stampRows"></tbody>
@@ -205,8 +202,6 @@
     let manifest = null;
     const imageUrls = new Map();
     let exportBusy = false;
-    /** 행 삭제로 구성이 바뀌면 번들 report.pdf는 더 이상 맞지 않음 */
-    let structureDirty = false;
 
     function setStatus(text) {
       statusEl.textContent = text;
@@ -292,46 +287,6 @@
       });
     }
 
-    function bindRowActions() {
-      stampRows.querySelectorAll('[data-action="delete-row"]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const index = Number(btn.getAttribute('data-index'));
-          if (!Number.isFinite(index)) return;
-          deleteStampRow(index);
-        });
-      });
-    }
-
-    function revokeStampImage(imageFile) {
-      if (!imageFile) return;
-      const url = imageUrls.get(imageFile);
-      if (url) {
-        URL.revokeObjectURL(url);
-        imageUrls.delete(imageFile);
-      }
-    }
-
-    function deleteStampRow(index) {
-      if (!manifest || exportBusy) return;
-      const synced = readManifestFromEditor();
-      if (!synced) return;
-      manifest = synced;
-      const stamp = manifest.stamps[index];
-      if (!stamp) return;
-      const label = (stamp.title || '').trim() || `${index + 1}번`;
-      if (!window.confirm(`「${label}」행을 삭제할까요?\n삭제 후 「수정 ZIP 저장」으로 반영하세요.`)) {
-        return;
-      }
-      const [removed] = manifest.stamps.splice(index, 1);
-      revokeStampImage(removed?.imageFile);
-      structureDirty = true;
-      if (loadedZip) {
-        loadedZip.remove('report.pdf');
-      }
-      renderEditor();
-      setStatus(`행을 삭제했습니다. (남은 ${manifest.stamps.length}장)`);
-    }
-
     function readManifestFromEditor() {
       if (!manifest) return null;
       const rows = [...stampRows.querySelectorAll('tr[data-index]')];
@@ -340,7 +295,6 @@
       rows.forEach((row) => {
         const index = Number(row.dataset.index);
         const stamp = next.stamps[index];
-        if (!stamp) return;
         stamp.title = row.querySelector('[data-field="title"]').value;
         stamp.memo = row.querySelector('[data-field="memo"]').value;
         const floorRaw = row.querySelector('[data-field="floor"]').value.trim();
@@ -364,12 +318,10 @@
           <td><input data-field="floor" value="${escapeAttr(floorLabel(stamp.floor))}" placeholder="예: 3층" /></td>
           <td>${escapeHtml(formatCoords(stamp))}</td>
           <td>${escapeHtml(formatDate(stamp.createdAt))}</td>
-          <td class="col-actions"><button type="button" class="danger" data-action="delete-row" data-index="${index}" aria-label="${index + 1}번 행 삭제">삭제</button></td>
         `;
         stampRows.appendChild(tr);
       });
       bindThumbClicks();
-      bindRowActions();
       reportTitleInput.value = manifest.reportTitle || '';
       applyExportSettingsToUi(manifest.exportSettings || {});
       editorPanel.hidden = false;
@@ -393,7 +345,6 @@
       revokeImageUrls();
       loadedZip = null;
       manifest = null;
-      structureDirty = false;
       editorPanel.hidden = true;
       exportSettingsPanel.hidden = true;
       setExportBusy(true);
@@ -452,11 +403,9 @@
           const blob = await response.blob();
           stampsFolder.file(stamp.imageFile, blob);
         }
-        if (!structureDirty) {
-          const pdfFile = loadedZip.file('report.pdf');
-          if (pdfFile) {
-            zip.file('report.pdf', await pdfFile.async('uint8array'));
-          }
+        const pdfFile = loadedZip.file('report.pdf');
+        if (pdfFile) {
+          zip.file('report.pdf', await pdfFile.async('uint8array'));
         }
         const blob = await zip.generateAsync({ type: 'blob' });
         const baseName = (next.reportTitle || 'VoiceStamp').replace(/[\\/:*?"<>|]/g, '_');
