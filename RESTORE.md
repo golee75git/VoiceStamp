@@ -1,4 +1,4 @@
-﻿# 되돌리기 가이드
+# 되돌리기 가이드
 
 문제가 생기면 아래 순서로 **초기 Expo 템플릿 상태**로 복구할 수 있습니다.
 
@@ -2486,4 +2486,19 @@ restore-export-binary-write.bat
 Copy-Item src.pre-export-binary-write\services\*.ts src\services\ -Force
 Remove-Item src\services\writeCacheFile.ts -ErrorAction SilentlyContinue
 Copy-Item src.pre-export-binary-write\help.html public\ -Force
+```
+
+## 153. 카메라 권한 확인 중 화면 생략 되돌리기 (선택)
+
+권한 로딩 문구를 제거하고 카메라 홈을 바로 보이게 한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-camera-permission-skip.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-camera-permission-skip\components\CameraScreen.tsx src\components\ -Force
+Copy-Item src.pre-camera-permission-skip\help.html public\ -Force
 ```

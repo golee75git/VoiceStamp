@@ -468,19 +468,13 @@ export function CameraScreen({
       await openSystemCamera();
       return;
     }
-    if (!permission?.granted) {
-      const result = await requestPermission();
-      if (!result.granted) {
-        return;
-      }
-    }
     const mode = await getPrimaryCaptureCamera();
     if (mode === 'in_app') {
       openInAppCamera('single');
       return;
     }
     await openSystemCamera();
-  }, [isWeb, openInAppCamera, openSystemCamera, permission?.granted, requestPermission]);
+  }, [isWeb, openInAppCamera, openSystemCamera]);
 
   const handleActionRetake = useCallback(() => {
     cancelLocationPrefetch();
@@ -600,8 +594,15 @@ export function CameraScreen({
     refreshKey,
   ]);
 
-  // permission === null: show launcher immediately (avoid "권한 확인 중" flash)
-  if (!isWeb && permission && !permission.granted) {
+  if (!permission) {
+    return (
+      <View style={styles.centered}>
+        <Text>카메라 권한 확인 중...</Text>
+      </View>
+    );
+  }
+
+  if (!isWeb && !permission.granted) {
     return (
       <View style={styles.centered}>
         <Text style={styles.message}>사진 촬영을 위해 카메라 권한이 필요합니다.</Text>
