@@ -13,6 +13,8 @@
 | [PLAN.md](./PLAN.md) | 기획·개발 | 단계·완료 기능, **§10 날짜별** · **§11 APK별** |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 기획·UI | LEG-04 정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | 기획·AI | **AI-ML-01** ML Kit 설계 (구현 `43d1f13` → **`0869e93` 되돌림**) |
+| [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
+| [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | 운영 | 카카오 REST API 키 체크리스트 |
@@ -30,9 +32,10 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-13)
+## 현재 상태 스냅샷 (2026-07-14)
 
-- **최신 커밋:** `afb5e88` (main)
+- **문서 갱신일:** 2026-07-14 — **GS-UPLOAD-01** 설계·초안만 (`src/` 변경 없음). 권장 APK·앱 기능은 **07-13**과 동일.
+- **최신 기능 커밋:** `afb5e88` (main) — 문서 전용 커밋은 이 동기화 커밋 기준
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`) — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부
@@ -76,8 +79,11 @@
 | 07-10 | 앱 내 **1x·3x·5x**·**촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `233524` |
 | 07-11 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이** · APK `101055` |
 | 07-13 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `231004` |
+| 07-14 | **GS-UPLOAD-01** Google Sheets(공용 시트)·압축 사진·원클릭 업로드 **설계·초안만** (`docs/`) — **앱·APK 변경 없음** · 권장 APK 유지 `231004` |
 
 ### APK별 (권장·주요)
+
+> **2026-07-14:** 신규 APK 없음. 아래 표·권장 파일은 **07-13**과 동일.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|

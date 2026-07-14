@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.1 |
-| 작성일 | 2026-07-13 |
-| 기준 커밋 | `afb5e88` (main) |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md) |
+| 문서 버전 | 3.2 |
+| 작성일 | 2026-07-14 |
+| 기준 커밋 | `afb5e88` (main, 앱/APK) — 문서: **GS-UPLOAD-01 초안** |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -398,6 +398,15 @@
 
 > **권장 APK:** `releases/VoiceStamp_20260713_231004.apk`.
 
+## 2AA. 문서·설계 (2026-07-14, 소스 변경 없음)
+
+| # | 항목 | 상태 | 비고 |
+|---|------|------|------|
+| 268 | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** | 📋 설계만 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · [drafts/google-sheets-upload/](./drafts/google-sheets-upload/) |
+| 269 | PRD·PROJECT·PLAN·README **날짜별·APK별** 동기화 (07-14) | ✅ | **신규 APK 없음** · 권장 APK 유지 `231004` |
+
+> **앱·APK:** 변경 없음. Apps Script 실제 배포·앱 연동은 별도 구현 계획.
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |
@@ -443,6 +452,7 @@
 | (본 갱신) | `46d6a41` 반영 — **층 school_only**·**목록 성능 A+B**·**목록 검색 음성**·APK `082557`·날짜별·APK별 이력 |
 | (본 갱신) | `831030e` 반영 — **위치 끔=GPS+학교**·**저장 손잡이**(확대·폴더 선택)·APK `092106`·`101055`·날짜별·APK별 이력 |
 | (본 갱신) | `afb5e88` 반영 — **카메라 권한 확인 중 생략**·APK `231004`·`171406`·`163836`·날짜별·APK별 이력 |
+| (본 갱신) | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
 
 ---
 
@@ -501,6 +511,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |----|------|------|
 | **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기 |
 
+### 4.5 연동·클라우드 (설계만)
+
+| ID | 내용 | 비고 |
+|----|------|------|
+| **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드 (압축 JPEG·개발자 공용 시트·Apps Script) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 초안 `docs/drafts/google-sheets-upload/` · **앱 미연동** |
+
 ---
 
 ## 5. 개발 원칙 (유지)
@@ -524,6 +540,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 5 | FEAT-03 로컬 JSON 백업/복원 | 재설치 시나리오 (오프라인) |
 | 5b | **FEAT-03-NCP** NCP 백업/복원 | §12 설계 기준, NCP 인프라 선행 |
 | 6 | RPT-01 보고서 서식 | 별도 PDCA·POC 필요 |
+| 7 | **GS-UPLOAD-01** 앱 연동 (초안 있음) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) — 공용 시트·토큰 보안 검토 후 |
 
 ---
 
@@ -563,6 +580,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~140 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
+| [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | Google Sheets 업로드 설계 (GS-UPLOAD-01, 초안) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
 
@@ -604,10 +622,13 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `165146`·`171301`·`233524` (`879658d`·`76aca1f`·`a0d05b9`) |
 | 2026-07-11 | 2Y·3 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이**(확대·폴더 선택) · APK `074726`~`101055` (`40805e9`~`831030e`) |
 | 2026-07-13 | 2Z·3 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `163836`·`171406`·`231004` (`61a32ca`~`afb5e88`) |
+| 2026-07-14 | 4 (설계) | **GS-UPLOAD-01** Google Sheets 공용 시트·압축·원클릭 **초안·설계** · 문서 동기화 · **소스·APK 변경 없음** |
 
 ---
 
 ## 11. APK 빌드별 요약
+
+> **2026-07-14:** 신규 APK 없음. 권장 = `releases/VoiceStamp_20260713_231004.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|

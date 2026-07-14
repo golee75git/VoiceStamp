@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-13 |
-| 최신 반영 커밋 | `afb5e88` (main) |
+| 문서 작성일 | 2026-07-14 |
+| 최신 반영 커밋 | `afb5e88` (main, 앱/APK) — 본 문서 동기화는 **GS-UPLOAD-01 초안** (소스 미변경) |
 
 ---
 
@@ -618,6 +618,7 @@
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
 | **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
+| **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 (재설치 복구) | 로드맵 |
@@ -669,12 +670,15 @@
 | **2026-07-10** | 앱 내 카메라 **1x·3x·5x** 배율 · **앱 내 촬영음** 켜기/끄기 · 확대 뷰어 **닫기·적용**을 카메라 손잡이 쪽 하단(사진 버리기 위) · APK `165146`·`171301`·`233524` | `879658d`·`76aca1f`·`a0d05b9` |
 | **2026-07-11** | **층 school_only** 가드 · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교 DB만** · **저장 화면 손잡이**(확대 아이콘·폴더 선택) · APK `074726`·`081130`·`082557`·`084109`·`092106`·`101055` | `40805e9`~`831030e` |
 | **2026-07-13** | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함**(속도) · 프로젝트·엑셀·HWPX **바이너리/청크 저장**(OOM 완화) · **카메라 권한 확인 중 화면 생략**(홈 즉시 표시) · APK `163836`·`171406`·`231004` · Vercel | `61a32ca`~`afb5e88` |
+| **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | (본 문서 커밋) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
 ---
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
+
+> **2026-07-14:** 신규 APK 빌드 없음. 권장 파일은 **`VoiceStamp_20260713_231004.apk`**. GS-UPLOAD 초안은 APK에 포함되지 않음.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|

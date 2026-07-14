@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-13**
-최신 커밋 기준: `afb5e88` (main)
+문서 작성일: **2026-07-14**
+최신 기능 커밋 기준: `afb5e88` (main) — **문서:** GS-UPLOAD-01 초안 (소스 미변경)
 
 ---
 
@@ -41,7 +41,7 @@ VoiceStamp/
 │   ├── types/              # stamp
 │   └── utils/              # id, cameraPictureSize, geoDistance
 ├── android/                # 네이티브 Android (로컬 빌드용)
-├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, 문서 목록
+├── docs/                   # PRD, PROJECT, PLAN, PRIVACY, DESIGN-*, drafts/google-sheets-upload
 ├── build-apk.bat           # Release APK 빌드
 ├── public/                 # 정책 정적 HTML (info, privacy, license, help)
 ├── RESTORE.md              # 기능별 되돌리기 (§8~111)
@@ -520,6 +520,14 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-14 (문서만 · APK 없음)
+
+| 항목 | 내용 |
+|------|------|
+| 신규 APK | **없음** |
+| 권장 APK | `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`) 유지 |
+| 문서 | **GS-UPLOAD-01** 설계·초안 · PRD·PLAN·README 날짜별·APK별 동기화 |
+
 #### 2026-07-13
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
@@ -915,6 +923,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-14
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 동기화 — **GS-UPLOAD-01** 초안·설계 · 날짜별·APK별 이력 · **소스·APK 변경 없음** |
+| (파일) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · [drafts/google-sheets-upload/](./drafts/google-sheets-upload/) (`Code.gs`, `client-api.draft.ts`, `sample-payload.json`) |
+
+> **권장 APK:** 유지 — `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`).
 
 ### 2026-07-13
 

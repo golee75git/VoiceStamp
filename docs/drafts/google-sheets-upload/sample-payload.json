@@ -1,0 +1,13 @@
+{
+  "token": "CHANGE_ME_TO_A_LONG_RANDOM_SECRET",
+  "id": "test-stamp-001",
+  "title": "테스트 제목",
+  "memo": "스모크 테스트 메모",
+  "createdAt": 1752470000000,
+  "latitude": 37.5665,
+  "longitude": 126.978,
+  "floor": "1",
+  "placeLabel": "테스트장소",
+  "mimeType": "image/jpeg",
+  "imageBase64": "REPLACE_WITH_REAL_JPEG_BASE64_WITHOUT_DATA_URI_PREFIX"
+}
