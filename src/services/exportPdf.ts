@@ -8,6 +8,10 @@ import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import {
+  ensureStampGroupDir,
+  extractStampGroupFromImagePath,
+} from './fileService';
+import {
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
@@ -373,12 +377,45 @@ async function namePdfFile(uri: string, fileName: string): Promise<string> {
   return dest;
 }
 
-async function archivePdf(uri: string, fileName: string): Promise<void> {
+/** Pick the most common stamp folder (YYYYMMDD_장소). Ties keep first-seen order. */
+function resolveArchiveGroupFromStamps(stamps: Stamp[]): string | null {
+  const counts = new Map<string, number>();
+  let best: string | null = null;
+  let bestCount = 0;
+
+  for (const stamp of stamps) {
+    const group = extractStampGroupFromImagePath(stamp.imagePath)?.trim();
+    if (!group) {
+      continue;
+    }
+    const next = (counts.get(group) ?? 0) + 1;
+    counts.set(group, next);
+    if (next > bestCount) {
+      best = group;
+      bestCount = next;
+    }
+  }
+
+  return best;
+}
+
+async function archivePdf(uri: string, fileName: string, groupName?: string | null): Promise<void> {
   if (!FileSystem.documentDirectory) {
     return;
   }
 
-  const dir = `${FileSystem.documentDirectory}exports/`;
+  let dir: string;
+  const trimmedGroup = groupName?.trim();
+  if (trimmedGroup) {
+    try {
+      dir = await ensureStampGroupDir(trimmedGroup);
+    } catch {
+      dir = `${FileSystem.documentDirectory}exports/`;
+    }
+  } else {
+    dir = `${FileSystem.documentDirectory}exports/`;
+  }
+
   const info = await FileSystem.getInfoAsync(dir);
   if (!info.exists) {
     await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
@@ -438,7 +475,7 @@ export async function createStampsPdf(
 
   const { uri } = await Print.printToFileAsync({ html });
   const namedUri = await namePdfFile(uri, safeName);
-  await archivePdf(namedUri, safeName);
+  await archivePdf(namedUri, safeName, resolveArchiveGroupFromStamps(stamps));
   return namedUri;
 }
 

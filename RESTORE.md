@@ -2502,3 +2502,18 @@ restore-camera-permission-skip.bat
 Copy-Item src.pre-camera-permission-skip\components\CameraScreen.tsx src\components\ -Force
 Copy-Item src.pre-camera-permission-skip\help.html public\ -Force
 ```
+
+## 154. PDF 현장 폴더 저장 되돌리기 (선택)
+
+PDF archive를 `exports/` 대신 `stamps/YYYYMMDD_장소명/`에 두도록 바꾼 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-export-site-folder.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-export-site-folder\services\exportPdf.ts src\services\ -Force
+Copy-Item public.pre-export-site-folder\help.html public\ -Force
+```
