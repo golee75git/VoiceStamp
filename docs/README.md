@@ -27,20 +27,20 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~152) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~154) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-14)
+## 현재 상태 스냅샷 (2026-07-20)
 
-- **문서 갱신일:** 2026-07-14 — **GS-UPLOAD-01** 설계·초안만 (`src/` 변경 없음). 권장 APK·앱 기능은 **07-13**과 동일.
-- **최신 기능 커밋:** `afb5e88` (main) — 문서 전용 커밋은 이 동기화 커밋 기준
+- **문서 갱신일:** 2026-07-20 — **PDF → `YYYYMMDD_장소명` 폴더 archive** · APK `225635` · 날짜별·APK별 이력 동기화
+- **최신 기능 커밋:** `6060a48` (main)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`) — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260713_231004.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260713_171406.apk` (`73dcb4f`, 내보내기 OOM 수정)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260720_225635.apk` (`6060a48`) — **PDF 현장 폴더 저장** + 카메라 권한 확인 중 생략 + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260720_225635.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`, 카메라 권한 홈 즉시)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
@@ -79,15 +79,17 @@
 | 07-10 | 앱 내 **1x·3x·5x**·**촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `233524` |
 | 07-11 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이** · APK `101055` |
 | 07-13 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `231004` |
-| 07-14 | **GS-UPLOAD-01** Google Sheets(공용 시트)·압축 사진·원클릭 업로드 **설계·초안만** (`docs/`) — **앱·APK 변경 없음** · 권장 APK 유지 `231004` |
+| 07-14 | **GS-UPLOAD-01** Google Sheets(공용 시트)·압축 사진·원클릭 업로드 **설계·초안만** (`docs/`) — **앱·APK 변경 없음** · 당시 권장 APK `231004` |
+| 07-20 | **PDF → `YYYYMMDD_장소` 폴더 archive** · 도움말 · APK `225635` · Vercel |
 
 ### APK별 (권장·주요)
 
-> **2026-07-14:** 신규 APK 없음. 아래 표·권장 파일은 **07-13**과 동일.
+> **2026-07-20:** 권장 파일은 **`VoiceStamp_20260720_225635.apk`**.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **설치·GitHub 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **설치·GitHub 권장** — **PDF → 현장 폴더 archive** + 07-13 전부 |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | ZIP PDF 미포함 + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 |

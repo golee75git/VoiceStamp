@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-14 |
-| 최신 반영 커밋 | `afb5e88` (main, 앱/APK) — 본 문서 동기화는 **GS-UPLOAD-01 초안** (소스 미변경) |
+| 문서 작성일 | 2026-07-20 |
+| 최신 반영 커밋 | `6060a48` (main) — **PDF → `YYYYMMDD_장소명` 폴더 archive** · APK `VoiceStamp_20260720_225635` |
 
 ---
 
@@ -607,7 +607,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260713_231004.apk`** (`afb5e88`) |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260720_225635.apk`** (`6060a48`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -670,7 +670,8 @@
 | **2026-07-10** | 앱 내 카메라 **1x·3x·5x** 배율 · **앱 내 촬영음** 켜기/끄기 · 확대 뷰어 **닫기·적용**을 카메라 손잡이 쪽 하단(사진 버리기 위) · APK `165146`·`171301`·`233524` | `879658d`·`76aca1f`·`a0d05b9` |
 | **2026-07-11** | **층 school_only** 가드 · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교 DB만** · **저장 화면 손잡이**(확대 아이콘·폴더 선택) · APK `074726`·`081130`·`082557`·`084109`·`092106`·`101055` | `40805e9`~`831030e` |
 | **2026-07-13** | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함**(속도) · 프로젝트·엑셀·HWPX **바이너리/청크 저장**(OOM 완화) · **카메라 권한 확인 중 화면 생략**(홈 즉시 표시) · APK `163836`·`171406`·`231004` · Vercel | `61a32ca`~`afb5e88` |
-| **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | (본 문서 커밋) |
+| **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
+| **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -678,11 +679,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-14:** 신규 APK 빌드 없음. 권장 파일은 **`VoiceStamp_20260713_231004.apk`**. GS-UPLOAD 초안은 APK에 포함되지 않음.
+> **2026-07-20:** 권장 파일은 **`VoiceStamp_20260720_225635.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` / `89941c6` | **설치·GitHub 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **설치·GitHub 권장** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부(권한 홈 즉시·OOM·ZIP PDF 미포함·`/report` 행 삭제) |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` / `89941c6` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` / `f68b363` | **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` / `a58157f` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` / `d0dcdf9` | **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |

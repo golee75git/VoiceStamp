@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-14**
-최신 기능 커밋 기준: `afb5e88` (main) — **문서:** GS-UPLOAD-01 초안 (소스 미변경)
+문서 작성일: **2026-07-20**
+최신 기능 커밋 기준: `6060a48` (main) — **PDF → `YYYYMMDD_장소명` 폴더 archive** · APK `VoiceStamp_20260720_225635`
 
 ---
 
@@ -360,8 +360,10 @@ VoiceStamp/
 | 259 | GitHub APK `releases/20260713_171406` · 랜딩·`/info` | `73dcb4f` | `restore-apk-download-20260713_171406.bat` |
 | 260 | **카메라 권한 확인 중 화면 생략** — 홈 즉시 표시 | `89941c6` | `restore-camera-permission-skip.bat` §153 |
 | 261 | GitHub APK `releases/20260713_231004` · 랜딩·`/info` | `afb5e88` | `restore-apk-download-20260713_231004.bat` |
+| 262 | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더=최다, 없으면 `exports/`) | `6060a48` | `restore-export-site-folder.bat` §154 |
+| 263 | GitHub APK `releases/20260720_225635` · 랜딩·`/info` · 도움말 | `6060a48` | `restore-apk-download-20260720-225635.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260713_231004.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260720_225635.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -427,7 +429,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260713_231004.apk`** | `afb5e88` | **설치·GitHub 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
+| **`releases/VoiceStamp_20260720_225635.apk`** | `6060a48` | **설치·GitHub 권장** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부(권한 홈 즉시·OOM·ZIP PDF 미포함·`/report` 행 삭제) |
+| **`releases/VoiceStamp_20260713_231004.apk`** | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이**(확대·폴더 선택) + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
@@ -520,19 +523,25 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-20
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **권장** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부 | **GitHub `releases/`** |
+
 #### 2026-07-14 (문서만 · APK 없음)
 
 | 항목 | 내용 |
 |------|------|
 | 신규 APK | **없음** |
-| 권장 APK | `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`) 유지 |
-| 문서 | **GS-UPLOAD-01** 설계·초안 · PRD·PLAN·README 날짜별·APK별 동기화 |
+| 권장 APK | 당시 `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`) 유지 |
+| 문서 | **GS-UPLOAD-01** 설계·초안 · PRD·PLAN·README 날짜별·APK별 동기화 (`744e460`) |
 
 #### 2026-07-13
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정**(바이너리/청크 ZIP·XLSX·HWPX) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) | GitHub |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) | GitHub |
 
@@ -924,14 +933,23 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-20
+
+| 커밋 | 내용 |
+|------|------|
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`6060a48` 기준) — 날짜별·APK별 이력 |
+| `6060a48` | **PDF archive → `stamps/YYYYMMDD_장소명/`** · 도움말 · APK `releases/VoiceStamp_20260720_225635` · 랜딩·`/info` · Vercel · `restore-export-site-folder.bat` §154 · `restore-apk-download-20260720-225635.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260720_225635.apk` (`6060a48`). 랜딩·`/info` 다운로드 링크 동기화됨.
+
 ### 2026-07-14
 
 | 커밋 | 내용 |
 |------|------|
-| (본 문서) | PRD·PROJECT·PLAN·README 동기화 — **GS-UPLOAD-01** 초안·설계 · 날짜별·APK별 이력 · **소스·APK 변경 없음** |
+| `744e460` | PRD·PROJECT·PLAN·README 동기화 — **GS-UPLOAD-01** 초안·설계 · 날짜별·APK별 이력 · **소스·APK 변경 없음** |
 | (파일) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · [drafts/google-sheets-upload/](./drafts/google-sheets-upload/) (`Code.gs`, `client-api.draft.ts`, `sample-payload.json`) |
 
-> **권장 APK:** 유지 — `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`).
+> **당시 권장 APK:** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`).
 
 ### 2026-07-13
 
@@ -947,7 +965,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `a58157f` | 프로젝트 ZIP **PDF 미포함** (속도) · `restore-project-zip-no-pdf.bat` §151 |
 | `61a32ca` | `/report` **행 삭제** · `restore-report-row-delete.bat` §150 · Vercel |
 
-> **권장 APK:** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **이전 권장 APK:** `releases/VoiceStamp_20260713_231004.apk` (`afb5e88`).
 
 ### 2026-07-11
 

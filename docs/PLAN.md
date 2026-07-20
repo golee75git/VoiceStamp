@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.2 |
-| 작성일 | 2026-07-14 |
-| 기준 커밋 | `afb5e88` (main, 앱/APK) — 문서: **GS-UPLOAD-01 초안** |
+| 문서 버전 | 3.3 |
+| 작성일 | 2026-07-20 |
+| 기준 커밋 | `6060a48` (main) — **PDF 현장 폴더 archive** · APK `225635` |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -396,16 +396,25 @@
 | 266 | **카메라 권한 확인 중 화면 생략** — 홈 즉시 표시 | `89941c6` | `restore-camera-permission-skip.bat` §153 |
 | 267 | GitHub APK `releases/20260713_231004` · 랜딩·`/info` | `afb5e88` | `restore-apk-download-20260713_231004.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260713_231004.apk`.
+> **이전 권장 APK:** `releases/VoiceStamp_20260713_231004.apk`.
 
 ## 2AA. 문서·설계 (2026-07-14, 소스 변경 없음)
 
 | # | 항목 | 상태 | 비고 |
 |---|------|------|------|
 | 268 | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** | 📋 설계만 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · [drafts/google-sheets-upload/](./drafts/google-sheets-upload/) |
-| 269 | PRD·PROJECT·PLAN·README **날짜별·APK별** 동기화 (07-14) | ✅ | **신규 APK 없음** · 권장 APK 유지 `231004` |
+| 269 | PRD·PROJECT·PLAN·README **날짜별·APK별** 동기화 (07-14) | ✅ | **신규 APK 없음** · 당시 권장 APK `231004` |
 
-> **앱·APK:** 변경 없음. Apps Script 실제 배포·앱 연동은 별도 구현 계획.
+> **앱·APK (07-14):** 변경 없음. Apps Script 실제 배포·앱 연동은 별도 구현 계획.
+
+## 2AB. Phase 3 추가 완료 (2026-07-20)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 270 | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더=최다 선택, 없으면 `exports/`) | `6060a48` | `restore-export-site-folder.bat` §154 |
+| 271 | GitHub APK `releases/20260720_225635` · 랜딩·`/info` · 도움말 | `6060a48` | `restore-apk-download-20260720-225635.bat` |
+
+> **권장 APK:** `releases/VoiceStamp_20260720_225635.apk`.
 
 ### 2.1 문서 동기화 이력
 
@@ -452,7 +461,8 @@
 | (본 갱신) | `46d6a41` 반영 — **층 school_only**·**목록 성능 A+B**·**목록 검색 음성**·APK `082557`·날짜별·APK별 이력 |
 | (본 갱신) | `831030e` 반영 — **위치 끔=GPS+학교**·**저장 손잡이**(확대·폴더 선택)·APK `092106`·`101055`·날짜별·APK별 이력 |
 | (본 갱신) | `afb5e88` 반영 — **카메라 권한 확인 중 생략**·APK `231004`·`171406`·`163836`·날짜별·APK별 이력 |
-| (본 갱신) | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
+| `744e460` | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
+| (본 갱신) | `6060a48` 반영 — **PDF 현장 폴더 archive**·APK `225635`·날짜별·APK별 이력 |
 
 ---
 
@@ -550,9 +560,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260713_231004.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260713_231004.apk |
-| 최신 소스 | `afb5e88` — **카메라 권한 확인 중 생략** + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260720_225635.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260720_225635.apk |
+| 최신 소스 | `6060a48` — **PDF → 현장 폴더 archive** + 카메라 권한 홈 즉시 + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -577,7 +587,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [PRD.md](./PRD.md) | 요구사항·기능 ID |
 | [PROJECT.md](./PROJECT.md) | 구현 이력·모듈·커밋 |
 | [README.md](./README.md) | docs 목록 |
-| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~140 |
+| [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~154 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | Google Sheets 업로드 설계 (GS-UPLOAD-01, 초안) |
@@ -622,17 +632,19 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-10 | 2X·3 | 앱 내 **1x·3x·5x** 배율 · 설정 **앱 내 촬영음** · 확대 뷰어 **닫기·적용** 손잡이 하단 · APK `165146`·`171301`·`233524` (`879658d`·`76aca1f`·`a0d05b9`) |
 | 2026-07-11 | 2Y·3 | **층 school_only** · **목록 성능 A+B** · **목록 검색 음성** · **내보내기 파일명·제목 음성** · **위치 끔=GPS+학교** · **저장 손잡이**(확대·폴더 선택) · APK `074726`~`101055` (`40805e9`~`831030e`) |
 | 2026-07-13 | 2Z·3 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `163836`·`171406`·`231004` (`61a32ca`~`afb5e88`) |
-| 2026-07-14 | 4 (설계) | **GS-UPLOAD-01** Google Sheets 공용 시트·압축·원클릭 **초안·설계** · 문서 동기화 · **소스·APK 변경 없음** |
+| 2026-07-14 | 4 (설계) | **GS-UPLOAD-01** Google Sheets 공용 시트·압축·원클릭 **초안·설계** · 문서 동기화 · **소스·APK 변경 없음** (`744e460`) |
+| 2026-07-20 | 2AB·3 | **PDF archive → `YYYYMMDD_장소` 폴더** · 도움말 · APK `225635` · Vercel (`6060a48`) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-14:** 신규 APK 없음. 권장 = `releases/VoiceStamp_20260713_231004.apk`.
+> **2026-07-20:** 권장 = `releases/VoiceStamp_20260720_225635.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **설치·GitHub 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **설치·GitHub 권장** — **PDF → 현장 폴더 archive** + 07-13 전부 |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
