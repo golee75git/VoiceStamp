@@ -421,10 +421,12 @@
 | # | 기능 | 커밋 | RESTORE |
 |---|------|------|---------|
 | 272 | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) | `7e91198` | `restore-crop-viewport-fix.bat` §155 |
-| 273 | **적용=라이브 줌**(`getCropViewport` shared value) | (본 배포) | `restore-crop-apply-live.bat` §156 |
-| 274 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 273 | **적용=라이브 줌**(`getCropViewport` shared value) | `a9f396e` | `restore-crop-apply-live.bat` §156 |
+| 274 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | `a9f396e` | — |
+| 275 | **적용=UI 스레드 flush**(JS stale 수정) | (본 배포) | `restore-crop-apply-ui-flush.bat` §157 |
+| 276 | GitHub APK `releases/20260721_233651` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260721_232039.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260721_233651.apk`.
 
 ### 2.1 문서 동기화 이력
 

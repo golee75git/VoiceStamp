@@ -8,6 +8,7 @@ import { Image, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
+  runOnUI,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -19,8 +20,8 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 
 export type ZoomableImageHandle = {
-  /** Live transform at Apply time (not a possibly-stale onCropChange snapshot). */
-  getCropViewport: () => StampCropViewport | null;
+  /** Flush UI-thread zoom into JS, then return the live crop viewport. */
+  getCropViewport: () => Promise<StampCropViewport | null>;
 };
 
 type ZoomableImageProps = {
@@ -64,26 +65,37 @@ export const ZoomableImage = forwardRef<ZoomableImageHandle, ZoomableImageProps>
       [onCropChange],
     );
 
-    const readCropViewport = useCallback((): StampCropViewport | null => {
-      const vw = viewportWidth.value;
-      const vh = viewportHeight.value;
-      const iw = imageWidth.value;
-      const ih = imageHeight.value;
-      if (vw <= 0 || vh <= 0 || iw <= 0 || ih <= 0) {
-        return null;
-      }
-      return {
-        scale: scale.value,
-        translateX: translateX.value,
-        translateY: translateY.value,
-        viewportWidth: vw,
-        viewportHeight: vh,
-        imageWidth: iw,
-        imageHeight: ih,
-      };
+    const flushCropViewport = useCallback((): Promise<StampCropViewport | null> => {
+      return new Promise((resolve) => {
+        runOnUI(() => {
+          'worklet';
+          const vw = viewportWidth.value;
+          const vh = viewportHeight.value;
+          const iw = imageWidth.value;
+          const ih = imageHeight.value;
+          if (vw <= 0 || vh <= 0 || iw <= 0 || ih <= 0) {
+            runOnJS(resolve)(null);
+            return;
+          }
+          const nextScale = scale.value;
+          const nextTx = translateX.value;
+          const nextTy = translateY.value;
+          runOnJS(publishCrop)(nextScale, nextTx, nextTy, vw, vh, iw, ih);
+          runOnJS(resolve)({
+            scale: nextScale,
+            translateX: nextTx,
+            translateY: nextTy,
+            viewportWidth: vw,
+            viewportHeight: vh,
+            imageWidth: iw,
+            imageHeight: ih,
+          });
+        })();
+      });
     }, [
       imageHeight,
       imageWidth,
+      publishCrop,
       scale,
       translateX,
       translateY,
@@ -91,7 +103,7 @@ export const ZoomableImage = forwardRef<ZoomableImageHandle, ZoomableImageProps>
       viewportWidth,
     ]);
 
-    useImperativeHandle(ref, () => ({ getCropViewport: readCropViewport }), [readCropViewport]);
+    useImperativeHandle(ref, () => ({ getCropViewport: flushCropViewport }), [flushCropViewport]);
 
     useEffect(() => {
       scale.value = 1;
@@ -109,16 +121,7 @@ export const ZoomableImage = forwardRef<ZoomableImageHandle, ZoomableImageProps>
             imageWidth.value = width;
             imageHeight.value = height;
             if (viewportWidth.value > 0) {
-              // Keep current transform (reset above for new uri); do not wipe later zooms.
-              publishCrop(
-                scale.value,
-                translateX.value,
-                translateY.value,
-                viewportWidth.value,
-                viewportHeight.value,
-                width,
-                height,
-              );
+              publishCrop(1, 0, 0, viewportWidth.value, viewportHeight.value, width, height);
             }
           }
         },
@@ -237,18 +240,7 @@ export const ZoomableImage = forwardRef<ZoomableImageHandle, ZoomableImageProps>
             const { width, height } = event.nativeEvent.layout;
             viewportWidth.value = width;
             viewportHeight.value = height;
-            if (imageWidth.value > 0) {
-              // Update size only — never force identity transform (that desynced Apply).
-              publishCrop(
-                scale.value,
-                translateX.value,
-                translateY.value,
-                width,
-                height,
-                imageWidth.value,
-                imageHeight.value,
-              );
-            }
+            // Do not publishCrop from JS .value here — stale reads can wipe gesture zoom.
           }}
         >
           <Animated.View style={[styles.imageWrap, animatedStyle]} collapsable={false}>

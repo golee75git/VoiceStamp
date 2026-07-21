@@ -789,9 +789,9 @@ export function StampSaveModal({
     setApplyingCrop(true);
     setError(null);
     try {
-      // Prefer live shared values so Apply matches the on-screen zoom (not a stale snapshot).
-      const cropState =
-        zoomViewerRef.current?.getCropViewport() ?? cropViewportRef.current;
+      // Flush UI-thread zoom (JS .value can be stale after gestures).
+      const live = (await zoomViewerRef.current?.getCropViewport()) ?? null;
+      const cropState = isStampCropActive(live) ? live : cropViewportRef.current;
       if (isStampCropActive(cropState)) {
         const croppedUri = await cropStampImage(workingImageUri, cropState);
         setWorkingImageUri(croppedUri);
