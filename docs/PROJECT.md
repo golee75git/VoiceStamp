@@ -365,10 +365,12 @@ VoiceStamp/
 | 264 | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) | `7e91198` | `restore-crop-viewport-fix.bat` §155 |
 | 265 | **적용=라이브 줌**(`getCropViewport`) | `a9f396e` | `restore-crop-apply-live.bat` §156 |
 | 266 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | `a9f396e` | — |
-| 267 | **적용=UI 스레드 flush**(JS stale 수정) | (본 배포) | `restore-crop-apply-ui-flush.bat` §157 |
-| 268 | GitHub APK `releases/20260721_233651` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 267 | **적용=UI 스레드 flush**(JS stale 수정) | `9734037` | `restore-crop-apply-ui-flush.bat` §157 |
+| 268 | GitHub APK `releases/20260721_233651` · 랜딩·`/info` · 도움말 | `9734037` | — |
+| 269 | **크롭을 `6060a48`/`225635`로 롤백** | (본 배포) | `restore-revert-crop-225635.bat` §158 |
+| 270 | GitHub APK `releases/20260721_235129` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260721_233651.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260721_235129.apk` (`225635` 크롭 계열).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -532,9 +534,11 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260721_233651.apk` | (본 배포) | **권장** — **적용=UI flush** + 라이브 크롭 + 뷰포트 수식 + 07-20 전부 | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260721_232039.apk` | `a9f396e` | **이전** — 라이브 크롭 시도 (JS stale) | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260721_215051.apk` | `7e91198` | **이전** — **크롭 적용=뷰포트** + 07-20 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260721_235129.apk` | (본 배포) | **권장** — **크롭=`225635`/`6060a48` 복구** + 07-20 PDF 현장 폴더 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **이전·동일 크롭 계열** — PDF → 현장 폴더 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260721_233651.apk` | `9734037` | **비권장** — UI flush 시도 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260721_232039.apk` | `a9f396e` | **비권장** — 라이브 크롭 시도 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260721_215051.apk` | `7e91198` | **비권장** — 뷰포트 수식 시도 | **GitHub `releases/`** |
 
 #### 2026-07-20
 
@@ -950,11 +954,12 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **적용=UI 스레드 flush** · APK `releases/VoiceStamp_20260721_233651` · 랜딩·`/info` · 도움말 · Vercel · `restore-crop-apply-ui-flush.bat` §157 |
-| `a9f396e` | **적용=라이브 줌** · APK `232039` · `restore-crop-apply-live.bat` §156 |
-| `7e91198` | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) · APK `215051` · `restore-crop-viewport-fix.bat` §155 |
+| (본 배포) | **크롭을 `6060a48`/`225635`로 롤백** · APK `releases/VoiceStamp_20260721_235129` · 랜딩·`/info` · 도움말 · Vercel · `restore-revert-crop-225635.bat` §158 |
+| `9734037` | **적용=UI 스레드 flush** · APK `233651` · `restore-crop-apply-ui-flush.bat` §157 (**이후 롤백**) |
+| `a9f396e` | **적용=라이브 줌** · APK `232039` · `restore-crop-apply-live.bat` §156 (**이후 롤백**) |
+| `7e91198` | **확대 크롭 적용=화면 가시 영역** · APK `215051` · `restore-crop-viewport-fix.bat` §155 (**이후 롤백**) |
 
-> **권장 APK:** `releases/VoiceStamp_20260721_233651.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260721_235129.apk` (`225635` 크롭 계열). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-20
 

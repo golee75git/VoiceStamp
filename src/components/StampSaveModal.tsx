@@ -65,7 +65,7 @@ import {
 import type { Stamp } from '../types/stamp';
 import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
-import { StampSaveZoomViewer, type StampSaveZoomViewerHandle } from './StampSaveZoomViewer';
+import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
@@ -252,7 +252,6 @@ export function StampSaveModal({
   const lastFloorRef = useRef<StampFloor | null>(null);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
   const cropViewportRef = useRef<StampCropViewport | null>(null);
-  const zoomViewerRef = useRef<StampSaveZoomViewerHandle | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -789,9 +788,7 @@ export function StampSaveModal({
     setApplyingCrop(true);
     setError(null);
     try {
-      // Flush UI-thread zoom (JS .value can be stale after gestures).
-      const live = (await zoomViewerRef.current?.getCropViewport()) ?? null;
-      const cropState = isStampCropActive(live) ? live : cropViewportRef.current;
+      const cropState = cropViewportRef.current;
       if (isStampCropActive(cropState)) {
         const croppedUri = await cropStampImage(workingImageUri, cropState);
         setWorkingImageUri(croppedUri);
@@ -1149,7 +1146,6 @@ export function StampSaveModal({
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
               <StampSaveZoomViewer
-                ref={zoomViewerRef}
                 imageUri={workingImageUri ?? imageUri!}
                 onCropChange={handleCropChange}
               />

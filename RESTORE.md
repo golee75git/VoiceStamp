@@ -2571,3 +2571,21 @@ Copy-Item src.pre-crop-apply-ui-flush\constants\apkBuildLabel.ts src\constants\ 
 Copy-Item src.pre-crop-apply-ui-flush\landing.html,src.pre-crop-apply-ui-flush\info.html public\ -Force
 ```
 
+## 158. 크롭을 20260720_225635(6060a48)로 되돌린 것 취소 (선택)
+
+줌·크롭을 `6060a48` / APK `225635` 동작으로 되돌린 뒤, 그 직전(UI flush 시대)으로 다시 가려면 아래로 복구합니다.
+
+```bat
+restore-revert-crop-225635.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-revert-crop-225635\components\ZoomableImage.tsx,src.pre-revert-crop-225635\components\StampSaveZoomViewer.tsx,src.pre-revert-crop-225635\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-revert-crop-225635\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-revert-crop-225635\help.html public\ -Force
+Copy-Item src.pre-revert-crop-225635\constants\apkBuildLabel.ts src\constants\ -Force
+Copy-Item src.pre-revert-crop-225635\landing.html,src.pre-revert-crop-225635\info.html public\ -Force
+```
+
