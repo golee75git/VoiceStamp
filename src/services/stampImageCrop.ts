@@ -50,8 +50,10 @@ export function computeStampCropRect(viewport: StampCropViewport): StampCropRect
     return null;
   }
 
-  const cropWidth = imageWidth / scale;
-  const cropHeight = imageHeight / scale;
+  // Visible area in image pixels = viewport / (contain fit * gesture scale).
+  // Using imageWidth/scale would mismatch letterboxed contain previews.
+  const cropWidth = viewportWidth / totalScale;
+  const cropHeight = viewportHeight / totalScale;
   const centerX = imageWidth / 2 - translateX / totalScale;
   const centerY = imageHeight / 2 - translateY / totalScale;
 

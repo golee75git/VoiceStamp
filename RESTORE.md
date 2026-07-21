@@ -2517,3 +2517,20 @@ restore-export-site-folder.bat
 Copy-Item src.pre-export-site-folder\services\exportPdf.ts src\services\ -Force
 Copy-Item public.pre-export-site-folder\help.html public\ -Force
 ```
+
+## 155. 확대 크롭 적용(뷰포트) 되돌리기 (선택)
+
+저장·수정 확대 화면의 크롭 영역을 화면(contain) 가시 영역 기준으로 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-crop-viewport-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-crop-viewport-fix\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-crop-viewport-fix\help.html public\ -Force
+Copy-Item src.pre-crop-viewport-fix\apkBuildLabel.ts src\constants\ -Force
+Copy-Item src.pre-crop-viewport-fix\landing.html,src.pre-crop-viewport-fix\info.html public\ -Force
+```
