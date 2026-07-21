@@ -2534,3 +2534,22 @@ Copy-Item src.pre-crop-viewport-fix\help.html public\ -Force
 Copy-Item src.pre-crop-viewport-fix\apkBuildLabel.ts src\constants\ -Force
 Copy-Item src.pre-crop-viewport-fix\landing.html,src.pre-crop-viewport-fix\info.html public\ -Force
 ```
+
+## 156. 확대 적용 라이브 크롭 되돌리기 (선택)
+
+「적용」이 화면 줌 shared value를 직접 읽도록 한 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-crop-apply-live.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-crop-apply-live\components\ZoomableImage.tsx,src.pre-crop-apply-live\components\StampSaveZoomViewer.tsx,src.pre-crop-apply-live\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-crop-apply-live\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-crop-apply-live\help.html public\ -Force
+Copy-Item src.pre-crop-apply-live\constants\apkBuildLabel.ts src\constants\ -Force
+Copy-Item src.pre-crop-apply-live\landing.html,src.pre-crop-apply-live\info.html public\ -Force
+```
+

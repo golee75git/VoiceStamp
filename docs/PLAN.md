@@ -416,6 +416,16 @@
 
 > **권장 APK:** `releases/VoiceStamp_20260720_225635.apk`.
 
+## 2AC. Phase 3 추가 완료 (2026-07-21)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 272 | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) | `7e91198` | `restore-crop-viewport-fix.bat` §155 |
+| 273 | **적용=라이브 줌**(`getCropViewport` shared value) | (본 배포) | `restore-crop-apply-live.bat` §156 |
+| 274 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+
+> **권장 APK:** `releases/VoiceStamp_20260721_232039.apk`.
+
 ### 2.1 문서 동기화 이력
 
 | 커밋 | 내용 |

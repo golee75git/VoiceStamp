@@ -1,6 +1,6 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-20**
+문서 작성일: **2026-07-21**
 최신 기능 커밋 기준: `6060a48` (main) — **PDF → `YYYYMMDD_장소명` 폴더 archive** · APK `VoiceStamp_20260720_225635`
 
 ---
@@ -362,8 +362,11 @@ VoiceStamp/
 | 261 | GitHub APK `releases/20260713_231004` · 랜딩·`/info` | `afb5e88` | `restore-apk-download-20260713_231004.bat` |
 | 262 | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더=최다, 없으면 `exports/`) | `6060a48` | `restore-export-site-folder.bat` §154 |
 | 263 | GitHub APK `releases/20260720_225635` · 랜딩·`/info` · 도움말 | `6060a48` | `restore-apk-download-20260720-225635.bat` |
+| 264 | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) | `7e91198` | `restore-crop-viewport-fix.bat` §155 |
+| 265 | **적용=라이브 줌**(`getCropViewport`) | (본 배포) | `restore-crop-apply-live.bat` §156 |
+| 266 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260720_225635.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260721_232039.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -522,6 +525,13 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-07-21
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260721_232039.apk` | (본 배포) | **권장** — **적용=라이브 크롭** + 뷰포트 수식 + 07-20 전부 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260721_215051.apk` | `7e91198` | **이전** — **크롭 적용=뷰포트** + 07-20 전부 | **GitHub `releases/`** |
 
 #### 2026-07-20
 
@@ -932,6 +942,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-07-21
+
+| 커밋 | 내용 |
+|------|------|
+| (본 배포) | **적용=라이브 줌**(`getCropViewport`) · APK `releases/VoiceStamp_20260721_232039` · 랜딩·`/info` · 도움말 · Vercel · `restore-crop-apply-live.bat` §156 |
+| `7e91198` | **확대 크롭 적용=화면 가시 영역**(뷰포트 수식) · APK `215051` · `restore-crop-viewport-fix.bat` §155 |
+
+> **권장 APK:** `releases/VoiceStamp_20260721_232039.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-20
 
