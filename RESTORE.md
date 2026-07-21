@@ -2589,3 +2589,21 @@ Copy-Item src.pre-revert-crop-225635\constants\apkBuildLabel.ts src\constants\ -
 Copy-Item src.pre-revert-crop-225635\landing.html,src.pre-revert-crop-225635\info.html public\ -Force
 ```
 
+## 159. 앱 내 카메라 크롭 적용 수정 되돌리기 (선택)
+
+앱 내 고해상도 사진에서 getSize/onLayout이 줌을 지우고, 크롭 수식을 뷰포트 기준으로 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-crop-inapp-fix.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-crop-inapp-fix\components\ZoomableImage.tsx,src.pre-crop-inapp-fix\components\StampSaveZoomViewer.tsx,src.pre-crop-inapp-fix\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-crop-inapp-fix\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-crop-inapp-fix\help.html public\ -Force
+Copy-Item src.pre-crop-inapp-fix\constants\apkBuildLabel.ts src\constants\ -Force
+Copy-Item src.pre-crop-inapp-fix\landing.html,src.pre-crop-inapp-fix\info.html public\ -Force
+```
+

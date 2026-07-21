@@ -672,7 +672,8 @@
 | **2026-07-13** | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함**(속도) · 프로젝트·엑셀·HWPX **바이너리/청크 저장**(OOM 완화) · **카메라 권한 확인 중 화면 생략**(홈 즉시 표시) · APK `163836`·`171406`·`231004` · Vercel | `61a32ca`~`afb5e88` |
 | **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
-| **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | (본 배포) |
+| **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
+| **2026-07-22** | **앱 내 카메라 크롭「적용」수정** — getSize/onLayout이 줌을 1배로 덮지 않음 · 뷰포트 수식 · UI flush · APK `000609` · Vercel · `restore-crop-inapp-fix.bat` §159 | (본 배포) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -680,13 +681,13 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-21:** 권장 파일은 **`VoiceStamp_20260721_235129.apk`** (`225635` 크롭 계열).
+> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_000609.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260721_235129.apk` | (본 배포) | **설치·GitHub 권장** — **크롭=`225635`/`6060a48` 복구** + 07-20 PDF 현장 폴더 |
-| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **이전·동일 크롭 계열** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부 |
-| `releases/VoiceStamp_20260721_233651.apk` | `9734037` | **비권장** — UI flush 시도 (줌 적용 미해결) |
+| `releases/VoiceStamp_20260722_000609.apk` | (본 배포) | **설치·GitHub 권장** — **앱 내·시스템 크롭 적용** + 07-20 PDF 현장 폴더 |
+| `releases/VoiceStamp_20260721_235129.apk` | `ee75aa8` | **이전** — `225635` 크롭 계열 복구 |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **이전** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부 |
 | `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` / `89941c6` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` / `f68b363` | **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` / `a58157f` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |

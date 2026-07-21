@@ -50,35 +50,23 @@ export function computeStampCropRect(viewport: StampCropViewport): StampCropRect
     return null;
   }
 
-  const cropWidth = imageWidth / scale;
-  const cropHeight = imageHeight / scale;
+  // Visible area in image pixels = viewport / (contain fit * gesture scale).
+  // imageWidth/scale mismatches letterboxed contain previews (common for in-app max pictureSize).
+  const cropWidth = viewportWidth / totalScale;
+  const cropHeight = viewportHeight / totalScale;
   const centerX = imageWidth / 2 - translateX / totalScale;
   const centerY = imageHeight / 2 - translateY / totalScale;
 
-  let originX = Math.round(centerX - cropWidth / 2);
-  let originY = Math.round(centerY - cropHeight / 2);
-  let width = Math.round(cropWidth);
-  let height = Math.round(cropHeight);
+  // Intersect with image bounds — do not shift the window (that changed framing vs screen).
+  const left = Math.max(0, centerX - cropWidth / 2);
+  const top = Math.max(0, centerY - cropHeight / 2);
+  const right = Math.min(imageWidth, centerX + cropWidth / 2);
+  const bottom = Math.min(imageHeight, centerY + cropHeight / 2);
 
-  if (width < MIN_CROP_SIZE || height < MIN_CROP_SIZE) {
-    return null;
-  }
-
-  if (originX < 0) {
-    originX = 0;
-  }
-  if (originY < 0) {
-    originY = 0;
-  }
-  if (originX + width > imageWidth) {
-    originX = Math.max(0, imageWidth - width);
-  }
-  if (originY + height > imageHeight) {
-    originY = Math.max(0, imageHeight - height);
-  }
-
-  width = Math.min(width, imageWidth - originX);
-  height = Math.min(height, imageHeight - originY);
+  const originX = Math.round(left);
+  const originY = Math.round(top);
+  const width = Math.round(right - left);
+  const height = Math.round(bottom - top);
 
   if (width < MIN_CROP_SIZE || height < MIN_CROP_SIZE) {
     return null;

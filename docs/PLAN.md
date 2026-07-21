@@ -425,10 +425,12 @@
 | 274 | GitHub APK `releases/20260721_232039` · 랜딩·`/info` · 도움말 | `a9f396e` | — |
 | 275 | **적용=UI 스레드 flush**(JS stale 수정) | `9734037` | `restore-crop-apply-ui-flush.bat` §157 |
 | 276 | GitHub APK `releases/20260721_233651` · 랜딩·`/info` · 도움말 | `9734037` | — |
-| 277 | **크롭을 `6060a48`/`225635`로 롤백** | (본 배포) | `restore-revert-crop-225635.bat` §158 |
-| 278 | GitHub APK `releases/20260721_235129` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 277 | **크롭을 `6060a48`/`225635`로 롤백** | `ee75aa8` | `restore-revert-crop-225635.bat` §158 |
+| 278 | GitHub APK `releases/20260721_235129` · 랜딩·`/info` · 도움말 | `ee75aa8` | — |
+| 279 | **앱 내 카메라 크롭「적용」수정**(레이스·뷰포트·UI flush) | (본 배포) | `restore-crop-inapp-fix.bat` §159 |
+| 280 | GitHub APK `releases/20260722_000609` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260721_235129.apk` (`225635` 크롭 계열).
+> **권장 APK:** `releases/VoiceStamp_20260722_000609.apk`.
 
 ### 2.1 문서 동기화 이력
 
