@@ -42,6 +42,7 @@ import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExpo
 import {
   cropStampImage,
   isStampCropActive,
+  normalizeStampImageForCrop,
   type StampCropViewport,
 } from '../services/stampImageCrop';
 import { saveStamp, updateStamp } from '../services/saveStamp';
@@ -244,6 +245,7 @@ export function StampSaveModal({
   const [floorDisplayMode, setFloorDisplayModeState] = useState<FloorDisplayMode>('suffix');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
+  const [preparingViewer, setPreparingViewer] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [folderPickerVisible, setFolderPickerVisible] = useState(false);
   const [folderOptions, setFolderOptions] = useState<string[]>([]);
@@ -854,6 +856,28 @@ export function StampSaveModal({
     setImageViewerVisible(false);
   };
 
+  const handleOpenViewer = async () => {
+    const source = workingImageUri ?? imageUri;
+    if (!source || preparingViewer || applyingCrop || saving) {
+      return;
+    }
+    setPreparingViewer(true);
+    setError(null);
+    try {
+      // Bake EXIF orientation so zoom/crop pixels match on-screen Image (in-app + gallery).
+      const normalized = await normalizeStampImageForCrop(source);
+      if (normalized !== source) {
+        setWorkingImageUri(normalized);
+      }
+      cropViewportRef.current = null;
+      setImageViewerVisible(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '확대 화면을 열지 못했습니다.');
+    } finally {
+      setPreparingViewer(false);
+    }
+  };
+
   const handleApplyCrop = async () => {
     if (!workingImageUri || applyingCrop || saving) {
       if (!applyingCrop && !saving) {
@@ -1013,7 +1037,8 @@ export function StampSaveModal({
 
             {photoUri ? (
               <Pressable
-                onPress={() => setImageViewerVisible(true)}
+                onPress={() => void handleOpenViewer()}
+                disabled={preparingViewer || applyingCrop || saving}
                 accessibilityLabel="사진 크게 보기 및 수정"
                 accessibilityHint="탭하면 확대·잘라내기 화면이 열립니다"
               >
@@ -1046,17 +1071,23 @@ export function StampSaveModal({
                     longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
                     variant="thumbnail"
                   />
-                  <Image
-                    source={zoomEditIcon}
-                    style={[
-                      styles.zoomEditBadge,
-                      cameraHand === 'left' ? styles.zoomEditBadgeLeft : styles.zoomEditBadgeRight,
-                    ]}
-                    resizeMode="contain"
-                    pointerEvents="none"
-                    accessibilityElementsHidden
-                    importantForAccessibility="no-hide-descendants"
-                  />
+                  {preparingViewer ? (
+                    <View style={styles.viewerPreparingOverlay}>
+                      <ActivityIndicator color="#fff" />
+                    </View>
+                  ) : (
+                    <Image
+                      source={zoomEditIcon}
+                      style={[
+                        styles.zoomEditBadge,
+                        cameraHand === 'left' ? styles.zoomEditBadgeLeft : styles.zoomEditBadgeRight,
+                      ]}
+                      resizeMode="contain"
+                      pointerEvents="none"
+                      accessibilityElementsHidden
+                      importantForAccessibility="no-hide-descendants"
+                    />
+                  )}
                 </View>
               </Pressable>
             ) : null}
@@ -1421,6 +1452,13 @@ const styles = StyleSheet.create({
   },
   zoomEditBadgeRight: {
     right: 8,
+  },
+  viewerPreparingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    borderRadius: 8,
   },
   imageViewerRoot: {
     flex: 1,

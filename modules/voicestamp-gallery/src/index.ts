@@ -13,6 +13,8 @@ type VoicestampGalleryNative = {
     latitude: number | null,
     longitude: number | null,
   ): Promise<string>;
+  /** Bake EXIF Orientation into pixels; returns file URI (may be unchanged). */
+  bakeExifOrientation(localUri: string): Promise<string>;
 };
 
 let nativeModule: VoicestampGalleryNative | null | undefined;
@@ -54,4 +56,18 @@ export async function embedExifFromSource(
     return null;
   }
   return mod.embedExifFromSource(captionUri, sourceUri, latitude, longitude);
+}
+
+/** Android: bake EXIF orientation into JPEG pixels for crop/zoom. Other platforms: passthrough. */
+export async function bakeExifOrientation(localUri: string): Promise<string> {
+  const mod = getNativeModule();
+  if (!mod?.bakeExifOrientation) {
+    return localUri;
+  }
+  try {
+    const next = await mod.bakeExifOrientation(localUri);
+    return next?.trim() ? next : localUri;
+  } catch {
+    return localUri;
+  }
 }

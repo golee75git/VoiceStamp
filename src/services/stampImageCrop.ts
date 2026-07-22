@@ -1,4 +1,5 @@
 import { SaveFormat, manipulateAsync } from 'expo-image-manipulator';
+import { bakeExifOrientation } from 'voicestamp-gallery';
 
 export type StampCropViewport = {
   scale: number;
@@ -18,6 +19,29 @@ export type StampCropRect = {
 };
 
 const MIN_CROP_SIZE = 32;
+
+/**
+ * Align pixel buffer with on-screen Image orientation (in-app camera / gallery EXIF).
+ * System camera usually already upright — this is a no-op then.
+ */
+export async function normalizeStampImageForCrop(uri: string): Promise<string> {
+  try {
+    const baked = await bakeExifOrientation(uri);
+    if (baked?.trim()) {
+      return baked;
+    }
+  } catch {
+    // fall through to manipulator re-encode
+  }
+  // Fallback when native module unavailable: re-encode (may bake orientation on some devices).
+  try {
+    const format = uri.toLowerCase().includes('.png') ? SaveFormat.PNG : SaveFormat.JPEG;
+    const result = await manipulateAsync(uri, [], { compress: 1, format });
+    return result.uri || uri;
+  } catch {
+    return uri;
+  }
+}
 
 export function isStampCropActive(viewport: StampCropViewport | null): boolean {
   if (!viewport) {

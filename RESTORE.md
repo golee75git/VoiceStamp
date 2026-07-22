@@ -2680,3 +2680,22 @@ Copy-Item src.pre-save-field-order\public\help.html public\ -Force
 Copy-Item src.pre-save-field-order\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 164. 크롭 EXIF 방향 정규화 되돌리기 (선택)
+
+확대·적용 전 EXIF 방향을 픽셀에 굽는 변경 후 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-crop-orient.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-crop-orient\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-crop-orient\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-crop-orient\public\help.html public\ -Force
+Copy-Item src.pre-crop-orient\apkBuildLabel.ts src\constants\ -Force
+Copy-Item src.pre-crop-orient\gallery-android\VoicestampGalleryModule.kt modules\voicestamp-gallery\android\src\main\java\expo\modules\voicestampgallery\ -Force
+Copy-Item src.pre-crop-orient\gallery-src\index.ts modules\voicestamp-gallery\src\ -Force
+```
+

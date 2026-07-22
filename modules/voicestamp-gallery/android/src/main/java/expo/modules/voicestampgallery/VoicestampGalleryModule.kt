@@ -1,7 +1,10 @@
 package expo.modules.voicestampgallery
 
 import android.content.ContentValues
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.exifinterface.media.ExifInterface
@@ -9,10 +12,79 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class VoicestampGalleryModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("VoicestampGallery")
+
+    /**
+     * Bake EXIF Orientation into pixels and write Orientation=Normal JPEG.
+     * Needed so zoom/crop math matches what Image shows (in-app camera + gallery).
+     * Returns original URI when already upright or decode fails softly.
+     */
+    AsyncFunction("bakeExifOrientation") { localUri: String ->
+      val context = appContext.reactContext ?: throw Exception("React context unavailable")
+      val cacheDir = context.cacheDir
+      val sourceFile = materializeLocalFile(localUri, cacheDir)
+      val exif = ExifInterface(sourceFile.absolutePath)
+      val orientation =
+        exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+      if (
+        orientation == ExifInterface.ORIENTATION_NORMAL ||
+          orientation == ExifInterface.ORIENTATION_UNDEFINED
+      ) {
+        return@AsyncFunction ensureFileUri(sourceFile, localUri)
+      }
+
+      val bitmap =
+        BitmapFactory.decodeFile(sourceFile.absolutePath)
+          ?: return@AsyncFunction ensureFileUri(sourceFile, localUri)
+      val matrix = Matrix()
+      when (orientation) {
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(-1f, 1f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.preScale(1f, -1f)
+        ExifInterface.ORIENTATION_TRANSPOSE -> {
+          matrix.postRotate(90f)
+          matrix.preScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+        ExifInterface.ORIENTATION_TRANSVERSE -> {
+          matrix.postRotate(270f)
+          matrix.preScale(-1f, 1f)
+        }
+        ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        else -> {
+          bitmap.recycle()
+          return@AsyncFunction ensureFileUri(sourceFile, localUri)
+        }
+      }
+
+      val rotated =
+        Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+      if (rotated !== bitmap) {
+        bitmap.recycle()
+      }
+
+      val outFile = File(cacheDir, "voicestamp-orient-${System.currentTimeMillis()}.jpg")
+      FileOutputStream(outFile).use { out ->
+        if (!rotated.compress(Bitmap.CompressFormat.JPEG, 95, out)) {
+          rotated.recycle()
+          throw Exception("Failed to compress oriented JPEG")
+        }
+      }
+      rotated.recycle()
+
+      val outExif = ExifInterface(outFile.absolutePath)
+      outExif.setAttribute(
+        ExifInterface.TAG_ORIENTATION,
+        ExifInterface.ORIENTATION_NORMAL.toString(),
+      )
+      outExif.saveAttributes()
+
+      "file://${outFile.absolutePath}"
+    }
 
     AsyncFunction("embedExifFromSource") { captionUri: String, sourceUri: String?, latitude: Double?, longitude: Double? ->
       val captionPath = captionUri.removePrefix("file://")
@@ -106,6 +178,32 @@ class VoicestampGalleryModule : Module() {
       val value = source.getAttribute(tag) ?: continue
       target.setAttribute(tag, value)
     }
+  }
+
+  /** Copy content:// (or plain path) into a real file for ExifInterface + BitmapFactory. */
+  private fun materializeLocalFile(localUri: String, cacheDir: File): File {
+    val trimmed = localUri.trim()
+    if (trimmed.startsWith("content://")) {
+      val context = appContext.reactContext ?: throw Exception("React context unavailable")
+      val tmp = File(cacheDir, "voicestamp-orient-src-${System.currentTimeMillis()}.jpg")
+      context.contentResolver.openInputStream(Uri.parse(trimmed))?.use { input ->
+        FileOutputStream(tmp).use { output -> input.copyTo(output) }
+      } ?: throw Exception("Cannot open content URI")
+      return tmp
+    }
+    val path = trimmed.removePrefix("file://")
+    val file = File(path)
+    if (!file.isFile) {
+      throw Exception("Source file not found: $path")
+    }
+    return file
+  }
+
+  private fun ensureFileUri(file: File, originalUri: String): String {
+    if (originalUri.startsWith("file://")) {
+      return originalUri
+    }
+    return "file://${file.absolutePath}"
   }
 
   private fun sanitizeDisplayName(name: String): String {
