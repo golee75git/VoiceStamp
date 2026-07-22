@@ -673,7 +673,7 @@
 | **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
-| **2026-07-22** | **앱 내 크롭** · **필드 표시명** · **추가1·추가2** · **2열 표** · **저장 필드 순서** · **크롭 EXIF** · **저장 화면 표시명 탭** · **스탬프별 표시명 스냅샷** · **목록 빈 메모 숨김** · APK `133757` · Vercel · `restore-list-hide-empty-memo.bat` §167 | (본 배포) |
+| **2026-07-22** | **앱 내 크롭** · **필드 표시명** · **추가1·추가2** · **2열 표** · **저장 필드 순서** · **크롭 EXIF** · **저장 화면 표시명 탭** · **스탬프별 표시명 스냅샷** · **목록 빈 메모 숨김** · **확대 크롭 cover 일치** · APK `162518` · Vercel · `restore-crop-cover-match.bat` §168 | (본 배포) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -681,11 +681,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_133757.apk`**.
+> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_162518.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260722_133757.apk` | (본 배포) | **설치·GitHub 권장** — **목록 빈 메모 숨김** + 07-22 누적 |
+| `releases/VoiceStamp_20260722_162518.apk` | (본 배포) | **설치·GitHub 권장** — **확대 크롭 cover 일치** + 07-22 누적 |
+| `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — 목록 빈 메모 숨김 |
 | `releases/VoiceStamp_20260722_130810.apk` | `0f9abfc` | **이전** — 스탬프별 표시명 스냅샷 |
 | `releases/VoiceStamp_20260722_111946.apk` | `9a8242a` | **이전** — 저장 화면 표시명 탭 편집 |
 | `releases/VoiceStamp_20260722_095047.apk` | `4501a7f` | **이전** — **추가1·추가2 + 표시명** |

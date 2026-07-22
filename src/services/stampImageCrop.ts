@@ -22,24 +22,25 @@ const MIN_CROP_SIZE = 32;
 
 /**
  * Align pixel buffer with on-screen Image orientation (in-app camera / gallery EXIF).
- * System camera usually already upright — this is a no-op then.
+ * System camera usually already upright — bake is a no-op then.
+ * Always re-encode afterward so getSize / display / manipulateAsync share one buffer.
  */
 export async function normalizeStampImageForCrop(uri: string): Promise<string> {
+  let source = uri;
   try {
     const baked = await bakeExifOrientation(uri);
     if (baked?.trim()) {
-      return baked;
+      source = baked;
     }
   } catch {
-    // fall through to manipulator re-encode
+    // keep source
   }
-  // Fallback when native module unavailable: re-encode (may bake orientation on some devices).
   try {
-    const format = uri.toLowerCase().includes('.png') ? SaveFormat.PNG : SaveFormat.JPEG;
-    const result = await manipulateAsync(uri, [], { compress: 1, format });
-    return result.uri || uri;
+    const format = source.toLowerCase().includes('.png') ? SaveFormat.PNG : SaveFormat.JPEG;
+    const result = await manipulateAsync(source, [], { compress: 1, format });
+    return result.uri || source;
   } catch {
-    return uri;
+    return source;
   }
 }
 
@@ -68,29 +69,44 @@ export function computeStampCropRect(viewport: StampCropViewport): StampCropRect
     return null;
   }
 
-  const fitScale = Math.min(viewportWidth / imageWidth, viewportHeight / imageHeight);
+  // Must match ZoomableImage resizeMode="cover" (fill viewport, may clip edges).
+  const fitScale = Math.max(viewportWidth / imageWidth, viewportHeight / imageHeight);
   const totalScale = fitScale * scale;
   if (totalScale <= 0) {
     return null;
   }
 
-  // Visible area in image pixels = viewport / (contain fit * gesture scale).
-  // imageWidth/scale mismatches letterboxed contain previews (common for in-app max pictureSize).
+  // Visible area in image pixels = viewport / (cover fit * gesture scale).
   const cropWidth = viewportWidth / totalScale;
   const cropHeight = viewportHeight / totalScale;
   const centerX = imageWidth / 2 - translateX / totalScale;
   const centerY = imageHeight / 2 - translateY / totalScale;
 
-  // Intersect with image bounds — do not shift the window (that changed framing vs screen).
-  const left = Math.max(0, centerX - cropWidth / 2);
-  const top = Math.max(0, centerY - cropHeight / 2);
-  const right = Math.min(imageWidth, centerX + cropWidth / 2);
-  const bottom = Math.min(imageHeight, centerY + cropHeight / 2);
+  let originX = Math.round(centerX - cropWidth / 2);
+  let originY = Math.round(centerY - cropHeight / 2);
+  let width = Math.round(cropWidth);
+  let height = Math.round(cropHeight);
 
-  const originX = Math.round(left);
-  const originY = Math.round(top);
-  const width = Math.round(right - left);
-  const height = Math.round(bottom - top);
+  if (width < MIN_CROP_SIZE || height < MIN_CROP_SIZE) {
+    return null;
+  }
+
+  // Keep crop size (viewport aspect); shift into bounds instead of shrinking.
+  if (originX < 0) {
+    originX = 0;
+  }
+  if (originY < 0) {
+    originY = 0;
+  }
+  if (originX + width > imageWidth) {
+    originX = Math.max(0, imageWidth - width);
+  }
+  if (originY + height > imageHeight) {
+    originY = Math.max(0, imageHeight - height);
+  }
+
+  width = Math.min(width, imageWidth - originX);
+  height = Math.min(height, imageHeight - originY);
 
   if (width < MIN_CROP_SIZE || height < MIN_CROP_SIZE) {
     return null;

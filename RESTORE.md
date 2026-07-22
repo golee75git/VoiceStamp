@@ -2752,3 +2752,20 @@ Copy-Item src.pre-list-hide-empty-memo\public\help.html public\ -Force
 Copy-Item src.pre-list-hide-empty-memo\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 168. 확대 크롭 cover 일치 되돌리기 (선택)
+
+확대 뷰어를 cover로 맞추고 크롭 수식을 화면에 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-crop-cover-match.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-crop-cover-match\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-crop-cover-match\components\ZoomableImage.tsx,src.pre-crop-cover-match\components\StampSaveZoomViewer.tsx,src.pre-crop-cover-match\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-crop-cover-match\public\help.html public\ -Force
+Copy-Item src.pre-crop-cover-match\apkBuildLabel.ts src\constants\ -Force
+```
+
