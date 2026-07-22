@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { FIELD_LABEL_MAX_LENGTH } from '../services/fieldLabels';
 import type { CameraHand, TextAlign } from '../services/settingsService';
 
 const micIcon = require('../../assets/mic-icon.png');
@@ -17,6 +19,9 @@ type VoiceInputFieldProps = {
   selection?: { start: number; end: number };
   textAlign?: TextAlign;
   cameraHand?: CameraHand;
+  /** Tap label to rename; commit via onLabelCommit (settings). */
+  labelEditable?: boolean;
+  onLabelCommit?: (nextLabel: string) => void;
 };
 
 export function VoiceInputField({
@@ -32,11 +37,53 @@ export function VoiceInputField({
   selection,
   textAlign = 'left',
   cameraHand = 'right',
+  labelEditable = false,
+  onLabelCommit,
 }: VoiceInputFieldProps) {
+  const [editingLabel, setEditingLabel] = useState(false);
+  const [draftLabel, setDraftLabel] = useState(label);
+
+  useEffect(() => {
+    if (!editingLabel) {
+      setDraftLabel(label);
+    }
+  }, [label, editingLabel]);
+
+  const commitLabel = () => {
+    setEditingLabel(false);
+    onLabelCommit?.(draftLabel);
+  };
+
   return (
     <View style={styles.field}>
       <View style={[styles.labelRow, cameraHand === 'left' && styles.labelRowLeft]}>
-        <Text style={styles.label}>{label}</Text>
+        {labelEditable && editingLabel ? (
+          <TextInput
+            style={styles.labelInput}
+            value={draftLabel}
+            onChangeText={setDraftLabel}
+            onBlur={commitLabel}
+            onSubmitEditing={commitLabel}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            autoFocus
+            selectTextOnFocus
+            returnKeyType="done"
+            placeholder={label}
+            accessibilityLabel="필드 표시명 수정"
+          />
+        ) : labelEditable ? (
+          <Pressable
+            onPress={() => setEditingLabel(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`${label} 표시명 수정`}
+            accessibilityHint="탭하면 칸 이름을 바꿀 수 있습니다. 설정에도 저장됩니다."
+            hitSlop={6}
+          >
+            <Text style={[styles.label, styles.labelEditable]}>{label}</Text>
+          </Pressable>
+        ) : (
+          <Text style={styles.label}>{label}</Text>
+        )}
         <View style={[styles.micGroup, cameraHand === 'left' && styles.micGroupLeft]}>
           {speechAvailable ? (
             <Text style={styles.micHint}>(눌러서 말하기)</Text>
@@ -88,6 +135,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#222',
+  },
+  labelEditable: {
+    textDecorationLine: 'underline',
+    textDecorationColor: '#93c5fd',
+  },
+  labelInput: {
+    flex: 1,
+    marginRight: 8,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    borderBottomWidth: 1,
+    borderBottomColor: '#2563eb',
+    paddingVertical: 2,
+    paddingHorizontal: 0,
+    maxWidth: '55%',
   },
   micGroup: {
     flexDirection: 'row',

@@ -576,7 +576,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>필드 표시명</Text>
           <Text style={styles.hint}>
-            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 비우면 기본값(제목·장소·메모·추가1·추가2)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
+            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 저장 화면에서 칸 이름을 탭해도 여기와 같이 저장됩니다. 비우면 기본값(제목·장소·메모·추가1·추가2)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
           </Text>
           <Text style={styles.label}>제목 칸 이름</Text>
           <TextInput

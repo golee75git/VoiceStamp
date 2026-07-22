@@ -31,9 +31,15 @@ import {
   setCurrentSiteName,
   setLastCapturePlaceCache,
   setLastPlaceLabel,
+  setTitleFieldLabel as writeTitleFieldLabel,
+  setPlaceFieldLabel as writePlaceFieldLabel,
+  setMemoFieldLabel as writeMemoFieldLabel,
+  setExtra1FieldLabel as writeExtra1FieldLabel,
+  setExtra2FieldLabel as writeExtra2FieldLabel,
 } from '../services/settingsService';
 import type { CameraHand, CoordsLabelMode, StampTextLayout, TextAlign, WatermarkStyle } from '../services/settingsService';
 import {
+  invalidateStampSaveModalLayoutCache,
   loadStampSaveModalLayoutSettings,
   peekStampSaveModalLayoutCache,
   type StampSaveModalLayoutSettings,
@@ -856,6 +862,36 @@ export function StampSaveModal({
     setImageViewerVisible(false);
   };
 
+  const persistFieldLabel = useCallback(
+    async (
+      field: 'title' | 'place' | 'memo' | 'extra1' | 'extra2',
+      nextLabel: string,
+    ) => {
+      try {
+        if (field === 'title') {
+          const safe = await writeTitleFieldLabel(nextLabel);
+          setTitleFieldLabel(safe);
+        } else if (field === 'place') {
+          const safe = await writePlaceFieldLabel(nextLabel);
+          setPlaceFieldLabel(safe);
+        } else if (field === 'memo') {
+          const safe = await writeMemoFieldLabel(nextLabel);
+          setMemoFieldLabel(safe);
+        } else if (field === 'extra1') {
+          const safe = await writeExtra1FieldLabel(nextLabel);
+          setExtra1FieldLabel(safe);
+        } else {
+          const safe = await writeExtra2FieldLabel(nextLabel);
+          setExtra2FieldLabel(safe);
+        }
+        invalidateStampSaveModalLayoutCache();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '표시명 저장에 실패했습니다.');
+      }
+    },
+    [],
+  );
+
   const handleOpenViewer = async () => {
     const source = workingImageUri ?? imageUri;
     if (!source || preparingViewer || applyingCrop || saving) {
@@ -1154,6 +1190,8 @@ export function StampSaveModal({
             <View>
               <VoiceInputField
                 label={titleFieldLabel}
+                labelEditable
+                onLabelCommit={(next) => void persistFieldLabel('title', next)}
                 value={title}
                 onChangeText={(text) => {
                   titleTouchedRef.current = true;
@@ -1175,6 +1213,8 @@ export function StampSaveModal({
 
             <VoiceInputField
               label={placeFieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('place', next)}
               value={placeLabel ?? ''}
               onChangeText={(text) => {
                 placeTouchedRef.current = true;
@@ -1219,6 +1259,8 @@ export function StampSaveModal({
 
             <VoiceInputField
               label={extra1FieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('extra1', next)}
               value={extra1}
               onChangeText={setExtra1}
               onMicPress={() => handleMicPress('extra1')}
@@ -1236,6 +1278,8 @@ export function StampSaveModal({
 
             <VoiceInputField
               label={extra2FieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('extra2', next)}
               value={extra2}
               onChangeText={setExtra2}
               onMicPress={() => handleMicPress('extra2')}
@@ -1253,6 +1297,8 @@ export function StampSaveModal({
 
             <VoiceInputField
               label={memoFieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('memo', next)}
               value={memo}
               onChangeText={setMemo}
               onMicPress={() => handleMicPress('memo')}

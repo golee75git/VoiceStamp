@@ -379,10 +379,12 @@ VoiceStamp/
 | 278 | GitHub APK `releases/20260722_101525` · 랜딩·`/info` · 도움말 | `b6adf01` | — |
 | 279 | **저장 화면 필드 순서**=워터마크·별도 영역(제목→장소→…) | `85c1577` | `restore-save-field-order.bat` §163 |
 | 280 | GitHub APK `releases/20260722_102946` · 랜딩·`/info` · 도움말 | `85c1577` | — |
-| 281 | **크롭 EXIF 방향 정규화**(앱 내·갤러리 적용=화면) | (본 배포) | `restore-crop-orient.bat` §164 |
-| 282 | GitHub APK `releases/20260722_110520` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 281 | **크롭 EXIF 방향 정규화**(앱 내·갤러리 적용=화면) | `2de35d6` | `restore-crop-orient.bat` §164 |
+| 282 | GitHub APK `releases/20260722_110520` · 랜딩·`/info` · 도움말 | `2de35d6` | — |
+| 283 | **저장 화면 표시명 탭 편집**(설정에도 저장) | (본 배포) | `restore-save-label-edit.bat` §165 |
+| 284 | GitHub APK `releases/20260722_111946` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_110520.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260722_111946.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -546,7 +548,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260722_110520.apk` | (본 배포) | **권장** — **크롭 EXIF 방향 정규화**(앱 내·갤러리=화면) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_111946.apk` | (본 배포) | **권장** — **저장 화면 표시명 탭 편집**(설정에도 저장) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_110520.apk` | `2de35d6` | **이전** — **크롭 EXIF 방향 정규화**(앱 내·갤러리=화면) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_102946.apk` | `85c1577` | **이전** — **저장 화면 필드 순서**=제목→장소(+층)→추가·메모 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_101525.apk` | `b6adf01` | **이전** — **별도 영역·PDF 2열 표**(표시명\|내용) + 추가1·추가2 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_095047.apk` | `4501a7f` | **이전** — **추가1·추가2**(저장·음성·값 있을 때만 워터마크) | **GitHub `releases/`** |

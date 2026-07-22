@@ -2699,3 +2699,19 @@ Copy-Item src.pre-crop-orient\gallery-android\VoicestampGalleryModule.kt modules
 Copy-Item src.pre-crop-orient\gallery-src\index.ts modules\voicestamp-gallery\src\ -Force
 ```
 
+## 165. 저장 화면 표시명 편집 되돌리기 (선택)
+
+저장 화면에서 칸 이름 탭 수정·설정 저장을 넣은 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-label-edit.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-label-edit\components\VoiceInputField.tsx,src.pre-save-label-edit\components\StampSaveModal.tsx,src.pre-save-label-edit\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-save-label-edit\public\help.html public\ -Force
+Copy-Item src.pre-save-label-edit\apkBuildLabel.ts src\constants\ -Force
+```
+
