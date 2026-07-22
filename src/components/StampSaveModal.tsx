@@ -46,12 +46,6 @@ import {
 } from '../services/stampSaveModalLayoutCache';
 import { fieldLabelsFromStamp } from '../services/fieldLabels';
 import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
-import {
-  cropStampImage,
-  isStampCropActive,
-  normalizeStampImageForCrop,
-  type StampCropViewport,
-} from '../services/stampImageCrop';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
@@ -73,7 +67,7 @@ import {
 import type { Stamp } from '../types/stamp';
 import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
-import { StampSaveZoomViewer, type StampSaveZoomViewerHandle } from './StampSaveZoomViewer';
+import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
@@ -252,14 +246,12 @@ export function StampSaveModal({
   const [floorDisplayMode, setFloorDisplayModeState] = useState<FloorDisplayMode>('suffix');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
-  const [preparingViewer, setPreparingViewer] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [folderPickerVisible, setFolderPickerVisible] = useState(false);
   const [folderOptions, setFolderOptions] = useState<string[]>([]);
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
-  const [applyingCrop, setApplyingCrop] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
     title: SpeechInsertSlice;
@@ -285,14 +277,8 @@ export function StampSaveModal({
   const floorTouchedRef = useRef(false);
   const lastFloorRef = useRef<StampFloor | null>(null);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
-  const cropViewportRef = useRef<StampCropViewport | null>(null);
-  const zoomViewerRef = useRef<StampSaveZoomViewerHandle | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-
-  const handleCropChange = useCallback((viewport: StampCropViewport) => {
-    cropViewportRef.current = viewport;
-  }, []);
 
   const scrollFieldIntoView = () => {
     requestAnimationFrame(() => {
@@ -459,11 +445,9 @@ export function StampSaveModal({
     floorTouchedRef.current = false;
     lastFloorRef.current = null;
     captureCoordsRef.current = null;
-    cropViewportRef.current = null;
     originalCameraUriRef.current = null;
     setWorkingImageUri(null);
     setPreviewThumbUri(null);
-    setApplyingCrop(false);
     setCaptureCoords(null);
     setFloor(null);
     setPlaceLabel(null);
@@ -908,53 +892,13 @@ export function StampSaveModal({
     [],
   );
 
-  const handleOpenViewer = async () => {
+  const handleOpenViewer = () => {
     const source = workingImageUri ?? imageUri;
-    if (!source || preparingViewer || applyingCrop || saving) {
+    if (!source || saving) {
       return;
     }
-    setPreparingViewer(true);
-    setError(null);
-    try {
-      // Bake EXIF orientation so zoom/crop pixels match on-screen Image (in-app + gallery).
-      const normalized = await normalizeStampImageForCrop(source);
-      if (normalized !== source) {
-        setWorkingImageUri(normalized);
-      }
-      cropViewportRef.current = null;
-      setImageViewerVisible(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '확대 화면을 열지 못했습니다.');
-    } finally {
-      setPreparingViewer(false);
-    }
-  };
-
-  const handleApplyCrop = async () => {
-    if (!workingImageUri || applyingCrop || saving) {
-      if (!applyingCrop && !saving) {
-        handleCloseViewer();
-      }
-      return;
-    }
-
-    setApplyingCrop(true);
-    setError(null);
-    try {
-      // UI-thread flush — JS ref can be wiped by late getSize/onLayout on large in-app photos.
-      const live = (await zoomViewerRef.current?.getCropViewport()) ?? null;
-      const cropState = isStampCropActive(live) ? live : cropViewportRef.current;
-      if (isStampCropActive(cropState)) {
-        const croppedUri = await cropStampImage(workingImageUri, cropState);
-        setWorkingImageUri(croppedUri);
-      }
-      cropViewportRef.current = null;
-      setImageViewerVisible(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '크기 적용에 실패했습니다.');
-    } finally {
-      setApplyingCrop(false);
-    }
+    // View-only zoom: do not re-encode / crop (Apply disabled).
+    setImageViewerVisible(true);
   };
 
   const handleSave = async () => {
@@ -1103,10 +1047,10 @@ export function StampSaveModal({
 
             {photoUri ? (
               <Pressable
-                onPress={() => void handleOpenViewer()}
-                disabled={preparingViewer || applyingCrop || saving}
-                accessibilityLabel="사진 크게 보기 및 수정"
-                accessibilityHint="탭하면 확대·잘라내기 화면이 열립니다"
+                onPress={handleOpenViewer}
+                disabled={saving}
+                accessibilityLabel="사진 크게 보기"
+                accessibilityHint="탭하면 확대 화면이 열립니다. 자르기는 지원하지 않습니다."
               >
                 <View style={styles.previewWrap}>
                   <StampSavePreview
@@ -1137,12 +1081,7 @@ export function StampSaveModal({
                     longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
                     variant="thumbnail"
                   />
-                  {preparingViewer ? (
-                    <View style={styles.viewerPreparingOverlay}>
-                      <ActivityIndicator color="#fff" />
-                    </View>
-                  ) : (
-                    <Image
+                  <Image
                       source={zoomEditIcon}
                       style={[
                         styles.zoomEditBadge,
@@ -1153,7 +1092,6 @@ export function StampSaveModal({
                       accessibilityElementsHidden
                       importantForAccessibility="no-hide-descendants"
                     />
-                  )}
                 </View>
               </Pressable>
             ) : null}
@@ -1377,13 +1315,11 @@ export function StampSaveModal({
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
               <StampSaveZoomViewer
-                ref={zoomViewerRef}
                 imageUri={workingImageUri ?? imageUri!}
-                onCropChange={handleCropChange}
               />
             </View>
           ) : null}
-          {/* VIEWER_ACTION_HAND: 닫기·적용을 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 되돌리: restore-viewer-action-hand.bat */}
+          {/* VIEWER_ACTION_HAND: 닫기를 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 자르기 적용은 비활성(A). */}
           <View
             style={[
               styles.imageViewerActionBar,
@@ -1398,18 +1334,6 @@ export function StampSaveModal({
               accessibilityLabel="저장 화면으로 돌아가기"
             >
               <Text style={styles.imageViewerCloseText}>닫기</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.imageViewerApplyButton, applyingCrop && styles.imageViewerApplyButtonDisabled]}
-              onPress={() => void handleApplyCrop()}
-              disabled={applyingCrop || saving}
-              accessibilityLabel="크기 적용"
-            >
-              {applyingCrop ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.imageViewerApplyText}>적용</Text>
-              )}
             </Pressable>
           </View>
           <View style={styles.imageViewerDeleteBar}>

@@ -2777,3 +2777,19 @@ Copy-Item src.pre-crop-cover-match\apkBuildLabel.ts src\constants\ -Force
 git show 7302cd4 -- src/services/stampImageCrop.ts src/components/ZoomableImage.tsx
 ```
 
+## 170. 확대 자르기(적용) 비활성 되돌리기 (선택)
+
+저장 확대 화면에서 「적용」 자르기를 끈 뒤 문제가 생기면 아래로 복구합니다(확대 미리보기는 유지된 상태의 적용 복구).
+
+```bat
+restore-disable-crop-apply.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-disable-crop-apply\components\StampSaveModal.tsx,src.pre-disable-crop-apply\components\StampSaveZoomViewer.tsx src\components\ -Force
+Copy-Item src.pre-disable-crop-apply\public\help.html public\ -Force
+Copy-Item src.pre-disable-crop-apply\apkBuildLabel.ts src\constants\ -Force
+```
+

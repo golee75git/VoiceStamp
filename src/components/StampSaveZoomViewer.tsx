@@ -16,8 +16,8 @@ export const StampSaveZoomViewer = forwardRef<StampSaveZoomViewerHandle, StampSa
     return (
       <View style={styles.root}>
         <ZoomableImage ref={ref} uri={imageUri} onCropChange={onCropChange} />
-        <Text style={styles.hint}>두 손가락으로 확대·이동 후 「적용」을 누르세요.</Text>
-        <Text style={styles.hintSub}>「닫기」는 변경 없이 저장 화면으로 돌아갑니다.</Text>
+        <Text style={styles.hint}>두 손가락으로 확대·이동해 확인할 수 있습니다.</Text>
+        <Text style={styles.hintSub}>자르기 적용은 지원하지 않습니다. 「닫기」로 저장 화면에 돌아갑니다.</Text>
       </View>
     );
   },
