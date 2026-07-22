@@ -371,10 +371,12 @@ VoiceStamp/
 | 270 | GitHub APK `releases/20260721_235129` · 랜딩·`/info` · 도움말 | `ee75aa8` | — |
 | 271 | **앱 내 카메라 크롭「적용」수정**(레이스·뷰포트·UI flush) | `11a7d29` | `restore-crop-inapp-fix.bat` §159 |
 | 272 | GitHub APK `releases/20260722_000609` · 랜딩·`/info` · 도움말 | `11a7d29` | — |
-| 273 | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** | (본 배포) | `restore-field-labels.bat` §160 |
-| 274 | GitHub APK `releases/20260722_091825` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 273 | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** | `30aed21` | `restore-field-labels.bat` §160 |
+| 274 | GitHub APK `releases/20260722_091825` · 랜딩·`/info` · 도움말 | `30aed21` | — |
+| 275 | **추가 필드 2개**(저장·음성·워터마크 값 있을 때만) | (본 배포) | `restore-extra-fields.bat` §161 |
+| 276 | GitHub APK `releases/20260722_095047` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_091825.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260722_095047.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -538,7 +540,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260722_091825.apk` | (본 배포) | **권장** — **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_095047.apk` | (본 배포) | **권장** — **추가1·추가2**(저장·음성·값 있을 때만 워터마크) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_091825.apk` | `30aed21` | **이전** — **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_000609.apk` | `11a7d29` | **이전** — **앱 내·시스템 크롭 적용** (getSize 레이스·뷰포트 수식) + 07-20 | **GitHub `releases/`** |
 
 #### 2026-07-21
@@ -965,10 +968,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · 설정 UI · PDF/네이티브/미리보기 · APK `releases/VoiceStamp_20260722_091825` · 랜딩·`/info` · 도움말 · Vercel · `restore-field-labels.bat` §160 |
-| `11a7d29` | **앱 내 카메라 크롭「적용」수정** — getSize/onLayout이 줌을 덮지 않음 · 뷰포트 수식 · UI flush · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
+| (본 배포) | **추가 필드 2개** — DB `extra1`/`extra2` · 표시명 · 음성 · 값 있을 때만 워터마크 · APK `releases/VoiceStamp_20260722_095047` · Vercel · `restore-extra-fields.bat` §161 |
+| `30aed21` | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `releases/VoiceStamp_20260722_091825` · `restore-field-labels.bat` §160 |
+| `11a7d29` | **앱 내 카메라 크롭「적용」수정** · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_091825.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260722_095047.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 

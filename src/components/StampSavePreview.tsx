@@ -65,6 +65,8 @@ type StampSavePreviewProps = {
   imageLoading?: boolean;
   title: string;
   memo: string;
+  extra1?: string;
+  extra2?: string;
   placeLabel?: string | null;
   titleAlign: TextAlign;
   memoAlign: TextAlign;
@@ -79,6 +81,8 @@ type StampSavePreviewProps = {
   titleFieldLabel?: string;
   placeFieldLabel?: string;
   memoFieldLabel?: string;
+  extra1FieldLabel?: string;
+  extra2FieldLabel?: string;
   floor?: StampFloor | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -90,6 +94,8 @@ export function StampSavePreview({
   imageLoading = false,
   title,
   memo,
+  extra1 = '',
+  extra2 = '',
   placeLabel,
   titleAlign,
   memoAlign,
@@ -104,18 +110,28 @@ export function StampSavePreview({
   titleFieldLabel,
   placeFieldLabel,
   memoFieldLabel,
+  extra1FieldLabel,
+  extra2FieldLabel,
   floor,
   latitude,
   longitude,
   variant,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
-  const labels = resolveFieldLabels({ titleFieldLabel, placeFieldLabel, memoFieldLabel });
+  const labels = resolveFieldLabels({
+    titleFieldLabel,
+    placeFieldLabel,
+    memoFieldLabel,
+    extra1FieldLabel,
+    extra2FieldLabel,
+  });
   const displayTitle = formatLabeledValue(
     labels.titleFieldLabel,
     stampDisplayTitle({ title, floor }, showDatetime),
   );
   const displayMemo = formatLabeledValue(labels.memoFieldLabel, memo.trim());
+  const displayExtra1 = formatLabeledValue(labels.extra1FieldLabel, extra1.trim());
+  const displayExtra2 = formatLabeledValue(labels.extra2FieldLabel, extra2.trim());
   const displayPlaceRaw = stampDisplayPlace({ placeLabel, floor }) ?? '';
   const displayPlace = formatLabeledValue(labels.placeFieldLabel, displayPlaceRaw);
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
@@ -193,6 +209,22 @@ export function StampSavePreview({
           {displayPlace}
         </Text>
       ) : null}
+      {displayExtra1 ? (
+        <Text
+          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          numberOfLines={2}
+        >
+          {displayExtra1}
+        </Text>
+      ) : null}
+      {displayExtra2 ? (
+        <Text
+          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          numberOfLines={2}
+        >
+          {displayExtra2}
+        </Text>
+      ) : null}
       {displayMemo ? (
         <Text
           style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}
@@ -264,6 +296,16 @@ export function StampSavePreview({
                 {displayPlace}
               </Text>
             ) : null}
+            {displayExtra1 ? (
+              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+                {displayExtra1}
+              </Text>
+            ) : null}
+            {displayExtra2 ? (
+              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+                {displayExtra2}
+              </Text>
+            ) : null}
             {displayMemo ? (
               <Text style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}>
                 {displayMemo}
@@ -310,6 +352,16 @@ export function StampSavePreview({
               {displayPlace}
             </Text>
           ) : null}
+          {displayExtra1 ? (
+            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
+              {displayExtra1}
+            </Text>
+          ) : null}
+          {displayExtra2 ? (
+            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
+              {displayExtra2}
+            </Text>
+          ) : null}
           {displayMemo ? (
             <Text style={[memoStyle, { textAlign: memoAlign }]} numberOfLines={2}>
               {displayMemo}
@@ -354,6 +406,12 @@ export function StampSavePreview({
         ) : null}
         {displayPlace ? (
           <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayPlace}</Text>
+        ) : null}
+        {displayExtra1 ? (
+          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayExtra1}</Text>
+        ) : null}
+        {displayExtra2 ? (
+          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayExtra2}</Text>
         ) : null}
         {displayMemo ? (
           <Text style={[memoStyle, { textAlign: memoAlign }]}>{displayMemo}</Text>

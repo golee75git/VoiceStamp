@@ -26,6 +26,8 @@ import {
   sanitizeOverlayText,
 } from './overlayText';
 import {
+  DEFAULT_FIELD_EXTRA1_LABEL,
+  DEFAULT_FIELD_EXTRA2_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_TITLE_LABEL,
@@ -69,6 +71,8 @@ const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
 const FIELD_LABEL_TITLE_KEY = 'field_label_title';
 const FIELD_LABEL_PLACE_KEY = 'field_label_place';
 const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
+const FIELD_LABEL_EXTRA1_KEY = 'field_label_extra1';
+const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -103,6 +107,8 @@ export {
   OVERLAY_PHRASE_MAX_LENGTH,
 } from './overlayText';
 export {
+  DEFAULT_FIELD_EXTRA1_LABEL,
+  DEFAULT_FIELD_EXTRA2_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_TITLE_LABEL,
@@ -404,6 +410,8 @@ export type SettingsScreenSnapshot = {
   titleFieldLabel: string;
   placeFieldLabel: string;
   memoFieldLabel: string;
+  extra1FieldLabel: string;
+  extra2FieldLabel: string;
 };
 
 export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
@@ -532,6 +540,18 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       return raw
         ? sanitizeFieldLabel(raw, DEFAULT_FIELD_MEMO_LABEL)
         : DEFAULT_FIELD_MEMO_LABEL;
+    })(),
+    extra1FieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_EXTRA1_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_EXTRA1_LABEL)
+        : DEFAULT_FIELD_EXTRA1_LABEL;
+    })(),
+    extra2FieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_EXTRA2_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_EXTRA2_LABEL)
+        : DEFAULT_FIELD_EXTRA2_LABEL;
     })(),
   };
 }
@@ -911,6 +931,34 @@ export async function getMemoFieldLabel(): Promise<string> {
 export async function setMemoFieldLabel(label: string): Promise<string> {
   const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_MEMO_LABEL);
   await writeSetting(FIELD_LABEL_MEMO_KEY, safe);
+  return safe;
+}
+
+export async function getExtra1FieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_EXTRA1_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_EXTRA1_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_EXTRA1_LABEL);
+}
+
+export async function setExtra1FieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_EXTRA1_LABEL);
+  await writeSetting(FIELD_LABEL_EXTRA1_KEY, safe);
+  return safe;
+}
+
+export async function getExtra2FieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_EXTRA2_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_EXTRA2_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_EXTRA2_LABEL);
+}
+
+export async function setExtra2FieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_EXTRA2_LABEL);
+  await writeSetting(FIELD_LABEL_EXTRA2_KEY, safe);
   return safe;
 }
 

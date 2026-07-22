@@ -84,6 +84,8 @@ export async function renderStampCaptionNative(
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
+  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
+  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -98,6 +100,8 @@ export async function renderStampCaptionNative(
     orgName,
     footerPhrase,
     place,
+    extra1 || null,
+    extra2 || null,
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 
@@ -158,6 +162,40 @@ export async function renderStampCaptionNative(
       positionOptions: {
         X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
         Y: layout.placeY,
+      },
+      style: captionTextStyle(
+        '#374151',
+        layout.placeSize,
+        layout.placeAlign,
+        false,
+        textBackgroundPaddingY,
+      ),
+    });
+  }
+
+  if (layout.extra1Y !== null && layout.extra1Text) {
+    watermarkTexts.push({
+      text: layout.extra1Text,
+      positionOptions: {
+        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
+        Y: layout.extra1Y,
+      },
+      style: captionTextStyle(
+        '#374151',
+        layout.placeSize,
+        layout.placeAlign,
+        false,
+        textBackgroundPaddingY,
+      ),
+    });
+  }
+
+  if (layout.extra2Y !== null && layout.extra2Text) {
+    watermarkTexts.push({
+      text: layout.extra2Text,
+      positionOptions: {
+        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
+        Y: layout.extra2Y,
       },
       style: captionTextStyle(
         '#374151',

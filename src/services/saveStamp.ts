@@ -35,6 +35,8 @@ import {
   getCoordsLabelMode,
   getTitleFieldLabel,
   getTitleTextAlign,
+  getExtra1FieldLabel,
+  getExtra2FieldLabel,
   type GallerySaveMode,
 } from './settingsService';
 import {
@@ -59,6 +61,8 @@ type SaveStampInput = {
   longitude?: number | null;
   floor?: Stamp['floor'];
   placeLabel?: string | null;
+  extra1?: string | null;
+  extra2?: string | null;
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -85,6 +89,8 @@ async function loadExportOptions(): Promise<StampImageExportOptions> {
     titleFieldLabel,
     placeFieldLabel,
     memoFieldLabel,
+    extra1FieldLabel,
+    extra2FieldLabel,
   ] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
@@ -99,6 +105,8 @@ async function loadExportOptions(): Promise<StampImageExportOptions> {
     getTitleFieldLabel(),
     getPlaceFieldLabel(),
     getMemoFieldLabel(),
+    getExtra1FieldLabel(),
+    getExtra2FieldLabel(),
   ]);
 
   return {
@@ -115,6 +123,8 @@ async function loadExportOptions(): Promise<StampImageExportOptions> {
     titleFieldLabel,
     placeFieldLabel,
     memoFieldLabel,
+    extra1FieldLabel,
+    extra2FieldLabel,
   };
 }
 
@@ -251,6 +261,8 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     longitude: input.longitude ?? null,
     floor: input.floor ?? null,
     placeLabel: input.placeLabel?.trim() || null,
+    extra1: input.extra1?.trim() || null,
+    extra2: input.extra2?.trim() || null,
   };
 
   await insertStamp(stamp);
@@ -274,6 +286,8 @@ export async function updateStamp(input: {
   groupName?: string;
   floor?: Stamp['floor'];
   placeLabel?: string | null;
+  extra1?: string | null;
+  extra2?: string | null;
   croppedImageUri?: string;
   captureForExport?: SaveStampInput['captureForExport'];
 }): Promise<void> {
@@ -285,6 +299,8 @@ export async function updateStamp(input: {
   const title = resolveStampTitle(input.title, stamp.createdAt);
   const memo = input.memo.trim();
   const placeLabel = input.placeLabel?.trim() || null;
+  const extra1 = input.extra1?.trim() || null;
+  const extra2 = input.extra2?.trim() || null;
   const nextGroup = normalizeStampGroupName(input.groupName ?? '');
   const currentGroup = extractStampGroupFromImagePath(stamp.imagePath) ?? '';
   const groupChanged = nextGroup !== currentGroup;
@@ -332,12 +348,24 @@ export async function updateStamp(input: {
     memo !== stamp.memo ||
     imageCropped ||
     (input.floor ?? null) !== (stamp.floor ?? null) ||
-    placeLabel !== (stamp.placeLabel?.trim() || null);
+    placeLabel !== (stamp.placeLabel?.trim() || null) ||
+    extra1 !== (stamp.extra1?.trim() || null) ||
+    extra2 !== (stamp.extra2?.trim() || null);
 
   if (metadataChanged) {
-    await updateStampRecord(stamp.id, title, memo, imagePath, galleryAssetId, input.floor ?? null, placeLabel);
+    await updateStampRecord(
+      stamp.id,
+      title,
+      memo,
+      imagePath,
+      galleryAssetId,
+      input.floor ?? null,
+      placeLabel,
+      extra1,
+      extra2,
+    );
   } else {
-    await updateStampMetadata(stamp.id, title, memo, input.floor ?? null, placeLabel);
+    await updateStampMetadata(stamp.id, title, memo, input.floor ?? null, placeLabel, extra1, extra2);
   }
 
   if (imageCropped && Platform.OS !== 'web') {
@@ -350,6 +378,8 @@ export async function updateStamp(input: {
       galleryAssetId,
       floor: input.floor ?? null,
       placeLabel,
+      extra1,
+      extra2,
       updatedAt: Date.now(),
     };
     scheduleEditStampCaptionGallerySave(

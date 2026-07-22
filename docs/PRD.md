@@ -673,7 +673,7 @@
 | **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
-| **2026-07-22** | **앱 내 카메라 크롭「적용」수정** · APK `000609` · **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `091825` · Vercel · `restore-field-labels.bat` §160 | (본 배포) |
+| **2026-07-22** | **앱 내 크롭** `000609` · **필드 표시명** `091825` · **추가 필드 2개**(저장·음성·값 있을 때만 워터마크) · APK `095047` · Vercel · `restore-extra-fields.bat` §161 | (본 배포) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -681,12 +681,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_091825.apk`**.
+> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_095047.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260722_091825.apk` | (본 배포) | **설치·GitHub 권장** — **필드 표시명 + 워터마크 라벨** |
-| `releases/VoiceStamp_20260722_000609.apk` | `11a7d29` | **이전** — 앱 내·시스템 크롭 적용 |
+| `releases/VoiceStamp_20260722_095047.apk` | (본 배포) | **설치·GitHub 권장** — **추가1·추가2 + 표시명** |
+| `releases/VoiceStamp_20260722_091825.apk` | `30aed21` | **이전** — 필드 표시명 |
 | `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` / `89941c6` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` / `f68b363` | **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` / `a58157f` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |

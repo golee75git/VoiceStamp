@@ -241,6 +241,8 @@
       titleFieldLabel: sanitizeFieldLabel(options.titleFieldLabel, '제목'),
       placeFieldLabel: sanitizeFieldLabel(options.placeFieldLabel, '장소'),
       memoFieldLabel: sanitizeFieldLabel(options.memoFieldLabel, '메모'),
+      extra1FieldLabel: sanitizeFieldLabel(options.extra1FieldLabel, '추가1'),
+      extra2FieldLabel: sanitizeFieldLabel(options.extra2FieldLabel, '추가2'),
     };
   }
 
@@ -300,6 +302,8 @@
     const memo = formatLabeledValue(labels.memoFieldLabel, String(stamp.memo ?? '').trim());
     const placeRaw = String(stamp.placeLabel ?? '').trim();
     const place = placeRaw ? formatLabeledValue(labels.placeFieldLabel, placeRaw) : '';
+    const extra1 = formatLabeledValue(labels.extra1FieldLabel, String(stamp.extra1 ?? '').trim());
+    const extra2 = formatLabeledValue(labels.extra2FieldLabel, String(stamp.extra2 ?? '').trim());
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
     const orgName = resolveOverlayOrgName(options) ?? '';
     const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -318,6 +322,8 @@
     const titleLines = title ? wrapCanvasLines(measureCtx, title, textWidth) : [];
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
     const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
+    const extra1Lines = extra1 ? wrapCanvasLines(measureCtx, extra1, textWidth) : [];
+    const extra2Lines = extra2 ? wrapCanvasLines(measureCtx, extra2, textWidth) : [];
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
@@ -329,6 +335,8 @@
       (orgLines.length > 0 ? orgLines.length * sizes.orgLine + sizes.orgGapAfter : 0) +
       (titleLines.length > 0 ? titleLines.length * sizes.titleLine : 0) +
       (placeLines.length > 0 ? sizes.memoGapBefore + placeLines.length * sizes.memoLine : 0) +
+      (extra1Lines.length > 0 ? sizes.memoGapBefore + extra1Lines.length * sizes.memoLine : 0) +
+      (extra2Lines.length > 0 ? sizes.memoGapBefore + extra2Lines.length * sizes.memoLine : 0) +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
       (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
@@ -388,6 +396,36 @@
       textY = drawAlignedText(
         ctx,
         place,
+        sizes.barPaddingX,
+        textY + sizes.memoAfterGap,
+        textWidth,
+        options.titleAlign,
+        sizes.memoFont,
+        '400',
+        theme.memoColor,
+        sizes.memoLine,
+      );
+    }
+
+    if (extra1) {
+      textY = drawAlignedText(
+        ctx,
+        extra1,
+        sizes.barPaddingX,
+        textY + sizes.memoAfterGap,
+        textWidth,
+        options.titleAlign,
+        sizes.memoFont,
+        '400',
+        theme.memoColor,
+        sizes.memoLine,
+      );
+    }
+
+    if (extra2) {
+      textY = drawAlignedText(
+        ctx,
+        extra2,
         sizes.barPaddingX,
         textY + sizes.memoAfterGap,
         textWidth,
@@ -461,6 +499,8 @@
     const memo = formatLabeledValue(labels.memoFieldLabel, String(stamp.memo ?? '').trim());
     const placeRaw = String(stamp.placeLabel ?? '').trim();
     const place = placeRaw ? formatLabeledValue(labels.placeFieldLabel, placeRaw) : '';
+    const extra1 = formatLabeledValue(labels.extra1FieldLabel, String(stamp.extra1 ?? '').trim());
+    const extra2 = formatLabeledValue(labels.extra2FieldLabel, String(stamp.extra2 ?? '').trim());
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
     const orgName = resolveOverlayOrgName(options) ?? '';
     const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -477,6 +517,8 @@
     const titleLines = title ? wrapCanvasLines(measureCtx, title, contentWidth) : [];
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
     const placeLines = place ? wrapCanvasLines(measureCtx, place, contentWidth) : [];
+    const extra1Lines = extra1 ? wrapCanvasLines(measureCtx, extra1, contentWidth) : [];
+    const extra2Lines = extra2 ? wrapCanvasLines(measureCtx, extra2, contentWidth) : [];
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
@@ -491,6 +533,8 @@
       (orgLines.length > 0 ? sizes.orgGapBefore + orgLines.length * sizes.orgLine : 0) +
       (titleLines.length > 0 ? titleLines.length * sizes.titleLine : 0) +
       (placeLines.length > 0 ? sizes.memoGapBefore + placeLines.length * sizes.memoLine : 0) +
+      (extra1Lines.length > 0 ? sizes.memoGapBefore + extra1Lines.length * sizes.memoLine : 0) +
+      (extra2Lines.length > 0 ? sizes.memoGapBefore + extra2Lines.length * sizes.memoLine : 0) +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
       (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
@@ -544,6 +588,36 @@
       textY = drawAlignedText(
         ctx,
         place,
+        padding,
+        textY + sizes.memoAfterGap,
+        contentWidth,
+        options.titleAlign,
+        sizes.memoFont,
+        '400',
+        '#374151',
+        sizes.memoLine,
+      );
+    }
+
+    if (extra1) {
+      textY = drawAlignedText(
+        ctx,
+        extra1,
+        padding,
+        textY + sizes.memoAfterGap,
+        contentWidth,
+        options.titleAlign,
+        sizes.memoFont,
+        '400',
+        '#374151',
+        sizes.memoLine,
+      );
+    }
+
+    if (extra2) {
+      textY = drawAlignedText(
+        ctx,
+        extra2,
         padding,
         textY + sizes.memoAfterGap,
         contentWidth,
@@ -621,6 +695,8 @@
       titleFieldLabel: typeof settings.titleFieldLabel === 'string' ? settings.titleFieldLabel : '제목',
       placeFieldLabel: typeof settings.placeFieldLabel === 'string' ? settings.placeFieldLabel : '장소',
       memoFieldLabel: typeof settings.memoFieldLabel === 'string' ? settings.memoFieldLabel : '메모',
+      extra1FieldLabel: typeof settings.extra1FieldLabel === 'string' ? settings.extra1FieldLabel : '추가1',
+      extra2FieldLabel: typeof settings.extra2FieldLabel === 'string' ? settings.extra2FieldLabel : '추가2',
     };
   }
 

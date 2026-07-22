@@ -1,0 +1,112 @@
+import Marker, { ImageFormat, Position, TextBackgroundType } from 'react-native-image-marker';
+
+import { resolveImageUri } from './fileService';
+import {
+  prepareExportPhoto,
+  STAMP_JPEG_COMPRESS,
+  type StampImageExportOptions,
+  type StampRenderParams,
+} from './exportStampImage';
+import { resolveOverlayFooterPhrase, resolveOverlayOrgName } from './overlayText';
+import { formatLabeledValue, resolveFieldLabels } from './fieldLabels';
+import { stampDisplayTitle } from './stampFloor';
+import { stampCoordinatesLine } from './stampCoords';
+import { stampPlaceLine } from './stampPlace';
+import { getWatermarkTheme } from './watermarkStyle';
+import type { TextAlign } from './settingsService';
+import type { Stamp } from '../types/stamp';
+
+const EXPORT_PHOTO_WIDTH = 1032;
+
+function watermarkPosition(align: TextAlign): Position {
+  if (align === 'center') {
+    return Position.bottomCenter;
+  }
+  if (align === 'right') {
+    return Position.bottomRight;
+  }
+  return Position.bottomLeft;
+}
+
+function normalizeMarkedUri(markedUri: string): string {
+  if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
+    return markedUri;
+  }
+  if (markedUri.startsWith('/')) {
+    return `file://${markedUri}`;
+  }
+  return markedUri;
+}
+
+export async function renderStampWatermarkNative(
+  stamp: Stamp,
+  options: StampImageExportOptions,
+  renderParams?: StampRenderParams,
+): Promise<string> {
+  const photoUri = renderParams?.sourceUri ?? resolveImageUri(stamp.imagePath);
+  const maxWidth = renderParams?.maxWidth;
+  const jpegCompress = renderParams?.jpegCompress ?? STAMP_JPEG_COMPRESS;
+  const prepared = await prepareExportPhoto(photoUri, maxWidth);
+  const labels = resolveFieldLabels(options);
+  const title = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle(stamp, options.showDatetime),
+  );
+  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
+  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
+  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const orgName = resolveOverlayOrgName(options);
+  const footerPhrase = resolveOverlayFooterPhrase(options);
+  const theme = getWatermarkTheme(options.watermarkStyle);
+  const scale = prepared.width / EXPORT_PHOTO_WIDTH;
+  const titleSize = Math.max(18, Math.round(32 * scale));
+  const paddingX = Math.round(20 * scale);
+  const paddingY = Math.round(16 * scale);
+
+  const overlayLines: string[] = [];
+  if (orgName) {
+    overlayLines.push(orgName);
+  }
+  if (title) {
+    overlayLines.push(title);
+  }
+  if (place) {
+    overlayLines.push(place);
+  }
+  if (memo) {
+    overlayLines.push(memo);
+  }
+  if (coords) {
+    overlayLines.push(coords);
+  }
+  if (footerPhrase) {
+    overlayLines.push(footerPhrase);
+  }
+  const text = overlayLines.join('\n');
+
+  const markedUri = await Marker.markText({
+    backgroundImage: { src: prepared.uri, scale: 1 },
+    watermarkTexts: [
+      {
+        text,
+        positionOptions: { position: watermarkPosition(options.titleAlign) },
+        style: {
+          color: theme.titleColor,
+          fontSize: titleSize,
+          bold: true,
+          textAlign: options.titleAlign,
+          textBackgroundStyle: {
+            type: TextBackgroundType.stretchX,
+            color: theme.nativeBarColor,
+            paddingX,
+            paddingY,
+          },
+        },
+      },
+    ],
+    quality: Math.round(jpegCompress * 100),
+    saveFormat: ImageFormat.jpg,
+  });
+
+  return normalizeMarkedUri(markedUri);
+}

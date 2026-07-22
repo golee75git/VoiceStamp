@@ -1,6 +1,8 @@
 import {
   getCameraHand,
   getCoordsLabelMode,
+  getExtra1FieldLabel,
+  getExtra2FieldLabel,
   getFloorDisplayMode,
   getMemoFieldLabel,
   getMemoTextAlign,
@@ -38,6 +40,8 @@ export type StampSaveModalLayoutSettings = {
   titleFieldLabel: string;
   placeFieldLabel: string;
   memoFieldLabel: string;
+  extra1FieldLabel: string;
+  extra2FieldLabel: string;
 };
 
 let cachedLayout: StampSaveModalLayoutSettings | null = null;
@@ -73,6 +77,8 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
       getTitleFieldLabel(),
       getPlaceFieldLabel(),
       getMemoFieldLabel(),
+      getExtra1FieldLabel(),
+      getExtra2FieldLabel(),
     ]).then(
       ([
         titleTextAlign,
@@ -90,6 +96,8 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
         titleFieldLabel,
         placeFieldLabel,
         memoFieldLabel,
+        extra1FieldLabel,
+        extra2FieldLabel,
       ]) => {
         const settings: StampSaveModalLayoutSettings = {
           titleTextAlign,
@@ -107,6 +115,8 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
           titleFieldLabel,
           placeFieldLabel,
           memoFieldLabel,
+          extra1FieldLabel,
+          extra2FieldLabel,
         };
         cachedLayout = settings;
         return settings;

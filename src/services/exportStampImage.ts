@@ -228,6 +228,8 @@ async function renderStampJpegWatermarkOnWeb(
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
+  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
+  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options) ?? '';
   const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -249,6 +251,8 @@ async function renderStampJpegWatermarkOnWeb(
   const titleLines = title ? wrapCanvasLines(measureCtx, title, textWidth) : [];
   measureCtx.font = '400 24px sans-serif';
   const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
+  const extra1Lines = extra1 ? wrapCanvasLines(measureCtx, extra1, textWidth) : [];
+  const extra2Lines = extra2 ? wrapCanvasLines(measureCtx, extra2, textWidth) : [];
   measureCtx.font = '400 26px sans-serif';
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
   measureCtx.font = '400 22px sans-serif';
@@ -261,6 +265,8 @@ async function renderStampJpegWatermarkOnWeb(
     (orgLines.length > 0 ? orgLines.length * 30 + 4 : 0) +
     (titleLines.length > 0 ? titleLines.length * 38 : 0) +
     (placeLines.length > 0 ? 6 + placeLines.length * 28 : 0) +
+    (extra1Lines.length > 0 ? 6 + extra1Lines.length * 28 : 0) +
+    (extra2Lines.length > 0 ? 6 + extra2Lines.length * 28 : 0) +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
     (phraseLines.length > 0 ? 4 + phraseLines.length * 24 : 0) +
@@ -317,6 +323,36 @@ async function renderStampJpegWatermarkOnWeb(
     textY = drawAlignedText(
       ctx,
       place,
+      barPaddingX,
+      textY + 2,
+      textWidth,
+      options.titleAlign,
+      24,
+      '400',
+      theme.memoColor,
+      28,
+    );
+  }
+
+  if (extra1) {
+    textY = drawAlignedText(
+      ctx,
+      extra1,
+      barPaddingX,
+      textY + 2,
+      textWidth,
+      options.titleAlign,
+      24,
+      '400',
+      theme.memoColor,
+      28,
+    );
+  }
+
+  if (extra2) {
+    textY = drawAlignedText(
+      ctx,
+      extra2,
       barPaddingX,
       textY + 2,
       textWidth,
@@ -394,6 +430,8 @@ async function renderStampJpegCaptionOnWeb(
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
+  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
+  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -408,6 +446,8 @@ async function renderStampJpegCaptionOnWeb(
     orgName,
     footerPhrase,
     place,
+    extra1 || null,
+    extra2 || null,
   );
 
   const canvas = document.createElement('canvas');
@@ -458,6 +498,36 @@ async function renderStampJpegCaptionOnWeb(
       layout.placeText,
       layout.padding,
       layout.placeY,
+      imgWidth,
+      layout.placeAlign,
+      layout.placeSize,
+      '400',
+      '#374151',
+      layout.placeLineHeight,
+    );
+  }
+
+  if (layout.extra1Y !== null && layout.extra1Text) {
+    drawAlignedText(
+      ctx,
+      layout.extra1Text,
+      layout.padding,
+      layout.extra1Y,
+      imgWidth,
+      layout.placeAlign,
+      layout.placeSize,
+      '400',
+      '#374151',
+      layout.placeLineHeight,
+    );
+  }
+
+  if (layout.extra2Y !== null && layout.extra2Text) {
+    drawAlignedText(
+      ctx,
+      layout.extra2Text,
+      layout.padding,
+      layout.extra2Y,
       imgWidth,
       layout.placeAlign,
       layout.placeSize,

@@ -2625,3 +2625,23 @@ Copy-Item src.pre-field-labels\apkBuildLabel.ts src\constants\ -Force
 Remove-Item src\services\fieldLabels.ts -ErrorAction SilentlyContinue
 ```
 
+## 161. 추가1·추가2 필드 되돌리기 (선택)
+
+스탬프에 추가1·추가2 입력 칸과 설정 표시명·워터마크·PDF·프로젝트 ZIP 반영을 넣은 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-extra-fields.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-extra-fields\db\*.ts src\db\ -Force
+Copy-Item src.pre-extra-fields\types\stamp.ts src\types\ -Force
+Copy-Item src.pre-extra-fields\services\*.ts src\services\ -Force
+Copy-Item src.pre-extra-fields\components\*.tsx src\components\ -Force
+Copy-Item src.pre-extra-fields\public\help.html,src.pre-extra-fields\public\landing.html,src.pre-extra-fields\public\info.html public\ -Force
+Copy-Item src.pre-extra-fields\report\watermark-export.js public\report\ -Force
+Copy-Item src.pre-extra-fields\apkBuildLabel.ts src\constants\ -Force
+```
+

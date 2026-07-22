@@ -71,7 +71,7 @@ import { VoiceInputField } from './VoiceInputField';
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
 const zoomEditIcon = require('../../assets/zoom.png');
 
-type SpeechTarget = 'title' | 'memo' | 'place' | null;
+type SpeechTarget = 'title' | 'memo' | 'place' | 'extra1' | 'extra2' | null;
 
 type SpeechInsertSlice = { prefix: string; suffix: string };
 
@@ -154,6 +154,8 @@ function applyStampSaveModalLayoutSettings(
     setTitleFieldLabel: (value: string) => void;
     setPlaceFieldLabel: (value: string) => void;
     setMemoFieldLabel: (value: string) => void;
+    setExtra1FieldLabel: (value: string) => void;
+    setExtra2FieldLabel: (value: string) => void;
   },
 ): void {
   apply.setTitleTextAlign(settings.titleTextAlign);
@@ -171,6 +173,8 @@ function applyStampSaveModalLayoutSettings(
   apply.setTitleFieldLabel(settings.titleFieldLabel);
   apply.setPlaceFieldLabel(settings.placeFieldLabel);
   apply.setMemoFieldLabel(settings.memoFieldLabel);
+  apply.setExtra1FieldLabel(settings.extra1FieldLabel);
+  apply.setExtra2FieldLabel(settings.extra2FieldLabel);
 }
 
 type StampSaveModalProps = {
@@ -204,6 +208,8 @@ export function StampSaveModal({
   const [groupName, setGroupName] = useState('');
   const [title, setTitle] = useState('');
   const [memo, setMemo] = useState('');
+  const [extra1, setExtra1] = useState('');
+  const [extra2, setExtra2] = useState('');
   const [saving, setSaving] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -211,6 +217,8 @@ export function StampSaveModal({
   const [titleSelection, setTitleSelection] = useState<TextSelection>({ start: 0, end: 0 });
   const [placeSelection, setPlaceSelection] = useState<TextSelection>({ start: 0, end: 0 });
   const [memoSelection, setMemoSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [extra1Selection, setExtra1Selection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [extra2Selection, setExtra2Selection] = useState<TextSelection>({ start: 0, end: 0 });
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
@@ -223,6 +231,8 @@ export function StampSaveModal({
   const [titleFieldLabel, setTitleFieldLabel] = useState('제목');
   const [placeFieldLabel, setPlaceFieldLabel] = useState('장소');
   const [memoFieldLabel, setMemoFieldLabel] = useState('메모');
+  const [extra1FieldLabel, setExtra1FieldLabel] = useState('추가1');
+  const [extra2FieldLabel, setExtra2FieldLabel] = useState('추가2');
   const [showDatetime, setShowDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
@@ -246,14 +256,20 @@ export function StampSaveModal({
     title: SpeechInsertSlice;
     memo: SpeechInsertSlice;
     place: SpeechInsertSlice;
+    extra1: SpeechInsertSlice;
+    extra2: SpeechInsertSlice;
   }>({
     title: { prefix: '', suffix: '' },
     memo: { prefix: '', suffix: '' },
     place: { prefix: '', suffix: '' },
+    extra1: { prefix: '', suffix: '' },
+    extra2: { prefix: '', suffix: '' },
   });
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
   const placeSelectionRef = useRef({ start: 0, end: 0 });
+  const extra1SelectionRef = useRef({ start: 0, end: 0 });
+  const extra2SelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
@@ -317,6 +333,26 @@ export function StampSaveModal({
         } else {
           setPlaceLabel(merged.trim() ? merged : null);
         }
+      } else if (target === 'extra1') {
+        const { prefix, suffix } = speechInsertRef.current.extra1;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setExtra1(withGap);
+          applyTextSelection(selection, extra1SelectionRef, setExtra1Selection);
+        } else {
+          setExtra1(merged);
+        }
+      } else if (target === 'extra2') {
+        const { prefix, suffix } = speechInsertRef.current.extra2;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setExtra2(withGap);
+          applyTextSelection(selection, extra2SelectionRef, setExtra2Selection);
+        } else {
+          setExtra2(merged);
+        }
       }
       if (isFinal) {
         setSpeechTarget(null);
@@ -349,6 +385,8 @@ export function StampSaveModal({
       setTitleFieldLabel,
       setPlaceFieldLabel,
       setMemoFieldLabel,
+      setExtra1FieldLabel,
+      setExtra2FieldLabel,
     };
 
     const cached = peekStampSaveModalLayoutCache();
@@ -376,6 +414,8 @@ export function StampSaveModal({
     setGroupName('');
     setTitle('');
     setMemo('');
+    setExtra1('');
+    setExtra2('');
     setSaving(false);
     setLocationLoading(false);
     setError(null);
@@ -383,9 +423,13 @@ export function StampSaveModal({
     setTitleSelection({ start: 0, end: 0 });
     setPlaceSelection({ start: 0, end: 0 });
     setMemoSelection({ start: 0, end: 0 });
+    setExtra1Selection({ start: 0, end: 0 });
+    setExtra2Selection({ start: 0, end: 0 });
     titleSelectionRef.current = { start: 0, end: 0 };
     placeSelectionRef.current = { start: 0, end: 0 };
     memoSelectionRef.current = { start: 0, end: 0 };
+    extra1SelectionRef.current = { start: 0, end: 0 };
+    extra2SelectionRef.current = { start: 0, end: 0 };
     setImageViewerVisible(false);
     setFolderPickerVisible(false);
     setFolderOptions([]);
@@ -414,6 +458,8 @@ export function StampSaveModal({
     }
     setTitle(stamp.title);
     setMemo(stamp.memo);
+    setExtra1(stamp.extra1 ?? '');
+    setExtra2(stamp.extra2 ?? '');
     setFloor(stamp.floor ?? null);
     setPlaceLabel(stamp.placeLabel ?? null);
     setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
@@ -706,6 +752,24 @@ export function StampSaveModal({
         selection.start,
         selection.end,
       );
+    } else if (target === 'extra1') {
+      const { text: prepared, selection } = prepareSpeechTarget(extra1, extra1SelectionRef.current);
+      setExtra1(prepared);
+      applyTextSelection(selection, extra1SelectionRef, setExtra1Selection);
+      speechInsertRef.current.extra1 = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
+      );
+    } else if (target === 'extra2') {
+      const { text: prepared, selection } = prepareSpeechTarget(extra2, extra2SelectionRef.current);
+      setExtra2(prepared);
+      applyTextSelection(selection, extra2SelectionRef, setExtra2Selection);
+      speechInsertRef.current.extra2 = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
+      );
     }
 
     setSpeechTarget(target);
@@ -840,6 +904,8 @@ export function StampSaveModal({
           id: stamp.id,
           title,
           memo,
+          extra1,
+          extra2,
           groupName,
           floor: effectiveFloor,
           placeLabel,
@@ -860,6 +926,8 @@ export function StampSaveModal({
           originalTempUri,
           title,
           memo,
+          extra1,
+          extra2,
           groupName: siteName,
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
@@ -955,6 +1023,8 @@ export function StampSaveModal({
                     imageLoading={false}
                     title={title}
                     memo={memo}
+                    extra1={extra1}
+                    extra2={extra2}
                     placeLabel={placeLabel}
                     titleAlign={titleTextAlign}
                     memoAlign={memoTextAlign}
@@ -969,6 +1039,8 @@ export function StampSaveModal({
                     titleFieldLabel={titleFieldLabel}
                     placeFieldLabel={placeFieldLabel}
                     memoFieldLabel={memoFieldLabel}
+                    extra1FieldLabel={extra1FieldLabel}
+                    extra2FieldLabel={extra2FieldLabel}
                     floor={floor}
                     latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                     longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
@@ -1113,6 +1185,40 @@ export function StampSaveModal({
                 cameraHand={cameraHand}
               />
             </View>
+
+            <VoiceInputField
+              label={extra1FieldLabel}
+              value={extra1}
+              onChangeText={setExtra1}
+              onMicPress={() => handleMicPress('extra1')}
+              listening={listening && speechTarget === 'extra1'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={extra1Selection}
+              onSelectionChange={(selection) => {
+                extra1SelectionRef.current = selection;
+                setExtra1Selection(selection);
+              }}
+              textAlign={titleTextAlign}
+              cameraHand={cameraHand}
+            />
+
+            <VoiceInputField
+              label={extra2FieldLabel}
+              value={extra2}
+              onChangeText={setExtra2}
+              onMicPress={() => handleMicPress('extra2')}
+              listening={listening && speechTarget === 'extra2'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={extra2Selection}
+              onSelectionChange={(selection) => {
+                extra2SelectionRef.current = selection;
+                setExtra2Selection(selection);
+              }}
+              textAlign={titleTextAlign}
+              cameraHand={cameraHand}
+            />
 
             <VoiceInputField
               label={memoFieldLabel}

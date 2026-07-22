@@ -11,6 +11,8 @@ import {
   getCoordsLabelMode,
   getMemoFieldLabel,
   getMemoTextAlign,
+  getExtra1FieldLabel,
+  getExtra2FieldLabel,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
@@ -40,6 +42,8 @@ export type ProjectExportSettings = {
   titleFieldLabel: string;
   placeFieldLabel: string;
   memoFieldLabel: string;
+  extra1FieldLabel: string;
+  extra2FieldLabel: string;
 };
 
 export type ProjectManifestStamp = {
@@ -48,6 +52,8 @@ export type ProjectManifestStamp = {
   memo: string;
   placeLabel: string | null;
   floor: string | null;
+  extra1: string | null;
+  extra2: string | null;
   latitude: number | null;
   longitude: number | null;
   createdAt: number;
@@ -123,7 +129,7 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
@@ -137,6 +143,8 @@ export async function createStampsProjectZip(
     getTitleFieldLabel(),
     getPlaceFieldLabel(),
     getMemoFieldLabel(),
+    getExtra1FieldLabel(),
+    getExtra2FieldLabel(),
   ]);
 
   const manifestStamps: ProjectManifestStamp[] = [];
@@ -158,6 +166,8 @@ export async function createStampsProjectZip(
       memo: stamp.memo,
       placeLabel: stamp.placeLabel ?? null,
       floor: stamp.floor ?? null,
+      extra1: stamp.extra1 ?? null,
+      extra2: stamp.extra2 ?? null,
       latitude: stamp.latitude ?? null,
       longitude: stamp.longitude ?? null,
       createdAt: stamp.createdAt,
@@ -185,6 +195,8 @@ export async function createStampsProjectZip(
       titleFieldLabel,
       placeFieldLabel,
       memoFieldLabel,
+      extra1FieldLabel,
+      extra2FieldLabel,
     },
     stamps: manifestStamps,
   };

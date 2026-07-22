@@ -27,20 +27,20 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~160) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~161) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
 ## 현재 상태 스냅샷 (2026-07-21)
 
-- **문서 갱신일:** 2026-07-22 — **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `091825`
-- **최신 기능 커밋:** (본 배포 커밋) — 제목·장소·메모 표시명 설정·워터마크 반영
+- **문서 갱신일:** 2026-07-22 — **추가 필드 2개**(저장·음성·워터마크 값 있을 때만) · APK `095047`
+- **최신 기능 커밋:** (본 배포 커밋) — extra1/extra2 + 표시명
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260722_091825.apk` — **필드 표시명 + 워터마크 라벨** + 앱 내 크롭 수정
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260722_091825.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260722_000609.apk` (앱 내 크롭 적용 수정)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260722_095047.apk` — **추가1·추가2 + 필드 표시명**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260722_095047.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260722_091825.apk` (필드 표시명만)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
@@ -82,16 +82,16 @@
 | 07-14 | **GS-UPLOAD-01** Google Sheets(공용 시트)·압축 사진·원클릭 업로드 **설계·초안만** (`docs/`) — **앱·APK 변경 없음** · 당시 권장 APK `231004` |
 | 07-20 | **PDF → `YYYYMMDD_장소` 폴더 archive** · 도움말 · APK `225635` · Vercel |
 | 07-21 | 크롭 뷰포트/라이브/UI-flush **시도 후 롤백** → **`225635` 크롭 동작 복구** · APK `235129` · Vercel |
-| 07-22 | **앱 내 카메라 크롭「적용」수정** · APK `000609` · **필드 표시명 + 워터마크 라벨** · APK `091825` · Vercel |
+| 07-22 | **앱 내 크롭** `000609` · **필드 표시명** `091825` · **추가 필드 2개** `095047` · Vercel |
 
 ### APK별 (권장·주요)
 
-> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_091825.apk`**.
+> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_095047.apk`**.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260722_091825.apk` | (본 배포) | **설치·GitHub 권장** — **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** |
-| `releases/VoiceStamp_20260722_000609.apk` | `11a7d29` | **이전** — 앱 내·시스템 크롭 적용 |
+| `releases/VoiceStamp_20260722_095047.apk` | (본 배포) | **설치·GitHub 권장** — **추가1·추가2(저장·음성·워터마크)** |
+| `releases/VoiceStamp_20260722_091825.apk` | `30aed21` | **이전** — 필드 표시명 커스텀 |
 | `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | ZIP PDF 미포함 + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |

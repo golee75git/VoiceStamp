@@ -9,6 +9,8 @@ export type CaptionLayout = {
   orgY: number | null;
   titleY: number;
   placeY: number | null;
+  extra1Y: number | null;
+  extra2Y: number | null;
   memoY: number | null;
   coordsY: number | null;
   phraseY: number | null;
@@ -27,6 +29,8 @@ export type CaptionLayout = {
   orgText: string;
   titleText: string;
   placeText: string;
+  extra1Text: string;
+  extra2Text: string;
   memoText: string;
   coordsText: string;
   phraseText: string;
@@ -94,6 +98,8 @@ export function buildCaptionLayout(
   orgName: string | null = null,
   footerPhrase: string | null = null,
   place: string | null = null,
+  extra1: string | null = null,
+  extra2: string | null = null,
 ): CaptionLayout {
   const scale = photoWidth / CAPTION_REFERENCE_PHOTO_WIDTH;
   const padding = Math.max(12, Math.round(24 * scale));
@@ -118,6 +124,8 @@ export function buildCaptionLayout(
   const orgLines = orgName ? wrapTextLines(orgName, contentWidth, orgSize) : [];
   const titleLines = wrapTextLines(title, contentWidth, titleSize);
   const placeLines = place ? wrapTextLines(place, contentWidth, placeSize) : [];
+  const extra1Lines = extra1 ? wrapTextLines(extra1, contentWidth, placeSize) : [];
+  const extra2Lines = extra2 ? wrapTextLines(extra2, contentWidth, placeSize) : [];
   const memoLines = memo ? wrapTextLines(memo, contentWidth, memoSize) : [];
   const coordsLines = coords ? wrapTextLines(coords, contentWidth, coordsSize) : [];
   const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, contentWidth, phraseSize) : [];
@@ -126,6 +134,10 @@ export function buildCaptionLayout(
   const titleBlockHeight = titleLines.length * titleLineHeight;
   const placeBlockHeight =
     placeLines.length > 0 ? Math.round(8 * scale) + placeLines.length * placeLineHeight : 0;
+  const extra1BlockHeight =
+    extra1Lines.length > 0 ? Math.round(8 * scale) + extra1Lines.length * placeLineHeight : 0;
+  const extra2BlockHeight =
+    extra2Lines.length > 0 ? Math.round(8 * scale) + extra2Lines.length * placeLineHeight : 0;
   const memoBlockHeight = memoLines.length > 0 ? Math.round(12 * scale) + memoLines.length * memoLineHeight : 0;
   const coordsBlockHeight =
     coordsLines.length > 0 ? Math.round(8 * scale) + coordsLines.length * coordsLineHeight : 0;
@@ -139,6 +151,8 @@ export function buildCaptionLayout(
     orgBlockHeight +
     titleBlockHeight +
     placeBlockHeight +
+    extra1BlockHeight +
+    extra2BlockHeight +
     memoBlockHeight +
     coordsBlockHeight +
     phraseBlockHeight +
@@ -152,30 +166,33 @@ export function buildCaptionLayout(
 
   const titleY = cursorY;
   cursorY += titleBlockHeight;
+
   const placeY = placeLines.length > 0 ? cursorY + Math.round(8 * scale) : null;
   if (placeY !== null) {
     cursorY += placeBlockHeight;
   }
 
-  const memoY = memoLines.length > 0 ? cursorY + Math.round(placeY !== null ? 0 : 12 * scale) : null;
-  const coordsY =
-    coordsLines.length > 0
-      ? (memoY !== null
-          ? memoY + memoLines.length * memoLineHeight
-          : placeY !== null
-            ? placeY + placeLines.length * placeLineHeight
-            : titleY + titleBlockHeight) + Math.round(8 * scale)
-      : null;
-  const phraseY =
-    phraseLines.length > 0
-      ? (coordsY !== null
-          ? coordsY + coordsLines.length * coordsLineHeight
-          : memoY !== null
-            ? memoY + memoLines.length * memoLineHeight
-            : placeY !== null
-              ? placeY + placeLines.length * placeLineHeight
-              : titleY + titleBlockHeight) + Math.round(8 * scale)
-      : null;
+  const extra1Y = extra1Lines.length > 0 ? cursorY + Math.round(8 * scale) : null;
+  if (extra1Y !== null) {
+    cursorY += extra1BlockHeight;
+  }
+
+  const extra2Y = extra2Lines.length > 0 ? cursorY + Math.round(8 * scale) : null;
+  if (extra2Y !== null) {
+    cursorY += extra2BlockHeight;
+  }
+
+  const memoY = memoLines.length > 0 ? cursorY + Math.round(12 * scale) : null;
+  if (memoY !== null) {
+    cursorY += memoBlockHeight;
+  }
+
+  const coordsY = coordsLines.length > 0 ? cursorY + Math.round(8 * scale) : null;
+  if (coordsY !== null) {
+    cursorY += coordsBlockHeight;
+  }
+
+  const phraseY = phraseLines.length > 0 ? cursorY + Math.round(8 * scale) : null;
 
   return {
     canvasWidth,
@@ -184,6 +201,8 @@ export function buildCaptionLayout(
     orgY,
     titleY,
     placeY,
+    extra1Y,
+    extra2Y,
     memoY,
     coordsY,
     phraseY,
@@ -202,6 +221,8 @@ export function buildCaptionLayout(
     orgText: orgLines.join('\n'),
     titleText: titleLines.join('\n'),
     placeText: placeLines.join('\n'),
+    extra1Text: extra1Lines.join('\n'),
+    extra2Text: extra2Lines.join('\n'),
     memoText: memoLines.join('\n'),
     coordsText: coordsLines.join('\n'),
     phraseText: phraseLines.join('\n'),

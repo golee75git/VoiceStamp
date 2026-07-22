@@ -5,6 +5,8 @@ import {
   ALTER_STAMPS_ADD_GALLERY_ASSET_ID,
   ALTER_STAMPS_ADD_FLOOR,
   ALTER_STAMPS_ADD_PLACE_LABEL,
+  ALTER_STAMPS_ADD_EXTRA1,
+  ALTER_STAMPS_ADD_EXTRA2,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_SETTINGS_TABLE,
@@ -40,6 +42,14 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasPlaceLabel = columns.some((column) => column.name === 'place_label');
   if (!hasPlaceLabel) {
     await db.execAsync(ALTER_STAMPS_ADD_PLACE_LABEL);
+  }
+  const hasExtra1 = columns.some((column) => column.name === 'extra1');
+  if (!hasExtra1) {
+    await db.execAsync(ALTER_STAMPS_ADD_EXTRA1);
+  }
+  const hasExtra2 = columns.some((column) => column.name === 'extra2');
+  if (!hasExtra2) {
+    await db.execAsync(ALTER_STAMPS_ADD_EXTRA2);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }

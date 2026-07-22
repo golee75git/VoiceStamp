@@ -13,6 +13,8 @@ export type Stamp = {
   longitude?: number | null;
   floor?: StampFloor | null;
   placeLabel?: string | null;
+  extra1?: string | null;
+  extra2?: string | null;
 };
 
 export type StampRow = {
@@ -28,4 +30,6 @@ export type StampRow = {
   longitude?: number | null;
   floor?: string | null;
   place_label?: string | null;
+  extra1?: string | null;
+  extra2?: string | null;
 };

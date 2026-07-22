@@ -38,6 +38,8 @@ export function StampExportCard({
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
+  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
+  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
@@ -135,6 +137,36 @@ export function StampExportCard({
               {place}
             </Text>
           ) : null}
+          {extra1 ? (
+            <Text
+              style={[
+                styles.watermarkMemo,
+                {
+                  fontSize: Math.max(14, Math.round(24 * scale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  textAlign: options.titleAlign,
+                  color: watermarkTheme.memoColor,
+                },
+              ]}
+            >
+              {extra1}
+            </Text>
+          ) : null}
+          {extra2 ? (
+            <Text
+              style={[
+                styles.watermarkMemo,
+                {
+                  fontSize: Math.max(14, Math.round(24 * scale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  textAlign: options.titleAlign,
+                  color: watermarkTheme.memoColor,
+                },
+              ]}
+            >
+              {extra2}
+            </Text>
+          ) : null}
           {memo ? (
             <Text
               style={[
@@ -201,6 +233,26 @@ export function StampExportCard({
                 {place}
               </Text>
             ) : null}
+            {extra1 ? (
+              <Text
+                style={[
+                  styles.watermarkMemo,
+                  { textAlign: options.titleAlign, color: watermarkTheme.memoColor },
+                ]}
+              >
+                {extra1}
+              </Text>
+            ) : null}
+            {extra2 ? (
+              <Text
+                style={[
+                  styles.watermarkMemo,
+                  { textAlign: options.titleAlign, color: watermarkTheme.memoColor },
+                ]}
+              >
+                {extra2}
+              </Text>
+            ) : null}
             {memo ? (
               <Text
                 style={[
@@ -238,6 +290,12 @@ export function StampExportCard({
       <Text style={[styles.title, { textAlign: options.titleAlign }]}>{title}</Text>
       {place ? (
         <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{place}</Text>
+      ) : null}
+      {extra1 ? (
+        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{extra1}</Text>
+      ) : null}
+      {extra2 ? (
+        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{extra2}</Text>
       ) : null}
       {memo ? (
         <Text style={[styles.memo, { textAlign: options.memoAlign }]}>{memo}</Text>

@@ -14,6 +14,8 @@ import {
 import {
   getMemoFieldLabel,
   getMemoTextAlign,
+  getExtra1FieldLabel,
+  getExtra2FieldLabel,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
@@ -102,15 +104,14 @@ function buildStampItem(
     ? formatLabeledValue(labels.placeFieldLabel, placeRaw)
     : '';
   const place = placeLabeled;
+  const extra1Labeled = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
+  const extra2Labeled = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, coordsLabel);
   const orgName = resolveOverlayOrgName(overlay);
   const footerPhrase = resolveOverlayFooterPhrase(overlay);
   const phraseSize = overlayPhraseFontSize(11);
   const coordsBlock = coords
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
-    : '';
-  const placeBlock = place
-    ? `<div class="stamp-place" style="text-align: ${titleAlign};">${escapeHtml(place)}</div>`
     : '';
   const slotHeight = photoSlotHeight(photosPerPage, shrinkForReportHeader);
   const photoSlot = `<div class="photo-slot" style="height: ${slotHeight};"><img src="${imageDataUri}" alt="stamp" /></div>`;
@@ -122,6 +123,12 @@ function buildStampItem(
       : '';
     const watermarkPlaceBlock = place
       ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(place)}</div>`
+      : '';
+    const watermarkExtra1Block = extra1Labeled
+      ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(extra1Labeled)}</div>`
+      : '';
+    const watermarkExtra2Block = extra2Labeled
+      ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(extra2Labeled)}</div>`
       : '';
     const watermarkCoordsBlock = coords
       ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
@@ -143,6 +150,8 @@ function buildStampItem(
             ${orgBlock}
             ${titleBlock}
             ${watermarkPlaceBlock}
+            ${watermarkExtra1Block}
+            ${watermarkExtra2Block}
             ${memoBlock}
             ${watermarkCoordsBlock}
             ${phraseBlock}
@@ -159,6 +168,12 @@ function buildStampItem(
     : '';
   const placeCaptionBlock = place
     ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(place)}</p>`
+    : '';
+  const extra1CaptionBlock = extra1Labeled
+    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(extra1Labeled)}</p>`
+    : '';
+  const extra2CaptionBlock = extra2Labeled
+    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(extra2Labeled)}</p>`
     : '';
   const phraseBlock = footerPhrase
     ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
@@ -177,6 +192,8 @@ function buildStampItem(
             ${orgBlock}
             ${titleBlock}
             ${placeCaptionBlock}
+            ${extra1CaptionBlock}
+            ${extra2CaptionBlock}
             ${memoBlock}
             ${coordsBlock}
             ${phraseBlock}
@@ -304,6 +321,8 @@ function buildHtml(
   .caption-phrase { font-size: 11px; color: #6b7280; margin: 4px 0 0; }
   .watermark-title { font-size: 14px; font-weight: 700; }
   .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
+  .watermark-place { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
+  .place { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .stamp-coords { font-size: 11px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
   .item-watermark .stamp-coords { color: #e5e7eb; opacity: 0.95; }
 </style>
@@ -457,7 +476,7 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
@@ -473,6 +492,8 @@ export async function createStampsPdf(
     getTitleFieldLabel(),
     getPlaceFieldLabel(),
     getMemoFieldLabel(),
+    getExtra1FieldLabel(),
+    getExtra2FieldLabel(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -491,7 +512,7 @@ export async function createStampsPdf(
     coordsLabel,
     watermarkStyle,
     { orgName, footerPhrase, showOrgName, showFooterPhrase },
-    { titleFieldLabel, placeFieldLabel, memoFieldLabel },
+    { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel },
   );
 
   if (Platform.OS === 'web') {
