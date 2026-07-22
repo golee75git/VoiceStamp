@@ -381,10 +381,12 @@ VoiceStamp/
 | 280 | GitHub APK `releases/20260722_102946` · 랜딩·`/info` · 도움말 | `85c1577` | — |
 | 281 | **크롭 EXIF 방향 정규화**(앱 내·갤러리 적용=화면) | `2de35d6` | `restore-crop-orient.bat` §164 |
 | 282 | GitHub APK `releases/20260722_110520` · 랜딩·`/info` · 도움말 | `2de35d6` | — |
-| 283 | **저장 화면 표시명 탭 편집**(설정에도 저장) | (본 배포) | `restore-save-label-edit.bat` §165 |
-| 284 | GitHub APK `releases/20260722_111946` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 283 | **저장 화면 표시명 탭 편집**(설정에도 저장) | `9a8242a` | `restore-save-label-edit.bat` §165 |
+| 284 | GitHub APK `releases/20260722_111946` · 랜딩·`/info` · 도움말 | `9a8242a` | — |
+| 285 | **스탬프별 표시명 스냅샷**(목록·PDF·이미지·저장 레이스 수정) | (본 배포) | `restore-stamp-field-labels.bat` §166 |
+| 286 | GitHub APK `releases/20260722_130810` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_111946.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260722_130810.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -548,7 +550,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260722_111946.apk` | (본 배포) | **권장** — **저장 화면 표시명 탭 편집**(설정에도 저장) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_130810.apk` | (본 배포) | **권장** — **스탬프별 표시명 스냅샷**(목록·내보내기·저장 레이스 수정) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_111946.apk` | `9a8242a` | **이전** — **저장 화면 표시명 탭 편집**(설정에도 저장) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_110520.apk` | `2de35d6` | **이전** — **크롭 EXIF 방향 정규화**(앱 내·갤러리=화면) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_102946.apk` | `85c1577` | **이전** — **저장 화면 필드 순서**=제목→장소(+층)→추가·메모 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_101525.apk` | `b6adf01` | **이전** — **별도 영역·PDF 2열 표**(표시명\|내용) + 추가1·추가2 | **GitHub `releases/`** |
@@ -980,11 +983,16 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **추가 필드 2개** — DB `extra1`/`extra2` · 표시명 · 음성 · 값 있을 때만 워터마크 · APK `releases/VoiceStamp_20260722_095047` · Vercel · `restore-extra-fields.bat` §161 |
+| (본 배포) | **스탬프별 표시명 스냅샷** — DB `*_field_label` · 목록·PDF·이미지 · 저장 시 레이스 수정 · APK `releases/VoiceStamp_20260722_130810` · Vercel · `restore-stamp-field-labels.bat` §166 |
+| `9a8242a` | **저장 화면 표시명 탭 편집** · APK `releases/VoiceStamp_20260722_111946` · `restore-save-label-edit.bat` §165 |
+| `2de35d6` | **크롭 EXIF 방향 정규화** · APK `releases/VoiceStamp_20260722_110520` · `restore-crop-orient.bat` §164 |
+| `85c1577` | **저장 화면 필드 순서**=제목→장소 · APK `releases/VoiceStamp_20260722_102946` · `restore-save-field-order.bat` §163 |
+| `b6adf01` | **별도 영역·PDF 2열 표** · APK `releases/VoiceStamp_20260722_101525` · `restore-caption-table.bat` §162 |
+| (이전) | **추가 필드 2개** — DB `extra1`/`extra2` · 표시명 · 음성 · 값 있을 때만 워터마크 · APK `releases/VoiceStamp_20260722_095047` · `restore-extra-fields.bat` §161 |
 | `30aed21` | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `releases/VoiceStamp_20260722_091825` · `restore-field-labels.bat` §160 |
 | `11a7d29` | **앱 내 카메라 크롭「적용」수정** · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_095047.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260722_130810.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 

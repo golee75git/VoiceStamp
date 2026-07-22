@@ -28,6 +28,7 @@ const galleryButton = require('../../assets/gallery.png');
 const captureButton = require('../../assets/capture.png');
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
 import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
+import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabels';
 import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
 import { createStampsHwpx, shareStampsHwpx } from '../services/exportHwpx';
 import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
@@ -702,7 +703,27 @@ export function StampListScreen({
             scrollEventThrottle={16}
             renderItem={({ item }) => {
               const isSelected = selectedIds.has(item.id);
-              const displayPlace = stampDisplayPlace(item);
+              const labels = fieldLabelsFromStamp(item);
+              const displayTitle =
+                formatLabeledValue(
+                  labels.titleFieldLabel,
+                  stampDisplayTitle(item, pdfShowDatetime),
+                ) || `(${labels.titleFieldLabel} 없음)`;
+              const displayPlace = formatLabeledValue(
+                labels.placeFieldLabel,
+                stampDisplayPlace(item) ?? '',
+              );
+              const displayMemo =
+                formatLabeledValue(labels.memoFieldLabel, item.memo) ||
+                `(${labels.memoFieldLabel} 없음)`;
+              const displayExtra1 = formatLabeledValue(
+                labels.extra1FieldLabel,
+                item.extra1 ?? '',
+              );
+              const displayExtra2 = formatLabeledValue(
+                labels.extra2FieldLabel,
+                item.extra2 ?? '',
+              );
               return (
                 <Pressable
                   style={[
@@ -733,18 +754,28 @@ export function StampListScreen({
                   />
                   <View style={styles.meta}>
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
-                      {stampDisplayTitle(item, pdfShowDatetime) || '(제목 없음)'}
+                      {displayTitle}
                     </Text>
                     {displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayPlace}
                       </Text>
                     ) : null}
+                    {displayExtra1 ? (
+                      <Text style={styles.cardPlace} numberOfLines={1}>
+                        {displayExtra1}
+                      </Text>
+                    ) : null}
+                    {displayExtra2 ? (
+                      <Text style={styles.cardPlace} numberOfLines={1}>
+                        {displayExtra2}
+                      </Text>
+                    ) : null}
                     <Text
                       style={[styles.cardMemo, { textAlign: memoTextAlign }]}
                       numberOfLines={isGrid ? 3 : 2}
                     >
-                      {item.memo || '(메모 없음)'}
+                      {displayMemo}
                     </Text>
                     <Text style={styles.cardDate}>
                       {new Date(item.createdAt).toLocaleString('ko-KR')}

@@ -23,6 +23,7 @@ import {
   type OverlayTextFields,
 } from './overlayText';
 import {
+  fieldLabelsFromStamp,
   formatLabeledValue,
   resolveFieldLabels,
   type FieldLabels,
@@ -625,17 +626,21 @@ export async function saveStampsAsJpegToGallery(
   for (let index = 0; index < stamps.length; index += 1) {
     const stamp = stamps[index];
     const fileName = buildExportJpegFileName(exportBaseName, index, total);
+    const stampOptions: StampImageExportOptions = {
+      ...options,
+      ...fieldLabelsFromStamp(stamp),
+    };
     try {
       let jpegUri: string;
 
       if (Platform.OS === 'web') {
-        const dataUri = await renderStampJpegOnWeb(stamp, options);
+        const dataUri = await renderStampJpegOnWeb(stamp, stampOptions);
         downloadDataUriOnWeb(dataUri, fileName);
         saved += 1;
         continue;
       }
 
-      jpegUri = await renderStampJpegUri(stamp, options, captureNative);
+      jpegUri = await renderStampJpegUri(stamp, stampOptions, captureNative);
       jpegUri = await embedCaptionExif(jpegUri, stamp);
       const albumName = extractStampGroupFromImagePath(stamp.imagePath) ?? undefined;
       await saveStampPhotoToGallery(jpegUri, fileName, albumName);

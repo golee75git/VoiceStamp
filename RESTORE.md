@@ -2715,3 +2715,24 @@ Copy-Item src.pre-save-label-edit\public\help.html public\ -Force
 Copy-Item src.pre-save-label-edit\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 166. 스탬프별 표시명 스냅샷 되돌리기 (선택)
+
+저장 시 칸 이름(표시명)을 스탬프 행에 보관·목록/내보내기 반영을 넣은 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-stamp-field-labels.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-field-labels\db\schema.ts,src.pre-stamp-field-labels\db\database.ts src\db\ -Force
+Copy-Item src.pre-stamp-field-labels\types\stamp.ts src\types\ -Force
+Copy-Item src.pre-stamp-field-labels\services\fieldLabels.ts,src.pre-stamp-field-labels\services\stampRepository.ts,src.pre-stamp-field-labels\services\saveStamp.ts,src.pre-stamp-field-labels\services\exportStampImage.ts,src.pre-stamp-field-labels\services\exportPdf.ts,src.pre-stamp-field-labels\services\exportProject.ts src\services\ -Force
+Copy-Item src.pre-stamp-field-labels\components\StampListScreen.tsx,src.pre-stamp-field-labels\components\StampSaveModal.tsx,src.pre-stamp-field-labels\components\StampExportCard.tsx src\components\ -Force
+Copy-Item src.pre-stamp-field-labels\public\help.html public\ -Force
+Copy-Item src.pre-stamp-field-labels\apkBuildLabel.ts src\constants\ -Force
+```
+
+기기 DB에 이미 추가된 `*_field_label` 컬럼은 그대로 두어도 무방합니다.
+

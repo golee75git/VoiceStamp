@@ -54,6 +54,11 @@ export type ProjectManifestStamp = {
   floor: string | null;
   extra1: string | null;
   extra2: string | null;
+  titleFieldLabel: string | null;
+  placeFieldLabel: string | null;
+  memoFieldLabel: string | null;
+  extra1FieldLabel: string | null;
+  extra2FieldLabel: string | null;
   latitude: number | null;
   longitude: number | null;
   createdAt: number;
@@ -168,6 +173,11 @@ export async function createStampsProjectZip(
       floor: stamp.floor ?? null,
       extra1: stamp.extra1 ?? null,
       extra2: stamp.extra2 ?? null,
+      titleFieldLabel: stamp.titleFieldLabel ?? null,
+      placeFieldLabel: stamp.placeFieldLabel ?? null,
+      memoFieldLabel: stamp.memoFieldLabel ?? null,
+      extra1FieldLabel: stamp.extra1FieldLabel ?? null,
+      extra2FieldLabel: stamp.extra2FieldLabel ?? null,
       latitude: stamp.latitude ?? null,
       longitude: stamp.longitude ?? null,
       createdAt: stamp.createdAt,

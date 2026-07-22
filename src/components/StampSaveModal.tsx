@@ -44,6 +44,7 @@ import {
   peekStampSaveModalLayoutCache,
   type StampSaveModalLayoutSettings,
 } from '../services/stampSaveModalLayoutCache';
+import { fieldLabelsFromStamp } from '../services/fieldLabels';
 import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
 import {
   cropStampImage,
@@ -404,15 +405,24 @@ export function StampSaveModal({
 
     let cancelled = false;
     void loadStampSaveModalLayoutSettings().then((settings) => {
-      if (!cancelled) {
-        applyStampSaveModalLayoutSettings(settings, apply);
+      if (cancelled) {
+        return;
+      }
+      applyStampSaveModalLayoutSettings(settings, apply);
+      if (stamp) {
+        const snap = fieldLabelsFromStamp(stamp);
+        setTitleFieldLabel(snap.titleFieldLabel);
+        setPlaceFieldLabel(snap.placeFieldLabel);
+        setMemoFieldLabel(snap.memoFieldLabel);
+        setExtra1FieldLabel(snap.extra1FieldLabel);
+        setExtra2FieldLabel(snap.extra2FieldLabel);
       }
     });
 
     return () => {
       cancelled = true;
     };
-  }, [visible]);
+  }, [visible, stamp?.id]);
 
   useEffect(() => {
     if (visible) {
@@ -471,6 +481,12 @@ export function StampSaveModal({
     setFloor(stamp.floor ?? null);
     setPlaceLabel(stamp.placeLabel ?? null);
     setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
+    const snap = fieldLabelsFromStamp(stamp);
+    setTitleFieldLabel(snap.titleFieldLabel);
+    setPlaceFieldLabel(snap.placeFieldLabel);
+    setMemoFieldLabel(snap.memoFieldLabel);
+    setExtra1FieldLabel(snap.extra1FieldLabel);
+    setExtra2FieldLabel(snap.extra2FieldLabel);
     titleTouchedRef.current = true;
     placeTouchedRef.current = true;
     floorTouchedRef.current = Boolean(stamp.floor);
@@ -971,6 +987,13 @@ export function StampSaveModal({
           placeLabel,
           croppedImageUri,
           captureForExport: captureStampForExport,
+          fieldLabels: {
+            titleFieldLabel,
+            placeFieldLabel,
+            memoFieldLabel,
+            extra1FieldLabel,
+            extra2FieldLabel,
+          },
         });
       } else {
         await setCurrentSiteName(siteName);
@@ -994,6 +1017,13 @@ export function StampSaveModal({
           floor: effectiveFloor,
           placeLabel,
           captureForExport: captureStampForExport,
+          fieldLabels: {
+            titleFieldLabel,
+            placeFieldLabel,
+            memoFieldLabel,
+            extra1FieldLabel,
+            extra2FieldLabel,
+          },
         });
         if (placeLabel?.trim()) {
           await setLastPlaceLabel(placeLabel);

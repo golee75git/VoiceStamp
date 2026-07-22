@@ -42,6 +42,7 @@ import {
   type OverlayTextFields,
 } from './overlayText';
 import {
+  fieldLabelsFromStamp,
   formatLabeledValue,
   resolveFieldLabels,
   type FieldLabels,
@@ -246,7 +247,10 @@ function buildHtml(
             coordsLabel,
             watermarkStyle,
             overlay,
-            fieldLabels,
+            {
+              ...fieldLabels,
+              ...fieldLabelsFromStamp(stamp),
+            },
           ),
         )
         .join('');

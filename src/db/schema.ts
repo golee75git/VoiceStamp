@@ -49,6 +49,26 @@ export const ALTER_STAMPS_ADD_EXTRA2 = `
   ALTER TABLE stamps ADD COLUMN extra2 TEXT;
 `;
 
+export const ALTER_STAMPS_ADD_TITLE_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN title_field_label TEXT;
+`;
+
+export const ALTER_STAMPS_ADD_PLACE_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN place_field_label TEXT;
+`;
+
+export const ALTER_STAMPS_ADD_MEMO_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN memo_field_label TEXT;
+`;
+
+export const ALTER_STAMPS_ADD_EXTRA1_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN extra1_field_label TEXT;
+`;
+
+export const ALTER_STAMPS_ADD_EXTRA2_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN extra2_field_label TEXT;
+`;
+
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,

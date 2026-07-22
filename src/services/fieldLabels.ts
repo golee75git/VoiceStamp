@@ -53,3 +53,20 @@ export function formatLabeledValue(label: string, value: string): string {
   }
   return `${label}: ${trimmed}`;
 }
+
+/** Labels stored on a stamp row (save-time snapshot), with defaults for legacy rows. */
+export function fieldLabelsFromStamp(stamp: {
+  titleFieldLabel?: string | null;
+  placeFieldLabel?: string | null;
+  memoFieldLabel?: string | null;
+  extra1FieldLabel?: string | null;
+  extra2FieldLabel?: string | null;
+} | null | undefined): FieldLabels {
+  return resolveFieldLabels({
+    titleFieldLabel: stamp?.titleFieldLabel ?? undefined,
+    placeFieldLabel: stamp?.placeFieldLabel ?? undefined,
+    memoFieldLabel: stamp?.memoFieldLabel ?? undefined,
+    extra1FieldLabel: stamp?.extra1FieldLabel ?? undefined,
+    extra2FieldLabel: stamp?.extra2FieldLabel ?? undefined,
+  });
+}

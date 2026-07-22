@@ -6,7 +6,7 @@ import type { PreparedExportPhoto, StampImageExportOptions } from '../services/e
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampCoordinatesLine } from '../services/stampCoords';
 import { stampPlaceLine } from '../services/stampPlace';
-import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
+import { fieldLabelsFromStamp, formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
 import { buildCaptionTableRows } from '../services/captionTable';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
@@ -32,7 +32,10 @@ export function StampExportCard({
 }: StampExportCardProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const readyNotifiedRef = useRef(false);
-  const labels = resolveFieldLabels(options);
+  const labels = resolveFieldLabels({
+    ...options,
+    ...fieldLabelsFromStamp(stamp),
+  });
   const title = formatLabeledValue(
     labels.titleFieldLabel,
     stampDisplayTitle(stamp, options.showDatetime),
