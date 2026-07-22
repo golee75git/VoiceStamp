@@ -21,6 +21,7 @@ import {
   resolveOverlayOrgName,
 } from '../services/overlayText';
 import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
+import { buildCaptionTableRows } from '../services/captionTable';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
@@ -137,9 +138,44 @@ export function StampSavePreview({
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
+  const captionTableRows = buildCaptionTableRows(
+    { title, memo, floor, placeLabel, extra1, extra2, latitude, longitude },
+    labels,
+    { showDatetime, coordsLabel, includeCoords: true },
+  );
   const isThumbnail = variant === 'thumbnail';
   const phraseFontSize = overlayPhraseFontSize(isThumbnail ? 10 : 13);
   const imageResizeMode: ImageResizeMode = textLayout === 'watermark' ? 'cover' : 'contain';
+
+  const renderCaptionTable = (compact: boolean) => {
+    if (captionTableRows.length === 0) {
+      return null;
+    }
+    return (
+      <View style={[styles.captionTable, compact && styles.captionTableCompact]}>
+        {captionTableRows.map((row) => (
+          <View key={`${row.label}:${row.value}`} style={styles.captionTableRow}>
+            <Text
+              style={[styles.captionTableLabel, compact && styles.captionTableLabelCompact]}
+              numberOfLines={compact ? 1 : 3}
+            >
+              {row.label}
+            </Text>
+            <Text
+              style={[
+                styles.captionTableValue,
+                compact && styles.captionTableValueCompact,
+                { textAlign: memoAlign },
+              ]}
+              numberOfLines={compact ? 2 : undefined}
+            >
+              {row.value}
+            </Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -342,36 +378,7 @@ export function StampSavePreview({
               {displayOrgName}
             </Text>
           ) : null}
-          {displayTitle ? (
-            <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
-              {displayTitle}
-            </Text>
-          ) : null}
-          {displayPlace ? (
-            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
-              {displayPlace}
-            </Text>
-          ) : null}
-          {displayExtra1 ? (
-            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
-              {displayExtra1}
-            </Text>
-          ) : null}
-          {displayExtra2 ? (
-            <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
-              {displayExtra2}
-            </Text>
-          ) : null}
-          {displayMemo ? (
-            <Text style={[memoStyle, { textAlign: memoAlign }]} numberOfLines={2}>
-              {displayMemo}
-            </Text>
-          ) : null}
-          {coords ? (
-            <Text style={[coordsStyle, { textAlign: memoAlign }]} numberOfLines={1}>
-              {coords}
-            </Text>
-          ) : null}
+          {renderCaptionTable(true)}
           {displayFooterPhrase ? (
             <Text
               style={[
@@ -401,24 +408,7 @@ export function StampSavePreview({
         {displayOrgName ? (
           <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }]}>{displayOrgName}</Text>
         ) : null}
-        {displayTitle ? (
-          <Text style={[titleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
-        ) : null}
-        {displayPlace ? (
-          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayPlace}</Text>
-        ) : null}
-        {displayExtra1 ? (
-          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayExtra1}</Text>
-        ) : null}
-        {displayExtra2 ? (
-          <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayExtra2}</Text>
-        ) : null}
-        {displayMemo ? (
-          <Text style={[memoStyle, { textAlign: memoAlign }]}>{displayMemo}</Text>
-        ) : null}
-        {coords ? (
-          <Text style={[coordsStyle, { textAlign: memoAlign }]}>{coords}</Text>
-        ) : null}
+        {renderCaptionTable(false)}
         {displayFooterPhrase ? (
           <Text
             style={[
@@ -514,6 +504,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     gap: 4,
+  },
+  captionTable: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginTop: 4,
+  },
+  captionTableCompact: {
+    marginTop: 2,
+  },
+  captionTableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#d1d5db',
+  },
+  captionTableLabel: {
+    width: '28%',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    backgroundColor: '#f3f4f6',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111827',
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderRightColor: '#d1d5db',
+  },
+  captionTableLabelCompact: {
+    fontSize: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+  },
+  captionTableValue: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    fontSize: 12,
+    color: '#374151',
+  },
+  captionTableValueCompact: {
+    fontSize: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
   },
   thumbnailOrg: {
     fontSize: 12,

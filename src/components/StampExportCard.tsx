@@ -7,6 +7,7 @@ import { stampDisplayTitle } from '../services/stampFloor';
 import { stampCoordinatesLine } from '../services/stampCoords';
 import { stampPlaceLine } from '../services/stampPlace';
 import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
+import { buildCaptionTableRows } from '../services/captionTable';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import type { Stamp } from '../types/stamp';
@@ -287,22 +288,44 @@ export function StampExportCard({
         resizeMode="contain"
         onLoadEnd={notifyImageReady}
       />
-      <Text style={[styles.title, { textAlign: options.titleAlign }]}>{title}</Text>
-      {place ? (
-        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{place}</Text>
-      ) : null}
-      {extra1 ? (
-        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{extra1}</Text>
-      ) : null}
-      {extra2 ? (
-        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{extra2}</Text>
-      ) : null}
-      {memo ? (
-        <Text style={[styles.memo, { textAlign: options.memoAlign }]}>{memo}</Text>
-      ) : null}
-      {coords ? (
-        <Text style={[styles.coords, { textAlign: options.memoAlign }]}>{coords}</Text>
-      ) : null}
+      {(() => {
+        const labels = resolveFieldLabels(options);
+        const orgName =
+          options.showOrgName && options.orgName?.trim() ? options.orgName.trim() : null;
+        const footerPhrase =
+          options.showFooterPhrase && options.footerPhrase?.trim()
+            ? options.footerPhrase.trim()
+            : null;
+        const rows = buildCaptionTableRows(stamp, labels, {
+          showDatetime: options.showDatetime,
+          coordsLabel: options.coordsLabel,
+          includeCoords: true,
+        });
+        return (
+          <View style={styles.captionBlock}>
+            {orgName ? (
+              <Text style={[styles.captionOrg, { textAlign: options.titleAlign }]}>{orgName}</Text>
+            ) : null}
+            {rows.length > 0 ? (
+              <View style={styles.captionTable}>
+                {rows.map((row) => (
+                  <View key={`${row.label}:${row.value}`} style={styles.captionTableRow}>
+                    <Text style={styles.captionTableLabel}>{row.label}</Text>
+                    <Text style={[styles.captionTableValue, { textAlign: options.memoAlign }]}>
+                      {row.value}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+            {footerPhrase ? (
+              <Text style={[styles.captionPhrase, { textAlign: options.memoAlign }]}>
+                {footerPhrase}
+              </Text>
+            ) : null}
+          </View>
+        );
+      })()}
     </View>
   );
 }
@@ -347,6 +370,48 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '700',
     color: '#111827',
+  },
+  captionBlock: {
+    marginTop: 16,
+    gap: 10,
+  },
+  captionOrg: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  captionTable: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    overflow: 'hidden',
+  },
+  captionTableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#d1d5db',
+  },
+  captionTableLabel: {
+    width: '28%',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: '#f3f4f6',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+    borderRightWidth: 1,
+    borderRightColor: '#d1d5db',
+  },
+  captionTableValue: {
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 24,
+    color: '#374151',
+    lineHeight: 32,
+  },
+  captionPhrase: {
+    fontSize: 22,
+    color: '#6b7280',
   },
   memo: {
     marginTop: 12,

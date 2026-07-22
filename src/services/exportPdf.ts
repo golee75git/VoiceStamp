@@ -46,6 +46,7 @@ import {
   resolveFieldLabels,
   type FieldLabels,
 } from './fieldLabels';
+import { buildCaptionTableRows } from './captionTable';
 import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
@@ -163,17 +164,19 @@ function buildStampItem(
   const orgBlock = orgName
     ? `<p class="caption-org" style="text-align: ${titleAlign};">${escapeHtml(orgName)}</p>`
     : '';
-  const memoBlock = memoLabeled
-    ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoLabeled)}</p>`
-    : '';
-  const placeCaptionBlock = place
-    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(place)}</p>`
-    : '';
-  const extra1CaptionBlock = extra1Labeled
-    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(extra1Labeled)}</p>`
-    : '';
-  const extra2CaptionBlock = extra2Labeled
-    ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(extra2Labeled)}</p>`
+  const tableRows = buildCaptionTableRows(stamp, labels, {
+    showDatetime,
+    coordsLabel,
+    includeCoords: true,
+  });
+  const tableBody = tableRows
+    .map(
+      (row) =>
+        `<tr><th scope="row">${escapeHtml(row.label)}</th><td style="text-align: ${memoAlign};">${escapeHtml(row.value)}</td></tr>`,
+    )
+    .join('');
+  const tableBlock = tableRows.length
+    ? `<table class="caption-table"><tbody>${tableBody}</tbody></table>`
     : '';
   const phraseBlock = footerPhrase
     ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
@@ -182,7 +185,6 @@ function buildStampItem(
   const dateBlock = showDatetime
     ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
     : '';
-  const titleBlock = title ? `<h1 style="text-align: ${titleAlign};">${title}</h1>` : '';
 
   return `
       <div class="item item-caption">
@@ -190,12 +192,7 @@ function buildStampItem(
           ${photoSlot}
           <figcaption class="stamp-caption">
             ${orgBlock}
-            ${titleBlock}
-            ${placeCaptionBlock}
-            ${extra1CaptionBlock}
-            ${extra2CaptionBlock}
-            ${memoBlock}
-            ${coordsBlock}
+            ${tableBlock}
             ${phraseBlock}
             ${dateBlock}
           </figcaption>
@@ -308,6 +305,27 @@ function buildHtml(
   .item-caption .stamp-caption { display: block; }
   h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
   .item h1, .item-caption h1 { font-size: 16px; margin: 8px 0 4px; }
+  .caption-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 4px;
+    font-size: 12px;
+    table-layout: fixed;
+  }
+  .caption-table th, .caption-table td {
+    border: 1px solid #d1d5db;
+    padding: 5px 8px;
+    vertical-align: top;
+    word-break: break-word;
+  }
+  .caption-table th {
+    width: 28%;
+    background: #f3f4f6;
+    color: #111827;
+    font-weight: 700;
+    text-align: left;
+  }
+  .caption-table td { color: #374151; white-space: pre-wrap; }
   .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
   .date { font-size: 11px; color: #888; margin-top: 6px; }
   .photo-slot-watermark .watermark-bar {

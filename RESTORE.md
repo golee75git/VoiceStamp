@@ -2645,3 +2645,22 @@ Copy-Item src.pre-extra-fields\report\watermark-export.js public\report\ -Force
 Copy-Item src.pre-extra-fields\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 162. 캡션·PDF 표 되돌리기 (선택)
+
+별도 영역·PDF에 2열 표(표시명|내용)를 넣은 뒤 문제가 생기면 아래로 복구합니다. 워터마크 줄글은 유지됩니다.
+
+```bat
+restore-caption-table.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-caption-table\services\*.ts src\services\ -Force
+Copy-Item src.pre-caption-table\components\*.tsx src\components\ -Force
+Copy-Item src.pre-caption-table\public\help.html,src.pre-caption-table\public\landing.html,src.pre-caption-table\public\info.html public\ -Force
+Copy-Item src.pre-caption-table\report\watermark-export.js public\report\ -Force
+Copy-Item src.pre-caption-table\apkBuildLabel.ts src\constants\ -Force
+Remove-Item src\services\captionTable.ts -ErrorAction SilentlyContinue
+```
+

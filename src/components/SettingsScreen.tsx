@@ -710,7 +710,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>제목·메모 표시 방식</Text>
           <Text style={styles.hint}>
-            PDF·이미지 저장 시 제목과 메모를 사진 아래(별도 영역) 또는 사진 위(워터마크)에 표시합니다.
+            PDF·이미지 저장 시 제목과 메모를 사진 아래(별도 영역·표) 또는 사진 위(워터마크·줄글)에 표시합니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable

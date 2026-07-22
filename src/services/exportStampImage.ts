@@ -27,6 +27,7 @@ import {
   resolveFieldLabels,
   type FieldLabels,
 } from './fieldLabels';
+import { buildCaptionTableRows } from './captionTable';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
@@ -422,163 +423,129 @@ async function renderStampJpegCaptionOnWeb(
   const scale = img.width > STAMP_JPEG_MAX_WIDTH ? STAMP_JPEG_MAX_WIDTH / img.width : 1;
   const imgWidth = Math.max(1, Math.round(img.width * scale));
   const imgHeight = Math.max(1, Math.round(img.height * scale));
-
+  const padding = Math.max(12, Math.round(24 * (imgWidth / 1032)));
   const labels = resolveFieldLabels(options);
-  const title = formatLabeledValue(
-    labels.titleFieldLabel,
-    stampDisplayTitle(stamp, options.showDatetime),
-  );
-  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
-  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
-  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
-  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
-  const layout = buildCaptionLayout(
-    imgWidth,
-    imgHeight,
-    title,
-    memo,
-    options.titleAlign,
-    options.memoAlign,
-    coords,
-    orgName,
-    footerPhrase,
-    place,
-    extra1 || null,
-    extra2 || null,
-  );
+  const rows = buildCaptionTableRows(stamp, labels, {
+    showDatetime: options.showDatetime,
+    coordsLabel: options.coordsLabel,
+    includeCoords: true,
+  });
+
+  const labelColWidth = Math.round(imgWidth * 0.28);
+  const valueColWidth = imgWidth - labelColWidth;
+  const fontSize = Math.max(14, Math.round(22 * (imgWidth / 1032)));
+  const lineHeight = Math.max(20, Math.round(fontSize * 1.35));
+  const cellPad = Math.max(6, Math.round(10 * (imgWidth / 1032)));
+
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  if (!measureCtx) {
+    throw new Error('캔버스를 사용할 수 없습니다.');
+  }
+
+  const rowHeights = rows.map((row) => {
+    measureCtx.font = `700 ${fontSize}px sans-serif`;
+    const labelLines = wrapCanvasLines(measureCtx, row.label, labelColWidth - cellPad * 2);
+    measureCtx.font = `400 ${fontSize}px sans-serif`;
+    const valueLines = wrapCanvasLines(measureCtx, row.value, valueColWidth - cellPad * 2);
+    return Math.max(labelLines.length, valueLines.length) * lineHeight + cellPad * 2;
+  });
+  const tableHeight = rowHeights.reduce((sum, h) => sum + h, 0);
+  const orgHeight = orgName ? lineHeight + 8 : 0;
+  const phraseHeight = footerPhrase ? lineHeight + 8 : 0;
+  const canvasWidth = imgWidth + padding * 2;
+  const canvasHeight =
+    padding + imgHeight + 16 + orgHeight + (tableHeight > 0 ? tableHeight + 8 : 0) + phraseHeight + padding;
 
   const canvas = document.createElement('canvas');
-  canvas.width = layout.canvasWidth;
-  canvas.height = layout.canvasHeight;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('캔버스를 사용할 수 없습니다.');
   }
 
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, layout.canvasWidth, layout.canvasHeight);
-  ctx.drawImage(img, layout.padding, layout.padding, imgWidth, imgHeight);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  ctx.drawImage(img, padding, padding, imgWidth, imgHeight);
 
-  if (layout.orgY !== null && layout.orgText) {
-    drawAlignedText(
-      ctx,
-      layout.orgText,
-      layout.padding,
-      layout.orgY,
-      imgWidth,
-      layout.titleAlign,
-      layout.orgSize,
-      '700',
-      '#111827',
-      layout.orgLineHeight,
-    );
+  let y = padding + imgHeight + 16;
+  if (orgName) {
+    y =
+      drawAlignedText(
+        ctx,
+        orgName,
+        padding,
+        y + fontSize,
+        imgWidth,
+        options.titleAlign,
+        fontSize + 2,
+        '700',
+        '#111827',
+        lineHeight,
+      ) + 8;
   }
 
-  let textY = layout.titleY;
-  textY =
-    drawAlignedText(
-      ctx,
-      layout.titleText,
-      layout.padding,
-      textY,
-      imgWidth,
-      layout.titleAlign,
-      layout.titleSize,
-      '700',
-      '#111827',
-      layout.titleLineHeight,
-    ) + 4;
+  if (rows.length > 0) {
+    const tableTop = y;
+    let rowY = tableTop;
+    rows.forEach((row, index) => {
+      const rowH = rowHeights[index];
+      ctx.fillStyle = '#f3f4f6';
+      ctx.fillRect(padding, rowY, labelColWidth, rowH);
+      ctx.strokeStyle = '#d1d5db';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(padding, rowY, imgWidth, rowH);
+      ctx.beginPath();
+      ctx.moveTo(padding + labelColWidth, rowY);
+      ctx.lineTo(padding + labelColWidth, rowY + rowH);
+      ctx.stroke();
 
-  if (layout.placeY !== null && layout.placeText) {
-    drawAlignedText(
-      ctx,
-      layout.placeText,
-      layout.padding,
-      layout.placeY,
-      imgWidth,
-      layout.placeAlign,
-      layout.placeSize,
-      '400',
-      '#374151',
-      layout.placeLineHeight,
-    );
+      measureCtx.font = `700 ${fontSize}px sans-serif`;
+      const labelLines = wrapCanvasLines(measureCtx, row.label, labelColWidth - cellPad * 2);
+      measureCtx.font = `400 ${fontSize}px sans-serif`;
+      const valueLines = wrapCanvasLines(measureCtx, row.value, valueColWidth - cellPad * 2);
+
+      ctx.fillStyle = '#111827';
+      ctx.font = `700 ${fontSize}px sans-serif`;
+      ctx.textAlign = 'left';
+      labelLines.forEach((line, lineIndex) => {
+        ctx.fillText(line, padding + cellPad, rowY + cellPad + fontSize + lineIndex * lineHeight);
+      });
+
+      ctx.fillStyle = '#374151';
+      ctx.font = `400 ${fontSize}px sans-serif`;
+      const valueX =
+        options.memoAlign === 'center'
+          ? padding + labelColWidth + valueColWidth / 2
+          : options.memoAlign === 'right'
+            ? padding + imgWidth - cellPad
+            : padding + labelColWidth + cellPad;
+      ctx.textAlign =
+        options.memoAlign === 'center' ? 'center' : options.memoAlign === 'right' ? 'right' : 'left';
+      valueLines.forEach((line, lineIndex) => {
+        ctx.fillText(line, valueX, rowY + cellPad + fontSize + lineIndex * lineHeight);
+      });
+
+      rowY += rowH;
+    });
+    y = rowY + 8;
   }
 
-  if (layout.extra1Y !== null && layout.extra1Text) {
+  if (footerPhrase) {
     drawAlignedText(
       ctx,
-      layout.extra1Text,
-      layout.padding,
-      layout.extra1Y,
+      footerPhrase,
+      padding,
+      y + fontSize,
       imgWidth,
-      layout.placeAlign,
-      layout.placeSize,
-      '400',
-      '#374151',
-      layout.placeLineHeight,
-    );
-  }
-
-  if (layout.extra2Y !== null && layout.extra2Text) {
-    drawAlignedText(
-      ctx,
-      layout.extra2Text,
-      layout.padding,
-      layout.extra2Y,
-      imgWidth,
-      layout.placeAlign,
-      layout.placeSize,
-      '400',
-      '#374151',
-      layout.placeLineHeight,
-    );
-  }
-
-  if (layout.memoY !== null && layout.memoText) {
-    textY = drawAlignedText(
-      ctx,
-      layout.memoText,
-      layout.padding,
-      layout.memoY,
-      imgWidth,
-      layout.memoAlign,
-      layout.memoSize,
-      '400',
-      '#374151',
-      layout.memoLineHeight,
-    );
-  }
-
-  if (layout.coordsY !== null && layout.coordsText) {
-    textY = drawAlignedText(
-      ctx,
-      layout.coordsText,
-      layout.padding,
-      layout.coordsY,
-      imgWidth,
-      layout.coordsAlign,
-      layout.coordsSize,
+      options.memoAlign,
+      Math.max(12, fontSize - 2),
       '400',
       '#6b7280',
-      layout.coordsLineHeight,
-    );
-  }
-
-  if (layout.phraseY !== null && layout.phraseText) {
-    drawAlignedText(
-      ctx,
-      layout.phraseText,
-      layout.padding,
-      layout.phraseY,
-      imgWidth,
-      layout.phraseAlign,
-      layout.phraseSize,
-      '400',
-      '#6b7280',
-      layout.phraseLineHeight,
+      lineHeight,
     );
   }
 
