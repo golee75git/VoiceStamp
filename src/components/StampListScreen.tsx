@@ -713,9 +713,10 @@ export function StampListScreen({
                 labels.placeFieldLabel,
                 stampDisplayPlace(item) ?? '',
               );
-              const displayMemo =
-                formatLabeledValue(labels.memoFieldLabel, item.memo) ||
-                `(${labels.memoFieldLabel} 없음)`;
+              const displayMemo = formatLabeledValue(
+                labels.memoFieldLabel,
+                item.memo,
+              );
               const displayExtra1 = formatLabeledValue(
                 labels.extra1FieldLabel,
                 item.extra1 ?? '',
@@ -771,12 +772,14 @@ export function StampListScreen({
                         {displayExtra2}
                       </Text>
                     ) : null}
-                    <Text
-                      style={[styles.cardMemo, { textAlign: memoTextAlign }]}
-                      numberOfLines={isGrid ? 3 : 2}
-                    >
-                      {displayMemo}
-                    </Text>
+                    {displayMemo ? (
+                      <Text
+                        style={[styles.cardMemo, { textAlign: memoTextAlign }]}
+                        numberOfLines={isGrid ? 3 : 2}
+                      >
+                        {displayMemo}
+                      </Text>
+                    ) : null}
                     <Text style={styles.cardDate}>
                       {new Date(item.createdAt).toLocaleString('ko-KR')}
                     </Text>

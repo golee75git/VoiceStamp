@@ -2736,3 +2736,19 @@ Copy-Item src.pre-stamp-field-labels\apkBuildLabel.ts src\constants\ -Force
 
 기기 DB에 이미 추가된 `*_field_label` 컬럼은 그대로 두어도 무방합니다.
 
+## 167. 목록 빈 메모 숨김 되돌리기 (선택)
+
+저장 목록에서 메모가 비어 있을 때 `(표시명 없음)`을 숨긴 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-list-hide-empty-memo.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-list-hide-empty-memo\components\StampListScreen.tsx src\components\ -Force
+Copy-Item src.pre-list-hide-empty-memo\public\help.html public\ -Force
+Copy-Item src.pre-list-hide-empty-memo\apkBuildLabel.ts src\constants\ -Force
+```
+
