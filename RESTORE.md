@@ -2664,3 +2664,19 @@ Copy-Item src.pre-caption-table\apkBuildLabel.ts src\constants\ -Force
 Remove-Item src\services\captionTable.ts -ErrorAction SilentlyContinue
 ```
 
+## 163. 저장 화면 필드 순서 되돌리기 (선택)
+
+저장 화면을 제목→장소(+층)→추가1·2→메모로 맞춘 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-save-field-order.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-save-field-order\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-save-field-order\public\help.html public\ -Force
+Copy-Item src.pre-save-field-order\apkBuildLabel.ts src\constants\ -Force
+```
+

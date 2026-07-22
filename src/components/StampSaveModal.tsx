@@ -1120,6 +1120,28 @@ export function StampSaveModal({
               </View>
             )}
 
+            <View>
+              <VoiceInputField
+                label={titleFieldLabel}
+                value={title}
+                onChangeText={(text) => {
+                  titleTouchedRef.current = true;
+                  setTitle(text);
+                }}
+                onMicPress={() => handleMicPress('title')}
+                listening={listening && speechTarget === 'title'}
+                speechAvailable={available}
+                onFocus={scrollFieldIntoView}
+                selection={titleSelection}
+                onSelectionChange={(selection) => {
+                  titleSelectionRef.current = selection;
+                  setTitleSelection(selection);
+                }}
+                textAlign={titleTextAlign}
+                cameraHand={cameraHand}
+              />
+            </View>
+
             <VoiceInputField
               label={placeFieldLabel}
               value={placeLabel ?? ''}
@@ -1163,28 +1185,6 @@ export function StampSaveModal({
                 </View>
               </View>
             ) : null}
-
-            <View>
-              <VoiceInputField
-                label={titleFieldLabel}
-                value={title}
-                onChangeText={(text) => {
-                  titleTouchedRef.current = true;
-                  setTitle(text);
-                }}
-                onMicPress={() => handleMicPress('title')}
-                listening={listening && speechTarget === 'title'}
-                speechAvailable={available}
-                onFocus={scrollFieldIntoView}
-                selection={titleSelection}
-                onSelectionChange={(selection) => {
-                  titleSelectionRef.current = selection;
-                  setTitleSelection(selection);
-                }}
-                textAlign={titleTextAlign}
-                cameraHand={cameraHand}
-              />
-            </View>
 
             <VoiceInputField
               label={extra1FieldLabel}
