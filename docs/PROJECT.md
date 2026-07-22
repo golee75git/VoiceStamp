@@ -965,9 +965,10 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **앱 내 카메라 크롭「적용」수정** — getSize/onLayout이 줌을 덮지 않음 · 뷰포트 수식 · UI flush · APK `releases/VoiceStamp_20260722_000609` · 랜딩·`/info` · 도움말 · Vercel · `restore-crop-inapp-fix.bat` §159 |
+| (본 배포) | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · 설정 UI · PDF/네이티브/미리보기 · APK `releases/VoiceStamp_20260722_091825` · 랜딩·`/info` · 도움말 · Vercel · `restore-field-labels.bat` §160 |
+| `11a7d29` | **앱 내 카메라 크롭「적용」수정** — getSize/onLayout이 줌을 덮지 않음 · 뷰포트 수식 · UI flush · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_000609.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260722_091825.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 
