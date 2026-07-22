@@ -13,7 +13,7 @@ import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import { getWatermarkTheme } from './watermarkStyle';
-import type { TextAlign } from './settingsService';
+import { stampTextSizeScale, type TextAlign } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const EXPORT_PHOTO_WIDTH = 1032;
@@ -61,7 +61,8 @@ export async function renderStampWatermarkNative(
   const footerPhrase = resolveOverlayFooterPhrase(options);
   const theme = getWatermarkTheme(options.watermarkStyle);
   const scale = prepared.width / EXPORT_PHOTO_WIDTH;
-  const titleSize = Math.max(18, Math.round(32 * scale));
+  const textScale = stampTextSizeScale(options.stampTextSize ?? 'medium');
+  const titleSize = Math.max(18, Math.round(32 * scale * textScale));
   const paddingX = Math.round(20 * scale);
   const paddingY = Math.round(16 * scale);
 

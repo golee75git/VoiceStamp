@@ -10,6 +10,7 @@ import { fieldLabelsFromStamp, formatLabeledValue, resolveFieldLabels } from '..
 import { buildCaptionTableRows } from '../services/captionTable';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
+import { stampTextSizeScale } from '../services/settingsService';
 import type { Stamp } from '../types/stamp';
 
 export const STAMP_EXPORT_CARD_WIDTH = 1080;
@@ -85,9 +86,10 @@ export function StampExportCard({
 
   if (options.textLayout === 'watermark' && preparedPhoto) {
     const scale = preparedPhoto.width / PHOTO_WIDTH;
-    const titleSize = Math.max(18, Math.round(32 * scale));
-    const memoSize = Math.max(16, Math.round(26 * scale));
-    const memoLineHeight = Math.max(22, Math.round(34 * scale));
+    const textScale = stampTextSizeScale(options.stampTextSize ?? 'medium');
+    const titleSize = Math.max(18, Math.round(32 * scale * textScale));
+    const memoSize = Math.max(16, Math.round(26 * scale * textScale));
+    const memoLineHeight = Math.max(22, Math.round(34 * scale * textScale));
     const barPaddingX = Math.round(20 * scale);
     const barPaddingY = Math.round(16 * scale);
 
@@ -131,8 +133,8 @@ export function StampExportCard({
               style={[
                 styles.watermarkMemo,
                 {
-                  fontSize: Math.max(14, Math.round(24 * scale)),
-                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  fontSize: Math.max(14, Math.round(24 * scale * textScale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale * textScale)),
                   textAlign: options.titleAlign,
                   color: watermarkTheme.memoColor,
                 },
@@ -146,8 +148,8 @@ export function StampExportCard({
               style={[
                 styles.watermarkMemo,
                 {
-                  fontSize: Math.max(14, Math.round(24 * scale)),
-                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  fontSize: Math.max(14, Math.round(24 * scale * textScale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale * textScale)),
                   textAlign: options.titleAlign,
                   color: watermarkTheme.memoColor,
                 },
@@ -161,8 +163,8 @@ export function StampExportCard({
               style={[
                 styles.watermarkMemo,
                 {
-                  fontSize: Math.max(14, Math.round(24 * scale)),
-                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  fontSize: Math.max(14, Math.round(24 * scale * textScale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale * textScale)),
                   textAlign: options.titleAlign,
                   color: watermarkTheme.memoColor,
                 },
@@ -191,8 +193,8 @@ export function StampExportCard({
               style={[
                 styles.watermarkCoords,
                 {
-                  fontSize: Math.max(14, Math.round(22 * scale)),
-                  lineHeight: Math.max(18, Math.round(28 * scale)),
+                  fontSize: Math.max(14, Math.round(22 * scale * textScale)),
+                  lineHeight: Math.max(18, Math.round(28 * scale * textScale)),
                   textAlign: options.memoAlign,
                   color: watermarkTheme.coordsColor,
                 },
@@ -304,17 +306,26 @@ export function StampExportCard({
           coordsLabel: options.coordsLabel,
           includeCoords: true,
         });
+        const textScale = stampTextSizeScale(options.stampTextSize ?? 'medium');
+        const fs = (n: number) => Math.max(12, Math.round(n * textScale));
         return (
           <View style={styles.captionBlock}>
             {orgName ? (
-              <Text style={[styles.captionOrg, { textAlign: options.titleAlign }]}>{orgName}</Text>
+              <Text style={[styles.captionOrg, { textAlign: options.titleAlign, fontSize: fs(28) }]}>
+                {orgName}
+              </Text>
             ) : null}
             {rows.length > 0 ? (
               <View style={styles.captionTable}>
                 {rows.map((row) => (
                   <View key={`${row.label}:${row.value}`} style={styles.captionTableRow}>
-                    <Text style={styles.captionTableLabel}>{row.label}</Text>
-                    <Text style={[styles.captionTableValue, { textAlign: options.memoAlign }]}>
+                    <Text style={[styles.captionTableLabel, { fontSize: fs(24) }]}>{row.label}</Text>
+                    <Text
+                      style={[
+                        styles.captionTableValue,
+                        { textAlign: options.memoAlign, fontSize: fs(24) },
+                      ]}
+                    >
                       {row.value}
                     </Text>
                   </View>
@@ -322,7 +333,12 @@ export function StampExportCard({
               </View>
             ) : null}
             {footerPhrase ? (
-              <Text style={[styles.captionPhrase, { textAlign: options.memoAlign }]}>
+              <Text
+                style={[
+                  styles.captionPhrase,
+                  { textAlign: options.memoAlign, fontSize: fs(22) },
+                ]}
+              >
                 {footerPhrase}
               </Text>
             ) : null}

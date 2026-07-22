@@ -43,6 +43,7 @@ import {
   DEFAULT_FLOOR_DISPLAY_MODE,
   DEFAULT_TITLE_DATETIME_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
+  DEFAULT_STAMP_TEXT_SIZE,
   DEFAULT_WATERMARK_STYLE,
   DEFAULT_TITLE_TEXT_ALIGN,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -100,13 +101,16 @@ import {
   setPdfPhotosPerPage,
   setPdfShowDatetime,
   setStampTextLayout,
+  setStampTextSize,
   setWatermarkStyle,
   setStampsFolderName,
   setTitleTextAlign,
   stampTextLayoutLabel,
+  stampTextSizeLabel,
   watermarkStyleLabel,
   WATERMARK_STYLE_OPTIONS,
   TEXT_ALIGN_OPTIONS,
+  STAMP_TEXT_SIZE_OPTIONS,
   type FloorPickerMode,
   type FloorDisplayMode,
   type TitleDatetimeMode,
@@ -114,6 +118,7 @@ import {
   type ContinuousCaptureCamera,
   type CaptureAfterMode,
   type StampTextLayout,
+  type StampTextSize,
   type WatermarkStyle,
   type TextAlign,
   textAlignLabel,
@@ -173,6 +178,7 @@ export function SettingsScreen({
   const [stampTextLayout, setStampTextLayoutState] = useState<StampTextLayout>(
     DEFAULT_STAMP_TEXT_LAYOUT,
   );
+  const [stampTextSize, setStampTextSizeState] = useState<StampTextSize>(DEFAULT_STAMP_TEXT_SIZE);
   const [watermarkStyle, setWatermarkStyleState] = useState<WatermarkStyle>(
     DEFAULT_WATERMARK_STYLE,
   );
@@ -231,6 +237,7 @@ export function SettingsScreen({
       setPdfShowDatetimeState(snapshot.pdfShowDatetime);
       setPdfFilenameIncludeDatetimeState(snapshot.pdfFilenameIncludeDatetime);
       setStampTextLayoutState(snapshot.stampTextLayout);
+      setStampTextSizeState(snapshot.stampTextSize);
       setWatermarkStyleState(snapshot.watermarkStyle);
       setGallerySaveModeState(snapshot.gallerySaveMode);
       setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
@@ -270,6 +277,7 @@ export function SettingsScreen({
         savedShowDatetime,
         savedFilenameDatetime,
         savedTextLayout,
+        savedStampTextSize,
         savedWatermarkStyle,
         savedGalleryMode,
         savedPrimaryCaptureCamera,
@@ -300,6 +308,7 @@ export function SettingsScreen({
           setPdfShowDatetime(pdfShowDatetime),
           setPdfFilenameIncludeDatetime(pdfFilenameIncludeDatetime),
           setStampTextLayout(stampTextLayout),
+          setStampTextSize(stampTextSize),
           setWatermarkStyle(watermarkStyle),
           setGallerySaveMode(gallerySaveMode),
           setPrimaryCaptureCamera(primaryCaptureCamera),
@@ -330,6 +339,7 @@ export function SettingsScreen({
       setPdfShowDatetimeState(savedShowDatetime);
       setPdfFilenameIncludeDatetimeState(savedFilenameDatetime);
       setStampTextLayoutState(savedTextLayout);
+      setStampTextSizeState(savedStampTextSize);
       setWatermarkStyleState(savedWatermarkStyle);
       setGallerySaveModeState(savedGalleryMode);
       setPrimaryCaptureCameraState(savedPrimaryCaptureCamera);
@@ -355,7 +365,7 @@ export function SettingsScreen({
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n앱 내 촬영음: ${shutterSoundLabel(savedShutterSound)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\n필드 표시명: ${savedTitleFieldLabel}/${savedPlaceFieldLabel}/${savedMemoFieldLabel}/${savedExtra1FieldLabel}/${savedExtra2FieldLabel}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n앱 내 촬영음: ${shutterSoundLabel(savedShutterSound)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\n필드 표시명: ${savedTitleFieldLabel}/${savedPlaceFieldLabel}/${savedMemoFieldLabel}/${savedExtra1FieldLabel}/${savedExtra2FieldLabel}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 글자 크기 ${stampTextSizeLabel(savedStampTextSize)}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -1017,6 +1027,28 @@ export function SettingsScreen({
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
                     {chipLabel(textAlignLabel(option), option === DEFAULT_MEMO_TEXT_ALIGN)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>글자 크기</Text>
+          <Text style={styles.hint}>
+            저장·수정 입력칸과 미리보기·워터마크·PDF·갤러리 이미지 저장에 적용됩니다. 시스템 글꼴만 사용합니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {STAMP_TEXT_SIZE_OPTIONS.map((option) => {
+              const selected = stampTextSize === option;
+              return (
+                <Pressable
+                  key={`text-size-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setStampTextSizeState(option)}
+                  disabled={saving}
+                >
+                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
+                    {chipLabel(stampTextSizeLabel(option), option === DEFAULT_STAMP_TEXT_SIZE)}
                   </Text>
                 </Pressable>
               );

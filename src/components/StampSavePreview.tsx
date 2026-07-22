@@ -24,7 +24,8 @@ import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels'
 import { buildCaptionTableRows } from '../services/captionTable';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { getWatermarkTheme } from '../services/watermarkStyle';
-import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
+import type { StampTextLayout, StampTextSize, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
+import { stampTextSizeScale } from '../services/settingsService';
 import type { StampFloor } from '../types/stamp';
 
 const FALLBACK_ASPECT_RATIO = 4 / 3;
@@ -72,6 +73,7 @@ type StampSavePreviewProps = {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   textLayout: StampTextLayout;
+  stampTextSize?: StampTextSize;
   watermarkStyle: WatermarkStyle;
   coordsLabel: CoordsLabelMode;
   showDatetime: boolean;
@@ -101,6 +103,7 @@ export function StampSavePreview({
   titleAlign,
   memoAlign,
   textLayout,
+  stampTextSize = 'medium',
   watermarkStyle,
   coordsLabel,
   showDatetime,
@@ -144,7 +147,9 @@ export function StampSavePreview({
     { showDatetime, coordsLabel, includeCoords: true },
   );
   const isThumbnail = variant === 'thumbnail';
-  const phraseFontSize = overlayPhraseFontSize(isThumbnail ? 10 : 13);
+  const textScale = stampTextSizeScale(stampTextSize);
+  const fs = (n: number) => Math.max(10, Math.round(n * textScale));
+  const phraseFontSize = fs(overlayPhraseFontSize(isThumbnail ? 10 : 13));
   const imageResizeMode: ImageResizeMode = textLayout === 'watermark' ? 'cover' : 'contain';
 
   const renderCaptionTable = (compact: boolean) => {
@@ -156,7 +161,11 @@ export function StampSavePreview({
         {captionTableRows.map((row) => (
           <View key={`${row.label}:${row.value}`} style={styles.captionTableRow}>
             <Text
-              style={[styles.captionTableLabel, compact && styles.captionTableLabelCompact]}
+              style={[
+                styles.captionTableLabel,
+                compact && styles.captionTableLabelCompact,
+                { fontSize: fs(compact ? 10 : 12) },
+              ]}
               numberOfLines={compact ? 1 : 3}
             >
               {row.label}
@@ -165,7 +174,7 @@ export function StampSavePreview({
               style={[
                 styles.captionTableValue,
                 compact && styles.captionTableValueCompact,
-                { textAlign: memoAlign },
+                { textAlign: memoAlign, fontSize: fs(compact ? 11 : 13) },
               ]}
               numberOfLines={compact ? 2 : undefined}
             >
@@ -204,6 +213,12 @@ export function StampSavePreview({
   const watermarkPlaceStyle = isThumbnail ? styles.thumbnailWatermarkPlace : styles.fullscreenWatermarkPlace;
   const watermarkCoordsStyle = isThumbnail ? styles.thumbnailWatermarkCoords : styles.fullscreenWatermarkCoords;
   const watermarkTheme = getWatermarkTheme(watermarkStyle);
+  const wmOrgFs = { fontSize: fs(isThumbnail ? 11 : 15) };
+  const wmTitleFs = { fontSize: fs(isThumbnail ? 13 : 18) };
+  const wmPlaceFs = { fontSize: fs(isThumbnail ? 11 : 15) };
+  const wmMemoFs = { fontSize: fs(isThumbnail ? 10 : 14) };
+  const wmCoordsFs = { fontSize: fs(isThumbnail ? 10 : 13) };
+  const orgFs = { fontSize: fs(isThumbnail ? 11 : 16) };
 
   const renderThumbnailPhoto = (photoStyle: StyleProp<ImageStyle>, resizeMode: ImageResizeMode) => {
     if (imageLoading || !imageUri) {
@@ -223,6 +238,7 @@ export function StampSavePreview({
           style={[
             styles.thumbnailWatermarkOrg,
             { textAlign: titleAlign, color: watermarkTheme.titleColor },
+            wmOrgFs,
           ]}
           numberOfLines={1}
         >
@@ -231,7 +247,11 @@ export function StampSavePreview({
       ) : null}
       {displayTitle ? (
         <Text
-          style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}
+          style={[
+            watermarkTitleStyle,
+            { textAlign: titleAlign, color: watermarkTheme.titleColor },
+            wmTitleFs,
+          ]}
           numberOfLines={2}
         >
           {displayTitle}
@@ -239,7 +259,11 @@ export function StampSavePreview({
       ) : null}
       {displayPlace ? (
         <Text
-          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          style={[
+            watermarkPlaceStyle,
+            { textAlign: titleAlign, color: watermarkTheme.memoColor },
+            wmPlaceFs,
+          ]}
           numberOfLines={2}
         >
           {displayPlace}
@@ -247,7 +271,11 @@ export function StampSavePreview({
       ) : null}
       {displayExtra1 ? (
         <Text
-          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          style={[
+            watermarkPlaceStyle,
+            { textAlign: titleAlign, color: watermarkTheme.memoColor },
+            wmPlaceFs,
+          ]}
           numberOfLines={2}
         >
           {displayExtra1}
@@ -255,7 +283,11 @@ export function StampSavePreview({
       ) : null}
       {displayExtra2 ? (
         <Text
-          style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
+          style={[
+            watermarkPlaceStyle,
+            { textAlign: titleAlign, color: watermarkTheme.memoColor },
+            wmPlaceFs,
+          ]}
           numberOfLines={2}
         >
           {displayExtra2}
@@ -263,7 +295,11 @@ export function StampSavePreview({
       ) : null}
       {displayMemo ? (
         <Text
-          style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}
+          style={[
+            watermarkMemoStyle,
+            { textAlign: memoAlign, color: watermarkTheme.memoColor },
+            wmMemoFs,
+          ]}
           numberOfLines={3}
         >
           {displayMemo}
@@ -271,7 +307,11 @@ export function StampSavePreview({
       ) : null}
       {coords ? (
         <Text
-          style={[watermarkCoordsStyle, { textAlign: memoAlign, color: watermarkTheme.coordsColor }]}
+          style={[
+            watermarkCoordsStyle,
+            { textAlign: memoAlign, color: watermarkTheme.coordsColor },
+            wmCoordsFs,
+          ]}
           numberOfLines={1}
         >
           {coords}
@@ -317,38 +357,75 @@ export function StampSavePreview({
                 style={[
                   styles.fullscreenWatermarkOrg,
                   { textAlign: titleAlign, color: watermarkTheme.titleColor },
+                  wmOrgFs,
                 ]}
               >
                 {displayOrgName}
               </Text>
             ) : null}
             {displayTitle ? (
-              <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
+              <Text
+                style={[
+                  watermarkTitleStyle,
+                  { textAlign: titleAlign, color: watermarkTheme.titleColor },
+                  wmTitleFs,
+                ]}
+              >
                 {displayTitle}
               </Text>
             ) : null}
             {displayPlace ? (
-              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+              <Text
+                style={[
+                  watermarkPlaceStyle,
+                  { textAlign: titleAlign, color: watermarkTheme.memoColor },
+                  wmPlaceFs,
+                ]}
+              >
                 {displayPlace}
               </Text>
             ) : null}
             {displayExtra1 ? (
-              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+              <Text
+                style={[
+                  watermarkPlaceStyle,
+                  { textAlign: titleAlign, color: watermarkTheme.memoColor },
+                  wmPlaceFs,
+                ]}
+              >
                 {displayExtra1}
               </Text>
             ) : null}
             {displayExtra2 ? (
-              <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
+              <Text
+                style={[
+                  watermarkPlaceStyle,
+                  { textAlign: titleAlign, color: watermarkTheme.memoColor },
+                  wmPlaceFs,
+                ]}
+              >
                 {displayExtra2}
               </Text>
             ) : null}
             {displayMemo ? (
-              <Text style={[watermarkMemoStyle, { textAlign: memoAlign, color: watermarkTheme.memoColor }]}>
+              <Text
+                style={[
+                  watermarkMemoStyle,
+                  { textAlign: memoAlign, color: watermarkTheme.memoColor },
+                  wmMemoFs,
+                ]}
+              >
                 {displayMemo}
               </Text>
             ) : null}
             {coords ? (
-              <Text style={[watermarkCoordsStyle, { textAlign: memoAlign, color: watermarkTheme.coordsColor }]}>
+              <Text
+                style={[
+                  watermarkCoordsStyle,
+                  { textAlign: memoAlign, color: watermarkTheme.coordsColor },
+                  wmCoordsFs,
+                ]}
+              >
                 {coords}
               </Text>
             ) : null}
@@ -374,7 +451,7 @@ export function StampSavePreview({
         {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
         <View style={styles.thumbnailCaptionText}>
           {displayOrgName ? (
-            <Text style={[styles.thumbnailOrg, { textAlign: titleAlign }]} numberOfLines={1}>
+            <Text style={[styles.thumbnailOrg, { textAlign: titleAlign }, orgFs]} numberOfLines={1}>
               {displayOrgName}
             </Text>
           ) : null}
@@ -406,7 +483,7 @@ export function StampSavePreview({
       </View>
       <View style={styles.fullscreenCaptionText}>
         {displayOrgName ? (
-          <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }]}>{displayOrgName}</Text>
+          <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }, orgFs]}>{displayOrgName}</Text>
         ) : null}
         {renderCaptionTable(false)}
         {displayFooterPhrase ? (

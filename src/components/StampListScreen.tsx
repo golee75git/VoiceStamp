@@ -38,6 +38,7 @@ import {
   loadSettingsForScreen,
   type CoordsLabelMode,
   type StampTextLayout,
+  type StampTextSize,
   type WatermarkStyle,
   type TextAlign,
   type CameraHand,
@@ -88,6 +89,7 @@ export function StampListScreen({
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
+  const [stampTextSize, setStampTextSize] = useState<StampTextSize>('medium');
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [overlayOrgName, setOverlayOrgName] = useState('');
@@ -175,6 +177,7 @@ export function StampListScreen({
       setPdfFilenameIncludeDatetime(settings.pdfFilenameIncludeDatetime);
       setPdfShowDatetime(settings.pdfShowDatetime);
       setStampTextLayout(settings.stampTextLayout);
+      setStampTextSize(settings.stampTextSize);
       setWatermarkStyle(settings.watermarkStyle);
       setCoordsLabel(settings.coordsLabelMode);
       setOverlayOrgName(settings.overlayOrgName);
@@ -346,6 +349,7 @@ export function StampListScreen({
         memoAlign: memoTextAlign,
         showDatetime: pdfShowDatetime,
         textLayout: stampTextLayout,
+        stampTextSize,
         watermarkStyle,
         coordsLabel,
         orgName: overlayOrgName,

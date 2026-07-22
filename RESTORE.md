@@ -2793,3 +2793,20 @@ Copy-Item src.pre-disable-crop-apply\public\help.html public\ -Force
 Copy-Item src.pre-disable-crop-apply\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 171. 스탬프 글자 크기(A+B) 되돌리기 (선택)
+
+설정 「글자 크기」(작게·보통·크게) — 입력 UI + 미리보기·워터마크·PDF·갤러리 내보내기. 문제 시:
+
+```bat
+restore-stamp-text-size.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-stamp-text-size\services\*.ts src\services\ -Force
+Copy-Item src.pre-stamp-text-size\components\*.tsx src\components\ -Force
+Copy-Item src.pre-stamp-text-size\public\help.html public\ -Force
+Copy-Item src.pre-stamp-text-size\apkBuildLabel.ts src\constants\ -Force
+```
+

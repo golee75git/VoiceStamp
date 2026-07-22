@@ -44,6 +44,7 @@ const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
+const STAMP_TEXT_SIZE_KEY = 'stamp_text_size';
 const WATERMARK_STYLE_KEY = 'watermark_style';
 const COORDS_LABEL_KEY = 'coords_label';
 const LOCATION_MODE_KEY = 'location_mode';
@@ -90,6 +91,7 @@ export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
+export const DEFAULT_STAMP_TEXT_SIZE = 'medium' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_LOCATION_MODE = 'auto' as const;
@@ -126,6 +128,7 @@ export {
 export type PdfPhotosPerPage = 1 | 2 | 3 | 4;
 export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
+export type StampTextSize = 'small' | 'medium' | 'large';
 export type CameraHand = 'left' | 'right';
 export type StampTextLayout = 'caption' | 'watermark';
 export type WatermarkStyle =
@@ -309,6 +312,7 @@ export function sanitizeStampTextLayout(value: string): StampTextLayout {
 }
 
 export const TEXT_ALIGN_OPTIONS: TextAlign[] = ['left', 'center', 'right'];
+export const STAMP_TEXT_SIZE_OPTIONS: StampTextSize[] = ['small', 'medium', 'large'];
 
 export function textAlignLabel(align: TextAlign): string {
   switch (align) {
@@ -319,6 +323,40 @@ export function textAlignLabel(align: TextAlign): string {
     default:
       return '왼쪽';
   }
+}
+
+export function stampTextSizeLabel(size: StampTextSize): string {
+  switch (size) {
+    case 'small':
+      return '작게';
+    case 'large':
+      return '크게';
+    default:
+      return '보통';
+  }
+}
+
+/** Scale for UI inputs + watermark/PDF/export (system font only). */
+export function stampTextSizeScale(size: StampTextSize): number {
+  switch (size) {
+    case 'small':
+      return 0.85;
+    case 'large':
+      return 1.25;
+    default:
+      return 1;
+  }
+}
+
+export function inputFontSizeForStampText(size: StampTextSize, base = 16): number {
+  return Math.max(12, Math.round(base * stampTextSizeScale(size)));
+}
+
+export function sanitizeStampTextSize(value: string): StampTextSize {
+  if (value === 'small' || value === 'large') {
+    return value;
+  }
+  return 'medium';
 }
 
 export function sanitizeTextAlign(value: string): TextAlign {
@@ -391,6 +429,7 @@ export type SettingsScreenSnapshot = {
   pdfShowDatetime: boolean;
   pdfFilenameIncludeDatetime: boolean;
   stampTextLayout: StampTextLayout;
+  stampTextSize: StampTextSize;
   watermarkStyle: WatermarkStyle;
   gallerySaveMode: GallerySaveMode;
   primaryCaptureCamera: ContinuousCaptureCamera;
@@ -462,6 +501,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
     stampTextLayout: (() => {
       const raw = pickSetting(map, STAMP_TEXT_LAYOUT_KEY);
       return raw ? sanitizeStampTextLayout(raw) : DEFAULT_STAMP_TEXT_LAYOUT;
+    })(),
+    stampTextSize: (() => {
+      const raw = pickSetting(map, STAMP_TEXT_SIZE_KEY);
+      return raw ? sanitizeStampTextSize(raw) : DEFAULT_STAMP_TEXT_SIZE;
     })(),
     watermarkStyle: (() => {
       const raw = pickSetting(map, WATERMARK_STYLE_KEY);
@@ -635,6 +678,20 @@ export async function setMemoTextAlign(align: TextAlign): Promise<TextAlign> {
   const safeAlign = sanitizeTextAlign(align);
   await writeSetting(MEMO_TEXT_ALIGN_KEY, safeAlign);
   return safeAlign;
+}
+
+export async function getStampTextSize(): Promise<StampTextSize> {
+  const value = await readSetting(STAMP_TEXT_SIZE_KEY);
+  if (!value) {
+    return DEFAULT_STAMP_TEXT_SIZE;
+  }
+  return sanitizeStampTextSize(value);
+}
+
+export async function setStampTextSize(size: StampTextSize): Promise<StampTextSize> {
+  const safeSize = sanitizeStampTextSize(size);
+  await writeSetting(STAMP_TEXT_SIZE_KEY, safeSize);
+  return safeSize;
 }
 
 function parseBooleanSetting(value: string | null, defaultValue: boolean): boolean {

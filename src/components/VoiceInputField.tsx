@@ -19,6 +19,8 @@ type VoiceInputFieldProps = {
   selection?: { start: number; end: number };
   textAlign?: TextAlign;
   cameraHand?: CameraHand;
+  /** Stamp field body font size (system font; from stamp text size setting). */
+  fontSize?: number;
   /** Tap label to rename; commit via onLabelCommit (settings). */
   labelEditable?: boolean;
   onLabelCommit?: (nextLabel: string) => void;
@@ -37,6 +39,7 @@ export function VoiceInputField({
   selection,
   textAlign = 'left',
   cameraHand = 'right',
+  fontSize = 16,
   labelEditable = false,
   onLabelCommit,
 }: VoiceInputFieldProps) {
@@ -102,7 +105,7 @@ export function VoiceInputField({
         </View>
       </View>
       <TextInput
-        style={[styles.input, multiline && styles.inputMultiline, { textAlign }]}
+        style={[styles.input, multiline && styles.inputMultiline, { textAlign, fontSize }]}
         value={value}
         onChangeText={onChangeText}
         onFocus={onFocus}

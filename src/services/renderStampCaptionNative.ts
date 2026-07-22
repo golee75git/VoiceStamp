@@ -18,6 +18,7 @@ import { stampDisplayTitle } from './stampFloor';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import type { TextAlign } from './settingsService';
+import { stampTextSizeScale } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
@@ -102,6 +103,7 @@ export async function renderStampCaptionNative(
     place,
     extra1 || null,
     extra2 || null,
+    stampTextSizeScale(options.stampTextSize ?? 'medium'),
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
 

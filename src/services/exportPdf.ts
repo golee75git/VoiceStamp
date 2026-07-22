@@ -25,15 +25,18 @@ import {
   getPdfShowDatetime,
   getPlaceFieldLabel,
   getStampTextLayout,
+  getStampTextSize,
   getWatermarkStyle,
   getCoordsLabelMode,
   getTitleFieldLabel,
   getTitleTextAlign,
   type PdfPhotosPerPage,
   type StampTextLayout,
+  type StampTextSize,
   type CoordsLabelMode,
   type TextAlign,
   type WatermarkStyle,
+  stampTextSizeScale,
 } from './settingsService';
 import {
   overlayPhraseFontSize,
@@ -95,6 +98,7 @@ function buildStampItem(
   watermarkStyle: WatermarkStyle,
   overlay: OverlayTextFields,
   fieldLabels: FieldLabels,
+  textSizeScale = 1,
 ): string {
   const labels = resolveFieldLabels(fieldLabels);
   const titleRaw = stampDisplayTitle(stamp, showDatetime);
@@ -111,7 +115,7 @@ function buildStampItem(
   const coords = stampCoordinatesLine(stamp, coordsLabel);
   const orgName = resolveOverlayOrgName(overlay);
   const footerPhrase = resolveOverlayFooterPhrase(overlay);
-  const phraseSize = overlayPhraseFontSize(11);
+  const phraseSize = Math.max(10, Math.round(overlayPhraseFontSize(11) * textSizeScale));
   const coordsBlock = coords
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
     : '';
@@ -223,7 +227,10 @@ function buildHtml(
   watermarkStyle: WatermarkStyle,
   overlay: OverlayTextFields,
   fieldLabels: FieldLabels,
+  stampTextSize: StampTextSize = 'medium',
 ): string {
+  const textSizeScale = stampTextSizeScale(stampTextSize);
+  const fs = (n: number) => Math.max(10, Math.round(n * textSizeScale));
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
     stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
@@ -251,6 +258,7 @@ function buildHtml(
               ...fieldLabels,
               ...fieldLabelsFromStamp(stamp),
             },
+            textSizeScale,
           ),
         )
         .join('');
@@ -307,13 +315,13 @@ function buildHtml(
     text-align: left;
   }
   .item-caption .stamp-caption { display: block; }
-  h1.report-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-  .item h1, .item-caption h1 { font-size: 16px; margin: 8px 0 4px; }
+  h1.report-title { font-size: ${fs(20)}px; font-weight: 700; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+  .item h1, .item-caption h1 { font-size: ${fs(16)}px; margin: 8px 0 4px; }
   .caption-table {
     width: 100%;
     border-collapse: collapse;
     margin: 8px 0 4px;
-    font-size: 12px;
+    font-size: ${fs(12)}px;
     table-layout: fixed;
   }
   .caption-table th, .caption-table td {
@@ -330,22 +338,22 @@ function buildHtml(
     text-align: left;
   }
   .caption-table td { color: #374151; white-space: pre-wrap; }
-  .memo { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
-  .date { font-size: 11px; color: #888; margin-top: 6px; }
+  .memo { font-size: ${fs(13)}px; color: #444; white-space: pre-wrap; margin: 0; }
+  .date { font-size: ${fs(11)}px; color: #888; margin-top: 6px; }
   .photo-slot-watermark .watermark-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.55); padding: 8px 10px; color: #fff;
   }
   .watermark-bar-top { top: 0; bottom: auto; }
-  .watermark-org { font-size: 12px; font-weight: 700; }
+  .watermark-org { font-size: ${fs(12)}px; font-weight: 700; }
   .watermark-phrase { margin-top: 4px; opacity: 0.9; }
-  .caption-org { font-size: 13px; font-weight: 700; margin: 8px 0 4px; color: #111827; }
-  .caption-phrase { font-size: 11px; color: #6b7280; margin: 4px 0 0; }
-  .watermark-title { font-size: 14px; font-weight: 700; }
-  .watermark-memo { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
-  .watermark-place { font-size: 12px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
-  .place { font-size: 13px; color: #444; white-space: pre-wrap; margin: 0; }
-  .stamp-coords { font-size: 11px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
+  .caption-org { font-size: ${fs(13)}px; font-weight: 700; margin: 8px 0 4px; color: #111827; }
+  .caption-phrase { font-size: ${fs(11)}px; color: #6b7280; margin: 4px 0 0; }
+  .watermark-title { font-size: ${fs(14)}px; font-weight: 700; }
+  .watermark-memo { font-size: ${fs(12)}px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
+  .watermark-place { font-size: ${fs(12)}px; white-space: pre-wrap; margin-top: 4px; opacity: 0.95; }
+  .place { font-size: ${fs(13)}px; color: #444; white-space: pre-wrap; margin: 0; }
+  .stamp-coords { font-size: ${fs(11)}px; white-space: pre-wrap; margin-top: 4px; color: #6b7280; }
   .item-watermark .stamp-coords { color: #e5e7eb; opacity: 0.95; }
 </style>
 </head>
@@ -498,13 +506,14 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, stampTextSize, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
     getStampTextLayout(),
+    getStampTextSize(),
     getCoordsLabelMode(),
     getWatermarkStyle(),
     getOverlayOrgName(),
@@ -535,6 +544,7 @@ export async function createStampsPdf(
     watermarkStyle,
     { orgName, footerPhrase, showOrgName, showFooterPhrase },
     { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel },
+    stampTextSize,
   );
 
   if (Platform.OS === 'web') {

@@ -37,7 +37,7 @@ import {
   setExtra1FieldLabel as writeExtra1FieldLabel,
   setExtra2FieldLabel as writeExtra2FieldLabel,
 } from '../services/settingsService';
-import type { CameraHand, CoordsLabelMode, StampTextLayout, TextAlign, WatermarkStyle } from '../services/settingsService';
+import type { CameraHand, CoordsLabelMode, StampTextLayout, StampTextSize, TextAlign, WatermarkStyle } from '../services/settingsService';
 import {
   invalidateStampSaveModalLayoutCache,
   loadStampSaveModalLayoutSettings,
@@ -59,6 +59,7 @@ import {
   getFloorDisplayMode,
   getFloorPickerMode,
   getLastFloor,
+  inputFontSizeForStampText,
   isGpsPlaceEnabled,
   setLastFloor,
   type FloorDisplayMode,
@@ -145,6 +146,7 @@ function applyStampSaveModalLayoutSettings(
     setMemoTextAlign: (value: TextAlign) => void;
     setCameraHand: (value: CameraHand) => void;
     setStampTextLayout: (value: StampTextLayout) => void;
+    setStampTextSize: (value: StampTextSize) => void;
     setWatermarkStyle: (value: WatermarkStyle) => void;
     setShowDatetime: (value: boolean) => void;
     setCoordsLabel: (value: CoordsLabelMode) => void;
@@ -164,6 +166,7 @@ function applyStampSaveModalLayoutSettings(
   apply.setMemoTextAlign(settings.memoTextAlign);
   apply.setCameraHand(settings.cameraHand);
   apply.setStampTextLayout(settings.stampTextLayout);
+  apply.setStampTextSize(settings.stampTextSize);
   apply.setWatermarkStyle(settings.watermarkStyle);
   apply.setShowDatetime(settings.showDatetime);
   apply.setCoordsLabel(settings.coordsLabel);
@@ -224,6 +227,7 @@ export function StampSaveModal({
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
+  const [stampTextSize, setStampTextSize] = useState<StampTextSize>('medium');
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [overlayOrgName, setOverlayOrgName] = useState('');
@@ -369,6 +373,7 @@ export function StampSaveModal({
       setMemoTextAlign,
       setCameraHand,
       setStampTextLayout,
+      setStampTextSize,
       setWatermarkStyle,
       setShowDatetime,
       setCoordsLabel,
@@ -1064,6 +1069,7 @@ export function StampSaveModal({
                     titleAlign={titleTextAlign}
                     memoAlign={memoTextAlign}
                     textLayout={stampTextLayout}
+                    stampTextSize={stampTextSize}
                     watermarkStyle={watermarkStyle}
                     coordsLabel={coordsLabel}
                     showDatetime={showDatetime}
@@ -1176,6 +1182,7 @@ export function StampSaveModal({
                 }}
                 textAlign={titleTextAlign}
                 cameraHand={cameraHand}
+                fontSize={inputFontSizeForStampText(stampTextSize)}
               />
             </View>
 
@@ -1199,6 +1206,7 @@ export function StampSaveModal({
               }}
               textAlign="left"
               cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
             />
 
             {showFloorPicker ? (
@@ -1242,6 +1250,7 @@ export function StampSaveModal({
               }}
               textAlign={titleTextAlign}
               cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
             />
 
             <VoiceInputField
@@ -1261,6 +1270,7 @@ export function StampSaveModal({
               }}
               textAlign={titleTextAlign}
               cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
             />
 
             <VoiceInputField
@@ -1281,6 +1291,7 @@ export function StampSaveModal({
               }}
               textAlign={memoTextAlign}
               cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
             />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}

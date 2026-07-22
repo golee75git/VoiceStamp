@@ -13,6 +13,7 @@ import {
   getPdfShowDatetime,
   getPlaceFieldLabel,
   getStampTextLayout,
+  getStampTextSize,
   getTitleFieldLabel,
   getTitleTextAlign,
   getWatermarkStyle,
@@ -20,6 +21,7 @@ import {
   type CoordsLabelMode,
   type FloorDisplayMode,
   type StampTextLayout,
+  type StampTextSize,
   type TextAlign,
   type WatermarkStyle,
 } from './settingsService';
@@ -29,6 +31,7 @@ export type StampSaveModalLayoutSettings = {
   memoTextAlign: TextAlign;
   cameraHand: CameraHand;
   stampTextLayout: StampTextLayout;
+  stampTextSize: StampTextSize;
   watermarkStyle: WatermarkStyle;
   showDatetime: boolean;
   coordsLabel: CoordsLabelMode;
@@ -66,6 +69,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
       getMemoTextAlign(),
       getCameraHand(),
       getStampTextLayout(),
+      getStampTextSize(),
       getWatermarkStyle(),
       getPdfShowDatetime(),
       getCoordsLabelMode(),
@@ -85,6 +89,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
         memoTextAlign,
         cameraHand,
         stampTextLayout,
+        stampTextSize,
         watermarkStyle,
         showDatetime,
         coordsLabel,
@@ -104,6 +109,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
           memoTextAlign,
           cameraHand,
           stampTextLayout,
+          stampTextSize,
           watermarkStyle,
           showDatetime,
           coordsLabel,

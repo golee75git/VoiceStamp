@@ -29,7 +29,8 @@ import {
   type FieldLabels,
 } from './fieldLabels';
 import { buildCaptionTableRows } from './captionTable';
-import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from './settingsService';
+import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle, StampTextSize } from './settingsService';
+import { DEFAULT_STAMP_TEXT_SIZE, stampTextSizeScale } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
@@ -94,6 +95,7 @@ export type StampImageExportOptions = OverlayTextFields & FieldLabels & {
   textLayout: StampTextLayout;
   coordsLabel: CoordsLabelMode;
   watermarkStyle: WatermarkStyle;
+  stampTextSize?: StampTextSize;
 };
 
 export type CaptureStampForExport = (
@@ -235,7 +237,9 @@ async function renderStampJpegWatermarkOnWeb(
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options) ?? '';
   const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
-  const phraseSize = overlayPhraseFontSize(22);
+  const textScale = stampTextSizeScale(options.stampTextSize ?? DEFAULT_STAMP_TEXT_SIZE);
+  const sz = (n: number) => Math.max(12, Math.round(n * textScale));
+  const phraseSize = Math.max(12, Math.round(overlayPhraseFontSize(22) * textScale));
   const barPaddingX = 20;
   const barPaddingY = 16;
   const textWidth = imgWidth - barPaddingX * 2;
@@ -243,35 +247,35 @@ async function renderStampJpegWatermarkOnWeb(
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) {
-    throw new Error('??? ????? ??? ? ????.');
+    throw new Error('캔버스를 사용할 수 없습니다.');
   }
 
-  measureCtx.font = '700 26px sans-serif';
+  measureCtx.font = `700 ${sz(26)}px sans-serif`;
   const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
 
-  measureCtx.font = '700 32px sans-serif';
+  measureCtx.font = `700 ${sz(32)}px sans-serif`;
   const titleLines = title ? wrapCanvasLines(measureCtx, title, textWidth) : [];
-  measureCtx.font = '400 24px sans-serif';
+  measureCtx.font = `400 ${sz(24)}px sans-serif`;
   const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
   const extra1Lines = extra1 ? wrapCanvasLines(measureCtx, extra1, textWidth) : [];
   const extra2Lines = extra2 ? wrapCanvasLines(measureCtx, extra2, textWidth) : [];
-  measureCtx.font = '400 26px sans-serif';
+  measureCtx.font = `400 ${sz(26)}px sans-serif`;
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
-  measureCtx.font = '400 22px sans-serif';
+  measureCtx.font = `400 ${sz(22)}px sans-serif`;
   const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
   measureCtx.font = `400 ${phraseSize}px sans-serif`;
   const phraseLines = footerPhrase ? wrapCanvasLines(measureCtx, footerPhrase, textWidth) : [];
 
   const barHeight =
     barPaddingY +
-    (orgLines.length > 0 ? orgLines.length * 30 + 4 : 0) +
-    (titleLines.length > 0 ? titleLines.length * 38 : 0) +
-    (placeLines.length > 0 ? 6 + placeLines.length * 28 : 0) +
-    (extra1Lines.length > 0 ? 6 + extra1Lines.length * 28 : 0) +
-    (extra2Lines.length > 0 ? 6 + extra2Lines.length * 28 : 0) +
-    (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
-    (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
-    (phraseLines.length > 0 ? 4 + phraseLines.length * 24 : 0) +
+    (orgLines.length > 0 ? orgLines.length * sz(30) + 4 : 0) +
+    (titleLines.length > 0 ? titleLines.length * sz(38) : 0) +
+    (placeLines.length > 0 ? 6 + placeLines.length * sz(28) : 0) +
+    (extra1Lines.length > 0 ? 6 + extra1Lines.length * sz(28) : 0) +
+    (extra2Lines.length > 0 ? 6 + extra2Lines.length * sz(28) : 0) +
+    (memoLines.length > 0 ? 8 + memoLines.length * sz(32) : 0) +
+    (coordsLines.length > 0 ? 6 + coordsLines.length * sz(28) : 0) +
+    (phraseLines.length > 0 ? 4 + phraseLines.length * Math.max(18, Math.round(phraseSize * 1.1)) : 0) +
     barPaddingY;
 
   const canvas = document.createElement('canvas');
@@ -287,7 +291,7 @@ async function renderStampJpegWatermarkOnWeb(
 
   drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
 
-  let textY = imgHeight - barHeight + barPaddingY + (orgName ? 22 : 28);
+  let textY = imgHeight - barHeight + barPaddingY + (orgName ? sz(22) : sz(28));
 
   if (orgName) {
     textY =
@@ -298,10 +302,10 @@ async function renderStampJpegWatermarkOnWeb(
         textY,
         textWidth,
         options.titleAlign,
-        26,
+        sz(26),
         '700',
         theme.titleColor,
-        30,
+        sz(30),
       ) + 4;
   }
 
@@ -314,10 +318,10 @@ async function renderStampJpegWatermarkOnWeb(
           textY,
           textWidth,
           options.titleAlign,
-          32,
+          sz(32),
           '700',
           theme.titleColor,
-          38,
+          sz(38),
         ) + 4
       : textY;
 
@@ -329,10 +333,10 @@ async function renderStampJpegWatermarkOnWeb(
       textY + 2,
       textWidth,
       options.titleAlign,
-      24,
+      sz(24),
       '400',
       theme.memoColor,
-      28,
+      sz(28),
     );
   }
 
@@ -344,10 +348,10 @@ async function renderStampJpegWatermarkOnWeb(
       textY + 2,
       textWidth,
       options.titleAlign,
-      24,
+      sz(24),
       '400',
       theme.memoColor,
-      28,
+      sz(28),
     );
   }
 
@@ -359,10 +363,10 @@ async function renderStampJpegWatermarkOnWeb(
       textY + 2,
       textWidth,
       options.titleAlign,
-      24,
+      sz(24),
       '400',
       theme.memoColor,
-      28,
+      sz(28),
     );
   }
 
@@ -374,10 +378,10 @@ async function renderStampJpegWatermarkOnWeb(
       textY + 4,
       textWidth,
       options.memoAlign,
-      26,
+      sz(26),
       '400',
       theme.memoColor,
-      32,
+      sz(32),
     );
   }
 
@@ -389,10 +393,10 @@ async function renderStampJpegWatermarkOnWeb(
       textY + 4,
       textWidth,
       options.memoAlign,
-      22,
+      sz(22),
       '400',
       theme.coordsColor,
-      28,
+      sz(28),
     );
   }
 
@@ -407,7 +411,7 @@ async function renderStampJpegWatermarkOnWeb(
       phraseSize,
       '400',
       theme.coordsColor,
-      24,
+      Math.max(18, Math.round(phraseSize * 1.1)),
     );
   }
 
@@ -436,7 +440,8 @@ async function renderStampJpegCaptionOnWeb(
 
   const labelColWidth = Math.round(imgWidth * 0.28);
   const valueColWidth = imgWidth - labelColWidth;
-  const fontSize = Math.max(14, Math.round(22 * (imgWidth / 1032)));
+  const textScale = stampTextSizeScale(options.stampTextSize ?? DEFAULT_STAMP_TEXT_SIZE);
+  const fontSize = Math.max(14, Math.round(22 * (imgWidth / 1032) * textScale));
   const lineHeight = Math.max(20, Math.round(fontSize * 1.35));
   const cellPad = Math.max(6, Math.round(10 * (imgWidth / 1032)));
 

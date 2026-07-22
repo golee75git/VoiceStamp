@@ -392,9 +392,10 @@ VoiceStamp/
 | 291 | **cover 크롭 롤백**(contain 뷰어·수식으로 복구) | `b47ca39` | §169 |
 | 292 | GitHub APK `releases/20260722_164409` · 랜딩·`/info` · 도움말 | `b47ca39` | — |
 | 293 | **확대 자르기(적용) 비활성**(미리보기 확대만 유지) | (본 배포) | `restore-disable-crop-apply.bat` §170 |
-| 294 | GitHub APK `releases/20260722_170650` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 295 | GitHub APK `releases/20260722_182753` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 294 | GitHub APK `releases/20260722_170650` · 랜딩·`/info` · 도움말 | `ca16ea2` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_170650.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260722_182753.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -558,7 +559,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260722_170650.apk` | (본 배포) | **권장** — **확대 자르기(적용) 비활성**(미리보기만) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_182753.apk` | (본 배포) | **권장** — **글자 크기**(작게·보통·크게) 입력+미리보기·PDF·내보내기 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_170650.apk` | `ca16ea2` | **확대 자르기(적용) 비활성**(미리보기만) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백(contain 복구) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — 확대 크롭 cover 일치 (**롤백됨**) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — **목록 빈 메모 숨김** | **GitHub `releases/`** |
@@ -995,7 +997,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **확대 자르기(적용) 비활성** — 미리보기 확대·이동만 · APK `releases/VoiceStamp_20260722_170650` · Vercel · `restore-disable-crop-apply.bat` §170 |
+| (본 배포) | **글자 크기 A+B** — 설정 작게·보통·크게 · 입력 UI + 미리보기·워터마크·PDF·갤러리 JPEG · 시스템 글꼴만 · APK `releases/VoiceStamp_20260722_182753` · Vercel · `restore-stamp-text-size.bat` §171 |
+| `ca16ea2` | **확대 자르기(적용) 비활성** — 미리보기 확대·이동만 · APK `releases/VoiceStamp_20260722_170650` · Vercel · `restore-disable-crop-apply.bat` §170 |
 | `b47ca39` | **cover 크롭 롤백** — contain 뷰어·수식 복구 · APK `releases/VoiceStamp_20260722_164409` · Vercel · §169 |
 | `7302cd4` | **확대 크롭 cover 일치** — APK `162518` · **이후 롤백** · §168 |
 | `41eef0c` | **목록 빈 메모 숨김** — 내용 없으면 `(표시명 없음)` 미표시 · APK `releases/VoiceStamp_20260722_133757` · Vercel · `restore-list-hide-empty-memo.bat` §167 |
@@ -1008,7 +1011,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `30aed21` | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `releases/VoiceStamp_20260722_091825` · `restore-field-labels.bat` §160 |
 | `11a7d29` | **앱 내 카메라 크롭「적용」수정** · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_170650.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260722_182753.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 
