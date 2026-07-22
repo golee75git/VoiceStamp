@@ -916,8 +916,11 @@ export function StampSaveModal({
     setPreparingViewer(true);
     setError(null);
     try {
+      // Bake EXIF orientation so zoom/crop pixels match on-screen Image (in-app + gallery).
       const normalized = await normalizeStampImageForCrop(source);
-      setWorkingImageUri(normalized);
+      if (normalized !== source) {
+        setWorkingImageUri(normalized);
+      }
       cropViewportRef.current = null;
       setImageViewerVisible(true);
     } catch (err) {

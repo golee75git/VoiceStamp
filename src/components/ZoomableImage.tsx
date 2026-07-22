@@ -272,8 +272,7 @@ export const ZoomableImage = forwardRef<ZoomableImageHandle, ZoomableImageProps>
           }}
         >
           <Animated.View style={[styles.imageWrap, animatedStyle]} collapsable={false}>
-            {/* cover: fill viewport (no letterbox) so crop math matches on-screen pixels */}
-            <Animated.Image source={{ uri }} style={styles.image} resizeMode="cover" />
+            <Animated.Image source={{ uri }} style={styles.image} resizeMode="contain" />
           </Animated.View>
         </Animated.View>
       </GestureDetector>

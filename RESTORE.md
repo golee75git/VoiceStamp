@@ -2769,3 +2769,11 @@ Copy-Item src.pre-crop-cover-match\public\help.html public\ -Force
 Copy-Item src.pre-crop-cover-match\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 169. 확대 크롭 cover 일치 적용분 롤백 기록
+
+`7302cd4`(cover 뷰어·크롭)이 해결되지 않아 `restore-crop-cover-match.bat`로 **contain 수식·뷰어**로 되돌린 배포입니다. cover 쪽을 다시 쓰려면 해당 커밋을 참고하세요.
+
+```bat
+git show 7302cd4 -- src/services/stampImageCrop.ts src/components/ZoomableImage.tsx
+```
+
