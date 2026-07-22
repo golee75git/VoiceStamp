@@ -151,6 +151,9 @@ function applyStampSaveModalLayoutSettings(
     setOverlayFooterPhrase: (value: string) => void;
     setOverlayShowOrgName: (value: boolean) => void;
     setOverlayShowFooterPhrase: (value: boolean) => void;
+    setTitleFieldLabel: (value: string) => void;
+    setPlaceFieldLabel: (value: string) => void;
+    setMemoFieldLabel: (value: string) => void;
   },
 ): void {
   apply.setTitleTextAlign(settings.titleTextAlign);
@@ -165,6 +168,9 @@ function applyStampSaveModalLayoutSettings(
   apply.setOverlayFooterPhrase(settings.overlayFooterPhrase);
   apply.setOverlayShowOrgName(settings.overlayShowOrgName);
   apply.setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
+  apply.setTitleFieldLabel(settings.titleFieldLabel);
+  apply.setPlaceFieldLabel(settings.placeFieldLabel);
+  apply.setMemoFieldLabel(settings.memoFieldLabel);
 }
 
 type StampSaveModalProps = {
@@ -214,6 +220,9 @@ export function StampSaveModal({
   const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
   const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
   const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
+  const [titleFieldLabel, setTitleFieldLabel] = useState('제목');
+  const [placeFieldLabel, setPlaceFieldLabel] = useState('장소');
+  const [memoFieldLabel, setMemoFieldLabel] = useState('메모');
   const [showDatetime, setShowDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
@@ -337,6 +346,9 @@ export function StampSaveModal({
       setOverlayFooterPhrase,
       setOverlayShowOrgName,
       setOverlayShowFooterPhrase,
+      setTitleFieldLabel,
+      setPlaceFieldLabel,
+      setMemoFieldLabel,
     };
 
     const cached = peekStampSaveModalLayoutCache();
@@ -954,6 +966,9 @@ export function StampSaveModal({
                     footerPhrase={overlayFooterPhrase}
                     showOrgName={overlayShowOrgName}
                     showFooterPhrase={overlayShowFooterPhrase}
+                    titleFieldLabel={titleFieldLabel}
+                    placeFieldLabel={placeFieldLabel}
+                    memoFieldLabel={memoFieldLabel}
                     floor={floor}
                     latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                     longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
@@ -1034,7 +1049,7 @@ export function StampSaveModal({
             )}
 
             <VoiceInputField
-              label="장소"
+              label={placeFieldLabel}
               value={placeLabel ?? ''}
               onChangeText={(text) => {
                 placeTouchedRef.current = true;
@@ -1079,7 +1094,7 @@ export function StampSaveModal({
 
             <View>
               <VoiceInputField
-                label="제목"
+                label={titleFieldLabel}
                 value={title}
                 onChangeText={(text) => {
                   titleTouchedRef.current = true;
@@ -1100,7 +1115,7 @@ export function StampSaveModal({
             </View>
 
             <VoiceInputField
-              label="메모"
+              label={memoFieldLabel}
               value={memo}
               onChangeText={setMemo}
               onMicPress={() => handleMicPress('memo')}

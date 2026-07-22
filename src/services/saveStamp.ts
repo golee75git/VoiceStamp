@@ -22,15 +22,18 @@ import { moveStampGalleryAlbum, saveStampPhotoToGallery } from './galleryService
 import {
   getCurrentSiteName,
   getGallerySaveMode,
+  getMemoFieldLabel,
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
   getPdfShowDatetime,
+  getPlaceFieldLabel,
   getStampTextLayout,
   getWatermarkStyle,
   getCoordsLabelMode,
+  getTitleFieldLabel,
   getTitleTextAlign,
   type GallerySaveMode,
 } from './settingsService';
@@ -68,7 +71,21 @@ function resolveStampTitle(title: string, fallbackTimestamp: number): string {
 }
 
 async function loadExportOptions(): Promise<StampImageExportOptions> {
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [
+    titleAlign,
+    memoAlign,
+    showDatetime,
+    textLayout,
+    coordsLabel,
+    watermarkStyle,
+    orgName,
+    footerPhrase,
+    showOrgName,
+    showFooterPhrase,
+    titleFieldLabel,
+    placeFieldLabel,
+    memoFieldLabel,
+  ] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
@@ -79,9 +96,26 @@ async function loadExportOptions(): Promise<StampImageExportOptions> {
     getOverlayFooterPhrase(),
     getOverlayShowOrgName(),
     getOverlayShowFooterPhrase(),
+    getTitleFieldLabel(),
+    getPlaceFieldLabel(),
+    getMemoFieldLabel(),
   ]);
 
-  return { titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase };
+  return {
+    titleAlign,
+    memoAlign,
+    showDatetime,
+    textLayout,
+    coordsLabel,
+    watermarkStyle,
+    orgName,
+    footerPhrase,
+    showOrgName,
+    showFooterPhrase,
+    titleFieldLabel,
+    placeFieldLabel,
+    memoFieldLabel,
+  };
 }
 
 async function saveNewStampToGallery(

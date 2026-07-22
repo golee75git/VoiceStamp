@@ -12,6 +12,7 @@ import {
   extractStampGroupFromImagePath,
 } from './fileService';
 import {
+  getMemoFieldLabel,
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
@@ -20,9 +21,11 @@ import {
   getPdfImageQuality,
   getPdfPhotosPerPage,
   getPdfShowDatetime,
+  getPlaceFieldLabel,
   getStampTextLayout,
   getWatermarkStyle,
   getCoordsLabelMode,
+  getTitleFieldLabel,
   getTitleTextAlign,
   type PdfPhotosPerPage,
   type StampTextLayout,
@@ -36,6 +39,11 @@ import {
   resolveOverlayOrgName,
   type OverlayTextFields,
 } from './overlayText';
+import {
+  formatLabeledValue,
+  resolveFieldLabels,
+  type FieldLabels,
+} from './fieldLabels';
 import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 
@@ -82,10 +90,18 @@ function buildStampItem(
   coordsLabel: CoordsLabelMode,
   watermarkStyle: WatermarkStyle,
   overlay: OverlayTextFields,
+  fieldLabels: FieldLabels,
 ): string {
-  const title = escapeHtml(stampDisplayTitle(stamp, showDatetime));
+  const labels = resolveFieldLabels(fieldLabels);
+  const titleRaw = stampDisplayTitle(stamp, showDatetime);
+  const title = escapeHtml(formatLabeledValue(labels.titleFieldLabel, titleRaw));
   const memoTrimmed = stamp.memo?.trim() ?? '';
-  const place = stampPlaceLine(stamp);
+  const memoLabeled = formatLabeledValue(labels.memoFieldLabel, memoTrimmed);
+  const placeRaw = stampPlaceLine(stamp);
+  const placeLabeled = placeRaw
+    ? formatLabeledValue(labels.placeFieldLabel, placeRaw)
+    : '';
+  const place = placeLabeled;
   const coords = stampCoordinatesLine(stamp, coordsLabel);
   const orgName = resolveOverlayOrgName(overlay);
   const footerPhrase = resolveOverlayFooterPhrase(overlay);
@@ -101,8 +117,8 @@ function buildStampItem(
 
   if (textLayout === 'watermark') {
     const theme = getWatermarkTheme(watermarkStyle);
-    const memoBlock = memoTrimmed
-      ? `<div class="watermark-memo" style="text-align: ${memoAlign}; color: ${theme.memoColor};">${escapeHtml(memoTrimmed)}</div>`
+    const memoBlock = memoLabeled
+      ? `<div class="watermark-memo" style="text-align: ${memoAlign}; color: ${theme.memoColor};">${escapeHtml(memoLabeled)}</div>`
       : '';
     const watermarkPlaceBlock = place
       ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(place)}</div>`
@@ -116,13 +132,16 @@ function buildStampItem(
     const phraseBlock = footerPhrase
       ? `<div class="watermark-phrase" style="text-align: ${memoAlign}; color: ${theme.coordsColor}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</div>`
       : '';
+    const titleBlock = title
+      ? `<div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>`
+      : '';
     return `
       <div class="item item-watermark">
         <div class="photo-slot photo-slot-watermark" style="height: ${slotHeight};">
           <img src="${imageDataUri}" alt="stamp" />
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
             ${orgBlock}
-            <div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>
+            ${titleBlock}
             ${watermarkPlaceBlock}
             ${memoBlock}
             ${watermarkCoordsBlock}
@@ -135,8 +154,8 @@ function buildStampItem(
   const orgBlock = orgName
     ? `<p class="caption-org" style="text-align: ${titleAlign};">${escapeHtml(orgName)}</p>`
     : '';
-  const memoBlock = memoTrimmed
-    ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoTrimmed)}</p>`
+  const memoBlock = memoLabeled
+    ? `<p class="memo" style="text-align: ${memoAlign};">${escapeHtml(memoLabeled)}</p>`
     : '';
   const placeCaptionBlock = place
     ? `<p class="place" style="text-align: ${titleAlign};">${escapeHtml(place)}</p>`
@@ -148,6 +167,7 @@ function buildStampItem(
   const dateBlock = showDatetime
     ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
     : '';
+  const titleBlock = title ? `<h1 style="text-align: ${titleAlign};">${title}</h1>` : '';
 
   return `
       <div class="item item-caption">
@@ -155,7 +175,7 @@ function buildStampItem(
           ${photoSlot}
           <figcaption class="stamp-caption">
             ${orgBlock}
-            <h1 style="text-align: ${titleAlign};">${title}</h1>
+            ${titleBlock}
             ${placeCaptionBlock}
             ${memoBlock}
             ${coordsBlock}
@@ -187,6 +207,7 @@ function buildHtml(
   coordsLabel: CoordsLabelMode,
   watermarkStyle: WatermarkStyle,
   overlay: OverlayTextFields,
+  fieldLabels: FieldLabels,
 ): string {
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
@@ -211,6 +232,7 @@ function buildHtml(
             coordsLabel,
             watermarkStyle,
             overlay,
+            fieldLabels,
           ),
         )
         .join('');
@@ -435,7 +457,7 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
@@ -448,6 +470,9 @@ export async function createStampsPdf(
     getOverlayFooterPhrase(),
     getOverlayShowOrgName(),
     getOverlayShowFooterPhrase(),
+    getTitleFieldLabel(),
+    getPlaceFieldLabel(),
+    getMemoFieldLabel(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -466,6 +491,7 @@ export async function createStampsPdf(
     coordsLabel,
     watermarkStyle,
     { orgName, footerPhrase, showOrgName, showFooterPhrase },
+    { titleFieldLabel, placeFieldLabel, memoFieldLabel },
   );
 
   if (Platform.OS === 'web') {

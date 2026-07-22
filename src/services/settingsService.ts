@@ -25,6 +25,13 @@ import {
   sanitizeOverlayShowFlag,
   sanitizeOverlayText,
 } from './overlayText';
+import {
+  DEFAULT_FIELD_MEMO_LABEL,
+  DEFAULT_FIELD_PLACE_LABEL,
+  DEFAULT_FIELD_TITLE_LABEL,
+  FIELD_LABEL_MAX_LENGTH,
+  sanitizeFieldLabel,
+} from './fieldLabels';
 
 const STAMPS_FOLDER_KEY = 'stamps_folder';
 const PDF_PHOTOS_PER_PAGE_KEY = 'pdf_photos_per_page';
@@ -59,6 +66,9 @@ const OVERLAY_ORG_NAME_KEY = 'overlay_org_name';
 const OVERLAY_FOOTER_PHRASE_KEY = 'overlay_footer_phrase';
 const OVERLAY_SHOW_ORG_NAME_KEY = 'overlay_show_org_name';
 const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
+const FIELD_LABEL_TITLE_KEY = 'field_label_title';
+const FIELD_LABEL_PLACE_KEY = 'field_label_place';
+const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -92,6 +102,13 @@ export {
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
 } from './overlayText';
+export {
+  DEFAULT_FIELD_MEMO_LABEL,
+  DEFAULT_FIELD_PLACE_LABEL,
+  DEFAULT_FIELD_TITLE_LABEL,
+  FIELD_LABEL_MAX_LENGTH,
+} from './fieldLabels';
+export type { FieldLabels } from './fieldLabels';
 export const DEFAULT_FLOOR_PICKER_MODE = 'school_only' as const;
 export { DEFAULT_FLOOR_DISPLAY_MODE, floorDisplayModeLabel, type FloorDisplayMode } from './floorDisplayMode';
 export {
@@ -384,6 +401,9 @@ export type SettingsScreenSnapshot = {
   overlayFooterPhrase: string;
   overlayShowOrgName: boolean;
   overlayShowFooterPhrase: boolean;
+  titleFieldLabel: string;
+  placeFieldLabel: string;
+  memoFieldLabel: string;
 };
 
 export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
@@ -494,6 +514,24 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
     overlayShowFooterPhrase: (() => {
       const raw = pickSetting(map, OVERLAY_SHOW_FOOTER_PHRASE_KEY);
       return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE;
+    })(),
+    titleFieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_TITLE_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_TITLE_LABEL)
+        : DEFAULT_FIELD_TITLE_LABEL;
+    })(),
+    placeFieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_PLACE_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_PLACE_LABEL)
+        : DEFAULT_FIELD_PLACE_LABEL;
+    })(),
+    memoFieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_MEMO_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_MEMO_LABEL)
+        : DEFAULT_FIELD_MEMO_LABEL;
     })(),
   };
 }
@@ -832,6 +870,48 @@ export async function setOverlayShowFooterPhrase(show: boolean): Promise<boolean
   const safeShow = sanitizeOverlayShowFlag(show);
   await writeSetting(OVERLAY_SHOW_FOOTER_PHRASE_KEY, safeShow ? 'true' : 'false');
   return safeShow;
+}
+
+export async function getTitleFieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_TITLE_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_TITLE_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_TITLE_LABEL);
+}
+
+export async function setTitleFieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_TITLE_LABEL);
+  await writeSetting(FIELD_LABEL_TITLE_KEY, safe);
+  return safe;
+}
+
+export async function getPlaceFieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_PLACE_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_PLACE_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_PLACE_LABEL);
+}
+
+export async function setPlaceFieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_PLACE_LABEL);
+  await writeSetting(FIELD_LABEL_PLACE_KEY, safe);
+  return safe;
+}
+
+export async function getMemoFieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_MEMO_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_MEMO_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_MEMO_LABEL);
+}
+
+export async function setMemoFieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_MEMO_LABEL);
+  await writeSetting(FIELD_LABEL_MEMO_KEY, safe);
+  return safe;
 }
 
 async function readGalleryAlbumIdMap(): Promise<Record<string, string>> {

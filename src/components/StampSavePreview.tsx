@@ -20,6 +20,7 @@ import {
   resolveOverlayFooterPhrase,
   resolveOverlayOrgName,
 } from '../services/overlayText';
+import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
@@ -75,6 +76,9 @@ type StampSavePreviewProps = {
   footerPhrase: string;
   showOrgName: boolean;
   showFooterPhrase: boolean;
+  titleFieldLabel?: string;
+  placeFieldLabel?: string;
+  memoFieldLabel?: string;
   floor?: StampFloor | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -97,15 +101,23 @@ export function StampSavePreview({
   footerPhrase,
   showOrgName,
   showFooterPhrase,
+  titleFieldLabel,
+  placeFieldLabel,
+  memoFieldLabel,
   floor,
   latitude,
   longitude,
   variant,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
-  const displayTitle = stampDisplayTitle({ title, floor }, showDatetime);
-  const displayMemo = memo.trim();
-  const displayPlace = stampDisplayPlace({ placeLabel, floor }) ?? '';
+  const labels = resolveFieldLabels({ titleFieldLabel, placeFieldLabel, memoFieldLabel });
+  const displayTitle = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle({ title, floor }, showDatetime),
+  );
+  const displayMemo = formatLabeledValue(labels.memoFieldLabel, memo.trim());
+  const displayPlaceRaw = stampDisplayPlace({ placeLabel, floor }) ?? '';
+  const displayPlace = formatLabeledValue(labels.placeFieldLabel, displayPlaceRaw);
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
@@ -165,12 +177,14 @@ export function StampSavePreview({
           {displayOrgName}
         </Text>
       ) : null}
-      <Text
-        style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}
-        numberOfLines={2}
-      >
-        {displayTitle}
-      </Text>
+      {displayTitle ? (
+        <Text
+          style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}
+          numberOfLines={2}
+        >
+          {displayTitle}
+        </Text>
+      ) : null}
       {displayPlace ? (
         <Text
           style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}
@@ -240,9 +254,11 @@ export function StampSavePreview({
                 {displayOrgName}
               </Text>
             ) : null}
-            <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
-              {displayTitle}
-            </Text>
+            {displayTitle ? (
+              <Text style={[watermarkTitleStyle, { textAlign: titleAlign, color: watermarkTheme.titleColor }]}>
+                {displayTitle}
+              </Text>
+            ) : null}
             {displayPlace ? (
               <Text style={[watermarkPlaceStyle, { textAlign: titleAlign, color: watermarkTheme.memoColor }]}>
                 {displayPlace}
@@ -284,9 +300,11 @@ export function StampSavePreview({
               {displayOrgName}
             </Text>
           ) : null}
-          <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
-            {displayTitle}
-          </Text>
+          {displayTitle ? (
+            <Text style={[titleStyle, { textAlign: titleAlign }]} numberOfLines={2}>
+              {displayTitle}
+            </Text>
+          ) : null}
           {displayPlace ? (
             <Text style={[placeStyle, { textAlign: titleAlign }]} numberOfLines={2}>
               {displayPlace}
@@ -331,7 +349,9 @@ export function StampSavePreview({
         {displayOrgName ? (
           <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }]}>{displayOrgName}</Text>
         ) : null}
-        <Text style={[titleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
+        {displayTitle ? (
+          <Text style={[titleStyle, { textAlign: titleAlign }]}>{displayTitle}</Text>
+        ) : null}
         {displayPlace ? (
           <Text style={[placeStyle, { textAlign: titleAlign }]}>{displayPlace}</Text>
         ) : null}

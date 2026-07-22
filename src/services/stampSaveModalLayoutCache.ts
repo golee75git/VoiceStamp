@@ -2,13 +2,16 @@ import {
   getCameraHand,
   getCoordsLabelMode,
   getFloorDisplayMode,
+  getMemoFieldLabel,
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
   getPdfShowDatetime,
+  getPlaceFieldLabel,
   getStampTextLayout,
+  getTitleFieldLabel,
   getTitleTextAlign,
   getWatermarkStyle,
   type CameraHand,
@@ -32,6 +35,9 @@ export type StampSaveModalLayoutSettings = {
   overlayFooterPhrase: string;
   overlayShowOrgName: boolean;
   overlayShowFooterPhrase: boolean;
+  titleFieldLabel: string;
+  placeFieldLabel: string;
+  memoFieldLabel: string;
 };
 
 let cachedLayout: StampSaveModalLayoutSettings | null = null;
@@ -64,6 +70,9 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
       getOverlayFooterPhrase(),
       getOverlayShowOrgName(),
       getOverlayShowFooterPhrase(),
+      getTitleFieldLabel(),
+      getPlaceFieldLabel(),
+      getMemoFieldLabel(),
     ]).then(
       ([
         titleTextAlign,
@@ -78,6 +87,9 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
         overlayFooterPhrase,
         overlayShowOrgName,
         overlayShowFooterPhrase,
+        titleFieldLabel,
+        placeFieldLabel,
+        memoFieldLabel,
       ]) => {
         const settings: StampSaveModalLayoutSettings = {
           titleTextAlign,
@@ -92,6 +104,9 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
           overlayFooterPhrase,
           overlayShowOrgName,
           overlayShowFooterPhrase,
+          titleFieldLabel,
+          placeFieldLabel,
+          memoFieldLabel,
         };
         cachedLayout = settings;
         return settings;

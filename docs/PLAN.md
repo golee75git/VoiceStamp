@@ -427,10 +427,12 @@
 | 276 | GitHub APK `releases/20260721_233651` · 랜딩·`/info` · 도움말 | `9734037` | — |
 | 277 | **크롭을 `6060a48`/`225635`로 롤백** | `ee75aa8` | `restore-revert-crop-225635.bat` §158 |
 | 278 | GitHub APK `releases/20260721_235129` · 랜딩·`/info` · 도움말 | `ee75aa8` | — |
-| 279 | **앱 내 카메라 크롭「적용」수정**(레이스·뷰포트·UI flush) | (본 배포) | `restore-crop-inapp-fix.bat` §159 |
-| 280 | GitHub APK `releases/20260722_000609` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 279 | **앱 내 카메라 크롭「적용」수정**(레이스·뷰포트·UI flush) | `11a7d29` | `restore-crop-inapp-fix.bat` §159 |
+| 280 | GitHub APK `releases/20260722_000609` · 랜딩·`/info` · 도움말 | `11a7d29` | — |
+| 281 | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** | (본 배포) | `restore-field-labels.bat` §160 |
+| 282 | GitHub APK `releases/20260722_091825` · 랜딩·`/info` · 도움말 | (본 배포) | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_000609.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260722_091825.apk`.
 
 ### 2.1 문서 동기화 이력
 

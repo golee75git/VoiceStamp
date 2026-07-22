@@ -228,6 +228,30 @@
     return trimmed || null;
   }
 
+  function sanitizeFieldLabel(text, fallback) {
+    const cleaned = String(text ?? '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .slice(0, 20);
+    return cleaned || fallback;
+  }
+
+  function resolveFieldLabels(options) {
+    return {
+      titleFieldLabel: sanitizeFieldLabel(options.titleFieldLabel, '제목'),
+      placeFieldLabel: sanitizeFieldLabel(options.placeFieldLabel, '장소'),
+      memoFieldLabel: sanitizeFieldLabel(options.memoFieldLabel, '메모'),
+    };
+  }
+
+  function formatLabeledValue(label, value) {
+    const trimmed = String(value ?? '').trim();
+    if (!trimmed) {
+      return '';
+    }
+    return `${label}: ${trimmed}`;
+  }
+
   function loadImage(src) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -271,8 +295,11 @@
     const imgHeight = Math.max(1, Math.round(img.height * scale));
     const sizes = getLayoutSizes('watermark', options.textScale);
 
-    const title = stampDisplayTitle(stamp, options.showDatetime);
-    const memo = String(stamp.memo ?? '').trim();
+    const labels = resolveFieldLabels(options);
+    const title = formatLabeledValue(labels.titleFieldLabel, stampDisplayTitle(stamp, options.showDatetime));
+    const memo = formatLabeledValue(labels.memoFieldLabel, String(stamp.memo ?? '').trim());
+    const placeRaw = String(stamp.placeLabel ?? '').trim();
+    const place = placeRaw ? formatLabeledValue(labels.placeFieldLabel, placeRaw) : '';
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
     const orgName = resolveOverlayOrgName(options) ?? '';
     const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -288,8 +315,9 @@
     const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
 
     measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
-    const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
+    const titleLines = title ? wrapCanvasLines(measureCtx, title, textWidth) : [];
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
+    const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, textWidth) : [];
@@ -299,7 +327,8 @@
     const barHeight =
       sizes.barPaddingY +
       (orgLines.length > 0 ? orgLines.length * sizes.orgLine + sizes.orgGapAfter : 0) +
-      titleLines.length * sizes.titleLine +
+      (titleLines.length > 0 ? titleLines.length * sizes.titleLine : 0) +
+      (placeLines.length > 0 ? sizes.memoGapBefore + placeLines.length * sizes.memoLine : 0) +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
       (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
@@ -340,19 +369,35 @@
         ) + sizes.orgGapAfter;
     }
 
-    textY =
-      drawAlignedText(
+    textY = title
+      ? drawAlignedText(
+          ctx,
+          title,
+          sizes.barPaddingX,
+          textY,
+          textWidth,
+          options.titleAlign,
+          sizes.titleFont,
+          '700',
+          theme.titleColor,
+          sizes.titleLine,
+        ) + sizes.titleAfterGap
+      : textY;
+
+    if (place) {
+      textY = drawAlignedText(
         ctx,
-        title,
+        place,
         sizes.barPaddingX,
-        textY,
+        textY + sizes.memoAfterGap,
         textWidth,
         options.titleAlign,
-        sizes.titleFont,
-        '700',
-        theme.titleColor,
-        sizes.titleLine,
-      ) + sizes.titleAfterGap;
+        sizes.memoFont,
+        '400',
+        theme.memoColor,
+        sizes.memoLine,
+      );
+    }
 
     if (memo) {
       textY = drawAlignedText(
@@ -411,8 +456,11 @@
 
     const padding = sizes.padding;
     const contentWidth = imgWidth;
-    const title = stampDisplayTitle(stamp, options.showDatetime);
-    const memo = String(stamp.memo ?? '').trim();
+    const labels = resolveFieldLabels(options);
+    const title = formatLabeledValue(labels.titleFieldLabel, stampDisplayTitle(stamp, options.showDatetime));
+    const memo = formatLabeledValue(labels.memoFieldLabel, String(stamp.memo ?? '').trim());
+    const placeRaw = String(stamp.placeLabel ?? '').trim();
+    const place = placeRaw ? formatLabeledValue(labels.placeFieldLabel, placeRaw) : '';
     const coords = stampCoordinatesLine(stamp, options.coordsLabel) ?? '';
     const orgName = resolveOverlayOrgName(options) ?? '';
     const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -426,8 +474,9 @@
     measureCtx.font = `700 ${sizes.orgFont}px sans-serif`;
     const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, contentWidth) : [];
     measureCtx.font = `700 ${sizes.titleFont}px sans-serif`;
-    const titleLines = wrapCanvasLines(measureCtx, title, contentWidth);
+    const titleLines = title ? wrapCanvasLines(measureCtx, title, contentWidth) : [];
     measureCtx.font = `400 ${sizes.memoFont}px sans-serif`;
+    const placeLines = place ? wrapCanvasLines(measureCtx, place, contentWidth) : [];
     const memoLines = memo ? wrapCanvasLines(measureCtx, memo, contentWidth) : [];
     measureCtx.font = `400 ${sizes.coordsFont}px sans-serif`;
     const coordsLines = coords ? wrapCanvasLines(measureCtx, coords, contentWidth) : [];
@@ -440,7 +489,8 @@
       imgHeight +
       sizes.imgToTextGap +
       (orgLines.length > 0 ? sizes.orgGapBefore + orgLines.length * sizes.orgLine : 0) +
-      titleLines.length * sizes.titleLine +
+      (titleLines.length > 0 ? titleLines.length * sizes.titleLine : 0) +
+      (placeLines.length > 0 ? sizes.memoGapBefore + placeLines.length * sizes.memoLine : 0) +
       (memoLines.length > 0 ? sizes.memoGapBefore + memoLines.length * sizes.memoLine : 0) +
       (coordsLines.length > 0 ? sizes.coordsGapBefore + coordsLines.length * sizes.coordsLine : 0) +
       (phraseLines.length > 0 ? sizes.phraseGapBefore + phraseLines.length * sizes.phraseLine : 0) +
@@ -475,19 +525,35 @@
         ) + sizes.titleAfterGap;
     }
 
-    textY =
-      drawAlignedText(
+    textY = title
+      ? drawAlignedText(
+          ctx,
+          title,
+          padding,
+          textY,
+          contentWidth,
+          options.titleAlign,
+          sizes.titleFont,
+          '700',
+          '#111827',
+          sizes.titleLine,
+        ) + sizes.titleAfterGap
+      : textY;
+
+    if (place) {
+      textY = drawAlignedText(
         ctx,
-        title,
+        place,
         padding,
-        textY,
+        textY + sizes.memoAfterGap,
         contentWidth,
         options.titleAlign,
-        sizes.titleFont,
-        '700',
-        '#111827',
-        sizes.titleLine,
-      ) + sizes.titleAfterGap;
+        sizes.memoFont,
+        '400',
+        '#374151',
+        sizes.memoLine,
+      );
+    }
 
     if (memo) {
       textY = drawAlignedText(
@@ -552,6 +618,9 @@
       footerPhrase: typeof settings.footerPhrase === 'string' ? settings.footerPhrase : '',
       showOrgName: settings.showOrgName !== false,
       showFooterPhrase: settings.showFooterPhrase !== false,
+      titleFieldLabel: typeof settings.titleFieldLabel === 'string' ? settings.titleFieldLabel : '제목',
+      placeFieldLabel: typeof settings.placeFieldLabel === 'string' ? settings.placeFieldLabel : '장소',
+      memoFieldLabel: typeof settings.memoFieldLabel === 'string' ? settings.memoFieldLabel : '메모',
     };
   }
 

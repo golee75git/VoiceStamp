@@ -9,13 +9,16 @@ import { resolveImageUri, sanitizeStampFileBaseName } from './fileService';
 import { writeJsZipToCacheFile } from './writeCacheFile';
 import {
   getCoordsLabelMode,
+  getMemoFieldLabel,
   getMemoTextAlign,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
   getPdfShowDatetime,
+  getPlaceFieldLabel,
   getStampTextLayout,
+  getTitleFieldLabel,
   getWatermarkStyle,
   getTitleTextAlign,
 } from './settingsService';
@@ -34,12 +37,16 @@ export type ProjectExportSettings = {
   footerPhrase: string;
   showOrgName: boolean;
   showFooterPhrase: boolean;
+  titleFieldLabel: string;
+  placeFieldLabel: string;
+  memoFieldLabel: string;
 };
 
 export type ProjectManifestStamp = {
   id: string;
   title: string;
   memo: string;
+  placeLabel: string | null;
   floor: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -116,7 +123,7 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
@@ -127,6 +134,9 @@ export async function createStampsProjectZip(
     getOverlayFooterPhrase(),
     getOverlayShowOrgName(),
     getOverlayShowFooterPhrase(),
+    getTitleFieldLabel(),
+    getPlaceFieldLabel(),
+    getMemoFieldLabel(),
   ]);
 
   const manifestStamps: ProjectManifestStamp[] = [];
@@ -146,6 +156,7 @@ export async function createStampsProjectZip(
       id: stamp.id,
       title: stamp.title,
       memo: stamp.memo,
+      placeLabel: stamp.placeLabel ?? null,
       floor: stamp.floor ?? null,
       latitude: stamp.latitude ?? null,
       longitude: stamp.longitude ?? null,
@@ -171,6 +182,9 @@ export async function createStampsProjectZip(
       footerPhrase,
       showOrgName,
       showFooterPhrase,
+      titleFieldLabel,
+      placeFieldLabel,
+      memoFieldLabel,
     },
     stamps: manifestStamps,
   };

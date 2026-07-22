@@ -7,6 +7,7 @@ import {
   resolveOverlayFooterPhrase,
   resolveOverlayOrgName,
 } from './overlayText';
+import { formatLabeledValue, resolveFieldLabels } from './fieldLabels';
 import {
   prepareExportPhoto,
   type StampImageExportOptions,
@@ -76,9 +77,13 @@ export async function renderStampCaptionNative(
   const maxWidth = renderParams?.maxWidth;
   const jpegCompress = renderParams?.jpegCompress ?? CAPTION_JPEG_COMPRESS;
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
-  const title = stampDisplayTitle(stamp, options.showDatetime);
-  const memo = stamp.memo?.trim() ?? '';
-  const place = stampPlaceLine(stamp);
+  const labels = resolveFieldLabels(options);
+  const title = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle(stamp, options.showDatetime),
+  );
+  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
+  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);

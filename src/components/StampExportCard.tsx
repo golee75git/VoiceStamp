@@ -5,6 +5,8 @@ import { resolveImageUri } from '../services/fileService';
 import type { PreparedExportPhoto, StampImageExportOptions } from '../services/exportStampImage';
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampCoordinatesLine } from '../services/stampCoords';
+import { stampPlaceLine } from '../services/stampPlace';
+import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import type { Stamp } from '../types/stamp';
@@ -29,8 +31,13 @@ export function StampExportCard({
 }: StampExportCardProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const readyNotifiedRef = useRef(false);
-  const title = stampDisplayTitle(stamp, options.showDatetime);
-  const memo = stamp.memo?.trim() ?? '';
+  const labels = resolveFieldLabels(options);
+  const title = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle(stamp, options.showDatetime),
+  );
+  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
+  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
@@ -103,14 +110,31 @@ export function StampExportCard({
             },
           ]}
         >
-          <Text
-            style={[
-              styles.watermarkTitle,
-              { fontSize: titleSize, textAlign: options.titleAlign, color: watermarkTheme.titleColor },
-            ]}
-          >
-            {title}
-          </Text>
+          {title ? (
+            <Text
+              style={[
+                styles.watermarkTitle,
+                { fontSize: titleSize, textAlign: options.titleAlign, color: watermarkTheme.titleColor },
+              ]}
+            >
+              {title}
+            </Text>
+          ) : null}
+          {place ? (
+            <Text
+              style={[
+                styles.watermarkMemo,
+                {
+                  fontSize: Math.max(14, Math.round(24 * scale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale)),
+                  textAlign: options.titleAlign,
+                  color: watermarkTheme.memoColor,
+                },
+              ]}
+            >
+              {place}
+            </Text>
+          ) : null}
           {memo ? (
             <Text
               style={[
@@ -157,14 +181,26 @@ export function StampExportCard({
             onLoadEnd={notifyImageReady}
           />
           <WatermarkBarBackground style={options.watermarkStyle} barStyle={styles.watermarkBar}>
-            <Text
-              style={[
-                styles.watermarkTitle,
-                { textAlign: options.titleAlign, color: watermarkTheme.titleColor },
-              ]}
-            >
-              {title}
-            </Text>
+            {title ? (
+              <Text
+                style={[
+                  styles.watermarkTitle,
+                  { textAlign: options.titleAlign, color: watermarkTheme.titleColor },
+                ]}
+              >
+                {title}
+              </Text>
+            ) : null}
+            {place ? (
+              <Text
+                style={[
+                  styles.watermarkMemo,
+                  { textAlign: options.titleAlign, color: watermarkTheme.memoColor },
+                ]}
+              >
+                {place}
+              </Text>
+            ) : null}
             {memo ? (
               <Text
                 style={[
@@ -200,6 +236,9 @@ export function StampExportCard({
         onLoadEnd={notifyImageReady}
       />
       <Text style={[styles.title, { textAlign: options.titleAlign }]}>{title}</Text>
+      {place ? (
+        <Text style={[styles.memo, { textAlign: options.titleAlign }]}>{place}</Text>
+      ) : null}
       {memo ? (
         <Text style={[styles.memo, { textAlign: options.memoAlign }]}>{memo}</Text>
       ) : null}

@@ -2607,3 +2607,21 @@ Copy-Item src.pre-crop-inapp-fix\constants\apkBuildLabel.ts src\constants\ -Forc
 Copy-Item src.pre-crop-inapp-fix\landing.html,src.pre-crop-inapp-fix\info.html public\ -Force
 ```
 
+## 160. 필드 표시명·워터마크 라벨 되돌리기 (선택)
+
+설정에서 제목·장소·메모 표시명을 바꾸고 워터마크·PDF에 「표시명: 내용」을 붙인 뒤 문제가 생기면 아래로 복구합니다.
+
+```bat
+restore-field-labels.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-field-labels\*.ts src\services\ -Force
+Copy-Item src.pre-field-labels\components\*.tsx src\components\ -Force
+Copy-Item src.pre-field-labels\public\help.html,src.pre-field-labels\public\landing.html,src.pre-field-labels\public\info.html public\ -Force
+Copy-Item src.pre-field-labels\apkBuildLabel.ts src\constants\ -Force
+Remove-Item src\services\fieldLabels.ts -ErrorAction SilentlyContinue
+```
+

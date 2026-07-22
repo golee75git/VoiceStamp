@@ -22,6 +22,11 @@ import {
   resolveOverlayOrgName,
   type OverlayTextFields,
 } from './overlayText';
+import {
+  formatLabeledValue,
+  resolveFieldLabels,
+  type FieldLabels,
+} from './fieldLabels';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
@@ -80,7 +85,7 @@ export type StampRenderParams = {
   jpegCompress?: number;
 };
 
-export type StampImageExportOptions = OverlayTextFields & {
+export type StampImageExportOptions = OverlayTextFields & FieldLabels & {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   showDatetime: boolean;
@@ -216,9 +221,13 @@ async function renderStampJpegWatermarkOnWeb(
   const imgWidth = Math.max(1, Math.round(img.width * scale));
   const imgHeight = Math.max(1, Math.round(img.height * scale));
 
-  const title = stampDisplayTitle(stamp, options.showDatetime);
-  const memo = stamp.memo?.trim() ?? '';
-  const place = stampPlaceLine(stamp);
+  const labels = resolveFieldLabels(options);
+  const title = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle(stamp, options.showDatetime),
+  );
+  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
+  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options) ?? '';
   const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -237,7 +246,7 @@ async function renderStampJpegWatermarkOnWeb(
   const orgLines = orgName ? wrapCanvasLines(measureCtx, orgName, textWidth) : [];
 
   measureCtx.font = '700 32px sans-serif';
-  const titleLines = wrapCanvasLines(measureCtx, title, textWidth);
+  const titleLines = title ? wrapCanvasLines(measureCtx, title, textWidth) : [];
   measureCtx.font = '400 24px sans-serif';
   const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
   measureCtx.font = '400 26px sans-serif';
@@ -250,7 +259,7 @@ async function renderStampJpegWatermarkOnWeb(
   const barHeight =
     barPaddingY +
     (orgLines.length > 0 ? orgLines.length * 30 + 4 : 0) +
-    titleLines.length * 38 +
+    (titleLines.length > 0 ? titleLines.length * 38 : 0) +
     (placeLines.length > 0 ? 6 + placeLines.length * 28 : 0) +
     (memoLines.length > 0 ? 8 + memoLines.length * 32 : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * 28 : 0) +
@@ -289,18 +298,20 @@ async function renderStampJpegWatermarkOnWeb(
   }
 
   textY =
-    drawAlignedText(
-      ctx,
-      title,
-      barPaddingX,
-      textY,
-      textWidth,
-      options.titleAlign,
-      32,
-      '700',
-      theme.titleColor,
-      38,
-    ) + 4;
+    title
+      ? drawAlignedText(
+          ctx,
+          title,
+          barPaddingX,
+          textY,
+          textWidth,
+          options.titleAlign,
+          32,
+          '700',
+          theme.titleColor,
+          38,
+        ) + 4
+      : textY;
 
   if (place) {
     textY = drawAlignedText(
@@ -376,9 +387,13 @@ async function renderStampJpegCaptionOnWeb(
   const imgWidth = Math.max(1, Math.round(img.width * scale));
   const imgHeight = Math.max(1, Math.round(img.height * scale));
 
-  const title = stampDisplayTitle(stamp, options.showDatetime);
-  const memo = stamp.memo?.trim() ?? '';
-  const place = stampPlaceLine(stamp);
+  const labels = resolveFieldLabels(options);
+  const title = formatLabeledValue(
+    labels.titleFieldLabel,
+    stampDisplayTitle(stamp, options.showDatetime),
+  );
+  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
+  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);

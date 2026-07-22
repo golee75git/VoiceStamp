@@ -93,6 +93,9 @@ export function StampListScreen({
   const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
   const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
   const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
+  const [titleFieldLabel, setTitleFieldLabel] = useState('제목');
+  const [placeFieldLabel, setPlaceFieldLabel] = useState('장소');
+  const [memoFieldLabel, setMemoFieldLabel] = useState('메모');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
@@ -175,6 +178,9 @@ export function StampListScreen({
       setOverlayFooterPhrase(settings.overlayFooterPhrase);
       setOverlayShowOrgName(settings.overlayShowOrgName);
       setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
+      setTitleFieldLabel(settings.titleFieldLabel);
+      setPlaceFieldLabel(settings.placeFieldLabel);
+      setMemoFieldLabel(settings.memoFieldLabel);
       setCameraHand(settings.cameraHand);
     } catch {
       // 목록은 이미 표시됨
@@ -341,6 +347,9 @@ export function StampListScreen({
         footerPhrase: overlayFooterPhrase,
         showOrgName: overlayShowOrgName,
         showFooterPhrase: overlayShowFooterPhrase,
+        titleFieldLabel,
+        placeFieldLabel,
+        memoFieldLabel,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,

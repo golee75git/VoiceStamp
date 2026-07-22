@@ -49,9 +49,13 @@ import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
+  DEFAULT_FIELD_TITLE_LABEL,
+  DEFAULT_FIELD_PLACE_LABEL,
+  DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_SHUTTER_SOUND,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
+  FIELD_LABEL_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
   primaryCaptureCameraLabel,
@@ -84,6 +88,9 @@ import {
   setOverlayOrgName,
   setOverlayShowFooterPhrase,
   setOverlayShowOrgName,
+  setTitleFieldLabel,
+  setPlaceFieldLabel,
+  setMemoFieldLabel,
   setPdfFilenameIncludeDatetime,
   setPdfImageQuality,
   setPdfPhotosPerPage,
@@ -198,6 +205,9 @@ export function SettingsScreen({
   const [overlayShowFooterPhrase, setOverlayShowFooterPhraseState] = useState(
     DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   );
+  const [titleFieldLabel, setTitleFieldLabelState] = useState(DEFAULT_FIELD_TITLE_LABEL);
+  const [placeFieldLabel, setPlaceFieldLabelState] = useState(DEFAULT_FIELD_PLACE_LABEL);
+  const [memoFieldLabel, setMemoFieldLabelState] = useState(DEFAULT_FIELD_MEMO_LABEL);
   const [saving, setSaving] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -231,6 +241,9 @@ export function SettingsScreen({
       setOverlayFooterPhraseState(snapshot.overlayFooterPhrase);
       setOverlayShowOrgNameState(snapshot.overlayShowOrgName);
       setOverlayShowFooterPhraseState(snapshot.overlayShowFooterPhrase);
+      setTitleFieldLabelState(snapshot.titleFieldLabel);
+      setPlaceFieldLabelState(snapshot.placeFieldLabel);
+      setMemoFieldLabelState(snapshot.memoFieldLabel);
     });
     return () => {
       cancelled = true;
@@ -265,6 +278,9 @@ export function SettingsScreen({
         savedFooterPhrase,
         savedShowOrgName,
         savedShowFooterPhrase,
+        savedTitleFieldLabel,
+        savedPlaceFieldLabel,
+        savedMemoFieldLabel,
       ] = await Promise.all([
           setStampsFolderName(folderName),
           setPdfPhotosPerPage(pdfPhotosPerPage),
@@ -290,6 +306,9 @@ export function SettingsScreen({
           setOverlayFooterPhrase(overlayFooterPhrase),
           setOverlayShowOrgName(overlayShowOrgName),
           setOverlayShowFooterPhrase(overlayShowFooterPhrase),
+          setTitleFieldLabel(titleFieldLabel),
+          setPlaceFieldLabel(placeFieldLabel),
+          setMemoFieldLabel(memoFieldLabel),
         ]);
       setFolderName(savedFolder);
       setPdfPhotosPerPageState(savedPerPage);
@@ -315,11 +334,14 @@ export function SettingsScreen({
       setOverlayFooterPhraseState(savedFooterPhrase);
       setOverlayShowOrgNameState(savedShowOrgName);
       setOverlayShowFooterPhraseState(savedShowFooterPhrase);
+      setTitleFieldLabelState(savedTitleFieldLabel);
+      setPlaceFieldLabelState(savedPlaceFieldLabel);
+      setMemoFieldLabelState(savedMemoFieldLabel);
       invalidateStampSaveModalLayoutCache();
       onSettingsSaved?.();
       Alert.alert(
         '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n앱 내 촬영음: ${shutterSoundLabel(savedShutterSound)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
+        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n일반 촬영: ${primaryCaptureCameraLabel(savedPrimaryCaptureCamera)}.\n촬영 후: ${captureAfterModeLabel(savedCaptureAfterMode)}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n앱 내 촬영음: ${shutterSoundLabel(savedShutterSound)}.\n위치 조회: ${locationModeLabel(savedLocationMode)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\n필드 표시명: ${savedTitleFieldLabel}/${savedPlaceFieldLabel}/${savedMemoFieldLabel}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
       );
     } catch (e) {
       Alert.alert(
@@ -537,6 +559,38 @@ export function SettingsScreen({
               </Text>
             </Pressable>
           </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>필드 표시명</Text>
+          <Text style={styles.hint}>
+            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 비우면 기본값(제목·장소·메모)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
+          </Text>
+          <Text style={styles.label}>제목 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={titleFieldLabel}
+            onChangeText={setTitleFieldLabelState}
+            placeholder={DEFAULT_FIELD_TITLE_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>장소 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={placeFieldLabel}
+            onChangeText={setPlaceFieldLabelState}
+            placeholder={DEFAULT_FIELD_PLACE_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>메모 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={memoFieldLabel}
+            onChangeText={setMemoFieldLabelState}
+            placeholder={DEFAULT_FIELD_MEMO_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
 
           <Text style={[styles.label, styles.sectionGap]}>사진 오버레이 문구</Text>
           <Text style={styles.hint}>
