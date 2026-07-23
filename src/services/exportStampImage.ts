@@ -614,11 +614,16 @@ export function buildCaptionGalleryFileName(title: string): string {
 export async function renderStampJpegUri(
   stamp: Stamp,
   options: StampImageExportOptions,
-  _captureNative?: CaptureStampForExport,
+  captureNative?: CaptureStampForExport,
   renderParams?: StampRenderParams,
 ): Promise<string> {
   if (options.textLayout === 'watermark') {
     return renderStampWatermarkNative(stamp, options, renderParams);
+  }
+
+  // Caption: prefer ViewShot StampExportCard (same 2-col table as PDF) when host is available.
+  if (captureNative && !renderParams) {
+    return captureNative(stamp, options);
   }
 
   return renderStampCaptionNative(stamp, options, renderParams);

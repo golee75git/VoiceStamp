@@ -2937,3 +2937,11 @@ restore-custom-field-templates.bat
 restore-caption-green-border.bat
 ```
 
+## 183. 별도영역 이미지 표 표시 되돌리기 (선택)
+
+이미지 내보내기 2열 표(PDF와 동일). 문제 시:
+
+```bat
+restore-caption-image-table.bat
+```
+

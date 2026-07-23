@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **별도영역 이미지 초록 테두리 수정** · APK `VoiceStamp_20260723_151910`
+최신 기능 커밋 기준: (본 배포) — **별도영역 이미지 표 표시** · APK `VoiceStamp_20260723_153816`
 
 ---
 
@@ -565,7 +565,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_151910.apk` | (본 배포) | **권장** — **별도영역 이미지 초록 테두리 수정** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_153816.apk` | (본 배포) | **권장** — **별도영역 이미지 표 표시** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — **별도영역 이미지 초록 테두리 수정** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_144416.apk` | `aabf4d5` | **이전** — **내 템플릿(사용자 정의)** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_135456.apk` | `e45db50` | **이전** — **저장 템플릿 시트 스크롤·여백** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_133903.apk` | `80d69b6` | **이전** — **저장 템플릿 6종 추가** | **GitHub `releases/`** |

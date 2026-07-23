@@ -2,30 +2,35 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system/legacy';
 import Marker, { ImageFormat, TextBackgroundType } from 'react-native-image-marker';
 
-import { buildCaptionLayout, captionTextX } from './captionLayout';
+import { wrapTextLines, captionTextX } from './captionLayout';
+import { buildCaptionTableRows } from './captionTable';
 import {
   resolveOverlayFooterPhrase,
   resolveOverlayOrgName,
 } from './overlayText';
-import { formatLabeledValue, resolveFieldLabels } from './fieldLabels';
+import { resolveFieldLabels } from './fieldLabels';
 import {
   prepareExportPhoto,
   type StampImageExportOptions,
   type StampRenderParams,
 } from './exportStampImage';
 import { resolveImageUri } from './fileService';
-import { stampDisplayTitle } from './stampFloor';
-import { stampCoordinatesLine } from './stampCoords';
-import { stampPlaceLine } from './stampPlace';
 import type { TextAlign } from './settingsService';
 import { stampTextSizeScale } from './settingsService';
 import type { Stamp } from '../types/stamp';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
+const CAPTION_REFERENCE_PHOTO_WIDTH = 1032;
 
-/** Opaque white RGBA 1×1. (Previous base64 was yellow @ 50% alpha → green fringe around photo.) */
+/** Opaque white RGBA 1×1. */
 const WHITE_1X1_PNG_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4////fwAJ+wP9KobjigAAAABJRU5ErkJggg==';
+/** Label cell background #f3f4f6 */
+const GRAY_1X1_PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4/OXbfwAJmAPdtH26kgAAAABJRU5ErkJggg==';
+/** Table border #d1d5db */
+const BORDER_1X1_PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGO4ePX2fwAIfQOBtuft9wAAAABJRU5ErkJggg==';
 
 function normalizeMarkedUri(markedUri: string): string {
   if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
@@ -37,25 +42,29 @@ function normalizeMarkedUri(markedUri: string): string {
   return markedUri;
 }
 
-async function createWhiteCanvas(width: number, height: number): Promise<string> {
-  const tempUri = `${FileSystem.cacheDirectory}caption-white-1x1.png`;
-  await FileSystem.writeAsStringAsync(tempUri, WHITE_1X1_PNG_BASE64, {
+async function createSolidJpeg(
+  base64Png: string,
+  cacheName: string,
+  width: number,
+  height: number,
+): Promise<string> {
+  const tempUri = `${FileSystem.cacheDirectory}${cacheName}`;
+  await FileSystem.writeAsStringAsync(tempUri, base64Png, {
     encoding: FileSystem.EncodingType.Base64,
   });
-  // JPEG strips alpha so image-marker cannot leave green/chroma fringes in photo padding.
-  const resized = await manipulateAsync(tempUri, [{ resize: { width, height } }], {
-    compress: 1,
-    format: SaveFormat.JPEG,
-  });
+  const resized = await manipulateAsync(
+    tempUri,
+    [{ resize: { width: Math.max(1, width), height: Math.max(1, height) } }],
+    { compress: 1, format: SaveFormat.JPEG },
+  );
   return resized.uri;
 }
 
-function captionTextStyle(
+function cellTextStyle(
   color: string,
   fontSize: number,
   align: TextAlign,
   bold: boolean,
-  paddingY: number,
 ) {
   return {
     color,
@@ -63,10 +72,10 @@ function captionTextStyle(
     bold,
     textAlign: align,
     textBackgroundStyle: {
-      type: TextBackgroundType.stretchX,
-      color: '#FFFFFF',
+      type: TextBackgroundType.none,
+      color: '#00000000',
       paddingX: 0,
-      paddingY,
+      paddingY: 0,
     },
   };
 }
@@ -81,218 +90,219 @@ export async function renderStampCaptionNative(
   const jpegCompress = renderParams?.jpegCompress ?? CAPTION_JPEG_COMPRESS;
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
   const labels = resolveFieldLabels(options);
-  const title = formatLabeledValue(
-    labels.titleFieldLabel,
-    stampDisplayTitle(stamp, options.showDatetime),
-  );
-  const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
-  const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
-  const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
-  const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
-  const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
-  const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
-  const layout = buildCaptionLayout(
-    prepared.width,
-    prepared.height,
-    title,
-    memo,
-    options.titleAlign,
-    options.memoAlign,
-    coords,
-    orgName,
-    footerPhrase,
-    place,
-    extra1 || null,
-    extra2 || null,
-    extra3 || null,
-    stampTextSizeScale(options.stampTextSize ?? 'medium'),
-  );
-  const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
+  const rows = buildCaptionTableRows(stamp, labels, {
+    showDatetime: options.showDatetime,
+    coordsLabel: options.coordsLabel,
+    includeCoords: true,
+  });
 
-  const canvasUri = await createWhiteCanvas(layout.canvasWidth, layout.canvasHeight);
-  const withPhoto = await Marker.markImage({
+  const imgWidth = prepared.width;
+  const imgHeight = prepared.height;
+  const padding = Math.max(12, Math.round(24 * (imgWidth / CAPTION_REFERENCE_PHOTO_WIDTH)));
+  const textScale = stampTextSizeScale(options.stampTextSize ?? 'medium');
+  const fontSize = Math.max(14, Math.round(22 * (imgWidth / CAPTION_REFERENCE_PHOTO_WIDTH) * textScale));
+  const lineHeight = Math.max(20, Math.round(fontSize * 1.35));
+  const cellPad = Math.max(6, Math.round(10 * (imgWidth / CAPTION_REFERENCE_PHOTO_WIDTH)));
+  const labelColWidth = Math.round(imgWidth * 0.28);
+  const valueColWidth = imgWidth - labelColWidth;
+  const borderW = Math.max(1, Math.round(imgWidth / 1032));
+
+  const rowHeights = rows.map((row) => {
+    const labelLines = wrapTextLines(row.label, labelColWidth - cellPad * 2, fontSize);
+    const valueLines = wrapTextLines(row.value, valueColWidth - cellPad * 2, fontSize);
+    return Math.max(labelLines.length, valueLines.length) * lineHeight + cellPad * 2;
+  });
+  const tableHeight = rowHeights.reduce((sum, h) => sum + h, 0);
+  const orgSize = Math.max(16, Math.round(28 * (imgWidth / CAPTION_REFERENCE_PHOTO_WIDTH) * textScale));
+  const orgLineHeight = Math.max(22, Math.round(orgSize * 1.3));
+  const orgLines = orgName ? wrapTextLines(orgName, imgWidth, orgSize) : [];
+  const orgHeight = orgLines.length > 0 ? orgLines.length * orgLineHeight + 8 : 0;
+  const phraseSize = Math.max(12, fontSize - 2);
+  const phraseLineHeight = Math.max(18, Math.round(phraseSize * 1.35));
+  const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, imgWidth, phraseSize) : [];
+  const phraseHeight = phraseLines.length > 0 ? phraseLines.length * phraseLineHeight + 8 : 0;
+
+  const canvasWidth = imgWidth + padding * 2;
+  const canvasHeight =
+    padding +
+    imgHeight +
+    16 +
+    orgHeight +
+    (tableHeight > 0 ? tableHeight + 8 : 0) +
+    phraseHeight +
+    padding;
+
+  const canvasUri = await createSolidJpeg(
+    WHITE_1X1_PNG_BASE64,
+    'caption-white-1x1.png',
+    canvasWidth,
+    canvasHeight,
+  );
+  const overlayImages: {
+    src: string;
+    scale: number;
+    position: { X: number; Y: number };
+  }[] = [
+    {
+      src: prepared.uri,
+      scale: 1,
+      position: { X: padding, Y: padding },
+    },
+  ];
+
+  let cursorY = padding + imgHeight + 16 + orgHeight;
+
+  for (let i = 0; i < rows.length; i += 1) {
+    const rowH = rowHeights[i];
+    const rowGray = await createSolidJpeg(
+      GRAY_1X1_PNG_BASE64,
+      `caption-gray-row-${i}.png`,
+      labelColWidth,
+      rowH,
+    );
+    overlayImages.push({
+      src: rowGray,
+      scale: 1,
+      position: { X: padding, Y: cursorY },
+    });
+    const hLine = await createSolidJpeg(
+      BORDER_1X1_PNG_BASE64,
+      `caption-hline-${i}.png`,
+      imgWidth,
+      borderW,
+    );
+    overlayImages.push({
+      src: hLine,
+      scale: 1,
+      position: { X: padding, Y: cursorY },
+    });
+    const vEdge = await createSolidJpeg(
+      BORDER_1X1_PNG_BASE64,
+      `caption-vedge-${i}.png`,
+      borderW,
+      rowH,
+    );
+    overlayImages.push(
+      { src: vEdge, scale: 1, position: { X: padding, Y: cursorY } },
+      { src: vEdge, scale: 1, position: { X: padding + labelColWidth, Y: cursorY } },
+      { src: vEdge, scale: 1, position: { X: padding + imgWidth - borderW, Y: cursorY } },
+    );
+    cursorY += rowH;
+  }
+
+  if (rows.length > 0) {
+    const bottomLine = await createSolidJpeg(
+      BORDER_1X1_PNG_BASE64,
+      'caption-hline-bottom.png',
+      imgWidth,
+      borderW,
+    );
+    overlayImages.push({
+      src: bottomLine,
+      scale: 1,
+      position: { X: padding, Y: cursorY - borderW },
+    });
+  }
+
+  const withChrome = await Marker.markImage({
     backgroundImage: { src: canvasUri, scale: 1 },
-    watermarkImages: [
-      {
-        src: prepared.uri,
-        scale: 1,
-        position: {
-          X: layout.padding,
-          Y: layout.padding,
-        },
-      },
-    ],
+    watermarkImages: overlayImages,
     quality: 1,
     saveFormat: ImageFormat.png,
   });
 
-  const watermarkTexts = [];
+  const watermarkTexts: {
+    text: string;
+    positionOptions: { X: number; Y: number };
+    style: ReturnType<typeof cellTextStyle>;
+  }[] = [];
 
-  if (layout.orgY !== null && layout.orgText) {
-    watermarkTexts.push({
-      text: layout.orgText,
-      positionOptions: {
-        X: captionTextX(layout.titleAlign, layout.padding, layout.canvasWidth),
-        Y: layout.orgY,
-      },
-      style: captionTextStyle(
-        '#111827',
-        layout.orgSize,
-        layout.titleAlign,
-        true,
-        textBackgroundPaddingY,
-      ),
+  let textY = padding + imgHeight + 16;
+  if (orgName && orgLines.length > 0) {
+    orgLines.forEach((line, lineIndex) => {
+      watermarkTexts.push({
+        text: line,
+        positionOptions: {
+          X: captionTextX(options.titleAlign, padding, canvasWidth),
+          Y: textY + lineIndex * orgLineHeight,
+        },
+        style: cellTextStyle('#111827', orgSize, options.titleAlign, true),
+      });
     });
+    textY += orgHeight;
   }
 
-  watermarkTexts.push({
-    text: layout.titleText,
-    positionOptions: {
-      X: captionTextX(layout.titleAlign, layout.padding, layout.canvasWidth),
-      Y: layout.titleY,
-    },
-    style: captionTextStyle(
-      '#111827',
-      layout.titleSize,
-      layout.titleAlign,
-      true,
-      textBackgroundPaddingY,
-    ),
+  let rowY = textY;
+  rows.forEach((row, index) => {
+    const rowH = rowHeights[index];
+    const labelLines = wrapTextLines(row.label, labelColWidth - cellPad * 2, fontSize);
+    const valueLines = wrapTextLines(row.value, valueColWidth - cellPad * 2, fontSize);
+
+    labelLines.forEach((line, lineIndex) => {
+      watermarkTexts.push({
+        text: line,
+        positionOptions: {
+          X: padding + cellPad,
+          Y: rowY + cellPad + lineIndex * lineHeight,
+        },
+        style: cellTextStyle('#111827', fontSize, 'left', true),
+      });
+    });
+
+    const valueAlign = options.memoAlign;
+    const valueX =
+      valueAlign === 'center'
+        ? padding + labelColWidth + valueColWidth / 2
+        : valueAlign === 'right'
+          ? padding + imgWidth - cellPad
+          : padding + labelColWidth + cellPad;
+    valueLines.forEach((line, lineIndex) => {
+      watermarkTexts.push({
+        text: line,
+        positionOptions: {
+          X: valueX,
+          Y: rowY + cellPad + lineIndex * lineHeight,
+        },
+        style: cellTextStyle('#374151', fontSize, valueAlign, false),
+      });
+    });
+
+    rowY += rowH;
   });
 
-  if (layout.placeY !== null && layout.placeText) {
-    watermarkTexts.push({
-      text: layout.placeText,
-      positionOptions: {
-        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
-        Y: layout.placeY,
-      },
-      style: captionTextStyle(
-        '#374151',
-        layout.placeSize,
-        layout.placeAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
+  if (rows.length > 0) {
+    rowY += 8;
+  }
+
+  if (footerPhrase && phraseLines.length > 0) {
+    phraseLines.forEach((line, lineIndex) => {
+      watermarkTexts.push({
+        text: line,
+        positionOptions: {
+          X: captionTextX(options.memoAlign, padding, canvasWidth),
+          Y: rowY + lineIndex * phraseLineHeight,
+        },
+        style: cellTextStyle('#6b7280', phraseSize, options.memoAlign, false),
+      });
     });
   }
 
-  if (layout.extra1Y !== null && layout.extra1Text) {
-    watermarkTexts.push({
-      text: layout.extra1Text,
-      positionOptions: {
-        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
-        Y: layout.extra1Y,
-      },
-      style: captionTextStyle(
-        '#374151',
-        layout.placeSize,
-        layout.placeAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
+  const pngUri =
+    watermarkTexts.length > 0
+      ? await Marker.markText({
+          backgroundImage: { src: normalizeMarkedUri(withChrome), scale: 1 },
+          watermarkTexts,
+          quality: 100,
+          saveFormat: ImageFormat.png,
+        })
+      : withChrome;
 
-  if (layout.extra2Y !== null && layout.extra2Text) {
-    watermarkTexts.push({
-      text: layout.extra2Text,
-      positionOptions: {
-        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
-        Y: layout.extra2Y,
-      },
-      style: captionTextStyle(
-        '#374151',
-        layout.placeSize,
-        layout.placeAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.extra3Y !== null && layout.extra3Text) {
-    watermarkTexts.push({
-      text: layout.extra3Text,
-      positionOptions: {
-        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
-        Y: layout.extra3Y,
-      },
-      style: captionTextStyle(
-        '#374151',
-        layout.placeSize,
-        layout.placeAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.memoY !== null && layout.memoText) {
-    watermarkTexts.push({
-      text: layout.memoText,
-      positionOptions: {
-        X: captionTextX(layout.memoAlign, layout.padding, layout.canvasWidth),
-        Y: layout.memoY,
-      },
-      style: captionTextStyle(
-        '#374151',
-        layout.memoSize,
-        layout.memoAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.coordsY !== null && layout.coordsText) {
-    watermarkTexts.push({
-      text: layout.coordsText,
-      positionOptions: {
-        X: captionTextX(layout.coordsAlign, layout.padding, layout.canvasWidth),
-        Y: layout.coordsY,
-      },
-      style: captionTextStyle(
-        '#6b7280',
-        layout.coordsSize,
-        layout.coordsAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  if (layout.phraseY !== null && layout.phraseText) {
-    watermarkTexts.push({
-      text: layout.phraseText,
-      positionOptions: {
-        X: captionTextX(layout.phraseAlign, layout.padding, layout.canvasWidth),
-        Y: layout.phraseY,
-      },
-      style: captionTextStyle(
-        '#6b7280',
-        layout.phraseSize,
-        layout.phraseAlign,
-        false,
-        textBackgroundPaddingY,
-      ),
-    });
-  }
-
-  const pngUri = await Marker.markText({
-    backgroundImage: { src: normalizeMarkedUri(withPhoto), scale: 1 },
-    watermarkTexts,
-    quality: 100,
-    saveFormat: ImageFormat.png,
+  const jpeg = await manipulateAsync(normalizeMarkedUri(pngUri), [], {
+    compress: jpegCompress,
+    format: SaveFormat.JPEG,
   });
-
-  const jpeg = await manipulateAsync(
-    normalizeMarkedUri(pngUri),
-    [],
-    { compress: jpegCompress, format: SaveFormat.JPEG },
-  );
 
   return jpeg.uri;
 }
