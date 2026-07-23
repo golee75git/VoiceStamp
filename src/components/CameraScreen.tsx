@@ -23,6 +23,7 @@ import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrim
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
+import { cropInAppCaptureToPreview } from '../services/stampImageCrop';
 import { StampSaveModal } from './StampSaveModal';
 import {
   InAppCameraPreview,
@@ -367,15 +368,22 @@ export function CameraScreen({
         return;
       }
 
+      const previewSize = previewRef.current?.getPreviewSize() ?? { width: 0, height: 0 };
+      const framedUri = await cropInAppCaptureToPreview(
+        photo.uri,
+        previewSize.width,
+        previewSize.height,
+      );
+
       if (inAppCameraMode === 'single') {
         setInAppCameraMode(null);
         setInAppCameraReady(false);
-        await handleCapturedUri(photo.uri);
+        await handleCapturedUri(framedUri);
         return;
       }
 
       const savedLocation = await saveQuickCapture({
-        tempImageUri: photo.uri,
+        tempImageUri: framedUri,
         captureForExport: captureStampForExport,
         reuseLocation: reuseLocationRef.current ?? undefined,
       });

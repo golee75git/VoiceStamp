@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **설정 저장 빠르게(dirty+tx)** · APK `VoiceStamp_20260723_094044`
+최신 기능 커밋 기준: (본 배포) — **앱내 카메라 미리보기 맞춤 저장** · APK `VoiceStamp_20260723_100201`
 
 ---
 
@@ -997,7 +997,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **설정 저장 빠르게 1+2+3+4** — dirty만 쓰기 · SQLite 트랜잭션 · 저장 후 refresh 생략 · 짧은 알림 · APK `releases/VoiceStamp_20260723_094044` · Vercel · `restore-settings-save-fast.bat` §173 |
+| (본 배포) | **앱내 카메라 미리보기 맞춤 저장** — FILL 프리뷰 비율로 캡처 JPEG 크롭 후 저장 · APK `releases/VoiceStamp_20260723_100201` · Vercel · `restore-inapp-preview-crop.bat` §174 |
+| `20391a6` | **설정 저장 빠르게 1+2+3+4** — dirty만 쓰기 · SQLite 트랜잭션 · 저장 후 refresh 생략 · 짧은 알림 · APK `releases/VoiceStamp_20260723_094044` · Vercel · `restore-settings-save-fast.bat` §173 |
 | `4d56901` | **장소명 prefetch 재조회** — 좌표만 있고 장소명이 비면 저장 모달에서 재조회 · APK `releases/VoiceStamp_20260723_091612` · Vercel · `restore-place-label-retry.bat` §172 |
 | `b47ca39` | **cover 크롭 롤백** — contain 뷰어·수식 복구 · APK `releases/VoiceStamp_20260722_164409` · Vercel · §169 |
 | `7302cd4` | **확대 크롭 cover 일치** — APK `162518` · **이후 롤백** · §168 |

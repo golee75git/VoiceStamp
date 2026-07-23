@@ -2843,3 +2843,20 @@ Copy-Item src.pre-settings-save-fast\public\help.html,src.pre-settings-save-fast
 Copy-Item src.pre-settings-save-fast\constants\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 174. 앱내 카메라 미리보기 맞춤 저장 되돌리기 (선택)
+
+앱내 촬영 후 FILL 미리보기 비율로 크롭 저장. 문제 시:
+
+```bat
+restore-inapp-preview-crop.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-inapp-preview-crop\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-inapp-preview-crop\components\CameraScreen.tsx,src.pre-inapp-preview-crop\components\InAppCameraPreview.tsx src\components\ -Force
+Copy-Item src.pre-inapp-preview-crop\public\help.html,src.pre-inapp-preview-crop\public\landing.html,src.pre-inapp-preview-crop\public\info.html public\ -Force
+Copy-Item src.pre-inapp-preview-crop\constants\apkBuildLabel.ts src\constants\ -Force
+```
+
