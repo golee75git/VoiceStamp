@@ -20,8 +20,6 @@ export type ZoomPreset = keyof typeof ZOOM_PRESET_VALUES;
 export type InAppCameraPreviewHandle = {
   setZoomPreset: (preset: ZoomPreset) => void;
   getZoom: () => number;
-  /** Preview slot size in layout pixels (for FILL cover crop after capture). */
-  getPreviewSize: () => { width: number; height: number };
 };
 
 type InAppCameraPreviewProps = {
@@ -54,7 +52,6 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
     const [zoom, setZoom] = useState(0);
     const zoomShared = useSharedValue(0);
     const savedZoom = useSharedValue(0);
-    const previewSizeRef = useRef({ width: 0, height: 0 });
     const onZoomChangeRef = useRef(onZoomChange);
     onZoomChangeRef.current = onZoomChange;
 
@@ -81,7 +78,6 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
           applyZoom(ZOOM_PRESET_VALUES[preset]);
         },
         getZoom: () => zoomShared.value,
-        getPreviewSize: () => previewSizeRef.current,
       }),
       [applyZoom, zoomShared],
     );
@@ -109,14 +105,7 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
     return (
       <GestureHandlerRootView style={[styles.root, style]}>
         <GestureDetector gesture={gesture}>
-          <View
-            style={styles.previewSlot}
-            collapsable={false}
-            onLayout={(event) => {
-              const { width, height } = event.nativeEvent.layout;
-              previewSizeRef.current = { width, height };
-            }}
-          >
+          <View style={styles.previewSlot} collapsable={false}>
             <CameraView
               ref={cameraRef}
               style={styles.camera}

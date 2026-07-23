@@ -2860,3 +2860,20 @@ Copy-Item src.pre-inapp-preview-crop\public\help.html,src.pre-inapp-preview-crop
 Copy-Item src.pre-inapp-preview-crop\constants\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 175. 앱내 미리보기 크롭 롤백 되돌리기 (선택)
+
+FILL 맞춤 크롭을 다시 넣으려면:
+
+```bat
+restore-revert-inapp-preview-crop.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-revert-inapp-preview-crop\services\stampImageCrop.ts src\services\ -Force
+Copy-Item src.pre-revert-inapp-preview-crop\components\CameraScreen.tsx,src.pre-revert-inapp-preview-crop\components\InAppCameraPreview.tsx src\components\ -Force
+Copy-Item src.pre-revert-inapp-preview-crop\public\help.html,src.pre-revert-inapp-preview-crop\public\landing.html,src.pre-revert-inapp-preview-crop\public\info.html public\ -Force
+Copy-Item src.pre-revert-inapp-preview-crop\constants\apkBuildLabel.ts src\constants\ -Force
+```
+

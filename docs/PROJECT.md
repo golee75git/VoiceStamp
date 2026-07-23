@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **앱내 카메라 미리보기 맞춤 저장** · APK `VoiceStamp_20260723_100201`
+최신 기능 커밋 기준: (본 배포) — **앱내 미리보기 크롭 롤백**(설정 저장 빠르게와 동일 기능) · APK `VoiceStamp_20260723_102421`
 
 ---
 
@@ -392,10 +392,11 @@ VoiceStamp/
 | 291 | **cover 크롭 롤백**(contain 뷰어·수식으로 복구) | `b47ca39` | §169 |
 | 292 | GitHub APK `releases/20260722_164409` · 랜딩·`/info` · 도움말 | `b47ca39` | — |
 | 293 | **확대 자르기(적용) 비활성**(미리보기 확대만 유지) | (본 배포) | `restore-disable-crop-apply.bat` §170 |
-| 297 | GitHub APK `releases/20260723_094044` · 랜딩·`/info` · 도움말 | (본 배포) | — |
-| 296 | GitHub APK `releases/20260723_091612` · 랜딩·`/info` · 도움말 | `4d56901` | — |
+| 297 | GitHub APK `releases/20260723_102421` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 296 | GitHub APK `releases/20260723_094044` · 랜딩·`/info` · 도움말 | `20391a6` | — |
+| 295 | GitHub APK `releases/20260723_091612` · 랜딩·`/info` · 도움말 | `4d56901` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260723_094044.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260723_102421.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -559,7 +560,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_094044.apk` | (본 배포) | **권장** — **설정 저장 빠르게**(dirty+트랜잭션·재로드 생략·짧은 알림) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_102421.apk` | (본 배포) | **권장** — **앱내 미리보기 크롭 롤백**(설정 저장 빠르게와 동일 기능) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_094044.apk` | `20391a6` | **이전** — **설정 저장 빠르게**(dirty+트랜잭션·재로드 생략·짧은 알림) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_091612.apk` | `4d56901` | **장소명 prefetch 재조회**(빈 장소명일 때 저장 화면에서 한 번 더) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백(contain 복구) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — 확대 크롭 cover 일치 (**롤백됨**) | **GitHub `releases/`** |
@@ -997,7 +999,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **앱내 카메라 미리보기 맞춤 저장** — FILL 프리뷰 비율로 캡처 JPEG 크롭 후 저장 · APK `releases/VoiceStamp_20260723_100201` · Vercel · `restore-inapp-preview-crop.bat` §174 |
+| (본 배포) | **앱내 미리보기 크롭 롤백** — FILL 맞춤 저장 제거, 직전(설정 저장 빠르게)과 동일 · APK `releases/VoiceStamp_20260723_102421` · Vercel · `restore-revert-inapp-preview-crop.bat` §175로 크롭 재적용 가능 |
+| `f27fcb6` | **앱내 카메라 미리보기 맞춤 저장** — FILL 프리뷰 비율 크롭 · APK `releases/VoiceStamp_20260723_100201` · `restore-inapp-preview-crop.bat` §174 |
 | `20391a6` | **설정 저장 빠르게 1+2+3+4** — dirty만 쓰기 · SQLite 트랜잭션 · 저장 후 refresh 생략 · 짧은 알림 · APK `releases/VoiceStamp_20260723_094044` · Vercel · `restore-settings-save-fast.bat` §173 |
 | `4d56901` | **장소명 prefetch 재조회** — 좌표만 있고 장소명이 비면 저장 모달에서 재조회 · APK `releases/VoiceStamp_20260723_091612` · Vercel · `restore-place-label-retry.bat` §172 |
 | `b47ca39` | **cover 크롭 롤백** — contain 뷰어·수식 복구 · APK `releases/VoiceStamp_20260722_164409` · Vercel · §169 |
