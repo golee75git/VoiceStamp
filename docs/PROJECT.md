@@ -66,7 +66,7 @@ VoiceStamp/
 | 목록 | `StampListScreen.tsx` | 목록·선택·PDF·이미지 저장·수정·휴지통·⚙ 설정 |
 | 휴지통 | `TrashScreen.tsx` | 터치 복원 |
 | 설정 | `SettingsScreen.tsx` | 폴더·PDF·내보내기·손잡이·휴지통 비우기 |
-| JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx` | 캡션 합성 (ViewShot, MainScreen 공유) |
+| JPEG 캡처 | `StampExportCard.tsx`, `StampImageExportHost.tsx`, `renderStampCaptionNative.ts` | 캡션 합성 (네이티브 불투명 JPEG; ViewShot은 호스트만 유지) |
 | 메인 | `MainScreen.tsx` | camera / list / settings / trash 전환, `BackHandler`, `StampImageExportHost` |
 
 ### 3.1 목록 화면 UI (현재)
@@ -561,11 +561,12 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
-#### 2026-07-22
+#### 2026-07-23
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_170552.apk` | (본 배포) | **권장** — **저장 목록 표시 모드** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_185321.apk` | (본 배포) | **권장** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — **저장 목록 표시 모드** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — **별도영역 이미지 표 표시** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — **별도영역 이미지 초록 테두리 수정** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_144416.apk` | `aabf4d5` | **이전** — **내 템플릿(사용자 정의)** | **GitHub `releases/`** |
@@ -577,6 +578,11 @@ build-apk.bat
 | `releases/VoiceStamp_20260723_102421.apk` | `550c513` | **이전** — 앱내 미리보기 크롭 롤백 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_094044.apk` | `20391a6` | **이전** — **설정 저장 빠르게**(dirty+트랜잭션·재로드 생략·짧은 알림) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_091612.apk` | `4d56901` | **장소명 prefetch 재조회**(빈 장소명일 때 저장 화면에서 한 번 더) | **GitHub `releases/`** |
+
+#### 2026-07-22
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백(contain 복구) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — 확대 크롭 cover 일치 (**롤백됨**) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — **목록 빈 메모 숨김** | **GitHub `releases/`** |
@@ -1009,11 +1015,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
-### 2026-07-22
+### 2026-07-23
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **별도영역 이미지 표 표시** — PDF와 동일 2열 표(ViewShot+네이티브) · APK `releases/VoiceStamp_20260723_153816` · Vercel · `restore-caption-image-table.bat` §183 |
+| (본 배포) | **별도영역 이미지 흐림 수정** — ViewShot 오프스크린 대신 네이티브 불투명 JPEG 합성 · APK `releases/VoiceStamp_20260723_185321` · Vercel · `restore-caption-export-wash.bat` §185 · MIT `react-native-image-marker` (신규 의존성 없음) |
+| `f4be621` | **저장 목록 표시 모드** — 설정 제목·날짜만/전체 · APK `releases/VoiceStamp_20260723_170552` · Vercel · `restore-list-display-mode.bat` §184 |
+| `1109346` | **별도영역 이미지 표 표시** — PDF와 동일 2열 표(ViewShot+네이티브) · APK `releases/VoiceStamp_20260723_153816` · Vercel · `restore-caption-image-table.bat` §183 |
 | `d13caf8` | **별도영역 이미지 초록 테두리 수정** — 캡션 JPEG 흰 캔버스(반투명 노랑→초록) · APK `releases/VoiceStamp_20260723_151910` · Vercel · `restore-caption-green-border.bat` §182 |
 | `aabf4d5` | **내 템플릿(사용자 정의)** — 만들기·기존 복사·수정·삭제(기기 SQLite, 최대 30) · APK `releases/VoiceStamp_20260723_144416` · Vercel · `restore-custom-field-templates.bat` §181 |
 | `e45db50` | **저장 템플릿 시트 스크롤·여백** — 제목 고정·목록 ScrollView·닫기 하단 여백 · APK `releases/VoiceStamp_20260723_135456` · Vercel · `restore-template-sheet-scroll.bat` §180 |
@@ -1025,6 +1033,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `f27fcb6` | **앱내 카메라 미리보기 맞춤 저장** — FILL 프리뷰 비율 크롭 · APK `releases/VoiceStamp_20260723_100201` · `restore-inapp-preview-crop.bat` §174 |
 | `20391a6` | **설정 저장 빠르게 1+2+3+4** — dirty만 쓰기 · SQLite 트랜잭션 · 저장 후 refresh 생략 · 짧은 알림 · APK `releases/VoiceStamp_20260723_094044` · Vercel · `restore-settings-save-fast.bat` §173 |
 | `4d56901` | **장소명 prefetch 재조회** — 좌표만 있고 장소명이 비면 저장 모달에서 재조회 · APK `releases/VoiceStamp_20260723_091612` · Vercel · `restore-place-label-retry.bat` §172 |
+
+### 2026-07-22
+
+| 커밋 | 내용 |
+|------|------|
 | `b47ca39` | **cover 크롭 롤백** — contain 뷰어·수식 복구 · APK `releases/VoiceStamp_20260722_164409` · Vercel · §169 |
 | `7302cd4` | **확대 크롭 cover 일치** — APK `162518` · **이후 롤백** · §168 |
 | `41eef0c` | **목록 빈 메모 숨김** — 내용 없으면 `(표시명 없음)` 미표시 · APK `releases/VoiceStamp_20260722_133757` · Vercel · `restore-list-hide-empty-memo.bat` §167 |

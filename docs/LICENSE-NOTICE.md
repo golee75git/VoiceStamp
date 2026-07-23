@@ -129,3 +129,4 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-06-19 | 최초 작성 — OSS JSON·dual-license 검토 결론(MIT/BSD 확정) |
 | 2026-07-06 | `assets/zoomedit.png` UI 배지 에셋 고지 추가 |
 | 2026-07-06 | 미리보기 배지 에셋 `zoomedit.png` → `zoom.png` 로 교체 |
+| 2026-07-23 | 별도영역 이미지 내보내기: ViewShot→`react-native-image-marker`(MIT) 불투명 JPEG. 신규 의존성·권한 없음 |

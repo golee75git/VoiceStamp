@@ -206,11 +206,12 @@ export async function renderStampCaptionNative(
     });
   }
 
+  // JPEG (not PNG): strip alpha so Android does not wash/fringe the photo (same as green-border fix).
   const withChrome = await Marker.markImage({
     backgroundImage: { src: canvasUri, scale: 1 },
     watermarkImages: overlayImages,
-    quality: 1,
-    saveFormat: ImageFormat.png,
+    quality: 100,
+    saveFormat: ImageFormat.jpg,
   });
 
   const watermarkTexts: {
@@ -289,17 +290,17 @@ export async function renderStampCaptionNative(
     });
   }
 
-  const pngUri =
+  const markedUri =
     watermarkTexts.length > 0
       ? await Marker.markText({
           backgroundImage: { src: normalizeMarkedUri(withChrome), scale: 1 },
           watermarkTexts,
           quality: 100,
-          saveFormat: ImageFormat.png,
+          saveFormat: ImageFormat.jpg,
         })
       : withChrome;
 
-  const jpeg = await manipulateAsync(normalizeMarkedUri(pngUri), [], {
+  const jpeg = await manipulateAsync(normalizeMarkedUri(markedUri), [], {
     compress: jpegCompress,
     format: SaveFormat.JPEG,
   });

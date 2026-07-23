@@ -621,11 +621,10 @@ export async function renderStampJpegUri(
     return renderStampWatermarkNative(stamp, options, renderParams);
   }
 
-  // Caption: prefer ViewShot StampExportCard (same 2-col table as PDF) when host is available.
-  if (captureNative && !renderParams) {
-    return captureNative(stamp, options);
-  }
-
+  // Caption: always use native opaque-JPEG composite.
+  // ViewShot offscreen capture can wash out the whole image on Android (alpha/chroma).
+  // captureNative is kept for API compatibility but unused for caption export.
+  void captureNative;
   return renderStampCaptionNative(stamp, options, renderParams);
 }
 

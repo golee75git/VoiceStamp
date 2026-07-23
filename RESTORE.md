@@ -2953,3 +2953,11 @@ restore-caption-image-table.bat
 restore-list-display-mode.bat
 ```
 
+## 185. 별도영역 이미지 흐림(워시) 되돌리기 (선택)
+
+캡션 JPEG를 ViewShot 대신 네이티브 불투명 합성으로 바꾼 뒤 문제가 생기면:
+
+```bat
+restore-caption-export-wash.bat
+```
+

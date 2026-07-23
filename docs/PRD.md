@@ -674,6 +674,7 @@
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
 | **2026-07-22** | 07-22 누적 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(미리보기만) · APK `170650` · Vercel · `restore-disable-crop-apply.bat` §170 | (본 배포) |
+| **2026-07-23** | **별도영역 이미지 흐림 수정** — ViewShot→네이티브 불투명 JPEG (`image-marker` MIT, 신규 의존성 없음·기기 내 합성만) · 도움말 갱신 · `restore-caption-export-wash.bat` §185 · Play 스토어: 추가 권한·네트워크 없음 | (본 배포) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 

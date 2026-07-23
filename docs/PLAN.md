@@ -483,6 +483,20 @@
 | (본 갱신) | `afb5e88` 반영 — **카메라 권한 확인 중 생략**·APK `231004`·`171406`·`163836`·날짜별·APK별 이력 |
 | `744e460` | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
 | (본 갱신) | `6060a48` 반영 — **PDF 현장 폴더 archive**·APK `225635`·날짜별·APK별 이력 |
+| (본 갱신) | **2026-07-23** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · `restore-caption-export-wash.bat` §185 |
+
+---
+
+## 2AD. Phase 3 추가 완료 (2026-07-23)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 285 | **별도영역 이미지 흐림 수정** — 캡션 JPEG를 ViewShot 대신 네이티브 불투명 JPEG 합성 | (본 배포) | `restore-caption-export-wash.bat` §185 |
+| 286 | GitHub APK · 랜딩·`/info` · 도움말 | (본 배포) | — |
+
+> **보안·라이선스:** 신규 npm 없음. `react-native-image-marker` MIT. 기기 내 합성만(추가 네트워크·권한 없음). Play 스토어 정책상 민감 권한 변경 없음.
+
+> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk`.
 
 ---
 
