@@ -10,7 +10,7 @@ export type CaptionTableRow = {
   value: string;
 };
 
-export type CaptionTableSource = Pick<Stamp, 'title' | 'memo' | 'floor' | 'placeLabel' | 'extra1' | 'extra2'> &
+export type CaptionTableSource = Pick<Stamp, 'title' | 'memo' | 'floor' | 'placeLabel' | 'extra1' | 'extra2' | 'extra3'> &
   Partial<Pick<Stamp, 'latitude' | 'longitude' | 'createdAt'>>;
 
 /** Rows for caption/PDF table. Empty values omitted. Org/footer stay outside the table. */
@@ -47,6 +47,11 @@ export function buildCaptionTableRows(
   const extra2Value = stamp.extra2?.trim() ?? '';
   if (extra2Value) {
     rows.push({ label: labels.extra2FieldLabel, value: extra2Value });
+  }
+
+  const extra3Value = stamp.extra3?.trim() ?? '';
+  if (extra3Value) {
+    rows.push({ label: labels.extra3FieldLabel, value: extra3Value });
   }
 
   const memoValue = stamp.memo?.trim() ?? '';

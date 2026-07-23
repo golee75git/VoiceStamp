@@ -49,6 +49,10 @@ export const ALTER_STAMPS_ADD_EXTRA2 = `
   ALTER TABLE stamps ADD COLUMN extra2 TEXT;
 `;
 
+export const ALTER_STAMPS_ADD_EXTRA3 = `
+  ALTER TABLE stamps ADD COLUMN extra3 TEXT;
+`;
+
 export const ALTER_STAMPS_ADD_TITLE_FIELD_LABEL = `
   ALTER TABLE stamps ADD COLUMN title_field_label TEXT;
 `;
@@ -67,6 +71,10 @@ export const ALTER_STAMPS_ADD_EXTRA1_FIELD_LABEL = `
 
 export const ALTER_STAMPS_ADD_EXTRA2_FIELD_LABEL = `
   ALTER TABLE stamps ADD COLUMN extra2_field_label TEXT;
+`;
+
+export const ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL = `
+  ALTER TABLE stamps ADD COLUMN extra3_field_label TEXT;
 `;
 
 export const CREATE_SETTINGS_TABLE = `

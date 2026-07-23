@@ -56,6 +56,7 @@ export async function renderStampWatermarkNative(
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
   const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
+  const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -81,6 +82,9 @@ export async function renderStampWatermarkNative(
   }
   if (extra2) {
     overlayLines.push(extra2);
+  }
+  if (extra3) {
+    overlayLines.push(extra3);
   }
   if (memo) {
     overlayLines.push(memo);

@@ -11,6 +11,7 @@ export type CaptionLayout = {
   placeY: number | null;
   extra1Y: number | null;
   extra2Y: number | null;
+  extra3Y: number | null;
   memoY: number | null;
   coordsY: number | null;
   phraseY: number | null;
@@ -31,6 +32,7 @@ export type CaptionLayout = {
   placeText: string;
   extra1Text: string;
   extra2Text: string;
+  extra3Text: string;
   memoText: string;
   coordsText: string;
   phraseText: string;
@@ -100,6 +102,7 @@ export function buildCaptionLayout(
   place: string | null = null,
   extra1: string | null = null,
   extra2: string | null = null,
+  extra3: string | null = null,
   textSizeScale = 1,
 ): CaptionLayout {
   const scale = (photoWidth / CAPTION_REFERENCE_PHOTO_WIDTH) * textSizeScale;
@@ -128,6 +131,7 @@ export function buildCaptionLayout(
   const placeLines = place ? wrapTextLines(place, contentWidth, placeSize) : [];
   const extra1Lines = extra1 ? wrapTextLines(extra1, contentWidth, placeSize) : [];
   const extra2Lines = extra2 ? wrapTextLines(extra2, contentWidth, placeSize) : [];
+  const extra3Lines = extra3 ? wrapTextLines(extra3, contentWidth, placeSize) : [];
   const memoLines = memo ? wrapTextLines(memo, contentWidth, memoSize) : [];
   const coordsLines = coords ? wrapTextLines(coords, contentWidth, coordsSize) : [];
   const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, contentWidth, phraseSize) : [];
@@ -140,6 +144,8 @@ export function buildCaptionLayout(
     extra1Lines.length > 0 ? Math.round(8 * layoutScale) + extra1Lines.length * placeLineHeight : 0;
   const extra2BlockHeight =
     extra2Lines.length > 0 ? Math.round(8 * layoutScale) + extra2Lines.length * placeLineHeight : 0;
+  const extra3BlockHeight =
+    extra3Lines.length > 0 ? Math.round(8 * layoutScale) + extra3Lines.length * placeLineHeight : 0;
   const memoBlockHeight =
     memoLines.length > 0 ? Math.round(12 * layoutScale) + memoLines.length * memoLineHeight : 0;
   const coordsBlockHeight =
@@ -156,6 +162,7 @@ export function buildCaptionLayout(
     placeBlockHeight +
     extra1BlockHeight +
     extra2BlockHeight +
+    extra3BlockHeight +
     memoBlockHeight +
     coordsBlockHeight +
     phraseBlockHeight +
@@ -185,6 +192,11 @@ export function buildCaptionLayout(
     cursorY += extra2BlockHeight;
   }
 
+  const extra3Y = extra3Lines.length > 0 ? cursorY + Math.round(8 * layoutScale) : null;
+  if (extra3Y !== null) {
+    cursorY += extra3BlockHeight;
+  }
+
   const memoY = memoLines.length > 0 ? cursorY + Math.round(12 * layoutScale) : null;
   if (memoY !== null) {
     cursorY += memoBlockHeight;
@@ -206,6 +218,7 @@ export function buildCaptionLayout(
     placeY,
     extra1Y,
     extra2Y,
+    extra3Y,
     memoY,
     coordsY,
     phraseY,
@@ -226,6 +239,7 @@ export function buildCaptionLayout(
     placeText: placeLines.join('\n'),
     extra1Text: extra1Lines.join('\n'),
     extra2Text: extra2Lines.join('\n'),
+    extra3Text: extra3Lines.join('\n'),
     memoText: memoLines.join('\n'),
     coordsText: coordsLines.join('\n'),
     phraseText: phraseLines.join('\n'),

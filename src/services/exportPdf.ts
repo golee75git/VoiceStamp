@@ -16,6 +16,7 @@ import {
   getMemoTextAlign,
   getExtra1FieldLabel,
   getExtra2FieldLabel,
+  getExtra3FieldLabel,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
@@ -112,6 +113,7 @@ function buildStampItem(
   const place = placeLabeled;
   const extra1Labeled = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
   const extra2Labeled = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
+  const extra3Labeled = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, coordsLabel);
   const orgName = resolveOverlayOrgName(overlay);
   const footerPhrase = resolveOverlayFooterPhrase(overlay);
@@ -136,6 +138,9 @@ function buildStampItem(
     const watermarkExtra2Block = extra2Labeled
       ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(extra2Labeled)}</div>`
       : '';
+    const watermarkExtra3Block = extra3Labeled
+      ? `<div class="watermark-place" style="text-align: ${titleAlign}; color: ${theme.memoColor};">${escapeHtml(extra3Labeled)}</div>`
+      : '';
     const watermarkCoordsBlock = coords
       ? `<div class="stamp-coords" style="text-align: ${memoAlign}; color: ${theme.coordsColor};">${escapeHtml(coords)}</div>`
       : '';
@@ -158,6 +163,7 @@ function buildStampItem(
             ${watermarkPlaceBlock}
             ${watermarkExtra1Block}
             ${watermarkExtra2Block}
+            ${watermarkExtra3Block}
             ${memoBlock}
             ${watermarkCoordsBlock}
             ${phraseBlock}
@@ -506,7 +512,7 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, stampTextSize, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, stampTextSize, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
@@ -525,6 +531,7 @@ export async function createStampsPdf(
     getMemoFieldLabel(),
     getExtra1FieldLabel(),
     getExtra2FieldLabel(),
+    getExtra3FieldLabel(),
   ]);
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
@@ -543,7 +550,7 @@ export async function createStampsPdf(
     coordsLabel,
     watermarkStyle,
     { orgName, footerPhrase, showOrgName, showFooterPhrase },
-    { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel },
+    { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel },
     stampTextSize,
   );
 

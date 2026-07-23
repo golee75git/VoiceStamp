@@ -1,4 +1,4 @@
-/** Display names for stamp fields (UI + watermark). DB columns stay title / place_label / memo / extra1 / extra2. */
+/** Display names for stamp fields (UI + watermark). DB columns stay title / place_label / memo / extra1 / extra2 / extra3. */
 
 export type FieldLabels = {
   titleFieldLabel: string;
@@ -6,6 +6,7 @@ export type FieldLabels = {
   memoFieldLabel: string;
   extra1FieldLabel: string;
   extra2FieldLabel: string;
+  extra3FieldLabel: string;
 };
 
 export const DEFAULT_FIELD_TITLE_LABEL = '제목';
@@ -13,6 +14,7 @@ export const DEFAULT_FIELD_PLACE_LABEL = '장소';
 export const DEFAULT_FIELD_MEMO_LABEL = '메모';
 export const DEFAULT_FIELD_EXTRA1_LABEL = '추가1';
 export const DEFAULT_FIELD_EXTRA2_LABEL = '추가2';
+export const DEFAULT_FIELD_EXTRA3_LABEL = '추가3';
 export const FIELD_LABEL_MAX_LENGTH = 20;
 
 export function sanitizeFieldLabel(text: string, fallback: string): string {
@@ -42,6 +44,10 @@ export function resolveFieldLabels(partial?: Partial<FieldLabels> | null): Field
       partial?.extra2FieldLabel ?? DEFAULT_FIELD_EXTRA2_LABEL,
       DEFAULT_FIELD_EXTRA2_LABEL,
     ),
+    extra3FieldLabel: sanitizeFieldLabel(
+      partial?.extra3FieldLabel ?? DEFAULT_FIELD_EXTRA3_LABEL,
+      DEFAULT_FIELD_EXTRA3_LABEL,
+    ),
   };
 }
 
@@ -61,6 +67,7 @@ export function fieldLabelsFromStamp(stamp: {
   memoFieldLabel?: string | null;
   extra1FieldLabel?: string | null;
   extra2FieldLabel?: string | null;
+  extra3FieldLabel?: string | null;
 } | null | undefined): FieldLabels {
   return resolveFieldLabels({
     titleFieldLabel: stamp?.titleFieldLabel ?? undefined,
@@ -68,5 +75,6 @@ export function fieldLabelsFromStamp(stamp: {
     memoFieldLabel: stamp?.memoFieldLabel ?? undefined,
     extra1FieldLabel: stamp?.extra1FieldLabel ?? undefined,
     extra2FieldLabel: stamp?.extra2FieldLabel ?? undefined,
+    extra3FieldLabel: stamp?.extra3FieldLabel ?? undefined,
   });
 }

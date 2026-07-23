@@ -234,6 +234,7 @@ async function renderStampJpegWatermarkOnWeb(
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
   const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
+  const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options) ?? '';
   const footerPhrase = resolveOverlayFooterPhrase(options) ?? '';
@@ -259,6 +260,7 @@ async function renderStampJpegWatermarkOnWeb(
   const placeLines = place ? wrapCanvasLines(measureCtx, place, textWidth) : [];
   const extra1Lines = extra1 ? wrapCanvasLines(measureCtx, extra1, textWidth) : [];
   const extra2Lines = extra2 ? wrapCanvasLines(measureCtx, extra2, textWidth) : [];
+  const extra3Lines = extra3 ? wrapCanvasLines(measureCtx, extra3, textWidth) : [];
   measureCtx.font = `400 ${sz(26)}px sans-serif`;
   const memoLines = memo ? wrapCanvasLines(measureCtx, memo, textWidth) : [];
   measureCtx.font = `400 ${sz(22)}px sans-serif`;
@@ -273,6 +275,7 @@ async function renderStampJpegWatermarkOnWeb(
     (placeLines.length > 0 ? 6 + placeLines.length * sz(28) : 0) +
     (extra1Lines.length > 0 ? 6 + extra1Lines.length * sz(28) : 0) +
     (extra2Lines.length > 0 ? 6 + extra2Lines.length * sz(28) : 0) +
+    (extra3Lines.length > 0 ? 6 + extra3Lines.length * sz(28) : 0) +
     (memoLines.length > 0 ? 8 + memoLines.length * sz(32) : 0) +
     (coordsLines.length > 0 ? 6 + coordsLines.length * sz(28) : 0) +
     (phraseLines.length > 0 ? 4 + phraseLines.length * Math.max(18, Math.round(phraseSize * 1.1)) : 0) +
@@ -359,6 +362,21 @@ async function renderStampJpegWatermarkOnWeb(
     textY = drawAlignedText(
       ctx,
       extra2,
+      barPaddingX,
+      textY + 2,
+      textWidth,
+      options.titleAlign,
+      sz(24),
+      '400',
+      theme.memoColor,
+      sz(28),
+    );
+  }
+
+  if (extra3) {
+    textY = drawAlignedText(
+      ctx,
+      extra3,
       barPaddingX,
       textY + 2,
       textWidth,

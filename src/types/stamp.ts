@@ -15,12 +15,14 @@ export type Stamp = {
   placeLabel?: string | null;
   extra1?: string | null;
   extra2?: string | null;
+  extra3?: string | null;
   /** Snapshot of UI field labels at save/edit time (null = use app defaults). */
   titleFieldLabel?: string | null;
   placeFieldLabel?: string | null;
   memoFieldLabel?: string | null;
   extra1FieldLabel?: string | null;
   extra2FieldLabel?: string | null;
+  extra3FieldLabel?: string | null;
 };
 
 export type StampRow = {
@@ -38,9 +40,11 @@ export type StampRow = {
   place_label?: string | null;
   extra1?: string | null;
   extra2?: string | null;
+  extra3?: string | null;
   title_field_label?: string | null;
   place_field_label?: string | null;
   memo_field_label?: string | null;
   extra1_field_label?: string | null;
   extra2_field_label?: string | null;
+  extra3_field_label?: string | null;
 };

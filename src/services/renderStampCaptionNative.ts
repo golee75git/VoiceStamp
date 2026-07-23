@@ -87,6 +87,7 @@ export async function renderStampCaptionNative(
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
   const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
+  const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -103,6 +104,7 @@ export async function renderStampCaptionNative(
     place,
     extra1 || null,
     extra2 || null,
+    extra3 || null,
     stampTextSizeScale(options.stampTextSize ?? 'medium'),
   );
   const textBackgroundPaddingY = Math.max(4, Math.round(8 * (layout.padding / 24)));
@@ -198,6 +200,23 @@ export async function renderStampCaptionNative(
       positionOptions: {
         X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
         Y: layout.extra2Y,
+      },
+      style: captionTextStyle(
+        '#374151',
+        layout.placeSize,
+        layout.placeAlign,
+        false,
+        textBackgroundPaddingY,
+      ),
+    });
+  }
+
+  if (layout.extra3Y !== null && layout.extra3Text) {
+    watermarkTexts.push({
+      text: layout.extra3Text,
+      positionOptions: {
+        X: captionTextX(layout.placeAlign, layout.padding, layout.canvasWidth),
+        Y: layout.extra3Y,
       },
       style: captionTextStyle(
         '#374151',

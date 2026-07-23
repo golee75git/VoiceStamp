@@ -101,6 +101,7 @@ export function StampListScreen({
   const [memoFieldLabel, setMemoFieldLabel] = useState('메모');
   const [extra1FieldLabel, setExtra1FieldLabel] = useState('추가1');
   const [extra2FieldLabel, setExtra2FieldLabel] = useState('추가2');
+  const [extra3FieldLabel, setExtra3FieldLabel] = useState('추가3');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [importUri, setImportUri] = useState<string | null>(null);
   const [importModalVisible, setImportModalVisible] = useState(false);
@@ -189,6 +190,7 @@ export function StampListScreen({
       setMemoFieldLabel(settings.memoFieldLabel);
       setExtra1FieldLabel(settings.extra1FieldLabel);
       setExtra2FieldLabel(settings.extra2FieldLabel);
+      setExtra3FieldLabel(settings.extra3FieldLabel);
       setCameraHand(settings.cameraHand);
     } catch {
       // 목록은 이미 표시됨
@@ -361,6 +363,7 @@ export function StampListScreen({
         memoFieldLabel,
         extra1FieldLabel,
         extra2FieldLabel,
+        extra3FieldLabel,
       };
       const { saved, failed } = await saveStampsAsJpegToGallery(
         selected,
@@ -729,6 +732,10 @@ export function StampListScreen({
                 labels.extra2FieldLabel,
                 item.extra2 ?? '',
               );
+              const displayExtra3 = formatLabeledValue(
+                labels.extra3FieldLabel,
+                item.extra3 ?? '',
+              );
               return (
                 <Pressable
                   style={[
@@ -774,6 +781,11 @@ export function StampListScreen({
                     {displayExtra2 ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayExtra2}
+                      </Text>
+                    ) : null}
+                    {displayExtra3 ? (
+                      <Text style={styles.cardPlace} numberOfLines={1}>
+                        {displayExtra3}
                       </Text>
                     ) : null}
                     {displayMemo ? (

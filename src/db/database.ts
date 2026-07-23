@@ -7,11 +7,13 @@ import {
   ALTER_STAMPS_ADD_PLACE_LABEL,
   ALTER_STAMPS_ADD_EXTRA1,
   ALTER_STAMPS_ADD_EXTRA2,
+  ALTER_STAMPS_ADD_EXTRA3,
   ALTER_STAMPS_ADD_TITLE_FIELD_LABEL,
   ALTER_STAMPS_ADD_PLACE_FIELD_LABEL,
   ALTER_STAMPS_ADD_MEMO_FIELD_LABEL,
   ALTER_STAMPS_ADD_EXTRA1_FIELD_LABEL,
   ALTER_STAMPS_ADD_EXTRA2_FIELD_LABEL,
+  ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_SETTINGS_TABLE,
@@ -56,6 +58,10 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   if (!hasExtra2) {
     await db.execAsync(ALTER_STAMPS_ADD_EXTRA2);
   }
+  const hasExtra3 = columns.some((column) => column.name === 'extra3');
+  if (!hasExtra3) {
+    await db.execAsync(ALTER_STAMPS_ADD_EXTRA3);
+  }
   const hasTitleFieldLabel = columns.some((column) => column.name === 'title_field_label');
   if (!hasTitleFieldLabel) {
     await db.execAsync(ALTER_STAMPS_ADD_TITLE_FIELD_LABEL);
@@ -75,6 +81,10 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasExtra2FieldLabel = columns.some((column) => column.name === 'extra2_field_label');
   if (!hasExtra2FieldLabel) {
     await db.execAsync(ALTER_STAMPS_ADD_EXTRA2_FIELD_LABEL);
+  }
+  const hasExtra3FieldLabel = columns.some((column) => column.name === 'extra3_field_label');
+  if (!hasExtra3FieldLabel) {
+    await db.execAsync(ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }

@@ -69,6 +69,7 @@ type StampSavePreviewProps = {
   memo: string;
   extra1?: string;
   extra2?: string;
+  extra3?: string;
   placeLabel?: string | null;
   titleAlign: TextAlign;
   memoAlign: TextAlign;
@@ -86,6 +87,7 @@ type StampSavePreviewProps = {
   memoFieldLabel?: string;
   extra1FieldLabel?: string;
   extra2FieldLabel?: string;
+  extra3FieldLabel?: string;
   floor?: StampFloor | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -99,6 +101,7 @@ export function StampSavePreview({
   memo,
   extra1 = '',
   extra2 = '',
+  extra3 = '',
   placeLabel,
   titleAlign,
   memoAlign,
@@ -116,6 +119,7 @@ export function StampSavePreview({
   memoFieldLabel,
   extra1FieldLabel,
   extra2FieldLabel,
+  extra3FieldLabel,
   floor,
   latitude,
   longitude,
@@ -128,6 +132,7 @@ export function StampSavePreview({
     memoFieldLabel,
     extra1FieldLabel,
     extra2FieldLabel,
+    extra3FieldLabel,
   });
   const displayTitle = formatLabeledValue(
     labels.titleFieldLabel,
@@ -136,13 +141,14 @@ export function StampSavePreview({
   const displayMemo = formatLabeledValue(labels.memoFieldLabel, memo.trim());
   const displayExtra1 = formatLabeledValue(labels.extra1FieldLabel, extra1.trim());
   const displayExtra2 = formatLabeledValue(labels.extra2FieldLabel, extra2.trim());
+  const displayExtra3 = formatLabeledValue(labels.extra3FieldLabel, extra3.trim());
   const displayPlaceRaw = stampDisplayPlace({ placeLabel, floor }) ?? '';
   const displayPlace = formatLabeledValue(labels.placeFieldLabel, displayPlaceRaw);
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const captionTableRows = buildCaptionTableRows(
-    { title, memo, floor, placeLabel, extra1, extra2, latitude, longitude },
+    { title, memo, floor, placeLabel, extra1, extra2, extra3, latitude, longitude },
     labels,
     { showDatetime, coordsLabel, includeCoords: true },
   );
@@ -293,6 +299,18 @@ export function StampSavePreview({
           {displayExtra2}
         </Text>
       ) : null}
+      {displayExtra3 ? (
+        <Text
+          style={[
+            watermarkPlaceStyle,
+            { textAlign: titleAlign, color: watermarkTheme.memoColor },
+            wmPlaceFs,
+          ]}
+          numberOfLines={2}
+        >
+          {displayExtra3}
+        </Text>
+      ) : null}
       {displayMemo ? (
         <Text
           style={[
@@ -405,6 +423,17 @@ export function StampSavePreview({
                 ]}
               >
                 {displayExtra2}
+              </Text>
+            ) : null}
+            {displayExtra3 ? (
+              <Text
+                style={[
+                  watermarkPlaceStyle,
+                  { textAlign: titleAlign, color: watermarkTheme.memoColor },
+                  wmPlaceFs,
+                ]}
+              >
+                {displayExtra3}
               </Text>
             ) : null}
             {displayMemo ? (

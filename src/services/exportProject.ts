@@ -13,6 +13,7 @@ import {
   getMemoTextAlign,
   getExtra1FieldLabel,
   getExtra2FieldLabel,
+  getExtra3FieldLabel,
   getOverlayFooterPhrase,
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
@@ -44,6 +45,7 @@ export type ProjectExportSettings = {
   memoFieldLabel: string;
   extra1FieldLabel: string;
   extra2FieldLabel: string;
+  extra3FieldLabel: string;
 };
 
 export type ProjectManifestStamp = {
@@ -54,11 +56,13 @@ export type ProjectManifestStamp = {
   floor: string | null;
   extra1: string | null;
   extra2: string | null;
+  extra3: string | null;
   titleFieldLabel: string | null;
   placeFieldLabel: string | null;
   memoFieldLabel: string | null;
   extra1FieldLabel: string | null;
   extra2FieldLabel: string | null;
+  extra3FieldLabel: string | null;
   latitude: number | null;
   longitude: number | null;
   createdAt: number;
@@ -134,7 +138,7 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
@@ -150,6 +154,7 @@ export async function createStampsProjectZip(
     getMemoFieldLabel(),
     getExtra1FieldLabel(),
     getExtra2FieldLabel(),
+    getExtra3FieldLabel(),
   ]);
 
   const manifestStamps: ProjectManifestStamp[] = [];
@@ -173,11 +178,13 @@ export async function createStampsProjectZip(
       floor: stamp.floor ?? null,
       extra1: stamp.extra1 ?? null,
       extra2: stamp.extra2 ?? null,
+      extra3: stamp.extra3 ?? null,
       titleFieldLabel: stamp.titleFieldLabel ?? null,
       placeFieldLabel: stamp.placeFieldLabel ?? null,
       memoFieldLabel: stamp.memoFieldLabel ?? null,
       extra1FieldLabel: stamp.extra1FieldLabel ?? null,
       extra2FieldLabel: stamp.extra2FieldLabel ?? null,
+      extra3FieldLabel: stamp.extra3FieldLabel ?? null,
       latitude: stamp.latitude ?? null,
       longitude: stamp.longitude ?? null,
       createdAt: stamp.createdAt,
@@ -207,6 +214,7 @@ export async function createStampsProjectZip(
       memoFieldLabel,
       extra1FieldLabel,
       extra2FieldLabel,
+      extra3FieldLabel,
     },
     stamps: manifestStamps,
   };

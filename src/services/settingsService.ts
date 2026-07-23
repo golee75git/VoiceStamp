@@ -28,6 +28,7 @@ import {
 import {
   DEFAULT_FIELD_EXTRA1_LABEL,
   DEFAULT_FIELD_EXTRA2_LABEL,
+  DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_TITLE_LABEL,
@@ -74,6 +75,7 @@ const FIELD_LABEL_PLACE_KEY = 'field_label_place';
 const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
 const FIELD_LABEL_EXTRA1_KEY = 'field_label_extra1';
 const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
+const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -111,6 +113,7 @@ export {
 export {
   DEFAULT_FIELD_EXTRA1_LABEL,
   DEFAULT_FIELD_EXTRA2_LABEL,
+  DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_TITLE_LABEL,
@@ -451,6 +454,7 @@ export type SettingsScreenSnapshot = {
   memoFieldLabel: string;
   extra1FieldLabel: string;
   extra2FieldLabel: string;
+  extra3FieldLabel: string;
 };
 
 export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
@@ -596,6 +600,12 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
         ? sanitizeFieldLabel(raw, DEFAULT_FIELD_EXTRA2_LABEL)
         : DEFAULT_FIELD_EXTRA2_LABEL;
     })(),
+    extra3FieldLabel: (() => {
+      const raw = pickSetting(map, FIELD_LABEL_EXTRA3_KEY);
+      return raw
+        ? sanitizeFieldLabel(raw, DEFAULT_FIELD_EXTRA3_LABEL)
+        : DEFAULT_FIELD_EXTRA3_LABEL;
+    })(),
   };
 }
 
@@ -634,6 +644,7 @@ export function sanitizeSettingsScreenSnapshot(
     memoFieldLabel: sanitizeFieldLabel(draft.memoFieldLabel, DEFAULT_FIELD_MEMO_LABEL),
     extra1FieldLabel: sanitizeFieldLabel(draft.extra1FieldLabel, DEFAULT_FIELD_EXTRA1_LABEL),
     extra2FieldLabel: sanitizeFieldLabel(draft.extra2FieldLabel, DEFAULT_FIELD_EXTRA2_LABEL),
+    extra3FieldLabel: sanitizeFieldLabel(draft.extra3FieldLabel, DEFAULT_FIELD_EXTRA3_LABEL),
   };
 }
 
@@ -669,6 +680,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [FIELD_LABEL_MEMO_KEY, snapshot.memoFieldLabel],
     [FIELD_LABEL_EXTRA1_KEY, snapshot.extra1FieldLabel],
     [FIELD_LABEL_EXTRA2_KEY, snapshot.extra2FieldLabel],
+    [FIELD_LABEL_EXTRA3_KEY, snapshot.extra3FieldLabel],
   ];
 }
 
@@ -1121,6 +1133,20 @@ export async function getExtra2FieldLabel(): Promise<string> {
 export async function setExtra2FieldLabel(label: string): Promise<string> {
   const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_EXTRA2_LABEL);
   await writeSetting(FIELD_LABEL_EXTRA2_KEY, safe);
+  return safe;
+}
+
+export async function getExtra3FieldLabel(): Promise<string> {
+  const value = await readSetting(FIELD_LABEL_EXTRA3_KEY);
+  if (!value) {
+    return DEFAULT_FIELD_EXTRA3_LABEL;
+  }
+  return sanitizeFieldLabel(value, DEFAULT_FIELD_EXTRA3_LABEL);
+}
+
+export async function setExtra3FieldLabel(label: string): Promise<string> {
+  const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_EXTRA3_LABEL);
+  await writeSetting(FIELD_LABEL_EXTRA3_KEY, safe);
   return safe;
 }
 

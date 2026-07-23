@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceStamp — Android 앱</title>
+  <script src="/vendor/qrcode.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 0 auto; padding: 1.25rem; color: #111; line-height: 1.6; background: #fff; }
+    a { color: #2563eb; }
+    .muted { color: #6b7280; font-size: 0.9rem; }
+    h1 { font-size: 1.75rem; margin: 0 0 0.5rem; }
+    .lead { font-size: 1.05rem; margin: 0 0 1.25rem; }
+    .cta { display: inline-block; margin: 0.5rem 0 1.25rem; padding: 0.75rem 1.25rem; background: #2563eb; color: #fff !important; text-decoration: none; border-radius: 10px; font-weight: 700; }
+    .share-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      padding: 1rem 1.1rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+    .share-qr-wrap { flex: 0 0 auto; text-align: center; }
+    #site-qr { display: inline-block; line-height: 0; }
+    #site-qr img { display: block; border-radius: 6px; }
+    .share-actions { flex: 1 1 12rem; min-width: 0; }
+    .share-btn {
+      display: inline-block;
+      padding: 0.6rem 1rem;
+      border: 1px solid #2563eb;
+      border-radius: 10px;
+      background: #fff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .share-btn:active { background: #eff6ff; }
+    .share-hint { margin: 0.35rem 0 0; font-size: 0.85rem; }
+    .panel { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.1rem; margin: 1.25rem 0; }
+    .panel h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+    ul { padding-left: 1.25rem; margin: 0.5rem 0 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>VoiceStamp</h1>
+  <p class="muted">버전 1.0.0 · 빌드 2026-07-23</p>  <p class="lead">사진 촬영 후 제목·메모를 남기고 스탬프로 저장·PDF·이미지로 공유하는 Android 앱입니다.</p>
+
+  <a class="cta" href="https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260723_102421.apk">Android APK 다운로드</a>
+  <p class="muted">VoiceStamp_20260723_102421.apk</p>
+  <p class="muted">설치 후 카메라·마이크·위치 권한을 허용해 주세요.</p>
+
+  <section class="share-bar" aria-label="홈페이지 공유">
+    <div class="share-qr-wrap">
+      <div id="site-qr" role="img" aria-label="https://voicestamp-gilt.vercel.app/ QR 코드"></div>
+      <p class="muted share-hint">QR 스캔 → 홈</p>
+    </div>
+    <div class="share-actions">
+      <button type="button" id="share-site" class="share-btn">링크 공유</button>
+      <p class="muted share-hint">휴대폰에서는 카카오톡 등으로 보낼 수 있습니다.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>개인정보·사용 안내</h2>
+    <p class="muted" style="margin:0 0 0.75rem;">
+      VoiceStamp <strong>운영 서버에는 사진·위치·제목·메모 등 개인정보를 저장하지 않습니다.</strong>
+      데이터는 사용자 <strong>휴대폰(또는 웹 테스트 시 브라우저)</strong> 안에만 보관됩니다.
+      자세한 내용은 <a href="/privacy">개인정보 처리 안내</a>를 참고해 주세요.
+    </p>
+    <p class="muted" style="margin:0;">
+      이 웹 사이트의 앱 화면은 <strong>단순 테스트용</strong>입니다. 실제 사용·평가는 위
+      <strong>Android APK를 다운로드해 설치</strong>한 뒤 이용해 주세요.
+    </p>
+    <p class="muted" style="margin:0.75rem 0 0;">
+      촬영한 사진은 관련 법령과 타인의 초상권·개인정보·저작권을 준수하여 이용해야 합니다.
+      불법 촬영, 무단 공유 등 사용자의 부적절한 이용으로 발생한 책임은 사용자에게 있습니다.
+    </p>
+  </section>
+
+  <ul>
+    <li><a href="/report">PC 보고서 편집</a> (프로젝트 ZIP · 행 삭제)</li>
+    <li><a href="/privacy">개인정보 처리 안내</a></li>
+    <li><a href="/license">라이선스·저작권</a></li>
+    <li><a href="/help">도움말</a></li>
+  </ul>
+
+  <p>© 2026 Lee Hyung Woo</p>
+  <footer>
+    <p id="visitor-stats" class="muted" aria-live="polite"></p>
+    문의: <a href="https://github.com/golee75git/VoiceStamp/issues">GitHub Issues</a>
+  </footer>
+  <script>
+    (function () {
+      var SITE_URL = 'https://voicestamp-gilt.vercel.app/';
+
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(document.getElementById('site-qr'), {
+          text: SITE_URL,
+          width: 120,
+          height: 120,
+          colorDark: '#111827',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+      }
+
+      var shareBtn = document.getElementById('share-site');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          var payload = {
+            title: 'VoiceStamp',
+            text: 'VoiceStamp Android 앱 홈페이지',
+            url: SITE_URL,
+          };
+
+          if (navigator.share) {
+            navigator.share(payload).catch(function (err) {
+              if (err && err.name === 'AbortError') return;
+              fallbackCopy(SITE_URL);
+            });
+            return;
+          }
+          fallbackCopy(SITE_URL);
+        });
+      }
+
+      function fallbackCopy(url) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () {
+            alert('링크를 복사했습니다.');
+          }).catch(function () {
+            window.prompt('아래 링크를 복사하세요.', url);
+          });
+          return;
+        }
+        window.prompt('아래 링크를 복사하세요.', url);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      var el = document.getElementById('visitor-stats');
+      if (!el) return;
+
+      var today = new Date().toISOString().slice(0, 10);
+      var seenKey = 'vs_landing_seen_' + today;
+
+      function showStats(data) {
+        if (!data || typeof data.daily !== 'number' || typeof data.total !== 'number') return;
+        el.textContent = '오늘 방문 ' + data.daily.toLocaleString('ko-KR')
+          + ' · 누적 ' + data.total.toLocaleString('ko-KR');
+      }
+
+      function loadStats() {
+        fetch('/api/visitor')
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(showStats)
+          .catch(function () {});
+      }
+
+      if (localStorage.getItem(seenKey)) {
+        loadStats();
+        return;
+      }
+
+      localStorage.setItem(seenKey, '1');
+      fetch('/api/visitor', { method: 'POST', keepalive: true })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data) showStats(data);
+          else loadStats();
+        })
+        .catch(loadStats);
+    })();
+  </script>
+</body>
+</html>

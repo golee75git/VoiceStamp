@@ -21,6 +21,8 @@ type VoiceInputFieldProps = {
   cameraHand?: CameraHand;
   /** Stamp field body font size (system font; from stamp text size setting). */
   fontSize?: number;
+  /** Faded example text (template hint). Defaults to `${label} 입력`. */
+  placeholderHint?: string;
   /** Tap label to rename; commit via onLabelCommit (settings). */
   labelEditable?: boolean;
   onLabelCommit?: (nextLabel: string) => void;
@@ -40,6 +42,7 @@ export function VoiceInputField({
   textAlign = 'left',
   cameraHand = 'right',
   fontSize = 16,
+  placeholderHint,
   labelEditable = false,
   onLabelCommit,
 }: VoiceInputFieldProps) {
@@ -111,7 +114,8 @@ export function VoiceInputField({
         onFocus={onFocus}
         onSelectionChange={(event) => onSelectionChange?.(event.nativeEvent.selection)}
         selection={selection}
-        placeholder={`${label} 입력`}
+        placeholder={placeholderHint?.trim() || `${label} 입력`}
+        placeholderTextColor="#9ca3af"
         multiline={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}
       />

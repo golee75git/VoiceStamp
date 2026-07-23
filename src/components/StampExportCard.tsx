@@ -45,6 +45,7 @@ export function StampExportCard({
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
   const extra1 = formatLabeledValue(labels.extra1FieldLabel, stamp.extra1?.trim() ?? '');
   const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
+  const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
   const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
@@ -173,6 +174,21 @@ export function StampExportCard({
               {extra2}
             </Text>
           ) : null}
+          {extra3 ? (
+            <Text
+              style={[
+                styles.watermarkMemo,
+                {
+                  fontSize: Math.max(14, Math.round(24 * scale * textScale)),
+                  lineHeight: Math.max(18, Math.round(30 * scale * textScale)),
+                  textAlign: options.titleAlign,
+                  color: watermarkTheme.memoColor,
+                },
+              ]}
+            >
+              {extra3}
+            </Text>
+          ) : null}
           {memo ? (
             <Text
               style={[
@@ -257,6 +273,16 @@ export function StampExportCard({
                 ]}
               >
                 {extra2}
+              </Text>
+            ) : null}
+            {extra3 ? (
+              <Text
+                style={[
+                  styles.watermarkMemo,
+                  { textAlign: options.titleAlign, color: watermarkTheme.memoColor },
+                ]}
+              >
+                {extra3}
               </Text>
             ) : null}
             {memo ? (

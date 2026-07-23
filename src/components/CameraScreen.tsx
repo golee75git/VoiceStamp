@@ -16,6 +16,7 @@ import { CameraView } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
+import { FieldTemplateSheet } from './FieldTemplateSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
@@ -35,6 +36,8 @@ import {
 const listIcon = require('../../assets/list-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const settingsIcon = require('../../assets/settings-icon.png');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const templateIcon = require('../../assets/template-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeImage = require('../../assets/camera-home.png');
 
@@ -59,6 +62,7 @@ export function CameraScreen({
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [pendingCaptureUri, setPendingCaptureUri] = useState<string | null>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const [templateSheetVisible, setTemplateSheetVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
@@ -738,6 +742,14 @@ export function CameraScreen({
       >
         <Pressable
           style={[styles.navButton, styles.navIconButton]}
+          onPress={() => setTemplateSheetVisible(true)}
+          disabled={cameraBusy || actionSheetVisible}
+          accessibilityLabel="저장 템플릿"
+        >
+          <Image source={templateIcon} style={styles.navIcon} resizeMode="contain" />
+        </Pressable>
+        <Pressable
+          style={[styles.navButton, styles.navIconButton]}
           onPress={onOpenList}
           disabled={cameraBusy || actionSheetVisible}
           accessibilityLabel="목록"
@@ -753,6 +765,14 @@ export function CameraScreen({
           <Image source={settingsIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
       </View>
+
+      <FieldTemplateSheet
+        visible={templateSheetVisible}
+        onClose={() => setTemplateSheetVisible(false)}
+        onApplied={(template) => {
+          Alert.alert('저장 템플릿', `「${template.name}」표시명을 적용했습니다.`);
+        }}
+      />
 
       <CaptureActionSheet
         visible={actionSheetVisible}

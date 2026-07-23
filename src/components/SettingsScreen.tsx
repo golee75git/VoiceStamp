@@ -55,6 +55,7 @@ import {
   DEFAULT_FIELD_MEMO_LABEL,
   DEFAULT_FIELD_EXTRA1_LABEL,
   DEFAULT_FIELD_EXTRA2_LABEL,
+  DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_SHUTTER_SOUND,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
@@ -191,6 +192,7 @@ export function SettingsScreen({
   const [memoFieldLabel, setMemoFieldLabelState] = useState(DEFAULT_FIELD_MEMO_LABEL);
   const [extra1FieldLabel, setExtra1FieldLabelState] = useState(DEFAULT_FIELD_EXTRA1_LABEL);
   const [extra2FieldLabel, setExtra2FieldLabelState] = useState(DEFAULT_FIELD_EXTRA2_LABEL);
+  const [extra3FieldLabel, setExtra3FieldLabelState] = useState(DEFAULT_FIELD_EXTRA3_LABEL);
   const [saving, setSaving] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -230,6 +232,7 @@ export function SettingsScreen({
       setMemoFieldLabelState(snapshot.memoFieldLabel);
       setExtra1FieldLabelState(snapshot.extra1FieldLabel);
       setExtra2FieldLabelState(snapshot.extra2FieldLabel);
+      setExtra3FieldLabelState(snapshot.extra3FieldLabel);
     });
     return () => {
       cancelled = true;
@@ -270,6 +273,7 @@ export function SettingsScreen({
         memoFieldLabel,
         extra1FieldLabel,
         extra2FieldLabel,
+        extra3FieldLabel,
       });
       setFolderName(saved.folderName);
       setPdfPhotosPerPageState(saved.pdfPhotosPerPage);
@@ -301,6 +305,7 @@ export function SettingsScreen({
       setMemoFieldLabelState(saved.memoFieldLabel);
       setExtra1FieldLabelState(saved.extra1FieldLabel);
       setExtra2FieldLabelState(saved.extra2FieldLabel);
+      setExtra3FieldLabelState(saved.extra3FieldLabel);
       invalidateStampSaveModalLayoutCache();
       // 저장 직후 refreshKey bump 생략 — 설정 화면 재로드를 피함. 카메라/목록은 복귀 시 remount로 반영.
       Alert.alert('저장 완료', '설정을 저장했습니다.');
@@ -523,7 +528,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>필드 표시명</Text>
           <Text style={styles.hint}>
-            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 저장 화면에서 칸 이름을 탭해도 여기와 같이 저장됩니다. 비우면 기본값(제목·장소·메모·추가1·추가2)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
+            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 저장 화면에서 칸 이름을 탭해도 여기와 같이 저장됩니다. 비우면 기본값(제목·장소·메모·추가1·추가2·추가3)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
           </Text>
           <Text style={styles.label}>제목 칸 이름</Text>
           <TextInput
@@ -567,6 +572,15 @@ export function SettingsScreen({
             value={extra2FieldLabel}
             onChangeText={setExtra2FieldLabelState}
             placeholder={DEFAULT_FIELD_EXTRA2_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>추가3 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={extra3FieldLabel}
+            onChangeText={setExtra3FieldLabelState}
+            placeholder={DEFAULT_FIELD_EXTRA3_LABEL}
             maxLength={FIELD_LABEL_MAX_LENGTH}
             editable={!saving}
           />

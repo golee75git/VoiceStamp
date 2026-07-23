@@ -3,6 +3,7 @@ import {
   getCoordsLabelMode,
   getExtra1FieldLabel,
   getExtra2FieldLabel,
+  getExtra3FieldLabel,
   getFloorDisplayMode,
   getMemoFieldLabel,
   getMemoTextAlign,
@@ -45,6 +46,7 @@ export type StampSaveModalLayoutSettings = {
   memoFieldLabel: string;
   extra1FieldLabel: string;
   extra2FieldLabel: string;
+  extra3FieldLabel: string;
 };
 
 let cachedLayout: StampSaveModalLayoutSettings | null = null;
@@ -83,6 +85,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
       getMemoFieldLabel(),
       getExtra1FieldLabel(),
       getExtra2FieldLabel(),
+      getExtra3FieldLabel(),
     ]).then(
       ([
         titleTextAlign,
@@ -103,6 +106,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
         memoFieldLabel,
         extra1FieldLabel,
         extra2FieldLabel,
+        extra3FieldLabel,
       ]) => {
         const settings: StampSaveModalLayoutSettings = {
           titleTextAlign,
@@ -123,6 +127,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
           memoFieldLabel,
           extra1FieldLabel,
           extra2FieldLabel,
+          extra3FieldLabel,
         };
         cachedLayout = settings;
         return settings;

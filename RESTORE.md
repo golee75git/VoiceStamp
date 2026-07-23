@@ -2877,3 +2877,13 @@ Copy-Item src.pre-revert-inapp-preview-crop\public\help.html,src.pre-revert-inap
 Copy-Item src.pre-revert-inapp-preview-crop\constants\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 176. 저장 템플릿·추가3 필드 되돌리기 (선택)
+
+홈 템플릿 아이콘·extra3·필드 템플릿. 문제 시:
+
+```bat
+restore-field-templates.bat
+```
+
+(`src.pre-field-templates`로 복구. 신규 `stampFieldTemplates.ts`·`FieldTemplateSheet.tsx`는 삭제됨. `assets\template-icon.png`는 수동 삭제.)
+
