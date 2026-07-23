@@ -2911,3 +2911,11 @@ restore-template-label-flash.bat
 restore-more-field-templates.bat
 ```
 
+## 180. 저장 템플릿 시트 스크롤·여백 되돌리기 (선택)
+
+제목 고정·목록 스크롤·닫기 하단 여백. 문제 시:
+
+```bat
+restore-template-sheet-scroll.bat
+```
+

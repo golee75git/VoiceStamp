@@ -1,4 +1,14 @@
-import { Alert, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import {
   STAMP_FIELD_TEMPLATES,
@@ -13,6 +23,9 @@ type FieldTemplateSheetProps = {
 };
 
 export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplateSheetProps) {
+  const { height: windowHeight } = useWindowDimensions();
+  const sheetMaxHeight = Math.round(windowHeight * 0.85);
+
   const handleSelect = async (templateId: string) => {
     try {
       const applied = await applyStampFieldTemplate(templateId);
@@ -27,26 +40,35 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={styles.sheet}>
-          <Text style={styles.title}>저장 템플릿</Text>
+        <View style={[styles.sheet, { maxHeight: sheetMaxHeight }]}>
+          <Text style={styles.title} accessibilityRole="header">
+            저장 템플릿
+          </Text>
           <Text style={styles.hint}>
             필드 표시명을 바꿉니다. 입력칸에는 예시가 흐리게 보이고, 촬영일시는 촬영 시각이 사용됩니다.
           </Text>
-          {STAMP_FIELD_TEMPLATES.map((template) => (
-            <Pressable
-              key={template.id}
-              style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
-              onPress={() => void handleSelect(template.id)}
-              accessibilityLabel={template.name}
-            >
-              <Text style={styles.itemTitle}>{template.name}</Text>
-              <Text style={styles.itemMeta} numberOfLines={2}>
-                {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
-                {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
-                {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
-              </Text>
-            </Pressable>
-          ))}
+          <ScrollView
+            style={styles.list}
+            contentContainerStyle={styles.listContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+          >
+            {STAMP_FIELD_TEMPLATES.map((template) => (
+              <Pressable
+                key={template.id}
+                style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+                onPress={() => void handleSelect(template.id)}
+                accessibilityLabel={template.name}
+              >
+                <Text style={styles.itemTitle}>{template.name}</Text>
+                <Text style={styles.itemMeta} numberOfLines={2}>
+                  {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
+                  {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
+                  {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
           <Pressable
             style={({ pressed }) => [styles.cancel, pressed && styles.cancelPressed]}
             onPress={onClose}
@@ -72,7 +94,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 28,
+    // Lift above Android gesture/nav bar so 「닫기」 stays tappable.
+    paddingBottom: Platform.OS === 'android' ? 48 : 36,
     gap: 10,
   },
   title: {
@@ -85,6 +108,14 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 4,
     lineHeight: 18,
+  },
+  list: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  listContent: {
+    gap: 10,
+    paddingBottom: 4,
   },
   item: {
     borderWidth: 1,
