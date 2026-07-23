@@ -23,8 +23,9 @@ import type { Stamp } from '../types/stamp';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
 
+/** Opaque white RGBA 1×1. (Previous base64 was yellow @ 50% alpha → green fringe around photo.) */
 const WHITE_1X1_PNG_BASE64 =
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4////fwAJ+wP9KobjigAAAABJRU5ErkJggg==';
 
 function normalizeMarkedUri(markedUri: string): string {
   if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
@@ -41,9 +42,10 @@ async function createWhiteCanvas(width: number, height: number): Promise<string>
   await FileSystem.writeAsStringAsync(tempUri, WHITE_1X1_PNG_BASE64, {
     encoding: FileSystem.EncodingType.Base64,
   });
+  // JPEG strips alpha so image-marker cannot leave green/chroma fringes in photo padding.
   const resized = await manipulateAsync(tempUri, [{ resize: { width, height } }], {
     compress: 1,
-    format: SaveFormat.PNG,
+    format: SaveFormat.JPEG,
   });
   return resized.uri;
 }

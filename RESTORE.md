@@ -2929,3 +2929,11 @@ restore-custom-field-templates.bat
 
 (`src.pre-custom-field-templates`로 복구. 신규 `CustomFieldTemplateEditor.tsx`는 삭제됨.)
 
+## 182. 별도영역 이미지 초록 테두리 되돌리기 (선택)
+
+캡션 JPEG 흰 캔버스(반투명 노랑→초록 테두리) 수정. 문제 시:
+
+```bat
+restore-caption-green-border.bat
+```
+
