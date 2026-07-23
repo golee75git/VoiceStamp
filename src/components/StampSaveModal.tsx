@@ -560,7 +560,8 @@ export function StampSaveModal({
       if (!snapshot) {
         return;
       }
-      if (!placeTouchedRef.current) {
+      // 빈 장소명으로 이미 채워진 값을 지우지 않음(재조회 실패 시 보호)
+      if (!placeTouchedRef.current && snapshot.placeLabel?.trim()) {
         setPlaceLabel(snapshot.placeLabel);
       }
       const coords = {
@@ -647,7 +648,31 @@ export function StampSaveModal({
 
       if (prefetchedLocationSnapshot) {
         applySnapshot(prefetchedLocationSnapshot);
-        setLocationLoading(false);
+        // 장소명이 이미 있으면 중복 조회 생략. 좌표만 있거나 장소명이 비면 한 번 더 조회.
+        if (prefetchedLocationSnapshot.placeLabel?.trim()) {
+          setLocationLoading(false);
+          return;
+        }
+        setLocationLoading(true);
+        void (async () => {
+          try {
+            const refined = await getCurrentLocationSnapshot();
+            if (cancelled) {
+              return;
+            }
+            if (refined) {
+              applySnapshot(refined);
+            } else {
+              await applyQuickLocationCache();
+            }
+          } catch {
+            // 프리페치 좌표는 유지
+          } finally {
+            if (!cancelled) {
+              setLocationLoading(false);
+            }
+          }
+        })();
         return;
       }
 
@@ -658,8 +683,8 @@ export function StampSaveModal({
       }
 
       if (locationPrefetchFinished) {
-        setLocationLoading(false);
-        void applyQuickLocationCache();
+        // 프리페치가 장소명 없이 끝난 경우 전체 조회로 보완
+        void fetchLocationFallback();
         return;
       }
 

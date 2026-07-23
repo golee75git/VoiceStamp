@@ -2810,3 +2810,19 @@ Copy-Item src.pre-stamp-text-size\public\help.html public\ -Force
 Copy-Item src.pre-stamp-text-size\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 172. 장소명 prefetch 재조회 되돌리기 (선택)
+
+저장 모달에서 프리페치에 장소명이 없을 때 한 번 더 조회하도록 한 뒤 문제가 생기면:
+
+```bat
+restore-place-label-retry.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-place-label-retry\components\StampSaveModal.tsx src\components\ -Force
+Copy-Item src.pre-place-label-retry\public\help.html,src.pre-place-label-retry\public\landing.html,src.pre-place-label-retry\public\info.html public\ -Force
+Copy-Item src.pre-place-label-retry\constants\apkBuildLabel.ts src\constants\ -Force
+```
+
