@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.3 |
-| 작성일 | 2026-07-20 |
-| 기준 커밋 | `6060a48` (main) — **PDF 현장 폴더 archive** · APK `225635` |
+| 문서 버전 | 3.4 |
+| 작성일 | 2026-07-23 |
+| 기준 커밋 | `8bad078` (main) — **별도영역 이미지 흐림 수정** · APK `185321` |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -484,6 +484,7 @@
 | `744e460` | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
 | (본 갱신) | `6060a48` 반영 — **PDF 현장 폴더 archive**·APK `225635`·날짜별·APK별 이력 |
 | (본 갱신) | **2026-07-23** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · `restore-caption-export-wash.bat` §185 |
+| (본 문서) | `8bad078` 기준 PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 · **소스 변경 없음** · 권장 APK `185321` |
 
 ---
 
@@ -491,12 +492,13 @@
 
 | # | 기능 | 커밋 | RESTORE |
 |---|------|------|---------|
-| 285 | **별도영역 이미지 흐림 수정** — 캡션 JPEG를 ViewShot 대신 네이티브 불투명 JPEG 합성 | (본 배포) | `restore-caption-export-wash.bat` §185 |
-| 286 | GitHub APK · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 285 | **별도영역 이미지 흐림 수정** — 캡션 JPEG를 ViewShot 대신 네이티브 불투명 JPEG 합성 | `8bad078` | `restore-caption-export-wash.bat` §185 |
+| 286 | GitHub APK `releases/20260723_185321` · 랜딩·`/info` · 도움말 | `8bad078` | — |
+| 287 | PRD·PROJECT·PLAN·README **날짜별·APK별** 문서 동기화 (소스 변경 없음) | (본 문서) | — |
 
 > **보안·라이선스:** 신규 npm 없음. `react-native-image-marker` MIT. 기기 내 합성만(추가 네트워크·권한 없음). Play 스토어 정책상 민감 권한 변경 없음.
 
-> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (`8bad078`).
 
 ---
 
@@ -668,17 +670,22 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-13 | 2Z·3 | `/report` **행 삭제** · 프로젝트 ZIP **PDF 미포함** · **바이너리/청크 내보내기**(OOM) · **카메라 권한 확인 중 생략**(홈 즉시) · APK `163836`·`171406`·`231004` (`61a32ca`~`afb5e88`) |
 | 2026-07-14 | 4 (설계) | **GS-UPLOAD-01** Google Sheets 공용 시트·압축·원클릭 **초안·설계** · 문서 동기화 · **소스·APK 변경 없음** (`744e460`) |
 | 2026-07-20 | 2AB·3 | **PDF archive → `YYYYMMDD_장소` 폴더** · 도움말 · APK `225635` · Vercel (`6060a48`) |
+| 2026-07-21 | 2AC·3 | 크롭 시도·롤백 · APK `235129` (`ee75aa8`) |
+| 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표·템플릿 누적 · APK `095047` 등 |
+| 2026-07-23 | 2AD·3 | **별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 동기화(소스 없음) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-20:** 권장 = `releases/VoiceStamp_20260720_225635.apk`.
+> **2026-07-23:** 권장 = `releases/VoiceStamp_20260723_185321.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **설치·GitHub 권장** — **PDF → 현장 폴더 archive** + 07-13 전부 |
-| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
+| `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
+| `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **이전** — **PDF → 현장 폴더 archive** + 07-13 전부 |
+| `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이** + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |

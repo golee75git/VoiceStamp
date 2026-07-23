@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-20 |
-| 최신 반영 커밋 | `6060a48` (main) — **PDF → `YYYYMMDD_장소명` 폴더 archive** · APK `VoiceStamp_20260720_225635` |
+| 문서 작성일 | 2026-07-23 |
+| 최신 반영 커밋 | `8bad078` (main) — **별도영역 이미지 흐림 수정** · APK `VoiceStamp_20260723_185321` |
 
 ---
 
@@ -673,8 +673,8 @@
 | **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
-| **2026-07-22** | 07-22 누적 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(미리보기만) · APK `170650` · Vercel · `restore-disable-crop-apply.bat` §170 | (본 배포) |
-| **2026-07-23** | **별도영역 이미지 흐림 수정** — ViewShot→네이티브 불투명 JPEG (`image-marker` MIT, 신규 의존성 없음·기기 내 합성만) · 도움말 갱신 · `restore-caption-export-wash.bat` §185 · Play 스토어: 추가 권한·네트워크 없음 | (본 배포) |
+| **2026-07-22** | 07-22 누적 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(미리보기만) · APK `170650` · Vercel · `restore-disable-crop-apply.bat` §170 | (07-22) |
+| **2026-07-23** | **별도영역 이미지 흐림 수정** — ViewShot→네이티브 불투명 JPEG · 저장 목록 표시 모드·표·초록 테두리 수정 누적 · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel | `8bad078` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -682,11 +682,15 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-22:** 권장 파일은 **`VoiceStamp_20260722_170650.apk`**.
+> **2026-07-23:** 권장 파일은 **`VoiceStamp_20260723_185321.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260722_170650.apk` | (본 배포) | **설치·GitHub 권장** — **확대 자르기(적용) 비활성** + 07-22 누적 |
+| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
+| `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
+| `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — 별도영역 이미지 표 |
+| `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — 별도영역 초록 테두리 수정 |
+| `releases/VoiceStamp_20260722_170650.apk` | (07-22) | **이전** — **확대 자르기(적용) 비활성** + 07-22 누적 |
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백 |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — cover 일치 (**롤백됨**) |
 | `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — 목록 빈 메모 숨김 |

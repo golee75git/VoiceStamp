@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **저장 목록 표시 모드** · APK `VoiceStamp_20260723_170552`
+최신 기능 커밋 기준: `8bad078` — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · APK `VoiceStamp_20260723_185321`
 
 ---
 
@@ -391,8 +391,10 @@ VoiceStamp/
 | 290 | GitHub APK `releases/20260722_162518` · 랜딩·`/info` · 도움말 | `7302cd4` | — |
 | 291 | **cover 크롭 롤백**(contain 뷰어·수식으로 복구) | `b47ca39` | §169 |
 | 292 | GitHub APK `releases/20260722_164409` · 랜딩·`/info` · 도움말 | `b47ca39` | — |
-| 293 | **확대 자르기(적용) 비활성**(미리보기 확대만 유지) | (본 배포) | `restore-disable-crop-apply.bat` §170 |
-| 302 | GitHub APK `releases/20260723_135456` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 293 | **확대 자르기(적용) 비활성**(미리보기 확대만 유지) | (07-22) | `restore-disable-crop-apply.bat` §170 |
+| 303 | **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) | `8bad078` | `restore-caption-export-wash.bat` §185 |
+| 304 | GitHub APK `releases/20260723_185321` · 랜딩·`/info` · 도움말 | `8bad078` | — |
+| 302 | GitHub APK `releases/20260723_135456` · 랜딩·`/info` · 도움말 | `e45db50` | — |
 | 301 | GitHub APK `releases/20260723_133903` · 랜딩·`/info` · 도움말 | `80d69b6` | — |
 | 300 | GitHub APK `releases/20260723_131102` · 랜딩·`/info` · 도움말 | `1eba298` | — |
 | 299 | GitHub APK `releases/20260723_113840` · 랜딩·`/info` · 도움말 | `9a3a8a2` | — |
@@ -401,7 +403,7 @@ VoiceStamp/
 | 296 | GitHub APK `releases/20260723_094044` · 랜딩·`/info` · 도움말 | `20391a6` | — |
 | 295 | GitHub APK `releases/20260723_091612` · 랜딩·`/info` · 도움말 | `4d56901` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260723_135456.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (`8bad078`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -422,8 +424,8 @@ VoiceStamp/
 | expo-print / expo-sharing | PDF |
 | expo-image-manipulator | PDF·JPEG 이미지 압축 |
 | expo-image-picker | 앨범·카메라 앱에서 사진 선택 |
-| react-native-view-shot | APK 캡션 합성 JPEG 캡처 |
-| react-native-image-marker | APK 워터마크 네이티브 텍스트 합성 |
+| react-native-view-shot | StampImageExportHost(오프스크린 호스트 유지; 캡션 갤러리 JPEG는 미사용) |
+| react-native-image-marker | APK 워터마크·캡션(별도영역) 네이티브 JPEG 합성 (MIT) |
 | exceljs | XLSX 내보내기 |
 | jszip | 프로젝트 ZIP 내보내기 |
 | react-native-web | 웹 |
@@ -467,8 +469,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260720_225635.apk`** | `6060a48` | **설치·GitHub 권장** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부(권한 홈 즉시·OOM·ZIP PDF 미포함·`/report` 행 삭제) |
-| **`releases/VoiceStamp_20260713_231004.apk`** | `afb5e88` | **이전 권장** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
+| **`releases/VoiceStamp_20260723_185321.apk`** | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) + 07-23 누적 |
+| **`releases/VoiceStamp_20260723_170552.apk`** | `f4be621` | **이전** — **저장 목록 표시 모드** |
+| **`releases/VoiceStamp_20260720_225635.apk`** | `6060a48` | **이전** — **PDF → 현장(`YYYYMMDD_장소`) 폴더 archive** + 07-13 전부 |
+| **`releases/VoiceStamp_20260713_231004.apk`** | `afb5e88` | **이전** — **카메라 권한 확인 중 화면 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 + 07-11 전부 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정**(바이너리/청크) + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |
 | `releases/VoiceStamp_20260713_163836.apk` | `66c5d5b` | 프로젝트 ZIP **PDF 미포함** + `/report` 행 삭제 (바이너리 쓰기 **미포함**) |
 | `releases/VoiceStamp_20260711_101055.apk` | `831030e` | **저장 손잡이**(확대·폴더 선택) + **위치 끔=GPS+학교** + 내보내기·목록 음성 + 목록 성능 A+B |
@@ -565,7 +569,7 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_185321.apk` | (본 배포) | **권장** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **권장** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — **저장 목록 표시 모드** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — **별도영역 이미지 표 표시** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — **별도영역 이미지 초록 테두리 수정** | **GitHub `releases/`** |
@@ -1019,7 +1023,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **별도영역 이미지 흐림 수정** — ViewShot 오프스크린 대신 네이티브 불투명 JPEG 합성 · APK `releases/VoiceStamp_20260723_185321` · Vercel · `restore-caption-export-wash.bat` §185 · MIT `react-native-image-marker` (신규 의존성 없음) |
+| `8bad078` | **별도영역 이미지 흐림 수정** — ViewShot 오프스크린 대신 네이티브 불투명 JPEG 합성 · APK `releases/VoiceStamp_20260723_185321` · Vercel · `restore-caption-export-wash.bat` §185 · MIT `react-native-image-marker` (신규 의존성 없음) |
+| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`8bad078` 기준) — 날짜별·APK별 이력 · **소스 변경 없음** |
 | `f4be621` | **저장 목록 표시 모드** — 설정 제목·날짜만/전체 · APK `releases/VoiceStamp_20260723_170552` · Vercel · `restore-list-display-mode.bat` §184 |
 | `1109346` | **별도영역 이미지 표 표시** — PDF와 동일 2열 표(ViewShot+네이티브) · APK `releases/VoiceStamp_20260723_153816` · Vercel · `restore-caption-image-table.bat` §183 |
 | `d13caf8` | **별도영역 이미지 초록 테두리 수정** — 캡션 JPEG 흰 캔버스(반투명 노랑→초록) · APK `releases/VoiceStamp_20260723_151910` · Vercel · `restore-caption-green-border.bat` §182 |
@@ -1050,7 +1055,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `30aed21` | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `releases/VoiceStamp_20260722_091825` · `restore-field-labels.bat` §160 |
 | `11a7d29` | **앱 내 카메라 크롭「적용」수정** · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260723_135456.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (`8bad078`). 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 
