@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **홈 네비 아이콘(투명 템플릿·1.3배)** · APK `VoiceStamp_20260723_113840`
+최신 기능 커밋 기준: (본 배포) — **템플릿 표시명 깜빡임 수정** · APK `VoiceStamp_20260723_131102`
 
 ---
 
@@ -392,13 +392,14 @@ VoiceStamp/
 | 291 | **cover 크롭 롤백**(contain 뷰어·수식으로 복구) | `b47ca39` | §169 |
 | 292 | GitHub APK `releases/20260722_164409` · 랜딩·`/info` · 도움말 | `b47ca39` | — |
 | 293 | **확대 자르기(적용) 비활성**(미리보기 확대만 유지) | (본 배포) | `restore-disable-crop-apply.bat` §170 |
-| 299 | GitHub APK `releases/20260723_113840` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 300 | GitHub APK `releases/20260723_131102` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 299 | GitHub APK `releases/20260723_113840` · 랜딩·`/info` · 도움말 | `9a3a8a2` | — |
 | 298 | GitHub APK `releases/20260723_110901` · 랜딩·`/info` · 도움말 | `dca00c5` | — |
 | 297 | GitHub APK `releases/20260723_102421` · 랜딩·`/info` · 도움말 | `550c513` | — |
 | 296 | GitHub APK `releases/20260723_094044` · 랜딩·`/info` · 도움말 | `20391a6` | — |
 | 295 | GitHub APK `releases/20260723_091612` · 랜딩·`/info` · 도움말 | `4d56901` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260723_113840.apk`.
+> **권장 APK:** `releases/VoiceStamp_20260723_131102.apk`.
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -562,7 +563,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_113840.apk` | (본 배포) | **권장** — **홈 네비 아이콘**(투명 템플릿·1.3배) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_131102.apk` | (본 배포) | **권장** — **템플릿 표시명 깜빡임 수정** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_113840.apk` | `9a3a8a2` | **이전** — **홈 네비 아이콘**(투명 템플릿·1.3배) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_110901.apk` | `dca00c5` | **이전** — **저장 템플릿·추가3** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_102421.apk` | `550c513` | **이전** — 앱내 미리보기 크롭 롤백 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_094044.apk` | `20391a6` | **이전** — **설정 저장 빠르게**(dirty+트랜잭션·재로드 생략·짧은 알림) | **GitHub `releases/`** |
@@ -1003,7 +1005,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **홈 네비 아이콘** — `img/temp.png` 투명 템플릿 아이콘 · 템플릿/목록/설정 1.3배 · APK `releases/VoiceStamp_20260723_113840` · Vercel · `restore-home-nav-icons.bat` §177 |
+| (본 배포) | **템플릿 표시명 깜빡임 수정** — 적용 후 레이아웃 캐시 유지·저장 모달 useLayoutEffect · APK `releases/VoiceStamp_20260723_131102` · Vercel · `restore-template-label-flash.bat` §178 |
+| `9a3a8a2` | **홈 네비 아이콘** — 투명 템플릿·1.3배 · APK `releases/VoiceStamp_20260723_113840` · `restore-home-nav-icons.bat` §177 |
 | `dca00c5` | **저장 템플릿·추가3** — 홈 템플릿(안전/공사) · 필드 표시명+흐린 예시 · extra3 · APK `releases/VoiceStamp_20260723_110901` · Vercel · `restore-field-templates.bat` §176 |
 | `550c513` | **앱내 미리보기 크롭 롤백** · APK `releases/VoiceStamp_20260723_102421` · `restore-revert-inapp-preview-crop.bat` §175 |
 | `f27fcb6` | **앱내 카메라 미리보기 맞춤 저장** — FILL 프리뷰 비율 크롭 · APK `releases/VoiceStamp_20260723_100201` · `restore-inapp-preview-crop.bat` §174 |
@@ -1021,7 +1024,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `30aed21` | **필드 표시명 커스텀 + 워터마크 「표시명: 내용」** · APK `releases/VoiceStamp_20260722_091825` · `restore-field-labels.bat` §160 |
 | `11a7d29` | **앱 내 카메라 크롭「적용」수정** · APK `releases/VoiceStamp_20260722_000609` · `restore-crop-inapp-fix.bat` §159 |
 
-> **권장 APK:** `releases/VoiceStamp_20260723_113840.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
+> **권장 APK:** `releases/VoiceStamp_20260723_131102.apk`. 랜딩·`/info` 다운로드 링크 동기화됨.
 
 ### 2026-07-21
 

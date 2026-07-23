@@ -2895,3 +2895,11 @@ restore-field-templates.bat
 restore-home-nav-icons.bat
 ```
 
+## 178. 템플릿 표시명 깜빡임 수정 되돌리기 (선택)
+
+저장 모달 첫 화면이 제목/장소로 잠깐 보이던 현상 수정. 문제 시:
+
+```bat
+restore-template-label-flash.bat
+```
+

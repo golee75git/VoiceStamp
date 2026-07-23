@@ -61,6 +61,29 @@ export function invalidateStampSaveModalLayoutCache(): void {
   loadPromise = null;
 }
 
+/** Update field labels in the in-memory cache (keep other layout settings). */
+export function patchStampSaveModalLayoutFieldLabels(labels: {
+  titleFieldLabel: string;
+  placeFieldLabel: string;
+  memoFieldLabel: string;
+  extra1FieldLabel: string;
+  extra2FieldLabel: string;
+  extra3FieldLabel: string;
+}): void {
+  if (!cachedLayout) {
+    return;
+  }
+  cachedLayout = {
+    ...cachedLayout,
+    titleFieldLabel: labels.titleFieldLabel,
+    placeFieldLabel: labels.placeFieldLabel,
+    memoFieldLabel: labels.memoFieldLabel,
+    extra1FieldLabel: labels.extra1FieldLabel,
+    extra2FieldLabel: labels.extra2FieldLabel,
+    extra3FieldLabel: labels.extra3FieldLabel,
+  };
+}
+
 export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayoutSettings> {
   if (cachedLayout) {
     return Promise.resolve(cachedLayout);

@@ -8,7 +8,12 @@ import {
   setPlaceFieldLabel,
   setTitleFieldLabel,
 } from './settingsService';
-import { invalidateStampSaveModalLayoutCache } from './stampSaveModalLayoutCache';
+import {
+  invalidateStampSaveModalLayoutCache,
+  loadStampSaveModalLayoutSettings,
+  patchStampSaveModalLayoutFieldLabels,
+  peekStampSaveModalLayoutCache,
+} from './stampSaveModalLayoutCache';
 
 /** Example placeholders shown faded in save inputs (not stored as stamp values). */
 export type FieldPlaceholders = {
@@ -106,6 +111,12 @@ export async function applyStampFieldTemplate(templateId: string): Promise<Stamp
   await setExtra3FieldLabel(labels.extra3FieldLabel);
 
   activePlaceholders = { ...template.placeholders };
-  invalidateStampSaveModalLayoutCache();
+  // Keep save-modal layout cache in sync so the first paint shows template labels (no 제목/장소 flash).
+  if (peekStampSaveModalLayoutCache()) {
+    patchStampSaveModalLayoutFieldLabels(labels);
+  } else {
+    invalidateStampSaveModalLayoutCache();
+    await loadStampSaveModalLayoutSettings();
+  }
   return { ...template, labels };
 }

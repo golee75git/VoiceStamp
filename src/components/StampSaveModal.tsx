@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -394,7 +394,7 @@ export function StampSaveModal({
   const stopRef = useRef(stop);
   stopRef.current = stop;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!visible) {
       return;
     }
@@ -424,6 +424,9 @@ export function StampSaveModal({
     const cached = peekStampSaveModalLayoutCache();
     if (cached) {
       applyStampSaveModalLayoutSettings(cached, apply);
+    }
+    if (!stamp) {
+      setFieldPlaceholders(getActiveFieldPlaceholders());
     }
 
     let cancelled = false;
