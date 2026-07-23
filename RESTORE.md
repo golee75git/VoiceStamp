@@ -2903,3 +2903,11 @@ restore-home-nav-icons.bat
 restore-template-label-flash.bat
 ```
 
+## 179. 저장 템플릿 6종 추가 되돌리기 (선택)
+
+교육·급식·지원·자산·재난·민원 템플릿 추가. 문제 시:
+
+```bat
+restore-more-field-templates.bat
+```
+
