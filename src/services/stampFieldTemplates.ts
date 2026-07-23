@@ -1,5 +1,15 @@
+import { getDatabase } from '../db/database';
 import type { FieldLabels } from './fieldLabels';
-import { resolveFieldLabels } from './fieldLabels';
+import {
+  DEFAULT_FIELD_EXTRA1_LABEL,
+  DEFAULT_FIELD_EXTRA2_LABEL,
+  DEFAULT_FIELD_EXTRA3_LABEL,
+  DEFAULT_FIELD_MEMO_LABEL,
+  DEFAULT_FIELD_PLACE_LABEL,
+  DEFAULT_FIELD_TITLE_LABEL,
+  resolveFieldLabels,
+  sanitizeFieldLabel,
+} from './fieldLabels';
 import {
   setExtra1FieldLabel,
   setExtra2FieldLabel,
@@ -30,6 +40,23 @@ export type StampFieldTemplate = {
   name: string;
   labels: FieldLabels;
   placeholders: FieldPlaceholders;
+  /** User-defined templates stored in app_settings (not bundled). */
+  custom?: boolean;
+};
+
+const CUSTOM_FIELD_TEMPLATES_KEY = 'custom_field_templates';
+const CUSTOM_ID_PREFIX = 'custom-';
+export const CUSTOM_TEMPLATE_NAME_MAX = 40;
+export const CUSTOM_TEMPLATE_PLACEHOLDER_MAX = 80;
+export const MAX_CUSTOM_FIELD_TEMPLATES = 30;
+
+export const DEFAULT_CUSTOM_TEMPLATE_LABELS: FieldLabels = {
+  titleFieldLabel: DEFAULT_FIELD_TITLE_LABEL,
+  placeFieldLabel: DEFAULT_FIELD_PLACE_LABEL,
+  memoFieldLabel: DEFAULT_FIELD_MEMO_LABEL,
+  extra1FieldLabel: DEFAULT_FIELD_EXTRA1_LABEL,
+  extra2FieldLabel: DEFAULT_FIELD_EXTRA2_LABEL,
+  extra3FieldLabel: DEFAULT_FIELD_EXTRA3_LABEL,
 };
 
 const EMPTY_PLACEHOLDERS: FieldPlaceholders = {
@@ -215,9 +242,171 @@ export function clearActiveFieldPlaceholders(): void {
   activePlaceholders = { ...EMPTY_PLACEHOLDERS };
 }
 
+export function isCustomStampFieldTemplateId(id: string): boolean {
+  return id.startsWith(CUSTOM_ID_PREFIX);
+}
+
+function sanitizePlaceholder(text: string): string {
+  return text.trim().replace(/\s+/g, ' ').slice(0, CUSTOM_TEMPLATE_PLACEHOLDER_MAX);
+}
+
+function sanitizePlaceholders(partial?: Partial<FieldPlaceholders> | null): FieldPlaceholders {
+  return {
+    title: sanitizePlaceholder(partial?.title ?? ''),
+    place: sanitizePlaceholder(partial?.place ?? ''),
+    memo: sanitizePlaceholder(partial?.memo ?? ''),
+    extra1: sanitizePlaceholder(partial?.extra1 ?? ''),
+    extra2: sanitizePlaceholder(partial?.extra2 ?? ''),
+    extra3: sanitizePlaceholder(partial?.extra3 ?? ''),
+  };
+}
+
+function sanitizeTemplateName(name: string): string {
+  return name.trim().replace(/\s+/g, ' ').slice(0, CUSTOM_TEMPLATE_NAME_MAX);
+}
+
+function createCustomTemplateId(): string {
+  return `${CUSTOM_ID_PREFIX}${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function parseCustomTemplates(raw: string | null): StampFieldTemplate[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    const out: StampFieldTemplate[] = [];
+    for (const item of parsed) {
+      if (!item || typeof item !== 'object') continue;
+      const row = item as Record<string, unknown>;
+      if (typeof row.id !== 'string' || !isCustomStampFieldTemplateId(row.id)) continue;
+      if (typeof row.name !== 'string') continue;
+      const name = sanitizeTemplateName(row.name);
+      if (!name) continue;
+      const labels = resolveFieldLabels(row.labels as Partial<FieldLabels> | null);
+      const placeholders = sanitizePlaceholders(row.placeholders as Partial<FieldPlaceholders> | null);
+      out.push({ id: row.id, name, labels, placeholders, custom: true });
+      if (out.length >= MAX_CUSTOM_FIELD_TEMPLATES) break;
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+async function readCustomTemplatesRaw(): Promise<string | null> {
+  const db = await getDatabase();
+  const row = await db.getFirstAsync<{ value: string }>(
+    'SELECT value FROM app_settings WHERE key = ?',
+    CUSTOM_FIELD_TEMPLATES_KEY,
+  );
+  return row?.value ?? null;
+}
+
+async function writeCustomTemplates(list: StampFieldTemplate[]): Promise<void> {
+  const payload = list.map((item) => ({
+    id: item.id,
+    name: item.name,
+    labels: item.labels,
+    placeholders: item.placeholders,
+  }));
+  const db = await getDatabase();
+  await db.runAsync(
+    `INSERT INTO app_settings (key, value) VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    CUSTOM_FIELD_TEMPLATES_KEY,
+    JSON.stringify(payload),
+  );
+}
+
+/** User-defined templates only (device-local SQLite). */
+export async function listCustomStampFieldTemplates(): Promise<StampFieldTemplate[]> {
+  return parseCustomTemplates(await readCustomTemplatesRaw());
+}
+
+export async function findStampFieldTemplate(templateId: string): Promise<StampFieldTemplate | null> {
+  const builtin = STAMP_FIELD_TEMPLATES.find((item) => item.id === templateId);
+  if (builtin) return { ...builtin, labels: { ...builtin.labels }, placeholders: { ...builtin.placeholders } };
+  const customs = await listCustomStampFieldTemplates();
+  return customs.find((item) => item.id === templateId) ?? null;
+}
+
+export type UpsertCustomStampFieldTemplateInput = {
+  /** Omit to create; set to update an existing custom template. */
+  id?: string;
+  name: string;
+  labels: FieldLabels;
+  placeholders?: FieldPlaceholders;
+};
+
+/** Create or update a user template. Built-ins are never overwritten. */
+export async function upsertCustomStampFieldTemplate(
+  input: UpsertCustomStampFieldTemplateInput,
+): Promise<StampFieldTemplate> {
+  const name = sanitizeTemplateName(input.name);
+  if (!name) {
+    throw new Error('템플릿 이름을 입력해 주세요.');
+  }
+  const labels = resolveFieldLabels({
+    titleFieldLabel: sanitizeFieldLabel(input.labels.titleFieldLabel, DEFAULT_FIELD_TITLE_LABEL),
+    placeFieldLabel: sanitizeFieldLabel(input.labels.placeFieldLabel, DEFAULT_FIELD_PLACE_LABEL),
+    memoFieldLabel: sanitizeFieldLabel(input.labels.memoFieldLabel, DEFAULT_FIELD_MEMO_LABEL),
+    extra1FieldLabel: sanitizeFieldLabel(input.labels.extra1FieldLabel, DEFAULT_FIELD_EXTRA1_LABEL),
+    extra2FieldLabel: sanitizeFieldLabel(input.labels.extra2FieldLabel, DEFAULT_FIELD_EXTRA2_LABEL),
+    extra3FieldLabel: sanitizeFieldLabel(input.labels.extra3FieldLabel, DEFAULT_FIELD_EXTRA3_LABEL),
+  });
+  const placeholders = sanitizePlaceholders(input.placeholders);
+
+  const list = await listCustomStampFieldTemplates();
+  if (input.id) {
+    if (!isCustomStampFieldTemplateId(input.id)) {
+      throw new Error('기본 템플릿은 수정할 수 없습니다.');
+    }
+    const index = list.findIndex((item) => item.id === input.id);
+    if (index < 0) {
+      throw new Error('내 템플릿을 찾을 수 없습니다.');
+    }
+    const updated: StampFieldTemplate = {
+      id: input.id,
+      name,
+      labels,
+      placeholders,
+      custom: true,
+    };
+    list[index] = updated;
+    await writeCustomTemplates(list);
+    return updated;
+  }
+
+  if (list.length >= MAX_CUSTOM_FIELD_TEMPLATES) {
+    throw new Error(`내 템플릿은 최대 ${MAX_CUSTOM_FIELD_TEMPLATES}개까지 저장할 수 있습니다.`);
+  }
+  const created: StampFieldTemplate = {
+    id: createCustomTemplateId(),
+    name,
+    labels,
+    placeholders,
+    custom: true,
+  };
+  list.push(created);
+  await writeCustomTemplates(list);
+  return created;
+}
+
+export async function deleteCustomStampFieldTemplate(templateId: string): Promise<void> {
+  if (!isCustomStampFieldTemplateId(templateId)) {
+    throw new Error('기본 템플릿은 삭제할 수 없습니다.');
+  }
+  const list = await listCustomStampFieldTemplates();
+  const next = list.filter((item) => item.id !== templateId);
+  if (next.length === list.length) {
+    throw new Error('내 템플릿을 찾을 수 없습니다.');
+  }
+  await writeCustomTemplates(next);
+}
+
 /** Apply template labels to app settings; placeholders are session hints for save inputs. */
 export async function applyStampFieldTemplate(templateId: string): Promise<StampFieldTemplate> {
-  const template = STAMP_FIELD_TEMPLATES.find((item) => item.id === templateId);
+  const template = await findStampFieldTemplate(templateId);
   if (!template) {
     throw new Error('템플릿을 찾을 수 없습니다.');
   }

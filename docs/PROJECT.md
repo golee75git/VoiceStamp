@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **저장 템플릿 시트 스크롤·여백** · APK `VoiceStamp_20260723_135456`
+최신 기능 커밋 기준: (본 배포) — **내 템플릿(사용자 정의)** · APK `VoiceStamp_20260723_144416`
 
 ---
 
@@ -565,7 +565,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_135456.apk` | (본 배포) | **권장** — **저장 템플릿 시트 스크롤·여백** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_144416.apk` | (본 배포) | **권장** — **내 템플릿(사용자 정의)** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_135456.apk` | `e45db50` | **이전** — **저장 템플릿 시트 스크롤·여백** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_133903.apk` | `80d69b6` | **이전** — **저장 템플릿 6종 추가** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_131102.apk` | `1eba298` | **이전** — **템플릿 표시명 깜빡임 수정** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_113840.apk` | `9a3a8a2` | **이전** — **홈 네비 아이콘**(투명 템플릿·1.3배) | **GitHub `releases/`** |
@@ -1009,7 +1010,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **저장 템플릿 시트 스크롤·여백** — 제목 고정·목록 ScrollView·닫기 하단 여백 · APK `releases/VoiceStamp_20260723_135456` · Vercel · `restore-template-sheet-scroll.bat` §180 |
+| (본 배포) | **내 템플릿(사용자 정의)** — 만들기·기존 복사·수정·삭제(기기 SQLite, 최대 30) · APK `releases/VoiceStamp_20260723_144416` · Vercel · `restore-custom-field-templates.bat` §181 |
+| `e45db50` | **저장 템플릿 시트 스크롤·여백** — 제목 고정·목록 ScrollView·닫기 하단 여백 · APK `releases/VoiceStamp_20260723_135456` · Vercel · `restore-template-sheet-scroll.bat` §180 |
 | `80d69b6` | **저장 템플릿 6종 추가** — 교육·급식·지원·자산·재난·민원 · APK `releases/VoiceStamp_20260723_133903` · Vercel · `restore-more-field-templates.bat` §179 |
 | `1eba298` | **템플릿 표시명 깜빡임 수정** · APK `releases/VoiceStamp_20260723_131102` · `restore-template-label-flash.bat` §178 |
 | `9a3a8a2` | **홈 네비 아이콘** — 투명 템플릿·1.3배 · APK `releases/VoiceStamp_20260723_113840` · `restore-home-nav-icons.bat` §177 |

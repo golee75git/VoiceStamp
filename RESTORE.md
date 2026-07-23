@@ -2919,3 +2919,13 @@ restore-more-field-templates.bat
 restore-template-sheet-scroll.bat
 ```
 
+## 181. 내 템플릿(사용자 정의) 되돌리기 (선택)
+
+내 템플릿 만들기·수정·삭제(기기 SQLite). 문제 시:
+
+```bat
+restore-custom-field-templates.bat
+```
+
+(`src.pre-custom-field-templates`로 복구. 신규 `CustomFieldTemplateEditor.tsx`는 삭제됨.)
+
