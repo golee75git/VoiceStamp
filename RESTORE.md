@@ -2945,3 +2945,11 @@ restore-caption-green-border.bat
 restore-caption-image-table.bat
 ```
 
+## 184. 저장 목록 표시 모드 되돌리기 (선택)
+
+설정 「저장 목록 표시」(제목·날짜만 / 전체). 문제 시:
+
+```bat
+restore-list-display-mode.bat
+```
+

@@ -44,6 +44,7 @@ import {
   DEFAULT_TITLE_DATETIME_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
   DEFAULT_STAMP_TEXT_SIZE,
+  DEFAULT_STAMP_LIST_DISPLAY_MODE,
   DEFAULT_WATERMARK_STYLE,
   DEFAULT_TITLE_TEXT_ALIGN,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -79,6 +80,7 @@ import {
   type PdfPhotosPerPage,
   stampTextLayoutLabel,
   stampTextSizeLabel,
+  stampListDisplayModeLabel,
   watermarkStyleLabel,
   WATERMARK_STYLE_OPTIONS,
   TEXT_ALIGN_OPTIONS,
@@ -91,6 +93,7 @@ import {
   type CaptureAfterMode,
   type StampTextLayout,
   type StampTextSize,
+  type StampListDisplayMode,
   type WatermarkStyle,
   type TextAlign,
   textAlignLabel,
@@ -101,6 +104,7 @@ const FLOOR_DISPLAY_OPTIONS: FloorDisplayMode[] = ['suffix', 'cursor'];
 const TITLE_DATETIME_OPTIONS: TitleDatetimeMode[] = ['none', 'date', 'datetime'];
 const COORDS_LABEL_OPTIONS: CoordsLabelMode[] = ['gps', 'coords', 'off'];
 const LOCATION_MODE_OPTIONS: LocationMode[] = ['auto', 'off'];
+const STAMP_LIST_DISPLAY_OPTIONS: StampListDisplayMode[] = ['title_date', 'full'];
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
@@ -151,6 +155,9 @@ export function SettingsScreen({
     DEFAULT_STAMP_TEXT_LAYOUT,
   );
   const [stampTextSize, setStampTextSizeState] = useState<StampTextSize>(DEFAULT_STAMP_TEXT_SIZE);
+  const [stampListDisplayMode, setStampListDisplayModeState] = useState<StampListDisplayMode>(
+    DEFAULT_STAMP_LIST_DISPLAY_MODE,
+  );
   const [watermarkStyle, setWatermarkStyleState] = useState<WatermarkStyle>(
     DEFAULT_WATERMARK_STYLE,
   );
@@ -211,6 +218,7 @@ export function SettingsScreen({
       setPdfFilenameIncludeDatetimeState(snapshot.pdfFilenameIncludeDatetime);
       setStampTextLayoutState(snapshot.stampTextLayout);
       setStampTextSizeState(snapshot.stampTextSize);
+      setStampListDisplayModeState(snapshot.stampListDisplayMode);
       setWatermarkStyleState(snapshot.watermarkStyle);
       setGallerySaveModeState(snapshot.gallerySaveMode);
       setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
@@ -252,6 +260,7 @@ export function SettingsScreen({
         pdfFilenameIncludeDatetime,
         stampTextLayout,
         stampTextSize,
+        stampListDisplayMode,
         watermarkStyle,
         gallerySaveMode,
         primaryCaptureCamera,
@@ -284,6 +293,7 @@ export function SettingsScreen({
       setPdfFilenameIncludeDatetimeState(saved.pdfFilenameIncludeDatetime);
       setStampTextLayoutState(saved.stampTextLayout);
       setStampTextSizeState(saved.stampTextSize);
+      setStampListDisplayModeState(saved.stampListDisplayMode);
       setWatermarkStyleState(saved.watermarkStyle);
       setGallerySaveModeState(saved.gallerySaveMode);
       setPrimaryCaptureCameraState(saved.primaryCaptureCamera);
@@ -978,6 +988,32 @@ export function SettingsScreen({
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
                     {chipLabel(textAlignLabel(option), option === DEFAULT_MEMO_TEXT_ALIGN)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>저장 목록 표시</Text>
+          <Text style={styles.hint}>
+            목록 카드에 제목·날짜만 보일지, 장소·추가·메모까지 모두 보일지 선택합니다. PDF·이미지 내보내기에는
+            영향 없습니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {STAMP_LIST_DISPLAY_OPTIONS.map((option) => {
+              const selected = stampListDisplayMode === option;
+              return (
+                <Pressable
+                  key={`list-display-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setStampListDisplayModeState(option)}
+                  disabled={saving}
+                >
+                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
+                    {chipLabel(
+                      stampListDisplayModeLabel(option),
+                      option === DEFAULT_STAMP_LIST_DISPLAY_MODE,
+                    )}
                   </Text>
                 </Pressable>
               );

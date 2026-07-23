@@ -76,6 +76,7 @@ const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
 const FIELD_LABEL_EXTRA1_KEY = 'field_label_extra1';
 const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
 const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
+const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -94,6 +95,8 @@ export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_STAMP_TEXT_SIZE = 'medium' as const;
+/** Cleaner list cards by default: title + date only. */
+export const DEFAULT_STAMP_LIST_DISPLAY_MODE = 'title_date' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_LOCATION_MODE = 'auto' as const;
@@ -151,6 +154,16 @@ export type GallerySaveMode = 'app_only' | 'original_only' | 'caption_only' | 'o
 export type ContinuousCaptureCamera = 'system' | 'in_app';
 export type CaptureAfterMode = 'action_sheet' | 'save_modal';
 export type FloorPickerMode = 'off' | 'school_only' | 'always';
+/** Stamp list card meta: title+date only, or all filled fields. */
+export type StampListDisplayMode = 'title_date' | 'full';
+
+export function stampListDisplayModeLabel(mode: StampListDisplayMode): string {
+  return mode === 'full' ? '전체 표시' : '제목·날짜만';
+}
+
+export function sanitizeStampListDisplayMode(value: string): StampListDisplayMode {
+  return value === 'full' ? 'full' : 'title_date';
+}
 
 export function locationModeLabel(mode: LocationMode): string {
   return mode === 'off' ? '사용 안 함' : '사용';
@@ -433,6 +446,7 @@ export type SettingsScreenSnapshot = {
   pdfFilenameIncludeDatetime: boolean;
   stampTextLayout: StampTextLayout;
   stampTextSize: StampTextSize;
+  stampListDisplayMode: StampListDisplayMode;
   watermarkStyle: WatermarkStyle;
   gallerySaveMode: GallerySaveMode;
   primaryCaptureCamera: ContinuousCaptureCamera;
@@ -509,6 +523,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
     stampTextSize: (() => {
       const raw = pickSetting(map, STAMP_TEXT_SIZE_KEY);
       return raw ? sanitizeStampTextSize(raw) : DEFAULT_STAMP_TEXT_SIZE;
+    })(),
+    stampListDisplayMode: (() => {
+      const raw = pickSetting(map, STAMP_LIST_DISPLAY_MODE_KEY);
+      return raw ? sanitizeStampListDisplayMode(raw) : DEFAULT_STAMP_LIST_DISPLAY_MODE;
     })(),
     watermarkStyle: (() => {
       const raw = pickSetting(map, WATERMARK_STYLE_KEY);
@@ -623,6 +641,7 @@ export function sanitizeSettingsScreenSnapshot(
     pdfFilenameIncludeDatetime: draft.pdfFilenameIncludeDatetime,
     stampTextLayout: sanitizeStampTextLayout(draft.stampTextLayout),
     stampTextSize: sanitizeStampTextSize(draft.stampTextSize),
+    stampListDisplayMode: sanitizeStampListDisplayMode(draft.stampListDisplayMode),
     watermarkStyle: sanitizeWatermarkStyle(draft.watermarkStyle),
     gallerySaveMode: sanitizeGallerySaveMode(draft.gallerySaveMode),
     primaryCaptureCamera: sanitizeContinuousCaptureCamera(draft.primaryCaptureCamera),
@@ -659,6 +678,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [PDF_FILENAME_INCLUDE_DATETIME_KEY, snapshot.pdfFilenameIncludeDatetime ? 'true' : 'false'],
     [STAMP_TEXT_LAYOUT_KEY, snapshot.stampTextLayout],
     [STAMP_TEXT_SIZE_KEY, snapshot.stampTextSize],
+    [STAMP_LIST_DISPLAY_MODE_KEY, snapshot.stampListDisplayMode],
     [WATERMARK_STYLE_KEY, snapshot.watermarkStyle],
     [GALLERY_SAVE_MODE_KEY, snapshot.gallerySaveMode],
     [PRIMARY_CAPTURE_CAMERA_KEY, snapshot.primaryCaptureCamera],
@@ -809,6 +829,22 @@ export async function setStampTextSize(size: StampTextSize): Promise<StampTextSi
   const safeSize = sanitizeStampTextSize(size);
   await writeSetting(STAMP_TEXT_SIZE_KEY, safeSize);
   return safeSize;
+}
+
+export async function getStampListDisplayMode(): Promise<StampListDisplayMode> {
+  const value = await readSetting(STAMP_LIST_DISPLAY_MODE_KEY);
+  if (!value) {
+    return DEFAULT_STAMP_LIST_DISPLAY_MODE;
+  }
+  return sanitizeStampListDisplayMode(value);
+}
+
+export async function setStampListDisplayMode(
+  mode: StampListDisplayMode,
+): Promise<StampListDisplayMode> {
+  const safeMode = sanitizeStampListDisplayMode(mode);
+  await writeSetting(STAMP_LIST_DISPLAY_MODE_KEY, safeMode);
+  return safeMode;
 }
 
 function parseBooleanSetting(value: string | null, defaultValue: boolean): boolean {

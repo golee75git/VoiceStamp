@@ -35,8 +35,10 @@ import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
+  DEFAULT_STAMP_LIST_DISPLAY_MODE,
   loadSettingsForScreen,
   type CoordsLabelMode,
+  type StampListDisplayMode,
   type StampTextLayout,
   type StampTextSize,
   type WatermarkStyle,
@@ -90,6 +92,9 @@ export function StampListScreen({
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
   const [stampTextSize, setStampTextSize] = useState<StampTextSize>('medium');
+  const [stampListDisplayMode, setStampListDisplayMode] = useState<StampListDisplayMode>(
+    DEFAULT_STAMP_LIST_DISPLAY_MODE,
+  );
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [overlayOrgName, setOverlayOrgName] = useState('');
@@ -179,6 +184,7 @@ export function StampListScreen({
       setPdfShowDatetime(settings.pdfShowDatetime);
       setStampTextLayout(settings.stampTextLayout);
       setStampTextSize(settings.stampTextSize);
+      setStampListDisplayMode(settings.stampListDisplayMode);
       setWatermarkStyle(settings.watermarkStyle);
       setCoordsLabel(settings.coordsLabelMode);
       setOverlayOrgName(settings.overlayOrgName);
@@ -716,26 +722,22 @@ export function StampListScreen({
                   labels.titleFieldLabel,
                   stampDisplayTitle(item, pdfShowDatetime),
                 ) || `(${labels.titleFieldLabel} 없음)`;
-              const displayPlace = formatLabeledValue(
-                labels.placeFieldLabel,
-                stampDisplayPlace(item) ?? '',
-              );
-              const displayMemo = formatLabeledValue(
-                labels.memoFieldLabel,
-                item.memo,
-              );
-              const displayExtra1 = formatLabeledValue(
-                labels.extra1FieldLabel,
-                item.extra1 ?? '',
-              );
-              const displayExtra2 = formatLabeledValue(
-                labels.extra2FieldLabel,
-                item.extra2 ?? '',
-              );
-              const displayExtra3 = formatLabeledValue(
-                labels.extra3FieldLabel,
-                item.extra3 ?? '',
-              );
+              const showFullMeta = stampListDisplayMode === 'full';
+              const displayPlace = showFullMeta
+                ? formatLabeledValue(labels.placeFieldLabel, stampDisplayPlace(item) ?? '')
+                : '';
+              const displayMemo = showFullMeta
+                ? formatLabeledValue(labels.memoFieldLabel, item.memo)
+                : '';
+              const displayExtra1 = showFullMeta
+                ? formatLabeledValue(labels.extra1FieldLabel, item.extra1 ?? '')
+                : '';
+              const displayExtra2 = showFullMeta
+                ? formatLabeledValue(labels.extra2FieldLabel, item.extra2 ?? '')
+                : '';
+              const displayExtra3 = showFullMeta
+                ? formatLabeledValue(labels.extra3FieldLabel, item.extra3 ?? '')
+                : '';
               return (
                 <Pressable
                   style={[
@@ -768,27 +770,27 @@ export function StampListScreen({
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
                       {displayTitle}
                     </Text>
-                    {displayPlace ? (
+                    {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayPlace}
                       </Text>
                     ) : null}
-                    {displayExtra1 ? (
+                    {showFullMeta && displayExtra1 ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayExtra1}
                       </Text>
                     ) : null}
-                    {displayExtra2 ? (
+                    {showFullMeta && displayExtra2 ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayExtra2}
                       </Text>
                     ) : null}
-                    {displayExtra3 ? (
+                    {showFullMeta && displayExtra3 ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayExtra3}
                       </Text>
                     ) : null}
-                    {displayMemo ? (
+                    {showFullMeta && displayMemo ? (
                       <Text
                         style={[styles.cardMemo, { textAlign: memoTextAlign }]}
                         numberOfLines={isGrid ? 3 : 2}

@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-23**
-최신 기능 커밋 기준: (본 배포) — **별도영역 이미지 표 표시** · APK `VoiceStamp_20260723_153816`
+최신 기능 커밋 기준: (본 배포) — **저장 목록 표시 모드** · APK `VoiceStamp_20260723_170552`
 
 ---
 
@@ -565,7 +565,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260723_153816.apk` | (본 배포) | **권장** — **별도영역 이미지 표 표시** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_170552.apk` | (본 배포) | **권장** — **저장 목록 표시 모드** | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — **별도영역 이미지 표 표시** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — **별도영역 이미지 초록 테두리 수정** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_144416.apk` | `aabf4d5` | **이전** — **내 템플릿(사용자 정의)** | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260723_135456.apk` | `e45db50` | **이전** — **저장 템플릿 시트 스크롤·여백** | **GitHub `releases/`** |
@@ -1012,7 +1013,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
-| (본 배포) | **별도영역 이미지 초록 테두리 수정** — 캡션 JPEG 흰 캔버스(반투명 노랑→초록) · APK `releases/VoiceStamp_20260723_151910` · Vercel · `restore-caption-green-border.bat` §182 |
+| (본 배포) | **별도영역 이미지 표 표시** — PDF와 동일 2열 표(ViewShot+네이티브) · APK `releases/VoiceStamp_20260723_153816` · Vercel · `restore-caption-image-table.bat` §183 |
+| `d13caf8` | **별도영역 이미지 초록 테두리 수정** — 캡션 JPEG 흰 캔버스(반투명 노랑→초록) · APK `releases/VoiceStamp_20260723_151910` · Vercel · `restore-caption-green-border.bat` §182 |
 | `aabf4d5` | **내 템플릿(사용자 정의)** — 만들기·기존 복사·수정·삭제(기기 SQLite, 최대 30) · APK `releases/VoiceStamp_20260723_144416` · Vercel · `restore-custom-field-templates.bat` §181 |
 | `e45db50` | **저장 템플릿 시트 스크롤·여백** — 제목 고정·목록 ScrollView·닫기 하단 여백 · APK `releases/VoiceStamp_20260723_135456` · Vercel · `restore-template-sheet-scroll.bat` §180 |
 | `80d69b6` | **저장 템플릿 6종 추가** — 교육·급식·지원·자산·재난·민원 · APK `releases/VoiceStamp_20260723_133903` · Vercel · `restore-more-field-templates.bat` §179 |
