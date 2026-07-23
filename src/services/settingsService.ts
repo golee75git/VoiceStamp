@@ -599,6 +599,111 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
   };
 }
 
+/** Sanitize UI draft into the same shape loadSettingsForScreen returns. */
+export function sanitizeSettingsScreenSnapshot(
+  draft: SettingsScreenSnapshot,
+): SettingsScreenSnapshot {
+  return {
+    folderName: sanitizeStampsFolderName(draft.folderName),
+    pdfPhotosPerPage: sanitizePdfPhotosPerPage(draft.pdfPhotosPerPage),
+    pdfImageQuality: sanitizePdfImageQuality(draft.pdfImageQuality),
+    titleTextAlign: sanitizeTextAlign(draft.titleTextAlign),
+    memoTextAlign: sanitizeTextAlign(draft.memoTextAlign),
+    pdfShowDatetime: draft.pdfShowDatetime,
+    pdfFilenameIncludeDatetime: draft.pdfFilenameIncludeDatetime,
+    stampTextLayout: sanitizeStampTextLayout(draft.stampTextLayout),
+    stampTextSize: sanitizeStampTextSize(draft.stampTextSize),
+    watermarkStyle: sanitizeWatermarkStyle(draft.watermarkStyle),
+    gallerySaveMode: sanitizeGallerySaveMode(draft.gallerySaveMode),
+    primaryCaptureCamera: sanitizeContinuousCaptureCamera(draft.primaryCaptureCamera),
+    continuousCaptureCamera: sanitizeContinuousCaptureCamera(draft.continuousCaptureCamera),
+    captureAfterMode: sanitizeCaptureAfterMode(draft.captureAfterMode),
+    shutterSound: draft.shutterSound,
+    cameraHand: sanitizeCameraHand(draft.cameraHand),
+    floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
+    floorDisplayMode: sanitizeFloorDisplayMode(draft.floorDisplayMode),
+    titleDatetimeMode: sanitizeTitleDatetimeMode(draft.titleDatetimeMode),
+    coordsLabelMode: sanitizeCoordsLabelMode(draft.coordsLabelMode),
+    locationMode: sanitizeLocationMode(draft.locationMode),
+    overlayOrgName: sanitizeOverlayText(draft.overlayOrgName, OVERLAY_ORG_MAX_LENGTH),
+    overlayFooterPhrase: sanitizeOverlayText(draft.overlayFooterPhrase, OVERLAY_PHRASE_MAX_LENGTH),
+    overlayShowOrgName: draft.overlayShowOrgName,
+    overlayShowFooterPhrase: draft.overlayShowFooterPhrase,
+    titleFieldLabel: sanitizeFieldLabel(draft.titleFieldLabel, DEFAULT_FIELD_TITLE_LABEL),
+    placeFieldLabel: sanitizeFieldLabel(draft.placeFieldLabel, DEFAULT_FIELD_PLACE_LABEL),
+    memoFieldLabel: sanitizeFieldLabel(draft.memoFieldLabel, DEFAULT_FIELD_MEMO_LABEL),
+    extra1FieldLabel: sanitizeFieldLabel(draft.extra1FieldLabel, DEFAULT_FIELD_EXTRA1_LABEL),
+    extra2FieldLabel: sanitizeFieldLabel(draft.extra2FieldLabel, DEFAULT_FIELD_EXTRA2_LABEL),
+  };
+}
+
+function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string, string]> {
+  return [
+    [STAMPS_FOLDER_KEY, snapshot.folderName],
+    [PDF_PHOTOS_PER_PAGE_KEY, String(snapshot.pdfPhotosPerPage)],
+    [PDF_IMAGE_QUALITY_KEY, snapshot.pdfImageQuality],
+    [TITLE_TEXT_ALIGN_KEY, snapshot.titleTextAlign],
+    [MEMO_TEXT_ALIGN_KEY, snapshot.memoTextAlign],
+    [PDF_SHOW_DATETIME_KEY, snapshot.pdfShowDatetime ? 'true' : 'false'],
+    [PDF_FILENAME_INCLUDE_DATETIME_KEY, snapshot.pdfFilenameIncludeDatetime ? 'true' : 'false'],
+    [STAMP_TEXT_LAYOUT_KEY, snapshot.stampTextLayout],
+    [STAMP_TEXT_SIZE_KEY, snapshot.stampTextSize],
+    [WATERMARK_STYLE_KEY, snapshot.watermarkStyle],
+    [GALLERY_SAVE_MODE_KEY, snapshot.gallerySaveMode],
+    [PRIMARY_CAPTURE_CAMERA_KEY, snapshot.primaryCaptureCamera],
+    [CONTINUOUS_CAPTURE_CAMERA_KEY, snapshot.continuousCaptureCamera],
+    [CAPTURE_AFTER_MODE_KEY, snapshot.captureAfterMode],
+    [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
+    [CAMERA_HAND_KEY, snapshot.cameraHand],
+    [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
+    [FLOOR_DISPLAY_MODE_KEY, snapshot.floorDisplayMode],
+    [TITLE_DATETIME_MODE_KEY, snapshot.titleDatetimeMode],
+    [COORDS_LABEL_KEY, snapshot.coordsLabelMode],
+    [LOCATION_MODE_KEY, snapshot.locationMode],
+    [OVERLAY_ORG_NAME_KEY, snapshot.overlayOrgName],
+    [OVERLAY_FOOTER_PHRASE_KEY, snapshot.overlayFooterPhrase],
+    [OVERLAY_SHOW_ORG_NAME_KEY, snapshot.overlayShowOrgName ? 'true' : 'false'],
+    [OVERLAY_SHOW_FOOTER_PHRASE_KEY, snapshot.overlayShowFooterPhrase ? 'true' : 'false'],
+    [FIELD_LABEL_TITLE_KEY, snapshot.titleFieldLabel],
+    [FIELD_LABEL_PLACE_KEY, snapshot.placeFieldLabel],
+    [FIELD_LABEL_MEMO_KEY, snapshot.memoFieldLabel],
+    [FIELD_LABEL_EXTRA1_KEY, snapshot.extra1FieldLabel],
+    [FIELD_LABEL_EXTRA2_KEY, snapshot.extra2FieldLabel],
+  ];
+}
+
+/**
+ * Persist settings screen draft: write only changed keys in one SQLite transaction.
+ * No new network calls; local DB only (Play Store / privacy safe).
+ */
+export async function saveSettingsForScreen(
+  draft: SettingsScreenSnapshot,
+): Promise<SettingsScreenSnapshot> {
+  const next = sanitizeSettingsScreenSnapshot(draft);
+  const current = await loadSettingsForScreen();
+  const nextRows = settingsSnapshotToRows(next);
+  const currentRows = settingsSnapshotToRows(current);
+  const dirty = nextRows.filter((row, index) => row[1] !== currentRows[index][1]);
+
+  if (dirty.length > 0) {
+    const db = await getDatabase();
+    await db.withTransactionAsync(async () => {
+      for (const [key, value] of dirty) {
+        await db.runAsync(
+          `INSERT INTO app_settings (key, value) VALUES (?, ?)
+           ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+          key,
+          value,
+        );
+      }
+    });
+  }
+
+  setFloorDisplayModeCache(next.floorDisplayMode);
+  setTitleDatetimeModeCache(next.titleDatetimeMode);
+  return next;
+}
+
 export async function getStampsFolderName(): Promise<string> {
   const value = await readSetting(STAMPS_FOLDER_KEY);
   if (!value) {

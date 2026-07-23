@@ -2826,3 +2826,20 @@ Copy-Item src.pre-place-label-retry\public\help.html,src.pre-place-label-retry\p
 Copy-Item src.pre-place-label-retry\constants\apkBuildLabel.ts src\constants\ -Force
 ```
 
+## 173. 설정 저장 빠르게(1+2+3+4) 되돌리기 (선택)
+
+설정 저장 dirty+트랜잭션·재로드 생략·짧은 알림. 문제 시:
+
+```bat
+restore-settings-save-fast.bat
+```
+
+또는:
+
+```powershell
+Copy-Item src.pre-settings-save-fast\services\settingsService.ts src\services\ -Force
+Copy-Item src.pre-settings-save-fast\components\SettingsScreen.tsx src\components\ -Force
+Copy-Item src.pre-settings-save-fast\public\help.html,src.pre-settings-save-fast\public\landing.html,src.pre-settings-save-fast\public\info.html public\ -Force
+Copy-Item src.pre-settings-save-fast\constants\apkBuildLabel.ts src\constants\ -Force
+```
+
