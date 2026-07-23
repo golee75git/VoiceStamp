@@ -2887,3 +2887,11 @@ restore-field-templates.bat
 
 (`src.pre-field-templates`로 복구. 신규 `stampFieldTemplates.ts`·`FieldTemplateSheet.tsx`는 삭제됨. `assets\template-icon.png`는 수동 삭제.)
 
+## 177. 홈 네비 아이콘(템플릿 교체·1.3배) 되돌리기 (선택)
+
+`img/temp.png` 기반 투명 템플릿 아이콘 · 홈 아이콘 1.3배. 문제 시:
+
+```bat
+restore-home-nav-icons.bat
+```
+

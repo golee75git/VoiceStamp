@@ -918,14 +918,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   navIconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     backgroundColor: 'transparent',
   },
   navIcon: {
-    width: 40,
-    height: 40,
+    width: 52,
+    height: 52,
   },
   inAppCamera: {
     flex: 1,
