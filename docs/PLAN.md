@@ -433,8 +433,12 @@
 | 282 | GitHub APK `releases/20260722_091825` · 랜딩·`/info` · 도움말 | `30aed21` | — |
 | 283 | **추가 필드 2개**(저장·음성·워터마크 값 있을 때만) | (본 배포) | `restore-extra-fields.bat` §161 |
 | 284 | GitHub APK `releases/20260722_095047` · 랜딩·`/info` · 도움말 | (본 배포) | — |
+| 284a | **확대 자르기(적용) 비활성**(미리보기만) | `ca16ea2` | `restore-disable-crop-apply.bat` §170 |
+| 284b | GitHub APK `releases/20260722_170650` · 랜딩·`/info` | `ca16ea2` | — |
+| 284c | **스탬프 글자 크기** 설정(입력·미리보기·내보내기) | `3af94ec` | `restore-stamp-text-size.bat` §171 |
+| 284d | GitHub APK `releases/20260722_182753` · 랜딩·`/info` | `3af94ec` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260722_095047.apk`.
+> **당시 권장 APK (07-22 말):** `releases/VoiceStamp_20260722_182753.apk` (`3af94ec`). (이후 **`185321`** — §2AD)
 
 ### 2.1 문서 동기화 이력
 
@@ -484,7 +488,8 @@
 | `744e460` | **2026-07-14** — **GS-UPLOAD-01** 초안·설계 · PRD·PROJECT·PLAN·README · **APK 변경 없음** |
 | (본 갱신) | `6060a48` 반영 — **PDF 현장 폴더 archive**·APK `225635`·날짜별·APK별 이력 |
 | (본 갱신) | **2026-07-23** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · `restore-caption-export-wash.bat` §185 |
-| (본 문서) | `8bad078` 기준 PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 · **소스 변경 없음** · 권장 APK `185321` |
+| `217b6d5` | `8bad078` 기준 PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 · **소스 변경 없음** · 권장 APK `185321` |
+| (본 문서) | 07-22 APK `170650`·`182753` 이력 보강 · 구버전 권장 APK 정정 · **F-QR-01** 후보 · **소스 변경 없음** |
 
 ---
 
@@ -492,9 +497,15 @@
 
 | # | 기능 | 커밋 | RESTORE |
 |---|------|------|---------|
-| 285 | **별도영역 이미지 흐림 수정** — 캡션 JPEG를 ViewShot 대신 네이티브 불투명 JPEG 합성 | `8bad078` | `restore-caption-export-wash.bat` §185 |
-| 286 | GitHub APK `releases/20260723_185321` · 랜딩·`/info` · 도움말 | `8bad078` | — |
-| 287 | PRD·PROJECT·PLAN·README **날짜별·APK별** 문서 동기화 (소스 변경 없음) | (본 문서) | — |
+| 285 | **저장 템플릿·추가3** · 홈 템플릿(안전/공사) | `dca00c5` | `restore-field-templates.bat` §176 |
+| 286 | **저장 템플릿 6종** · 교육·급식·지원·자산·재난·민원 | `80d69b6` | `restore-more-field-templates.bat` §179 |
+| 287 | **내 템플릿**(만들기·수정·삭제, SQLite 최대 30) | `aabf4d5` | `restore-custom-field-templates.bat` §181 |
+| 288 | **별도영역 초록 테두리 수정** · 불투명 흰 캔버스 | `d13caf8` | `restore-caption-green-border.bat` §182 |
+| 289 | **별도영역 이미지 표** · PDF와 동일 2열 | `1109346` | `restore-caption-image-table.bat` §183 |
+| 290 | **저장 목록 표시 모드** · 제목·날짜만 / 전체 | `f4be621` | `restore-list-display-mode.bat` §184 |
+| 291 | **별도영역 이미지 흐림 수정** — ViewShot→네이티브 불투명 JPEG | `8bad078` | `restore-caption-export-wash.bat` §185 |
+| 292 | GitHub APK `releases/20260723_185321` · 랜딩·`/info` · 도움말 | `8bad078` | — |
+| 293 | PRD·PROJECT·PLAN·README **날짜별·APK별** 이력 보강 (소스 변경 없음) | (본 문서) | — |
 
 > **보안·라이선스:** 신규 npm 없음. `react-native-image-marker` MIT. 기기 내 합성만(추가 네트워크·권한 없음). Play 스토어 정책상 민감 권한 변경 없음.
 
@@ -533,6 +544,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | UX-C | 구·동 먼저 표시, 건물명은 나중 추가 | ~~미구현~~ → **건물명→도로명** `7b6b0c1` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 | 선택 |
 | UX-PURPOSE | **사진 목적별** 제목·메모 라벨 (여행→이야기, 점검→결과 등) | 설정 또는 프로필 |
+| **F-QR-01** | 저장 화면 **관련 URL QR 오버레이** (선택 시 미리보기·갤러리 합성·내보내기) | 미구현 · MIT QR 라이브러리 |
 | FEAT-02 | PDF 생성 진행 표시 UI | |
 
 ### 4.2 데이터·복구
@@ -671,8 +683,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-14 | 4 (설계) | **GS-UPLOAD-01** Google Sheets 공용 시트·압축·원클릭 **초안·설계** · 문서 동기화 · **소스·APK 변경 없음** (`744e460`) |
 | 2026-07-20 | 2AB·3 | **PDF archive → `YYYYMMDD_장소` 폴더** · 도움말 · APK `225635` · Vercel (`6060a48`) |
 | 2026-07-21 | 2AC·3 | 크롭 시도·롤백 · APK `235129` (`ee75aa8`) |
-| 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표·템플릿 누적 · APK `095047` 등 |
-| 2026-07-23 | 2AD·3 | **별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 동기화(소스 없음) |
+| 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표 · **자르기 적용 비활성**(`170650`) · **글자 크기**(`182753`) · APK `095047`~`182753` |
+| 2026-07-23 | 2AD·3 | 저장 템플릿·목록 표시·표·초록 테두리·**별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 이력 보강(소스 없음) |
 
 ---
 
@@ -684,6 +696,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------------|------|--------|
 | `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
 | `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
+| `releases/VoiceStamp_20260722_182753.apk` | `3af94ec` | **이전** — **스탬프 글자 크기** 설정 |
+| `releases/VoiceStamp_20260722_170650.apk` | `ca16ea2` | **이전** — **확대 자르기(적용) 비활성** |
 | `releases/VoiceStamp_20260720_225635.apk` | `6060a48` | **이전** — **PDF → 현장 폴더 archive** + 07-13 전부 |
 | `releases/VoiceStamp_20260713_231004.apk` | `afb5e88` | **이전** — **카메라 권한 확인 중 생략**(홈 즉시) + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
 | `releases/VoiceStamp_20260713_171406.apk` | `73dcb4f` | **내보내기 OOM 수정** + ZIP PDF 미포함 + `/report` 행 삭제 (권한 홈 즉시 **미포함**) |

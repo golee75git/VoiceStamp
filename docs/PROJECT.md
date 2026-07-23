@@ -587,6 +587,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
+| `releases/VoiceStamp_20260722_182753.apk` | `3af94ec` | **이전** — **스탬프 글자 크기** 설정(입력·미리보기·내보내기) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260722_170650.apk` | `ca16ea2` | **이전** — **확대 자르기(적용) 비활성**(미리보기만) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백(contain 복구) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — 확대 크롭 cover 일치 (**롤백됨**) | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — **목록 빈 메모 숨김** | **GitHub `releases/`** |
@@ -1024,7 +1026,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 커밋 | 내용 |
 |------|------|
 | `8bad078` | **별도영역 이미지 흐림 수정** — ViewShot 오프스크린 대신 네이티브 불투명 JPEG 합성 · APK `releases/VoiceStamp_20260723_185321` · Vercel · `restore-caption-export-wash.bat` §185 · MIT `react-native-image-marker` (신규 의존성 없음) |
-| (본 문서) | PRD·PROJECT·PLAN·README 문서 동기화 (`8bad078` 기준) — 날짜별·APK별 이력 · **소스 변경 없음** |
+| `217b6d5` | PRD·PROJECT·PLAN·README 문서 동기화 (`8bad078` 기준) — 날짜별·APK별 이력 · **소스 변경 없음** |
+| (본 문서) | 07-22 APK `170650`·`182753` 등 날짜별·APK별 이력 보강 · **소스 변경 없음** |
 | `f4be621` | **저장 목록 표시 모드** — 설정 제목·날짜만/전체 · APK `releases/VoiceStamp_20260723_170552` · Vercel · `restore-list-display-mode.bat` §184 |
 | `1109346` | **별도영역 이미지 표 표시** — PDF와 동일 2열 표(ViewShot+네이티브) · APK `releases/VoiceStamp_20260723_153816` · Vercel · `restore-caption-image-table.bat` §183 |
 | `d13caf8` | **별도영역 이미지 초록 테두리 수정** — 캡션 JPEG 흰 캔버스(반투명 노랑→초록) · APK `releases/VoiceStamp_20260723_151910` · Vercel · `restore-caption-green-border.bat` §182 |
@@ -1043,6 +1046,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 커밋 | 내용 |
 |------|------|
+| `3af94ec` | **스탬프 글자 크기** — 설정·입력·미리보기·워터마크·PDF·갤러리 합성 · APK `releases/VoiceStamp_20260722_182753` · Vercel · `restore-stamp-text-size.bat` §171 |
+| `ca16ea2` | **확대 자르기(적용) 비활성** — 미리보기 확대만 유지 · APK `releases/VoiceStamp_20260722_170650` · Vercel · `restore-disable-crop-apply.bat` §170 |
 | `b47ca39` | **cover 크롭 롤백** — contain 뷰어·수식 복구 · APK `releases/VoiceStamp_20260722_164409` · Vercel · §169 |
 | `7302cd4` | **확대 크롭 cover 일치** — APK `162518` · **이후 롤백** · §168 |
 | `41eef0c` | **목록 빈 메모 숨김** — 내용 없으면 `(표시명 없음)` 미표시 · APK `releases/VoiceStamp_20260722_133757` · Vercel · `restore-list-hide-empty-memo.bat` §167 |
@@ -1561,18 +1566,16 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
-a0d05b9 Place stamp zoom viewer Close/Apply by camera hand and publish VoiceStamp_20260710_233524.apk.
-baf9c7c Sync PRD, PROJECT, PLAN, and README docs to commit 76aca1f.
-76aca1f Add in-app shutter sound setting and publish VoiceStamp_20260710_171301.apk.
-879658d Add 1x/3x/5x zoom presets on in-app camera and publish VoiceStamp_20260710_165146.apk.
-5af6203 Sync PRD, PROJECT, PLAN, and README docs to commit ed2f7ec.
-ed2f7ec Load settings in one query and show settings screen immediately, publish VoiceStamp_20260709_170409.apk.
-9903447 Align settings back and save buttons on one bottom bar and publish VoiceStamp_20260709_164922.apk.
-d68edeb Show default markers on settings chips, remove reset button, and publish VoiceStamp_20260709_163343.apk.
-9fb7e16 Pin settings save button to bottom footer and publish VoiceStamp_20260709_153137.apk.
-3c3ee0f Add in-app camera pinch and double-tap zoom and publish VoiceStamp_20260709_151301.apk.
-fc076c8 Add primary capture camera setting (system or in-app) and publish VoiceStamp_20260709_145528.apk.
-392e611 Remember last place when location lookup is off and publish VoiceStamp_20260709_140843.apk.
+217b6d5 Sync PRD, PROJECT, PLAN, and README to 8bad078 / APK 185321 (docs only).
+8bad078 Fix washed-out caption image export via opaque native JPEG; publish VoiceStamp_20260723_185321.apk.
+f4be621 Add stamp list display mode setting (title+date or full); publish VoiceStamp_20260723_170552.apk.
+1109346 Show PDF-style caption table in separate-area image export; publish VoiceStamp_20260723_153816.apk.
+d13caf8 Fix caption image export green border by using opaque white canvas; publish VoiceStamp_20260723_151910.apk.
+aabf4d5 Add user-defined save field templates with create/edit/delete; publish VoiceStamp_20260723_144416.apk.
+3af94ec Add stamp text size setting for inputs and exports; publish VoiceStamp_20260722_182753.apk.
+ca16ea2 Disable stamp zoom Apply crop while keeping view-only preview; publish VoiceStamp_20260722_170650.apk.
+6060a48 Archive PDF into stamp site folders and publish VoiceStamp_20260720_225635.apk.
+afb5e88 Publish VoiceStamp_20260713_231004.apk and update site download links.
 … (이전 커밋은 `git log` 참고)
 ```
 

@@ -607,7 +607,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260720_225635.apk`** (`6060a48`) |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260723_185321.apk`** (`8bad078`) |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -617,6 +617,7 @@
 | UX-C | 구·동 먼저 표시, 건물명은 나중에 추가 | `kakaoLocal.ts` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
+| **F-QR-01** | 저장 화면 **관련 URL QR 오버레이** — 선택 시 미리보기·갤러리 합성·내보내기 JPEG에 QR 포함 | 미구현 · MIT QR 라이브러리 후보 |
 | **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
@@ -673,8 +674,8 @@
 | **2026-07-14** | **GS-UPLOAD-01** Google Sheets 공용 시트·JPEG 압축·원클릭 업로드 **설계·초안** (`docs/DESIGN-GOOGLE-SHEETS-UPLOAD.md`, `docs/drafts/google-sheets-upload/`) · PRD·PLAN·PROJECT·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `231004`) | `744e460` |
 | **2026-07-20** | **PDF archive → `stamps/YYYYMMDD_장소명/`** (다수 폴더 시 최다 선택 폴더, 없으면 `exports/` fallback) · 도움말 · APK `225635` · Vercel · 되돌리기 `restore-export-site-folder.bat` §154 | `6060a48` |
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
-| **2026-07-22** | 07-22 누적 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(미리보기만) · APK `170650` · Vercel · `restore-disable-crop-apply.bat` §170 | (07-22) |
-| **2026-07-23** | **별도영역 이미지 흐림 수정** — ViewShot→네이티브 불투명 JPEG · 저장 목록 표시 모드·표·초록 테두리 수정 누적 · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel | `8bad078` |
+| **2026-07-22** | **필드 표시명**·**추가1·추가2**·별도영역 **2열 표**·표시명 스냅샷·목록 빈 메모 숨김 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(`170650`) · **스탬프 글자 크기**(`182753`) · Vercel | `30aed21`~`3af94ec` |
+| **2026-07-23** | **저장 템플릿·추가3**·목록 표시 모드 · 별도영역 표·초록 테두리·**이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel · 문서 이력 보강(소스 없음) | `4d56901`~`8bad078` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -690,7 +691,8 @@
 | `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
 | `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — 별도영역 이미지 표 |
 | `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — 별도영역 초록 테두리 수정 |
-| `releases/VoiceStamp_20260722_170650.apk` | (07-22) | **이전** — **확대 자르기(적용) 비활성** + 07-22 누적 |
+| `releases/VoiceStamp_20260722_182753.apk` | `3af94ec` | **이전** — **스탬프 글자 크기** 설정 |
+| `releases/VoiceStamp_20260722_170650.apk` | `ca16ea2` | **이전** — **확대 자르기(적용) 비활성** + 07-22 누적 |
 | `releases/VoiceStamp_20260722_164409.apk` | `b47ca39` | **이전** — cover 크롭 롤백 |
 | `releases/VoiceStamp_20260722_162518.apk` | `7302cd4` | **이전** — cover 일치 (**롤백됨**) |
 | `releases/VoiceStamp_20260722_133757.apk` | `41eef0c` | **이전** — 목록 빈 메모 숨김 |
