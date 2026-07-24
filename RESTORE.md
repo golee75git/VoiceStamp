@@ -3011,3 +3011,15 @@ restore-privacy-blur-exif.bat
 ```
 
 `src.pre-privacy-blur-exif/` 스냅샷으로 `privacyBlurService`·`PrivacyBlurModal`·도움말을 되돌립니다.
+
+---
+
+## 190. 앱 내 카메라 전·후면 전환 되돌리기 (선택)
+
+앱 내 카메라 전면/후면 전환을 넣은 뒤 문제가 생기면:
+
+```bat
+restore-inapp-camera-facing.bat
+```
+
+`src.pre-inapp-camera-facing/` 스냅샷으로 `CameraScreen`·`InAppCameraPreview`·도움말을 되돌립니다.

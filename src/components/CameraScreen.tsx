@@ -12,7 +12,7 @@ import {
   View,
   type AppStateStatus,
 } from 'react-native';
-import { CameraView } from 'expo-camera';
+import { CameraView, type CameraType } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
 import { CaptureActionSheet } from './CaptureActionSheet';
@@ -81,6 +81,7 @@ export function CameraScreen({
   const [inAppCameraReady, setInAppCameraReady] = useState(false);
   const [inAppCapturing, setInAppCapturing] = useState(false);
   const [inAppPictureSize, setInAppPictureSize] = useState<string | undefined>();
+  const [cameraFacing, setCameraFacing] = useState<CameraType>('back');
   const cameraRef = useRef<CameraView>(null);
   const previewRef = useRef<InAppCameraPreviewHandle>(null);
   const [zoomPreset, setZoomPreset] = useState<ZoomPreset | null>(1);
@@ -305,6 +306,8 @@ export function CameraScreen({
     setInAppCameraMode(null);
     setInAppCameraReady(false);
     setZoomPreset(1);
+    setCameraFacing('back');
+    setInAppPictureSize(undefined);
     setInAppCapturing(false);
     reuseLocationRef.current = null;
     setAutoLaunch(false);
@@ -350,6 +353,16 @@ export function CameraScreen({
       // Keep default picture size when sizes are unavailable.
     }
   }, []);
+
+  const toggleCameraFacing = useCallback(() => {
+    if (cameraBusy || inAppCapturing) {
+      return;
+    }
+    setInAppCameraReady(false);
+    setInAppPictureSize(undefined);
+    setZoomPreset(1);
+    setCameraFacing((prev) => (prev === 'back' ? 'front' : 'back'));
+  }, [cameraBusy, inAppCapturing]);
 
   const handleInAppShutter = useCallback(async () => {
     if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy || !inAppCameraMode) {
@@ -626,6 +639,7 @@ export function CameraScreen({
         <InAppCameraPreview
           ref={previewRef}
           cameraRef={cameraRef}
+          facing={cameraFacing}
           pictureSize={inAppPictureSize}
           style={styles.inAppCamera}
           onCameraReady={() => void handleInAppCameraReady()}
@@ -636,8 +650,8 @@ export function CameraScreen({
           <Text style={styles.inAppTitle}>{isContinuous ? '연속 촬영' : '사진 촬영'}</Text>
           <Text style={styles.inAppHint}>
             {isContinuous
-              ? '1x·3x·5x · 핀치·더블탭 · 셔터 → 저장 · 완료로 종료'
-              : '1x·3x·5x · 핀치·더블탭 · 셔터 → 확인 · 취소로 돌아가기'}
+              ? '전·후면 · 1x·3x·5x · 핀치·더블탭 · 셔터 → 저장 · 완료로 종료'
+              : '전·후면 · 1x·3x·5x · 핀치·더블탭 · 셔터 → 확인 · 취소로 돌아가기'}
           </Text>
         </View>
 
@@ -683,15 +697,29 @@ export function CameraScreen({
               );
             })}
           </View>
-          <Pressable
-            style={styles.inAppShutterOuter}
-            onPress={() => void handleInAppShutter()}
-            disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
-            accessibilityRole="button"
-            accessibilityLabel="촬영"
-          >
-            <View style={styles.inAppShutterInner} />
-          </Pressable>
+          <View style={styles.inAppShutterRow}>
+            <Pressable
+              style={styles.inAppFlipButton}
+              onPress={toggleCameraFacing}
+              disabled={cameraBusy || inAppCapturing}
+              accessibilityRole="button"
+              accessibilityLabel={cameraFacing === 'back' ? '전면 카메라로 전환' : '후면 카메라로 전환'}
+            >
+              <Text style={styles.inAppFlipButtonText}>
+                {cameraFacing === 'back' ? '전면' : '후면'}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={styles.inAppShutterOuter}
+              onPress={() => void handleInAppShutter()}
+              disabled={!inAppCameraReady || cameraBusy || inAppCapturing}
+              accessibilityRole="button"
+              accessibilityLabel="촬영"
+            >
+              <View style={styles.inAppShutterInner} />
+            </Pressable>
+            <View style={styles.inAppFlipSpacer} />
+          </View>
         </View>
 
         {cameraBusy ? (
@@ -1003,6 +1031,33 @@ const styles = StyleSheet.create({
   },
   zoomPresetTextSelected: {
     color: '#111',
+  },
+  inAppShutterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 28,
+    width: '100%',
+    paddingHorizontal: 24,
+  },
+  inAppFlipSpacer: {
+    minWidth: 64,
+  },
+  inAppFlipButton: {
+    minWidth: 64,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inAppFlipButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
   },
   inAppShutterOuter: {
     width: 76,

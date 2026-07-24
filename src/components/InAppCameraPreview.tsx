@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import { CameraView } from 'expo-camera';
+import { CameraView, type CameraType } from 'expo-camera';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue } from 'react-native-reanimated';
 
@@ -24,6 +24,7 @@ export type InAppCameraPreviewHandle = {
 
 type InAppCameraPreviewProps = {
   cameraRef: React.RefObject<CameraView | null>;
+  facing?: CameraType;
   pictureSize?: string;
   onCameraReady: () => void;
   onZoomChange?: (zoom: number, preset: ZoomPreset | null) => void;
@@ -46,7 +47,7 @@ function nearestPreset(zoom: number): ZoomPreset | null {
 
 export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCameraPreviewProps>(
   function InAppCameraPreview(
-    { cameraRef, pictureSize, onCameraReady, onZoomChange, style },
+    { cameraRef, facing = 'back', pictureSize, onCameraReady, onZoomChange, style },
     ref,
   ) {
     const [zoom, setZoom] = useState(0);
@@ -69,7 +70,7 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
       zoomShared.value = 0;
       setZoom(0);
       onZoomChangeRef.current?.(0, 1);
-    }, [zoomShared]);
+    }, [zoomShared, facing]);
 
     useImperativeHandle(
       ref,
@@ -109,7 +110,8 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
             <CameraView
               ref={cameraRef}
               style={styles.camera}
-              facing="back"
+              facing={facing}
+              mirror={facing === 'front'}
               pictureSize={pictureSize}
               zoom={zoom}
               onCameraReady={onCameraReady}
