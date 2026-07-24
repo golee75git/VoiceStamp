@@ -2975,3 +2975,15 @@ restore-privacy-blur.bat
 
 `src.pre-privacy-blur/` 스냅샷으로 `StampSaveModal`·`SettingsScreen`·`settingsService`·`package.json` 등을 되돌리고 `modules/voicestamp-mlkit`·`PrivacyBlurModal` 등을 제거합니다. `app_settings` 키 `privacy_blur_enabled`는 남아도 무해합니다.
 
+---
+
+## 187. 개인정보 가리기 해상도 비례 강도 되돌리기 (선택)
+
+약·중·강 모자이크를 사진 해상도·영역 크기 비례로 바꾼 뒤 문제가 생기면:
+
+```bat
+restore-privacy-blur-scale.bat
+```
+
+`VoicestampMlkitModule.kt`를 고정 px(12/24/40) 버전으로 되돌립니다.
+

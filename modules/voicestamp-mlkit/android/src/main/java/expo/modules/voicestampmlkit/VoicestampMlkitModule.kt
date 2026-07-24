@@ -117,8 +117,19 @@ class VoicestampMlkitModule : Module() {
           copy ?: throw Exception("Cannot create mutable bitmap")
         }
 
-      val blockSize = mosaicBlockSize(strength)
-      val inflate = if (strength == "strong") 0.15f else 0.12f
+      val shortSide = min(bitmap.width, bitmap.height)
+      val faceInflate =
+        when (strength) {
+          "light" -> 0.12f
+          "strong" -> 0.28f
+          else -> 0.18f
+        }
+      val textInflate =
+        when (strength) {
+          "light" -> 0.04f
+          "strong" -> 0.10f
+          else -> 0.06f
+        }
       val canvas = Canvas(bitmap)
       val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
 
@@ -143,13 +154,16 @@ class VoicestampMlkitModule : Module() {
           continue
         }
         val type = obj.optString("type", "text")
-        val padFactor = if (type == "face") inflate else 0.06f
+        val padFactor = if (type == "face") faceInflate else textInflate
+        val regionW = width.roundToInt().coerceAtLeast(1)
+        val regionH = height.roundToInt().coerceAtLeast(1)
+        val blockSize = mosaicBlockSize(strength, shortSide, regionW, regionH)
         val rect =
           inflateRect(
             left.roundToInt(),
             top.roundToInt(),
-            width.roundToInt(),
-            height.roundToInt(),
+            regionW,
+            regionH,
             padFactor,
             bitmap.width,
             bitmap.height,
@@ -187,12 +201,42 @@ class VoicestampMlkitModule : Module() {
     )
   }
 
-  private fun mosaicBlockSize(strength: String): Int {
-    return when (strength) {
-      "light" -> 12
-      "strong" -> 40
-      else -> 24
-    }
+  /**
+   * Mosaic block size scales with image short side and region size so light/medium/strong
+   * stay consistent across phone resolutions (not fixed px).
+   */
+  private fun mosaicBlockSize(
+    strength: String,
+    shortSide: Int,
+    regionWidth: Int,
+    regionHeight: Int,
+  ): Int {
+    val side = shortSide.coerceAtLeast(1)
+    val regionSpan = max(regionWidth, regionHeight).coerceAtLeast(1)
+    val imageRatio =
+      when (strength) {
+        "light" -> 0.012f
+        "strong" -> 0.055f
+        else -> 0.028f
+      }
+    val regionDiv =
+      when (strength) {
+        "light" -> 14
+        "strong" -> 4
+        else -> 8
+      }
+    val fromImage = (side * imageRatio).roundToInt()
+    val fromRegion = regionSpan / regionDiv
+    val raw = max(fromImage, fromRegion)
+    val minBlock =
+      when (strength) {
+        "light" -> 8
+        "strong" -> 24
+        else -> 14
+      }
+    // Cap so tiny images do not become one giant block; strong still covers large faces.
+    val maxBlock = max(minBlock, (side * 0.14f).roundToInt())
+    return raw.coerceIn(minBlock, maxBlock)
   }
 
   private fun inflateRect(

@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260724_105355.apk` — **개인정보 가리기(블러)** — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260724_111410.apk` — **개인정보 가리기(블러)** — 상세는 [docs/README.md](./docs/README.md)
