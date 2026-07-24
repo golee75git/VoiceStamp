@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-23 |
-| 최신 반영 커밋 | `8bad078` (main) — **별도영역 이미지 흐림 수정** · APK `VoiceStamp_20260723_185321` |
+| 문서 작성일 | 2026-07-24 |
+| 최신 반영 커밋 | (본 배포) — **AI-ML-02 개인정보 가리기** · APK `VoiceStamp_20260724_105355` |
 
 ---
 
@@ -607,7 +607,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260723_185321.apk`** (`8bad078`) |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260724_105355.apk`** |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -619,6 +619,7 @@
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
 | **F-QR-01** | 저장 화면 **관련 URL QR 오버레이** — 선택 시 미리보기·갤러리 합성·내보내기 JPEG에 QR 포함 | 미구현 · MIT QR 라이브러리 후보 |
 | **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
+| **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP (2026-07-24) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · 설정 opt-in · 생성형 삭제 제외 |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
@@ -676,6 +677,7 @@
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
 | **2026-07-22** | **필드 표시명**·**추가1·추가2**·별도영역 **2열 표**·표시명 스냅샷·목록 빈 메모 숨김 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(`170650`) · **스탬프 글자 크기**(`182753`) · Vercel | `30aed21`~`3af94ec` |
 | **2026-07-23** | **저장 템플릿·추가3**·목록 표시 모드 · 별도영역 표·초록 테두리·**이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel · 문서 이력 보강(소스 없음) | `4d56901`~`8bad078` |
+| **2026-07-24** | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · 설정 opt-in · `voicestamp-mlkit` · 도움말·PRIVACY · `restore-privacy-blur.bat` | (본 배포) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -830,6 +832,7 @@
 | 문서 목록 | [README.md](./README.md) |
 | 정보·정책 페이지 설계·구현 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) |
 | ML Kit 장면 라벨 설계 (AI-ML-01) | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
+| 개인정보 가리기(블러) 설계 (AI-ML-02) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
 | 개발 계획 | [PLAN.md](./PLAN.md) |
 | 프로젝트 현황·기능 이력 | [PROJECT.md](./PROJECT.md) |
 | 개인정보 처리 안내 | [PRIVACY.md](./PRIVACY.md) |

@@ -1,0 +1,13 @@
+{
+  "name": "voicestamp-mlkit",
+  "version": "1.0.0",
+  "description": "On-device ML Kit face/OCR detect and mosaic blur for privacy masking",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": "*",
+    "expo-modules-core": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

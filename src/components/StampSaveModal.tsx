@@ -75,6 +75,9 @@ import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
+import { PrivacyBlurModal } from './PrivacyBlurModal';
+import { getPrivacyBlurEnabled } from '../services/settingsService';
+import { isPrivacyBlurSupported } from '../services/privacyBlurService';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
 const zoomEditIcon = require('../../assets/zoom.png');
@@ -274,6 +277,8 @@ export function StampSaveModal({
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
+  const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
     title: SpeechInsertSlice;
@@ -502,6 +507,7 @@ export function StampSaveModal({
     originalCameraUriRef.current = null;
     setWorkingImageUri(null);
     setPreviewThumbUri(null);
+    setPrivacyModalOpen(false);
     setCaptureCoords(null);
     setFloor(null);
     setPlaceLabel(null);
@@ -541,6 +547,21 @@ export function StampSaveModal({
       originalCameraUriRef.current = imageUri;
     }
   }, [visible, imageUri, isEdit]);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    let cancelled = false;
+    void getPrivacyBlurEnabled().then((enabled) => {
+      if (!cancelled) {
+        setPrivacyBlurEnabled(enabled);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible]);
 
   useEffect(() => {
     if (!visible) {
@@ -1196,6 +1217,18 @@ export function StampSaveModal({
               </Pressable>
             ) : null}
 
+            {photoUri && privacyBlurEnabled && isPrivacyBlurSupported() ? (
+              <Pressable
+                style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
+                onPress={() => setPrivacyModalOpen(true)}
+                disabled={saving}
+                accessibilityRole="button"
+                accessibilityLabel="개인정보 가리기"
+              >
+                <Text style={styles.privacyBlurBtnText}>개인정보 가리기</Text>
+              </Pressable>
+            ) : null}
+
             {!isEdit ? (
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
@@ -1530,6 +1563,16 @@ export function StampSaveModal({
         </Pressable>
       </Pressable>
     </Modal>
+
+    <PrivacyBlurModal
+      visible={privacyModalOpen}
+      imageUri={photoUri}
+      onClose={() => setPrivacyModalOpen(false)}
+      onApplied={(blurredUri) => {
+        setWorkingImageUri(blurredUri);
+        setPrivacyModalOpen(false);
+      }}
+    />
     </>
   );
 }
@@ -1583,6 +1626,21 @@ const styles = StyleSheet.create({
   },
   zoomEditBadgeRight: {
     right: 8,
+  },
+  privacyBlurBtn: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+  },
+  privacyBlurBtnText: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: '600',
   },
   viewerPreparingOverlay: {
     ...StyleSheet.absoluteFillObject,

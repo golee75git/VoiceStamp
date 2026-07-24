@@ -58,6 +58,7 @@ import {
   DEFAULT_FIELD_EXTRA2_LABEL,
   DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_SHUTTER_SOUND,
+  DEFAULT_PRIVACY_BLUR_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   FIELD_LABEL_MAX_LENGTH,
@@ -66,6 +67,7 @@ import {
   primaryCaptureCameraLabel,
   captureAfterModeLabel,
   shutterSoundLabel,
+  privacyBlurEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -174,6 +176,7 @@ export function SettingsScreen({
     DEFAULT_CAPTURE_AFTER_MODE,
   );
   const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
+  const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -225,6 +228,7 @@ export function SettingsScreen({
       setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
       setCaptureAfterModeState(snapshot.captureAfterMode);
       setShutterSoundState(snapshot.shutterSound);
+      setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
       setCameraHandState(snapshot.cameraHand);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
@@ -267,6 +271,7 @@ export function SettingsScreen({
         continuousCaptureCamera,
         captureAfterMode,
         shutterSound,
+        privacyBlurEnabled,
         cameraHand,
         floorPickerMode,
         floorDisplayMode,
@@ -300,6 +305,7 @@ export function SettingsScreen({
       setContinuousCaptureCameraState(saved.continuousCaptureCamera);
       setCaptureAfterModeState(saved.captureAfterMode);
       setShutterSoundState(saved.shutterSound);
+      setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
       setCameraHandState(saved.cameraHand);
       setFloorPickerModeState(saved.floorPickerMode);
       setFloorDisplayModeState(saved.floorDisplayMode);
@@ -952,6 +958,42 @@ export function SettingsScreen({
                 );
               },
             )}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>개인정보 가리기</Text>
+          <Text style={styles.hint}>
+            사용: 저장 화면에서 얼굴·숫자 영역을 폰 안에서만 흐리게 할 수 있습니다. 서버로 보내지 않습니다.
+            (Android) 기본은 끔이며, 버튼을 눌러 확인 후 적용합니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !privacyBlurEnabled && styles.optionButtonSelected]}
+              onPress={() => setPrivacyBlurEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !privacyBlurEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(privacyBlurEnabledLabel(false), !DEFAULT_PRIVACY_BLUR_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, privacyBlurEnabled && styles.optionButtonSelected]}
+              onPress={() => setPrivacyBlurEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  privacyBlurEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(privacyBlurEnabledLabel(true), DEFAULT_PRIVACY_BLUR_ENABLED)}
+              </Text>
+            </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>

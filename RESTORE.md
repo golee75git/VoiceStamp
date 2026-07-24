@@ -2961,3 +2961,17 @@ restore-list-display-mode.bat
 restore-caption-export-wash.bat
 ```
 
+파일을 스냅샷에서 덮어쓴 뒤 Metro/앱을 다시 로드하세요.
+
+---
+
+## 186. 개인정보 가리기(블러) 되돌리기 (선택)
+
+온디바이스 얼굴·숫자 모자이크 블러(AI-ML-02) 추가 후 문제가 생기면:
+
+```bat
+restore-privacy-blur.bat
+```
+
+`src.pre-privacy-blur/` 스냅샷으로 `StampSaveModal`·`SettingsScreen`·`settingsService`·`package.json` 등을 되돌리고 `modules/voicestamp-mlkit`·`PrivacyBlurModal` 등을 제거합니다. `app_settings` 키 `privacy_blur_enabled`는 남아도 무해합니다.
+

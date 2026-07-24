@@ -567,7 +567,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | ID | 내용 | 비고 |
 |----|------|------|
-| **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기 |
+| **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기(되돌림 이력) |
+| **AI-ML-02** | **ML Kit Face + OCR** — 얼굴·숫자 **블러**(개인정보 가리기) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · ✅ MVP 구현 (2026-07-24) · `restore-privacy-blur.bat` §186 |
 
 ### 4.5 연동·클라우드 (설계만)
 
@@ -638,6 +639,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [../RESTORE.md](../RESTORE.md) | 되돌리기 §1~154 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
+| [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) | 개인정보 가리기(블러) MVP 설계 (AI-ML-02) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | Google Sheets 업로드 설계 (GS-UPLOAD-01, 초안) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
@@ -685,6 +687,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-21 | 2AC·3 | 크롭 시도·롤백 · APK `235129` (`ee75aa8`) |
 | 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표 · **자르기 적용 비활성**(`170650`) · **글자 크기**(`182753`) · APK `095047`~`182753` |
 | 2026-07-23 | 2AD·3 | 저장 템플릿·목록 표시·표·초록 테두리·**별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 이력 보강(소스 없음) |
+| 2026-07-24 | 4→2 | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · `voicestamp-mlkit` · `restore-privacy-blur.bat` §186 · 도움말·PRIVACY 갱신 |
 
 ---
 

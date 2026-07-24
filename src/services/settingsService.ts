@@ -77,6 +77,7 @@ const FIELD_LABEL_EXTRA1_KEY = 'field_label_extra1';
 const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
 const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
+const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -105,6 +106,8 @@ export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
 export const DEFAULT_SHUTTER_SOUND = true;
+/** Android on-device face/number mosaic blur. Default off (opt-in). */
+export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -453,6 +456,7 @@ export type SettingsScreenSnapshot = {
   continuousCaptureCamera: ContinuousCaptureCamera;
   captureAfterMode: CaptureAfterMode;
   shutterSound: boolean;
+  privacyBlurEnabled: boolean;
   cameraHand: CameraHand;
   floorPickerMode: FloorPickerMode;
   floorDisplayMode: FloorDisplayMode;
@@ -552,6 +556,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       pickSetting(map, SHUTTER_SOUND_KEY),
       DEFAULT_SHUTTER_SOUND,
     ),
+    privacyBlurEnabled: parseBooleanSetting(
+      pickSetting(map, PRIVACY_BLUR_ENABLED_KEY),
+      DEFAULT_PRIVACY_BLUR_ENABLED,
+    ),
     cameraHand: (() => {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
@@ -648,6 +656,7 @@ export function sanitizeSettingsScreenSnapshot(
     continuousCaptureCamera: sanitizeContinuousCaptureCamera(draft.continuousCaptureCamera),
     captureAfterMode: sanitizeCaptureAfterMode(draft.captureAfterMode),
     shutterSound: draft.shutterSound,
+    privacyBlurEnabled: draft.privacyBlurEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
     floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
     floorDisplayMode: sanitizeFloorDisplayMode(draft.floorDisplayMode),
@@ -685,6 +694,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [CONTINUOUS_CAPTURE_CAMERA_KEY, snapshot.continuousCaptureCamera],
     [CAPTURE_AFTER_MODE_KEY, snapshot.captureAfterMode],
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
+    [PRIVACY_BLUR_ENABLED_KEY, snapshot.privacyBlurEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
     [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
     [FLOOR_DISPLAY_MODE_KEY, snapshot.floorDisplayMode],
@@ -1019,6 +1029,20 @@ export async function getShutterSoundEnabled(): Promise<boolean> {
 
 export async function setShutterSoundEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(SHUTTER_SOUND_KEY, enabled ? 'true' : 'false');
+  return enabled;
+}
+
+export function privacyBlurEnabledLabel(enabled: boolean): string {
+  return enabled ? '사용' : '사용 안 함';
+}
+
+export async function getPrivacyBlurEnabled(): Promise<boolean> {
+  const value = await readSetting(PRIVACY_BLUR_ENABLED_KEY);
+  return parseBooleanSetting(value, DEFAULT_PRIVACY_BLUR_ENABLED);
+}
+
+export async function setPrivacyBlurEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(PRIVACY_BLUR_ENABLED_KEY, enabled ? 'true' : 'false');
   return enabled;
 }
 

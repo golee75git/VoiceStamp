@@ -13,6 +13,7 @@
 | [PLAN.md](./PLAN.md) | 기획·개발 | 단계·완료 기능, **§10 날짜별** · **§11 APK별** |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 기획·UI | LEG-04 정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | 기획·AI | **AI-ML-01** ML Kit 설계 (구현 `43d1f13` → **`0869e93` 되돌림**) |
+| [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) | 기획·AI | **AI-ML-02** 온디바이스 얼굴·숫자 **블러** MVP 설계 (구현 전·소스 미변경) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
@@ -32,20 +33,21 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-23)
+## 현재 상태 스냅샷 (2026-07-24)
 
-- **문서 갱신일:** 2026-07-23 — **날짜별·APK별 이력 보강** (`170650`·`182753` 등) · 권장 APK `185321` · **소스 변경 없음**
-- **최신 기능 커밋:** `8bad078` — ViewShot→네이티브 불투명 JPEG
+- **문서 갱신일:** 2026-07-24 — **AI-ML-02** 개인정보 가리기(블러) MVP · APK `105355`
+- **이전 문서 갱신일:** 2026-07-23 — **날짜별·APK별 이력 보강** (`170650`·`182753` 등) · 권장 APK `185321`
+- **최신 기능 커밋:** (본 배포) — 온디바이스 얼굴·숫자 모자이크 블러
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260723_185321.apk` — **별도영역 이미지 흐림 수정**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260723_185321.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260723_170552.apk` (저장 목록 표시 모드)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260724_105355.apk` — **개인정보 가리기(블러)**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260724_105355.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (별도영역 이미지 흐림 수정)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
-- **개선 후보(미구현):** **F-QR-01** 저장 화면 관련 URL QR 오버레이 (PRD §10.1 · PLAN §4.1)
+- **개선 후보(미구현):** **F-QR-01** · **AI-ML-02** 개인정보 가리기(블러) 설계만 · **AI-ML-01** 장면 라벨(되돌림) (PRD §10.1 · PLAN §4)
 
 ### 날짜별 요약
 
@@ -85,6 +87,7 @@
 | 07-21 | 크롭 뷰포트/라이브/UI-flush **시도 후 롤백** → **`225635` 크롭 동작 복구** · APK `235129` · Vercel |
 | 07-22 | **필드 표시명**·**추가1·2**·표 · **자르기 적용 비활성** `170650` · **글자 크기** `182753` · Vercel |
 | 07-23 | **저장 템플릿**·목록 표시 · 표·초록 테두리·**별도영역 이미지 흐림 수정** `185321` · Vercel · 문서 이력 보강 |
+| 07-24 | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · `voicestamp-mlkit` · 도움말·PRIVACY · APK `105355` |
 
 ### APK별 (권장·주요)
 

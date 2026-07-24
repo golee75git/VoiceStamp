@@ -96,6 +96,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 카카오 로컬 API | GPS → 주소 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md), 카카오 개발자 약관 |
 | 전국초중등학교위치표준데이터 | GPS → 학교명 (로컬 DB, 200m) | [공공데이터포털](https://www.data.go.kr/data/15021148/standard.do) — 한국교육시설안전원 제공, **출처 표시** (공공데이터). 빌드 시 `assets/schools.sqlite` 생성 (`npm run build:schools-db`, 기준일 2026-03-20). |
 | OS 음성 인식 | STT | 기기/OS 정책 — [PRIVACY.md](./PRIVACY.md) §2.3 |
+| Google ML Kit (Face Detection, Korean Text Recognition) | 선택: 온디바이스 얼굴·숫자 영역 모자이크 블러 | [ML Kit Terms](https://developers.google.com/ml-kit/terms) · 사진은 서버 미전송 · [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
 
 ---
 
@@ -130,3 +131,4 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-07-06 | `assets/zoomedit.png` UI 배지 에셋 고지 추가 |
 | 2026-07-06 | 미리보기 배지 에셋 `zoomedit.png` → `zoom.png` 로 교체 |
 | 2026-07-23 | 별도영역 이미지 내보내기: ViewShot→`react-native-image-marker`(MIT) 불투명 JPEG. 신규 의존성·권한 없음 |
+| 2026-07-24 | AI-ML-02 개인정보 가리기: voicestamp-mlkit (ML Kit Face + Korean OCR) + 자체 모자이크. GPL 없음. 생성형 인페인팅 없음 |
