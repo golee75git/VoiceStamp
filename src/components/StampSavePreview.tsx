@@ -14,6 +14,7 @@ import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { stampDisplayTitle } from '../services/stampFloor';
+import { formatStampFooterDatetime } from '../services/pdfTitleFormat';
 import { stampDisplayPlace } from '../services/stampPlace';
 import {
   overlayPhraseFontSize,
@@ -78,6 +79,8 @@ type StampSavePreviewProps = {
   watermarkStyle: WatermarkStyle;
   coordsLabel: CoordsLabelMode;
   showDatetime: boolean;
+  showFooterDatetime?: boolean;
+  createdAt?: number;
   orgName: string;
   footerPhrase: string;
   showOrgName: boolean;
@@ -110,6 +113,8 @@ export function StampSavePreview({
   watermarkStyle,
   coordsLabel,
   showDatetime,
+  showFooterDatetime = true,
+  createdAt,
   orgName,
   footerPhrase,
   showOrgName,
@@ -147,6 +152,10 @@ export function StampSavePreview({
   const coords = formatStampCoordinates(latitude, longitude, coordsLabel);
   const displayOrgName = resolveOverlayOrgName({ orgName, footerPhrase, showOrgName, showFooterPhrase });
   const displayFooterPhrase = resolveOverlayFooterPhrase({ orgName, footerPhrase, showOrgName, showFooterPhrase });
+  const displayFooterDatetime =
+    showFooterDatetime && textLayout !== 'watermark'
+      ? formatStampFooterDatetime(createdAt ?? Date.now())
+      : null;
   const captionTableRows = buildCaptionTableRows(
     { title, memo, floor, placeLabel, extra1, extra2, extra3, latitude, longitude },
     labels,
@@ -496,6 +505,17 @@ export function StampSavePreview({
               {displayFooterPhrase}
             </Text>
           ) : null}
+          {displayFooterDatetime ? (
+            <Text
+              style={[
+                styles.thumbnailCaptionPhrase,
+                { textAlign: titleAlign, fontSize: phraseFontSize, color: '#6b7280' },
+              ]}
+              numberOfLines={1}
+            >
+              {displayFooterDatetime}
+            </Text>
+          ) : null}
         </View>
       </View>
     );
@@ -523,6 +543,16 @@ export function StampSavePreview({
             ]}
           >
             {displayFooterPhrase}
+          </Text>
+        ) : null}
+        {displayFooterDatetime ? (
+          <Text
+            style={[
+              styles.fullscreenCaptionPhrase,
+              { textAlign: titleAlign, fontSize: phraseFontSize, color: '#6b7280' },
+            ]}
+          >
+            {displayFooterDatetime}
           </Text>
         ) : null}
       </View>

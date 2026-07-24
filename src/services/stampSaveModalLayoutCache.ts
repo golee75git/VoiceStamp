@@ -12,6 +12,7 @@ import {
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
   getPdfShowDatetime,
+  getExportFooterDatetime,
   getPlaceFieldLabel,
   getStampTextLayout,
   getStampTextSize,
@@ -35,6 +36,7 @@ export type StampSaveModalLayoutSettings = {
   stampTextSize: StampTextSize;
   watermarkStyle: WatermarkStyle;
   showDatetime: boolean;
+  showFooterDatetime: boolean;
   coordsLabel: CoordsLabelMode;
   floorDisplayMode: FloorDisplayMode;
   overlayOrgName: string;
@@ -97,6 +99,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
       getStampTextSize(),
       getWatermarkStyle(),
       getPdfShowDatetime(),
+      getExportFooterDatetime(),
       getCoordsLabelMode(),
       getFloorDisplayMode(),
       getOverlayOrgName(),
@@ -118,6 +121,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
         stampTextSize,
         watermarkStyle,
         showDatetime,
+        showFooterDatetime,
         coordsLabel,
         floorDisplayMode,
         overlayOrgName,
@@ -139,6 +143,7 @@ export function loadStampSaveModalLayoutSettings(): Promise<StampSaveModalLayout
           stampTextSize,
           watermarkStyle,
           showDatetime,
+          showFooterDatetime,
           coordsLabel,
           floorDisplayMode,
           overlayOrgName,

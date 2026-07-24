@@ -14,6 +14,11 @@ export function pdfDisplayTitle(rawTitle: string | undefined, showDatetime: bool
   return stripped || '(제목 없음)';
 }
 
+/** Bottom caption/PDF line: stamp createdAt in Korean locale. */
+export function formatStampFooterDatetime(createdAt: number): string {
+  return new Date(createdAt).toLocaleString('ko-KR');
+}
+
 export function defaultPdfFileNameFromStampTitle(
   title: string | undefined,
   includeDatetime: boolean,

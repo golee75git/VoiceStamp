@@ -2987,3 +2987,15 @@ restore-privacy-blur-scale.bat
 
 `VoicestampMlkitModule.kt`를 고정 px(12/24/40) 버전으로 되돌립니다.
 
+
+---
+
+## 188. 하단 촬영 일시 설정 되돌리기 (선택)
+
+설정 「하단 촬영 일시」를 제목 접두어와 분리한 뒤 문제가 생기면:
+
+```bat
+restore-export-footer-datetime.bat
+```
+
+`src.pre-export-footer-datetime/` 스냅샷으로 관련 서비스·설정·미리보기·목록을 되돌립니다. DB 키 `export_footer_datetime`은 남아도 무해합니다.

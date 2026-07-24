@@ -43,6 +43,7 @@ const TITLE_TEXT_ALIGN_KEY = 'title_text_align';
 const MEMO_TEXT_ALIGN_KEY = 'memo_text_align';
 const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
+const EXPORT_FOOTER_DATETIME_KEY = 'export_footer_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const STAMP_TEXT_SIZE_KEY = 'stamp_text_size';
@@ -92,6 +93,8 @@ export const DEFAULT_PDF_IMAGE_QUALITY = 'original' as const;
 export const DEFAULT_TITLE_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_MEMO_TEXT_ALIGN = 'left' as const;
 export const DEFAULT_PDF_SHOW_DATETIME = true;
+/** Caption/PDF bottom createdAt line (separate from title prefix). Default on. */
+export const DEFAULT_EXPORT_FOOTER_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
@@ -446,6 +449,7 @@ export type SettingsScreenSnapshot = {
   titleTextAlign: TextAlign;
   memoTextAlign: TextAlign;
   pdfShowDatetime: boolean;
+  exportFooterDatetime: boolean;
   pdfFilenameIncludeDatetime: boolean;
   stampTextLayout: StampTextLayout;
   stampTextSize: StampTextSize;
@@ -515,6 +519,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
     pdfShowDatetime: parseBooleanSetting(
       pickSetting(map, PDF_SHOW_DATETIME_KEY),
       DEFAULT_PDF_SHOW_DATETIME,
+    ),
+    exportFooterDatetime: parseBooleanSetting(
+      pickSetting(map, EXPORT_FOOTER_DATETIME_KEY),
+      DEFAULT_EXPORT_FOOTER_DATETIME,
     ),
     pdfFilenameIncludeDatetime: parseBooleanSetting(
       pickSetting(map, PDF_FILENAME_INCLUDE_DATETIME_KEY),
@@ -646,6 +654,7 @@ export function sanitizeSettingsScreenSnapshot(
     titleTextAlign: sanitizeTextAlign(draft.titleTextAlign),
     memoTextAlign: sanitizeTextAlign(draft.memoTextAlign),
     pdfShowDatetime: draft.pdfShowDatetime,
+    exportFooterDatetime: draft.exportFooterDatetime,
     pdfFilenameIncludeDatetime: draft.pdfFilenameIncludeDatetime,
     stampTextLayout: sanitizeStampTextLayout(draft.stampTextLayout),
     stampTextSize: sanitizeStampTextSize(draft.stampTextSize),
@@ -684,6 +693,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [TITLE_TEXT_ALIGN_KEY, snapshot.titleTextAlign],
     [MEMO_TEXT_ALIGN_KEY, snapshot.memoTextAlign],
     [PDF_SHOW_DATETIME_KEY, snapshot.pdfShowDatetime ? 'true' : 'false'],
+    [EXPORT_FOOTER_DATETIME_KEY, snapshot.exportFooterDatetime ? 'true' : 'false'],
     [PDF_FILENAME_INCLUDE_DATETIME_KEY, snapshot.pdfFilenameIncludeDatetime ? 'true' : 'false'],
     [STAMP_TEXT_LAYOUT_KEY, snapshot.stampTextLayout],
     [STAMP_TEXT_SIZE_KEY, snapshot.stampTextSize],
@@ -871,6 +881,16 @@ export async function getPdfShowDatetime(): Promise<boolean> {
 
 export async function setPdfShowDatetime(show: boolean): Promise<boolean> {
   await writeSetting(PDF_SHOW_DATETIME_KEY, show ? 'true' : 'false');
+  return show;
+}
+
+export async function getExportFooterDatetime(): Promise<boolean> {
+  const value = await readSetting(EXPORT_FOOTER_DATETIME_KEY);
+  return parseBooleanSetting(value, DEFAULT_EXPORT_FOOTER_DATETIME);
+}
+
+export async function setExportFooterDatetime(show: boolean): Promise<boolean> {
+  await writeSetting(EXPORT_FOOTER_DATETIME_KEY, show ? 'true' : 'false');
   return show;
 }
 

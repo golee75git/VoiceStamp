@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import { stampDisplayTitle } from './stampFloor';
+import { formatStampFooterDatetime } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import {
@@ -24,6 +25,7 @@ import {
   getPdfImageQuality,
   getPdfPhotosPerPage,
   getPdfShowDatetime,
+  getExportFooterDatetime,
   getPlaceFieldLabel,
   getStampTextLayout,
   getStampTextSize,
@@ -93,6 +95,7 @@ function buildStampItem(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
   showDatetime: boolean,
+  showFooterDatetime: boolean,
   shrinkForReportHeader: boolean,
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
@@ -192,8 +195,8 @@ function buildStampItem(
   const phraseBlock = footerPhrase
     ? `<p class="caption-phrase" style="text-align: ${memoAlign}; font-size: ${phraseSize}px;">${escapeHtml(footerPhrase)}</p>`
     : '';
-  const date = escapeHtml(new Date(stamp.createdAt).toLocaleString('ko-KR'));
-  const dateBlock = showDatetime
+  const date = escapeHtml(formatStampFooterDatetime(stamp.createdAt));
+  const dateBlock = showFooterDatetime
     ? `<p class="date" style="text-align: ${titleAlign};">${date}</p>`
     : '';
 
@@ -227,6 +230,7 @@ function buildHtml(
   titleAlign: TextAlign,
   memoAlign: TextAlign,
   showDatetime: boolean,
+  showFooterDatetime: boolean,
   reportTitle: string,
   textLayout: StampTextLayout,
   coordsLabel: CoordsLabelMode,
@@ -255,6 +259,7 @@ function buildHtml(
             titleAlign,
             memoAlign,
             showDatetime,
+            showFooterDatetime,
             shrinkImages,
             textLayout,
             coordsLabel,
@@ -512,12 +517,13 @@ export async function createStampsPdf(
   }
 
   const safeName = sanitizePdfFileName(fileName);
-  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, textLayout, stampTextSize, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
+  const [photosPerPage, imageQuality, titleAlign, memoAlign, showDatetime, showFooterDatetime, textLayout, stampTextSize, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
     getPdfPhotosPerPage(),
     getPdfImageQuality(),
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
+    getExportFooterDatetime(),
     getStampTextLayout(),
     getStampTextSize(),
     getCoordsLabelMode(),
@@ -545,6 +551,7 @@ export async function createStampsPdf(
     titleAlign,
     memoAlign,
     showDatetime,
+    showFooterDatetime,
     reportTitle,
     textLayout,
     coordsLabel,

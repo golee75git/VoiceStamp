@@ -40,8 +40,8 @@
 - **최신 기능 커밋:** (본 배포) — 온디바이스 얼굴·숫자 모자이크 블러
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260724_111410.apk` — **개인정보 가리기(해상도 비례 강도)**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260724_111410.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260724_114341.apk` — **개인정보 가리기(해상도 비례 강도)**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260724_114341.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (별도영역 이미지 흐림 수정)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)

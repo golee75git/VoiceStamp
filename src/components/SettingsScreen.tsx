@@ -32,6 +32,7 @@ import {
   DEFAULT_PDF_IMAGE_QUALITY,
   DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_PDF_SHOW_DATETIME,
+  DEFAULT_EXPORT_FOOTER_DATETIME,
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
@@ -150,6 +151,9 @@ export function SettingsScreen({
   const [titleTextAlign, setTitleTextAlignState] = useState<TextAlign>(DEFAULT_TITLE_TEXT_ALIGN);
   const [memoTextAlign, setMemoTextAlignState] = useState<TextAlign>(DEFAULT_MEMO_TEXT_ALIGN);
   const [pdfShowDatetime, setPdfShowDatetimeState] = useState(DEFAULT_PDF_SHOW_DATETIME);
+  const [exportFooterDatetime, setExportFooterDatetimeState] = useState(
+    DEFAULT_EXPORT_FOOTER_DATETIME,
+  );
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetimeState] = useState(
     DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   );
@@ -218,6 +222,7 @@ export function SettingsScreen({
       setTitleTextAlignState(snapshot.titleTextAlign);
       setMemoTextAlignState(snapshot.memoTextAlign);
       setPdfShowDatetimeState(snapshot.pdfShowDatetime);
+      setExportFooterDatetimeState(snapshot.exportFooterDatetime);
       setPdfFilenameIncludeDatetimeState(snapshot.pdfFilenameIncludeDatetime);
       setStampTextLayoutState(snapshot.stampTextLayout);
       setStampTextSizeState(snapshot.stampTextSize);
@@ -261,6 +266,7 @@ export function SettingsScreen({
         titleTextAlign,
         memoTextAlign,
         pdfShowDatetime,
+        exportFooterDatetime,
         pdfFilenameIncludeDatetime,
         stampTextLayout,
         stampTextSize,
@@ -295,6 +301,7 @@ export function SettingsScreen({
       setTitleTextAlignState(saved.titleTextAlign);
       setMemoTextAlignState(saved.memoTextAlign);
       setPdfShowDatetimeState(saved.pdfShowDatetime);
+      setExportFooterDatetimeState(saved.exportFooterDatetime);
       setPdfFilenameIncludeDatetimeState(saved.pdfFilenameIncludeDatetime);
       setStampTextLayoutState(saved.stampTextLayout);
       setStampTextSizeState(saved.stampTextSize);
@@ -482,7 +489,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>PDF 촬영 일시 표시</Text>
           <Text style={styles.hint}>
-            끄면 PDF 제목의 날짜·시간(20260607_1045)과 하단 일시 줄을 표시하지 않습니다.
+            끄면 PDF·이미지·미리보기 제목의 날짜·시간 접두어(20260607_1045)를 표시하지 않습니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable
@@ -505,6 +512,42 @@ export function SettingsScreen({
                 style={[styles.optionButtonText, !pdfShowDatetime && styles.optionButtonTextSelected]}
               >
                 {chipLabel('숨김', !DEFAULT_PDF_SHOW_DATETIME)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>하단 촬영 일시</Text>
+          <Text style={styles.hint}>
+            PDF·이미지의 「사진 아래(별도 영역)」맨 아래에 촬영(저장) 일시를 표시합니다. 워터마크 모드에는
+            적용되지 않습니다. 제목 접두어와는 별개입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, exportFooterDatetime && styles.optionButtonSelected]}
+              onPress={() => setExportFooterDatetimeState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  exportFooterDatetime && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('표시', DEFAULT_EXPORT_FOOTER_DATETIME)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !exportFooterDatetime && styles.optionButtonSelected]}
+              onPress={() => setExportFooterDatetimeState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !exportFooterDatetime && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('숨김', !DEFAULT_EXPORT_FOOTER_DATETIME)}
               </Text>
             </Pressable>
           </View>

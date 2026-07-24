@@ -19,6 +19,7 @@ import {
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
   getPdfShowDatetime,
+  getExportFooterDatetime,
   getPlaceFieldLabel,
   getStampTextLayout,
   getTitleFieldLabel,
@@ -33,6 +34,7 @@ export type ProjectExportSettings = {
   titleAlign: string;
   memoAlign: string;
   showDatetime: boolean;
+  showFooterDatetime?: boolean;
   textLayout: string;
   coordsLabel: string;
   watermarkStyle: string;
@@ -138,10 +140,11 @@ export async function createStampsProjectZip(
   }
 
   const safeName = sanitizeExportBaseName(fileName);
-  const [titleAlign, memoAlign, showDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
+  const [titleAlign, memoAlign, showDatetime, showFooterDatetime, textLayout, coordsLabel, watermarkStyle, orgName, footerPhrase, showOrgName, showFooterPhrase, titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel] = await Promise.all([
     getTitleTextAlign(),
     getMemoTextAlign(),
     getPdfShowDatetime(),
+    getExportFooterDatetime(),
     getStampTextLayout(),
     getCoordsLabelMode(),
     getWatermarkStyle(),
@@ -202,6 +205,7 @@ export async function createStampsProjectZip(
       titleAlign,
       memoAlign,
       showDatetime,
+      showFooterDatetime,
       textLayout,
       coordsLabel,
       watermarkStyle,

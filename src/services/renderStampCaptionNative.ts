@@ -9,6 +9,7 @@ import {
   resolveOverlayOrgName,
 } from './overlayText';
 import { resolveFieldLabels } from './fieldLabels';
+import { formatStampFooterDatetime } from './pdfTitleFormat';
 import {
   prepareExportPhoto,
   type StampImageExportOptions,
@@ -123,6 +124,15 @@ export async function renderStampCaptionNative(
   const phraseLineHeight = Math.max(18, Math.round(phraseSize * 1.35));
   const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, imgWidth, phraseSize) : [];
   const phraseHeight = phraseLines.length > 0 ? phraseLines.length * phraseLineHeight + 8 : 0;
+  const showFooterDatetime = options.showFooterDatetime !== false;
+  const dateText =
+    showFooterDatetime && typeof stamp.createdAt === 'number'
+      ? formatStampFooterDatetime(stamp.createdAt)
+      : '';
+  const dateSize = Math.max(12, fontSize - 2);
+  const dateLineHeight = Math.max(18, Math.round(dateSize * 1.35));
+  const dateLines = dateText ? wrapTextLines(dateText, imgWidth, dateSize) : [];
+  const dateHeight = dateLines.length > 0 ? dateLines.length * dateLineHeight + 8 : 0;
 
   const canvasWidth = imgWidth + padding * 2;
   const canvasHeight =
@@ -132,6 +142,7 @@ export async function renderStampCaptionNative(
     orgHeight +
     (tableHeight > 0 ? tableHeight + 8 : 0) +
     phraseHeight +
+    dateHeight +
     padding;
 
   const canvasUri = await createSolidJpeg(
@@ -286,6 +297,20 @@ export async function renderStampCaptionNative(
           Y: rowY + lineIndex * phraseLineHeight,
         },
         style: cellTextStyle('#6b7280', phraseSize, options.memoAlign, false),
+      });
+    });
+    rowY += phraseHeight;
+  }
+
+  if (dateLines.length > 0) {
+    dateLines.forEach((line, lineIndex) => {
+      watermarkTexts.push({
+        text: line,
+        positionOptions: {
+          X: captionTextX(options.titleAlign, padding, canvasWidth),
+          Y: rowY + lineIndex * dateLineHeight,
+        },
+        style: cellTextStyle('#6b7280', dateSize, options.titleAlign, false),
       });
     });
   }

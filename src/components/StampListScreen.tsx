@@ -90,6 +90,7 @@ export function StampListScreen({
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
   const [pdfShowDatetime, setPdfShowDatetime] = useState(true);
+  const [exportFooterDatetime, setExportFooterDatetime] = useState(true);
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
   const [stampTextSize, setStampTextSize] = useState<StampTextSize>('medium');
   const [stampListDisplayMode, setStampListDisplayMode] = useState<StampListDisplayMode>(
@@ -182,6 +183,7 @@ export function StampListScreen({
       setMemoTextAlign(settings.memoTextAlign);
       setPdfFilenameIncludeDatetime(settings.pdfFilenameIncludeDatetime);
       setPdfShowDatetime(settings.pdfShowDatetime);
+      setExportFooterDatetime(settings.exportFooterDatetime);
       setStampTextLayout(settings.stampTextLayout);
       setStampTextSize(settings.stampTextSize);
       setStampListDisplayMode(settings.stampListDisplayMode);
@@ -356,6 +358,7 @@ export function StampListScreen({
         titleAlign: titleTextAlign,
         memoAlign: memoTextAlign,
         showDatetime: pdfShowDatetime,
+        showFooterDatetime: exportFooterDatetime,
         textLayout: stampTextLayout,
         stampTextSize,
         watermarkStyle,

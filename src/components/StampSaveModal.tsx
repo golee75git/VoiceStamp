@@ -157,6 +157,7 @@ function applyStampSaveModalLayoutSettings(
     setStampTextSize: (value: StampTextSize) => void;
     setWatermarkStyle: (value: WatermarkStyle) => void;
     setShowDatetime: (value: boolean) => void;
+    setShowFooterDatetime: (value: boolean) => void;
     setCoordsLabel: (value: CoordsLabelMode) => void;
     setFloorDisplayModeState: (value: FloorDisplayMode) => void;
     setOverlayOrgName: (value: string) => void;
@@ -178,6 +179,7 @@ function applyStampSaveModalLayoutSettings(
   apply.setStampTextSize(settings.stampTextSize);
   apply.setWatermarkStyle(settings.watermarkStyle);
   apply.setShowDatetime(settings.showDatetime);
+  apply.setShowFooterDatetime(settings.showFooterDatetime);
   apply.setCoordsLabel(settings.coordsLabel);
   apply.setFloorDisplayModeState(settings.floorDisplayMode);
   apply.setOverlayOrgName(settings.overlayOrgName);
@@ -261,6 +263,7 @@ export function StampSaveModal({
     extra3: '',
   });
   const [showDatetime, setShowDatetime] = useState(true);
+  const [showFooterDatetime, setShowFooterDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
   );
@@ -412,6 +415,7 @@ export function StampSaveModal({
       setStampTextSize,
       setWatermarkStyle,
       setShowDatetime,
+      setShowFooterDatetime,
       setCoordsLabel,
       setFloorDisplayModeState,
       setOverlayOrgName,
@@ -1187,6 +1191,8 @@ export function StampSaveModal({
                     watermarkStyle={watermarkStyle}
                     coordsLabel={coordsLabel}
                     showDatetime={showDatetime}
+                    showFooterDatetime={showFooterDatetime}
+                    createdAt={isEdit && stamp ? stamp.createdAt : Date.now()}
                     orgName={overlayOrgName}
                     footerPhrase={overlayFooterPhrase}
                     showOrgName={overlayShowOrgName}

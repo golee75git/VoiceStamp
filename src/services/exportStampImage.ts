@@ -29,6 +29,7 @@ import {
   type FieldLabels,
 } from './fieldLabels';
 import { buildCaptionTableRows } from './captionTable';
+import { formatStampFooterDatetime } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle, StampTextSize } from './settingsService';
 import { DEFAULT_STAMP_TEXT_SIZE, stampTextSizeScale } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
@@ -92,6 +93,8 @@ export type StampImageExportOptions = OverlayTextFields & FieldLabels & {
   titleAlign: TextAlign;
   memoAlign: TextAlign;
   showDatetime: boolean;
+  /** Caption layout only: bottom createdAt line. Defaults to true when omitted. */
+  showFooterDatetime?: boolean;
   textLayout: StampTextLayout;
   coordsLabel: CoordsLabelMode;
   watermarkStyle: WatermarkStyle;
@@ -479,9 +482,22 @@ async function renderStampJpegCaptionOnWeb(
   const tableHeight = rowHeights.reduce((sum, h) => sum + h, 0);
   const orgHeight = orgName ? lineHeight + 8 : 0;
   const phraseHeight = footerPhrase ? lineHeight + 8 : 0;
+  const showFooterDatetime = options.showFooterDatetime !== false;
+  const dateText =
+    showFooterDatetime && typeof stamp.createdAt === 'number'
+      ? formatStampFooterDatetime(stamp.createdAt)
+      : '';
+  const dateHeight = dateText ? lineHeight + 8 : 0;
   const canvasWidth = imgWidth + padding * 2;
   const canvasHeight =
-    padding + imgHeight + 16 + orgHeight + (tableHeight > 0 ? tableHeight + 8 : 0) + phraseHeight + padding;
+    padding +
+    imgHeight +
+    16 +
+    orgHeight +
+    (tableHeight > 0 ? tableHeight + 8 : 0) +
+    phraseHeight +
+    dateHeight +
+    padding;
 
   const canvas = document.createElement('canvas');
   canvas.width = canvasWidth;
@@ -559,13 +575,29 @@ async function renderStampJpegCaptionOnWeb(
   }
 
   if (footerPhrase) {
-    drawAlignedText(
+    y = drawAlignedText(
       ctx,
       footerPhrase,
       padding,
       y + fontSize,
       imgWidth,
       options.memoAlign,
+      Math.max(12, fontSize - 2),
+      '400',
+      '#6b7280',
+      lineHeight,
+    );
+    y += 8;
+  }
+
+  if (dateText) {
+    drawAlignedText(
+      ctx,
+      dateText,
+      padding,
+      y + fontSize,
+      imgWidth,
+      options.titleAlign,
       Math.max(12, fontSize - 2),
       '400',
       '#6b7280',
