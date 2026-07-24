@@ -1,4 +1,4 @@
-# VoiceStamp PRD (Product Requirements Document)
+﻿# VoiceStamp PRD (Product Requirements Document)
 
 | 항목 | 내용 |
 |------|------|
@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-24 |
-| 최신 반영 커밋 | (본 배포) — **AI-ML-02 개인정보 가리기** · APK `VoiceStamp_20260724_105355` |
+| 최신 반영 커밋 | `f6403fe` — **하단 촬영 일시 설정** + AI-ML-02 개인정보 가리기 · APK `VoiceStamp_20260724_114341` |
 
 ---
 
@@ -374,6 +374,9 @@
 | F-SET-24 | 설정 옵션 칩에 **· 기본** 표시, **기본값** 버튼 제거 | ✅ `d68edeb` |
 | F-SET-25 | 설정 **하단 바** — 뒤로가기·저장 한 줄, `bottom: 31` (목록 화면과 동일) | ✅ `9903447` |
 | F-SET-26 | 설정 **`loadSettingsForScreen()`** — SQLite 1회 조회, 로딩 스피너 없이 즉시 표시 | ✅ `ed2f7ec` |
+| F-SET-27 | **하단 촬영 일시** (`export_footer_datetime`) — PDF·캡션 이미지 **하단** `createdAt` 표시/숨김 (제목 접두어·워터마크와 분리, 기본 표시) | ✅ `f6403fe` |
+| F-BLUR-01 | **개인정보 가리기**(AI-ML-02) — 설정 opt-in · 온디바이스 얼굴·숫자 모자이크 · 저장 모달 | ✅ `449da4d` |
+| F-BLUR-02 | 모자이크 **약·중·강** = 사진 해상도·영역 크기 비례 | ✅ `239883c` |
 
 ### 3.8 배포·빌드 (P1)
 
@@ -619,7 +622,7 @@
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
 | **F-QR-01** | 저장 화면 **관련 URL QR 오버레이** — 선택 시 미리보기·갤러리 합성·내보내기 JPEG에 QR 포함 | 미구현 · MIT QR 라이브러리 후보 |
 | **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
-| **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP (2026-07-24) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · 설정 opt-in · 생성형 삭제 제외 |
+| **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP (2026-07-24) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · opt-in · 해상도 비례 강도(`239883c`) · 생성형 삭제 제외 |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
@@ -677,7 +680,7 @@
 | **2026-07-21** | 크롭 뷰포트/라이브/UI-flush **시도** 후 **`6060a48`/`225635` 크롭 동작으로 롤백** · APK `235129` · Vercel · `restore-revert-crop-225635.bat` §158 | `ee75aa8` |
 | **2026-07-22** | **필드 표시명**·**추가1·추가2**·별도영역 **2열 표**·표시명 스냅샷·목록 빈 메모 숨김 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(`170650`) · **스탬프 글자 크기**(`182753`) · Vercel | `30aed21`~`3af94ec` |
 | **2026-07-23** | **저장 템플릿·추가3**·목록 표시 모드 · 별도영역 표·초록 테두리·**이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel · 문서 이력 보강(소스 없음) | `4d56901`~`8bad078` |
-| **2026-07-24** | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · 설정 opt-in · `voicestamp-mlkit` · 도움말·PRIVACY · `restore-privacy-blur.bat` | (본 배포) |
+| **2026-07-24** | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP(`105355`) · 모자이크 **해상도·영역 비례 강도**(`111410`) · **하단 촬영 일시** 설정(`114341`, 제목 접두어와 분리) · 도움말·PRIVACY · `restore-privacy-blur.bat` §186 · `restore-privacy-blur-scale.bat` §187 · `restore-export-footer-datetime.bat` §188 · Vercel | `449da4d` · `239883c` · `f6403fe` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -685,11 +688,14 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-23:** 권장 파일은 **`VoiceStamp_20260723_185321.apk`**.
+> **2026-07-24:** 권장 파일은 **`VoiceStamp_20260724_114341.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
+| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **설치·GitHub 권장** — **하단 촬영 일시** 설정 + 개인정보 가리기(해상도 비례) |
+| `releases/VoiceStamp_20260724_111410.apk` | `239883c` | **이전** — 모자이크 **해상도·영역 비례** 약·중·강 |
+| `releases/VoiceStamp_20260724_105355.apk` | `449da4d` | **이전** — **AI-ML-02** 개인정보 가리기 MVP |
+| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **이전** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
 | `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
 | `releases/VoiceStamp_20260723_153816.apk` | `1109346` | **이전** — 별도영역 이미지 표 |
 | `releases/VoiceStamp_20260723_151910.apk` | `d13caf8` | **이전** — 별도영역 초록 테두리 수정 |

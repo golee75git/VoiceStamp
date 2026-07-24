@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.4 |
-| 작성일 | 2026-07-23 |
-| 기준 커밋 | `8bad078` (main) — **별도영역 이미지 흐림 수정** · APK `185321` |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
+| 문서 버전 | 3.5 |
+| 작성일 | 2026-07-24 |
+| 기준 커밋 | `f6403fe` (main) — **하단 촬영 일시** + 개인정보 가리기 · APK `114341` |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -490,6 +490,10 @@
 | (본 갱신) | **2026-07-23** — **별도영역 이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · `restore-caption-export-wash.bat` §185 |
 | `217b6d5` | `8bad078` 기준 PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 · **소스 변경 없음** · 권장 APK `185321` |
 | (본 문서) | 07-22 APK `170650`·`182753` 이력 보강 · 구버전 권장 APK 정정 · **F-QR-01** 후보 · **소스 변경 없음** |
+| `449da4d` | **2026-07-24** — **AI-ML-02** 개인정보 가리기 MVP · APK `105355` |
+| `239883c` | **2026-07-24** — 모자이크 해상도·영역 비례 · APK `111410` |
+| `f6403fe` | **2026-07-24** — **하단 촬영 일시** · APK `114341` |
+| (본 문서) | `f6403fe` 기준 PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 · **소스 변경 없음** · 권장 APK `114341` |
 
 ---
 
@@ -509,7 +513,25 @@
 
 > **보안·라이선스:** 신규 npm 없음. `react-native-image-marker` MIT. 기기 내 합성만(추가 네트워크·권한 없음). Play 스토어 정책상 민감 권한 변경 없음.
 
-> **권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (`8bad078`).
+> **당시 권장 APK (07-23 말):** `releases/VoiceStamp_20260723_185321.apk` (`8bad078`). (이후 **`114341`** — §2AE)
+
+---
+
+## 2AE. Phase 3·4 추가 완료 (2026-07-24)
+
+| # | 기능 | 커밋 | RESTORE |
+|---|------|------|---------|
+| 294 | **AI-ML-02 개인정보 가리기** — ML Kit Face+한글 OCR 온디바이스 모자이크 · 설정 opt-in · `voicestamp-mlkit` | `449da4d` | `restore-privacy-blur.bat` §186 |
+| 295 | GitHub APK `releases/20260724_105355` · 랜딩·`/info` · 도움말·PRIVACY | `449da4d` | — |
+| 296 | **모자이크 약·중·강 = 해상도·영역 비례** | `239883c` | `restore-privacy-blur-scale.bat` §187 |
+| 297 | GitHub APK `releases/20260724_111410` · 랜딩·`/info` · 도움말 | `239883c` | — |
+| 298 | **하단 촬영 일시** (`export_footer_datetime`) — PDF·캡션 하단 · 제목 접두어와 분리 | `f6403fe` | `restore-export-footer-datetime.bat` §188 |
+| 299 | GitHub APK `releases/20260724_114341` · 랜딩·`/info` · 도움말 | `f6403fe` | — |
+| 300 | PRD·PROJECT·PLAN·README **날짜별·APK별** 동기화 (소스 변경 없음) | (본 문서) | — |
+
+> **보안·라이선스:** ML Kit / `voicestamp-mlkit` 온디바이스만(서버 전송 없음). Google ML Kit 라이선스·Play 데이터 안전(온디바이스 처리) 준수. 하단 일시 설정은 신규 네트워크·권한 없음.
+
+> **권장 APK:** `releases/VoiceStamp_20260724_114341.apk` (`f6403fe`).
 
 ---
 
@@ -568,7 +590,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | ID | 내용 | 비고 |
 |----|------|------|
 | **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기(되돌림 이력) |
-| **AI-ML-02** | **ML Kit Face + OCR** — 얼굴·숫자 **블러**(개인정보 가리기) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · ✅ MVP 구현 (2026-07-24) · `restore-privacy-blur.bat` §186 |
+| **AI-ML-02** | **ML Kit Face + OCR** — 얼굴·숫자 **블러**(개인정보 가리기) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · ✅ MVP (`449da4d`) · 해상도 비례(`239883c`) · `restore-privacy-blur.bat` §186 · `restore-privacy-blur-scale.bat` §187 |
 
 ### 4.5 연동·클라우드 (설계만)
 
@@ -687,17 +709,20 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-21 | 2AC·3 | 크롭 시도·롤백 · APK `235129` (`ee75aa8`) |
 | 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표 · **자르기 적용 비활성**(`170650`) · **글자 크기**(`182753`) · APK `095047`~`182753` |
 | 2026-07-23 | 2AD·3 | 저장 템플릿·목록 표시·표·초록 테두리·**별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 이력 보강(소스 없음) |
-| 2026-07-24 | 4→2 | **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · `voicestamp-mlkit` · `restore-privacy-blur.bat` §186 · 도움말·PRIVACY 갱신 |
+| 2026-07-24 | 2AE·3·4 | **AI-ML-02** 블러 MVP(`105355`) · 모자이크 **해상도 비례**(`111410`) · **하단 촬영 일시**(`114341`) · `restore-privacy-blur*.bat` §186–187 · `restore-export-footer-datetime.bat` §188 · 문서 동기화(소스 없음) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-23:** 권장 = `releases/VoiceStamp_20260723_185321.apk`.
+> **2026-07-24:** 권장 = `releases/VoiceStamp_20260724_114341.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **설치·GitHub 권장** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
+| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **설치·GitHub 권장** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
+| `releases/VoiceStamp_20260724_111410.apk` | `239883c` | **이전** — 모자이크 **해상도·영역 비례** |
+| `releases/VoiceStamp_20260724_105355.apk` | `449da4d` | **이전** — **AI-ML-02** 개인정보 가리기 MVP |
+| `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **이전** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
 | `releases/VoiceStamp_20260723_170552.apk` | `f4be621` | **이전** — 저장 목록 표시 모드 |
 | `releases/VoiceStamp_20260722_182753.apk` | `3af94ec` | **이전** — **스탬프 글자 크기** 설정 |
 | `releases/VoiceStamp_20260722_170650.apk` | `ca16ea2` | **이전** — **확대 자르기(적용) 비활성** |
