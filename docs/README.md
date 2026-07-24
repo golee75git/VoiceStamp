@@ -40,7 +40,7 @@
 - **최신 기능 커밋:** `f6403fe` — **하단 촬영 일시** + 개인정보 가리기(해상도 비례 모자이크)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260724_132520.apk` — **하단 촬영 일시** + 개인정보 가리기(해상도 비례)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260724_132520.apk` — **개인정보 가리기 EXIF 정렬**
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260724_132520.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260723_185321.apk` (별도영역 이미지 흐림 수정)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
@@ -95,7 +95,7 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260724_132520.apk` | `f6403fe` | **설치·GitHub 권장** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
+| `releases/VoiceStamp_20260724_132520.apk` | `35f6d9b` | **설치·GitHub 권장** — **개인정보 가리기 EXIF 정렬** |
 | `releases/VoiceStamp_20260724_111410.apk` | `239883c` | **이전** — 모자이크 **해상도·영역 비례** |
 | `releases/VoiceStamp_20260724_105355.apk` | `449da4d` | **이전** — **AI-ML-02** 개인정보 가리기 MVP |
 | `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **이전** — **별도영역 이미지 흐림 수정** |
