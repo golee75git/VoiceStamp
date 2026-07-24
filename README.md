@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260724_114341.apk` — **하단 촬영 일시** + 개인정보 가리기 — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260724_132520.apk` — **개인정보 가리기 EXIF 정렬 — 상세는 [docs/README.md](./docs/README.md)

@@ -71,6 +71,8 @@ export function PrivacyBlurModal({
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  /** EXIF-baked URI shared by preview, detect boxes, and mosaic apply. */
+  const [workUri, setWorkUri] = useState<string | null>(null);
   const [regions, setRegions] = useState<PrivacyRegion[]>([]);
   const [includeFaces, setIncludeFaces] = useState(true);
   const [includeTexts, setIncludeTexts] = useState(true);
@@ -84,6 +86,7 @@ export function PrivacyBlurModal({
     setLoading(true);
     setError(null);
     setRegions([]);
+    setWorkUri(null);
     try {
       const result = await detectPrivacyRegions(uri);
       if (!result) {
@@ -91,6 +94,7 @@ export function PrivacyBlurModal({
         setImageSize({ width: 0, height: 0 });
         return;
       }
+      setWorkUri(result.imageUri || uri);
       setImageSize({ width: result.width, height: result.height });
       setRegions(result.regions.map((r) => ({ ...r, enabled: true })));
       if (result.regions.length === 0) {
@@ -110,6 +114,7 @@ export function PrivacyBlurModal({
     setIncludeFaces(true);
     setIncludeTexts(true);
     setStrength('medium');
+    setWorkUri(null);
     void runDetect(imageUri);
   }, [visible, imageUri, runDetect]);
 
@@ -132,13 +137,14 @@ export function PrivacyBlurModal({
   };
 
   const handleApply = async () => {
-    if (!imageUri || enabledCount === 0 || applying) {
+    const source = workUri || imageUri;
+    if (!source || enabledCount === 0 || applying) {
       return;
     }
     setApplying(true);
     setError(null);
     try {
-      const out = await applyBlurToImage(imageUri, displayRegions, strength);
+      const out = await applyBlurToImage(source, displayRegions, strength);
       if (!out) {
         setError('가리기에 실패했습니다. 다시 시도하세요.');
         return;
@@ -169,9 +175,9 @@ export function PrivacyBlurModal({
             setStageSize({ width, height });
           }}
         >
-          {imageUri ? (
+          {workUri || imageUri ? (
             <Image
-              source={{ uri: normalizeDisplayUri(imageUri) }}
+              source={{ uri: normalizeDisplayUri(workUri || imageUri!) }}
               style={StyleSheet.absoluteFill}
               resizeMode="contain"
             />

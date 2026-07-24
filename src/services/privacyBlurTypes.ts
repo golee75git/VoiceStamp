@@ -17,6 +17,8 @@ export type PrivacyDetectResult = {
   width: number;
   height: number;
   regions: PrivacyRegion[];
+  /** Upright file used for detect (EXIF orientation baked). Use for preview + apply. */
+  imageUri: string;
 };
 
 export const BLUR_STRENGTH_OPTIONS: BlurStrength[] = ['light', 'medium', 'strong'];

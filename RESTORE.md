@@ -2999,3 +2999,15 @@ restore-export-footer-datetime.bat
 ```
 
 `src.pre-export-footer-datetime/` 스냅샷으로 관련 서비스·설정·미리보기·목록을 되돌립니다. DB 키 `export_footer_datetime`은 남아도 무해합니다.
+
+---
+
+## 189. 개인정보 가리기 EXIF 정렬 되돌리기 (선택)
+
+시스템 카메라 JPEG의 EXIF 회전을 bake한 뒤 감지·모자이크하도록 바꾸 뒤 문제가 생기면:
+
+```bat
+restore-privacy-blur-exif.bat
+```
+
+`src.pre-privacy-blur-exif/` 스냅샷으로 `privacyBlurService`·`PrivacyBlurModal`·도움말을 되돌립니다.

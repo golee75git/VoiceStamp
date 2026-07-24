@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { bakeExifOrientation } from 'voicestamp-gallery';
 import {
   isPrivacyBlurNativeAvailable,
   nativeApplyBlurRegions,
@@ -34,6 +35,23 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
         }
       });
   });
+}
+
+/**
+ * System camera JPEGs often keep EXIF Orientation while pixels stay landscape.
+ * ML Kit boxes + BitmapFactory mosaic must share upright pixels (same as crop path).
+ */
+async function ensureUprightImageUri(imageUri: string): Promise<string> {
+  const trimmed = imageUri.trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+  try {
+    const baked = await bakeExifOrientation(trimmed);
+    return baked?.trim() ? baked : trimmed;
+  } catch {
+    return trimmed;
+  }
 }
 
 function normalizeRegion(raw: {
@@ -89,7 +107,8 @@ export async function detectPrivacyRegions(
   if (!isPrivacyBlurSupported() || !imageUri.trim()) {
     return null;
   }
-  const result = await withTimeout(nativeDetectPrivacyRegions(imageUri), DETECT_TIMEOUT_MS);
+  const uprightUri = await ensureUprightImageUri(imageUri);
+  const result = await withTimeout(nativeDetectPrivacyRegions(uprightUri), DETECT_TIMEOUT_MS);
   if (!result) {
     return null;
   }
@@ -104,6 +123,7 @@ export async function detectPrivacyRegions(
     width: Number(result.width) || 0,
     height: Number(result.height) || 0,
     regions,
+    imageUri: uprightUri,
   };
 }
 
@@ -119,6 +139,7 @@ export async function applyBlurToImage(
   if (enabled.length === 0) {
     return null;
   }
+  const uprightUri = await ensureUprightImageUri(imageUri);
   const payload = enabled.map((r) => ({
     id: r.id,
     type: r.type,
@@ -130,7 +151,7 @@ export async function applyBlurToImage(
     enabled: true,
   }));
   return withTimeout(
-    nativeApplyBlurRegions(imageUri, JSON.stringify(payload), strength),
+    nativeApplyBlurRegions(uprightUri, JSON.stringify(payload), strength),
     BLUR_TIMEOUT_MS,
   );
 }
