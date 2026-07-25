@@ -132,3 +132,4 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-07-06 | 미리보기 배지 에셋 `zoomedit.png` → `zoom.png` 로 교체 |
 | 2026-07-23 | 별도영역 이미지 내보내기: ViewShot→`react-native-image-marker`(MIT) 불투명 JPEG. 신규 의존성·권한 없음 |
 | 2026-07-24 | AI-ML-02 개인정보 가리기: voicestamp-mlkit (ML Kit Face + Korean OCR) + 자체 모자이크. GPL 없음. 생성형 인페인팅 없음 |
+| 2026-07-25 | 저장 템플릿 적용 중/사용자수정 표시: 기기 내 app_settings만 사용. 신규 의존성·권한·네트워크 없음. GPL 없음 |

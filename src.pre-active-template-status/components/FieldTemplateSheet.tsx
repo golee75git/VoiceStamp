@@ -15,9 +15,7 @@ import {
   STAMP_FIELD_TEMPLATES,
   applyStampFieldTemplate,
   deleteCustomStampFieldTemplate,
-  getActiveStampFieldTemplateStatus,
   listCustomStampFieldTemplates,
-  type ActiveStampFieldTemplateStatus,
   type StampFieldTemplate,
 } from '../services/stampFieldTemplates';
 import { CustomFieldTemplateEditor } from './CustomFieldTemplateEditor';
@@ -32,7 +30,6 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
   const { height: windowHeight } = useWindowDimensions();
   const sheetMaxHeight = Math.round(windowHeight * 0.85);
   const [customs, setCustoms] = useState<StampFieldTemplate[]>([]);
-  const [activeStatus, setActiveStatus] = useState<ActiveStampFieldTemplateStatus>({ kind: 'none' });
   const [editorVisible, setEditorVisible] = useState(false);
   const [editing, setEditing] = useState<StampFieldTemplate | null>(null);
 
@@ -44,21 +41,12 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
     }
   }, []);
 
-  const reloadActiveStatus = useCallback(async () => {
-    try {
-      setActiveStatus(await getActiveStampFieldTemplateStatus());
-    } catch {
-      setActiveStatus({ kind: 'none' });
-    }
-  }, []);
-
   useEffect(() => {
     if (!visible) return;
     void reloadCustoms();
-    void reloadActiveStatus();
     setEditorVisible(false);
     setEditing(null);
-  }, [visible, reloadCustoms, reloadActiveStatus]);
+  }, [visible, reloadCustoms]);
 
   const handleSelect = async (templateId: string) => {
     try {
@@ -92,7 +80,6 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
             try {
               await deleteCustomStampFieldTemplate(template.id);
               await reloadCustoms();
-              await reloadActiveStatus();
             } catch (error) {
               const message = error instanceof Error ? error.message : '삭제하지 못했습니다.';
               Alert.alert('내 템플릿', message);
@@ -111,77 +98,30 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
     ]);
   };
 
-  const itemBadge = (templateId: string): 'applied' | 'userModified' | null => {
-    if (activeStatus.kind === 'applied' && activeStatus.templateId === templateId) {
-      return 'applied';
-    }
-    if (
-      activeStatus.kind === 'userModified' &&
-      activeStatus.templateId != null &&
-      activeStatus.templateId === templateId
-    ) {
-      return 'userModified';
-    }
-    return null;
-  };
-
-  const renderItem = (template: StampFieldTemplate, custom: boolean) => {
-    const badge = itemBadge(template.id);
-    return (
-      <Pressable
-        key={template.id}
-        style={({ pressed }) => [
-          styles.item,
-          custom && styles.itemCustom,
-          badge === 'applied' && styles.itemApplied,
-          badge === 'userModified' && styles.itemUserModified,
-          pressed && (custom ? styles.itemCustomPressed : styles.itemPressed),
-        ]}
-        onPress={() => void handleSelect(template.id)}
-        onLongPress={custom ? () => handleCustomLongPress(template) : undefined}
-        delayLongPress={400}
-        accessibilityLabel={
-          badge === 'applied'
-            ? `${template.name}, 적용 중`
-            : badge === 'userModified'
-              ? `${template.name}, 사용자수정`
-              : custom
-                ? `${template.name}, 길게 누르면 수정·삭제`
-                : template.name
-        }
-        accessibilityState={{ selected: badge === 'applied' }}
-      >
-        <View style={styles.itemHeader}>
-          <Text
-            style={[
-              styles.itemTitle,
-              custom && styles.itemTitleCustom,
-              badge === 'applied' && styles.itemTitleApplied,
-              badge === 'userModified' && styles.itemTitleUserModified,
-            ]}
-          >
-            {template.name}
-          </Text>
-          {badge === 'applied' ? (
-            <Text style={styles.badgeApplied}>적용 중</Text>
-          ) : badge === 'userModified' ? (
-            <Text style={styles.badgeUserModified}>사용자수정</Text>
-          ) : null}
-        </View>
-        <Text style={styles.itemMeta} numberOfLines={2}>
-          {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
-          {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
-          {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
-        </Text>
-        {custom ? <Text style={styles.longPressHint}>길게 눌러 수정·삭제</Text> : null}
-      </Pressable>
-    );
-  };
-
-  const orphanUserModified =
-    activeStatus.kind === 'userModified' &&
-    (activeStatus.templateId == null ||
-      (![...customs, ...STAMP_FIELD_TEMPLATES].some((t) => t.id === activeStatus.templateId)));
+  const renderItem = (template: StampFieldTemplate, custom: boolean) => (
+    <Pressable
+      key={template.id}
+      style={({ pressed }) => [
+        styles.item,
+        custom && styles.itemCustom,
+        pressed && (custom ? styles.itemCustomPressed : styles.itemPressed),
+      ]}
+      onPress={() => void handleSelect(template.id)}
+      onLongPress={custom ? () => handleCustomLongPress(template) : undefined}
+      delayLongPress={400}
+      accessibilityLabel={
+        custom ? `${template.name}, 길게 누르면 수정·삭제` : template.name
+      }
+    >
+      <Text style={[styles.itemTitle, custom && styles.itemTitleCustom]}>{template.name}</Text>
+      <Text style={styles.itemMeta} numberOfLines={2}>
+        {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
+        {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
+        {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
+      </Text>
+      {custom ? <Text style={styles.longPressHint}>길게 눌러 수정·삭제</Text> : null}
+    </Pressable>
+  );
 
   return (
     <>
@@ -192,19 +132,8 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
               저장 템플릿
             </Text>
             <Text style={styles.hint}>
-              필드 표시명을 바꿉니다. 입력칸에는 예시가 흐리게 보이고, 촬영일시는 촬영 시각이 사용됩니다. 적용
-              중인 템플릿은 「적용 중」, 표시명을 직접 바꾼 경우 「사용자수정」으로 표시됩니다.
+              필드 표시명을 바꿉니다. 입력칸에는 예시가 흐리게 보이고, 촬영일시는 촬영 시각이 사용됩니다.
             </Text>
-            {orphanUserModified ? (
-              <View style={styles.statusBanner} accessibilityLabel="사용자수정">
-                <Text style={styles.statusBannerText}>
-                  현재 표시명: 사용자수정
-                  {activeStatus.kind === 'userModified' && activeStatus.name
-                    ? ` (원래 「${activeStatus.name}」)`
-                    : ''}
-                </Text>
-              </View>
-            ) : null}
             <ScrollView
               style={styles.list}
               contentContainerStyle={styles.listContent}
@@ -249,7 +178,6 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
         }}
         onSaved={() => {
           void reloadCustoms();
-          void reloadActiveStatus();
         }}
       />
     </>
@@ -282,19 +210,6 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 4,
     lineHeight: 18,
-  },
-  statusBanner: {
-    borderWidth: 1,
-    borderColor: '#fcd34d',
-    backgroundColor: '#fffbeb',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  statusBannerText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#92400e',
   },
   list: {
     flexGrow: 0,
@@ -340,62 +255,19 @@ const styles = StyleSheet.create({
     borderColor: '#bbf7d0',
     backgroundColor: '#f0fdf4',
   },
-  itemApplied: {
-    borderColor: '#2563eb',
-    borderWidth: 2,
-    backgroundColor: '#dbeafe',
-  },
-  itemUserModified: {
-    borderColor: '#f59e0b',
-    borderWidth: 2,
-    backgroundColor: '#fffbeb',
-  },
   itemPressed: {
     backgroundColor: '#dbeafe',
   },
   itemCustomPressed: {
     backgroundColor: '#dcfce7',
   },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
   itemTitle: {
-    flex: 1,
     fontSize: 16,
     fontWeight: '700',
     color: '#1d4ed8',
   },
   itemTitleCustom: {
     color: '#15803d',
-  },
-  itemTitleApplied: {
-    color: '#1e40af',
-  },
-  itemTitleUserModified: {
-    color: '#92400e',
-  },
-  badgeApplied: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1d4ed8',
-    backgroundColor: '#bfdbfe',
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  badgeUserModified: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#92400e',
-    backgroundColor: '#fde68a',
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
   },
   itemMeta: {
     fontSize: 12,

@@ -11,12 +11,6 @@ import {
   sanitizeFieldLabel,
 } from './fieldLabels';
 import {
-  getExtra1FieldLabel,
-  getExtra2FieldLabel,
-  getExtra3FieldLabel,
-  getMemoFieldLabel,
-  getPlaceFieldLabel,
-  getTitleFieldLabel,
   setExtra1FieldLabel,
   setExtra2FieldLabel,
   setExtra3FieldLabel,
@@ -51,18 +45,10 @@ export type StampFieldTemplate = {
 };
 
 const CUSTOM_FIELD_TEMPLATES_KEY = 'custom_field_templates';
-const ACTIVE_FIELD_TEMPLATE_ID_KEY = 'active_field_template_id';
 const CUSTOM_ID_PREFIX = 'custom-';
-const ACTIVE_TEMPLATE_ID_MAX = 64;
 export const CUSTOM_TEMPLATE_NAME_MAX = 40;
 export const CUSTOM_TEMPLATE_PLACEHOLDER_MAX = 80;
 export const MAX_CUSTOM_FIELD_TEMPLATES = 30;
-
-/** How current field labels relate to the last applied save template. */
-export type ActiveStampFieldTemplateStatus =
-  | { kind: 'none' }
-  | { kind: 'applied'; templateId: string; name: string }
-  | { kind: 'userModified'; templateId: string | null; name: string | null };
 
 export const DEFAULT_CUSTOM_TEMPLATE_LABELS: FieldLabels = {
   titleFieldLabel: DEFAULT_FIELD_TITLE_LABEL,
@@ -332,93 +318,6 @@ async function writeCustomTemplates(list: StampFieldTemplate[]): Promise<void> {
   );
 }
 
-function sanitizeActiveTemplateId(raw: string | null | undefined): string | null {
-  if (!raw || typeof raw !== 'string') return null;
-  const id = raw.trim().slice(0, ACTIVE_TEMPLATE_ID_MAX);
-  if (!id) return null;
-  // Built-in ids are kebab-case; custom ids use custom-<alnum>-<alnum>.
-  if (!/^[a-z0-9][a-z0-9-]{0,63}$/i.test(id)) return null;
-  return id;
-}
-
-function fieldLabelsEqual(a: FieldLabels, b: FieldLabels): boolean {
-  return (
-    a.titleFieldLabel === b.titleFieldLabel &&
-    a.placeFieldLabel === b.placeFieldLabel &&
-    a.memoFieldLabel === b.memoFieldLabel &&
-    a.extra1FieldLabel === b.extra1FieldLabel &&
-    a.extra2FieldLabel === b.extra2FieldLabel &&
-    a.extra3FieldLabel === b.extra3FieldLabel
-  );
-}
-
-async function readActiveTemplateId(): Promise<string | null> {
-  const db = await getDatabase();
-  const row = await db.getFirstAsync<{ value: string }>(
-    'SELECT value FROM app_settings WHERE key = ?',
-    ACTIVE_FIELD_TEMPLATE_ID_KEY,
-  );
-  return sanitizeActiveTemplateId(row?.value ?? null);
-}
-
-async function writeActiveTemplateId(templateId: string): Promise<void> {
-  const safe = sanitizeActiveTemplateId(templateId);
-  if (!safe) return;
-  const db = await getDatabase();
-  await db.runAsync(
-    `INSERT INTO app_settings (key, value) VALUES (?, ?)
-     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
-    ACTIVE_FIELD_TEMPLATE_ID_KEY,
-    safe,
-  );
-}
-
-/** Current field display names from app settings (same source as save/settings screens). */
-export async function loadCurrentFieldLabels(): Promise<FieldLabels> {
-  return resolveFieldLabels({
-    titleFieldLabel: await getTitleFieldLabel(),
-    placeFieldLabel: await getPlaceFieldLabel(),
-    memoFieldLabel: await getMemoFieldLabel(),
-    extra1FieldLabel: await getExtra1FieldLabel(),
-    extra2FieldLabel: await getExtra2FieldLabel(),
-    extra3FieldLabel: await getExtra3FieldLabel(),
-  });
-}
-
-/**
- * Resolve whether the last applied template still matches current labels.
- * If no stored id, falls back to label match against built-in/custom templates (display only).
- */
-export async function getActiveStampFieldTemplateStatus(): Promise<ActiveStampFieldTemplateStatus> {
-  const current = await loadCurrentFieldLabels();
-  const storedId = await readActiveTemplateId();
-
-  if (storedId) {
-    const template = await findStampFieldTemplate(storedId);
-    if (template && fieldLabelsEqual(current, resolveFieldLabels(template.labels))) {
-      return { kind: 'applied', templateId: template.id, name: template.name };
-    }
-    return {
-      kind: 'userModified',
-      templateId: storedId,
-      name: template?.name ?? null,
-    };
-  }
-
-  const customs = await listCustomStampFieldTemplates();
-  for (const template of [...customs, ...STAMP_FIELD_TEMPLATES]) {
-    if (fieldLabelsEqual(current, resolveFieldLabels(template.labels))) {
-      return { kind: 'applied', templateId: template.id, name: template.name };
-    }
-  }
-  // Labels differ from every known template (manual edit before this feature, or defaults).
-  const defaults = resolveFieldLabels(null);
-  if (fieldLabelsEqual(current, defaults)) {
-    return { kind: 'none' };
-  }
-  return { kind: 'userModified', templateId: null, name: null };
-}
-
 /** User-defined templates only (device-local SQLite). */
 export async function listCustomStampFieldTemplates(): Promise<StampFieldTemplate[]> {
   return parseCustomTemplates(await readCustomTemplatesRaw());
@@ -519,7 +418,6 @@ export async function applyStampFieldTemplate(templateId: string): Promise<Stamp
   await setExtra1FieldLabel(labels.extra1FieldLabel);
   await setExtra2FieldLabel(labels.extra2FieldLabel);
   await setExtra3FieldLabel(labels.extra3FieldLabel);
-  await writeActiveTemplateId(template.id);
 
   activePlaceholders = { ...template.placeholders };
   // Keep save-modal layout cache in sync so the first paint shows template labels (no 제목/장소 flash).
