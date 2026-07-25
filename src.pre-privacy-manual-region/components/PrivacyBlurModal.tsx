@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Image,
   Modal,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -20,7 +19,6 @@ import {
   blurStrengthLabel,
   type BlurStrength,
   type PrivacyRegion,
-  type PrivacyRegionType,
 } from '../services/privacyBlurTypes';
 
 type PrivacyBlurModalProps = {
@@ -31,15 +29,6 @@ type PrivacyBlurModalProps = {
 };
 
 type ViewBox = { left: number; top: number; width: number; height: number };
-
-const MANUAL_ID_PREFIX = 'manual-';
-const MAX_MANUAL_REGIONS = 40;
-/** Lift footer above Android gesture/nav bar. */
-const ROOT_PADDING_BOTTOM = Platform.OS === 'android' ? 56 : 36;
-
-function isManualRegionId(id: string): boolean {
-  return id.startsWith(MANUAL_ID_PREFIX);
-}
 
 function mapImageBoxToView(
   region: PrivacyRegion,
@@ -61,64 +50,6 @@ function mapImageBoxToView(
     top: offsetY + region.top * scale,
     width: Math.max(8, region.width * scale),
     height: Math.max(8, region.height * scale),
-  };
-}
-
-/** Map stage tap (view coords) to image pixel coords; null if outside the drawn image. */
-function mapViewPointToImage(
-  x: number,
-  y: number,
-  imageWidth: number,
-  imageHeight: number,
-  viewWidth: number,
-  viewHeight: number,
-): { x: number; y: number } | null {
-  if (imageWidth <= 0 || imageHeight <= 0 || viewWidth <= 0 || viewHeight <= 0) {
-    return null;
-  }
-  const scale = Math.min(viewWidth / imageWidth, viewHeight / imageHeight);
-  const drawnW = imageWidth * scale;
-  const drawnH = imageHeight * scale;
-  const offsetX = (viewWidth - drawnW) / 2;
-  const offsetY = (viewHeight - drawnH) / 2;
-  if (x < offsetX || y < offsetY || x > offsetX + drawnW || y > offsetY + drawnH) {
-    return null;
-  }
-  return {
-    x: (x - offsetX) / scale,
-    y: (y - offsetY) / scale,
-  };
-}
-
-function createManualRegion(
-  type: PrivacyRegionType,
-  centerX: number,
-  centerY: number,
-  imageWidth: number,
-  imageHeight: number,
-): PrivacyRegion {
-  const minSide = Math.min(imageWidth, imageHeight);
-  let width: number;
-  let height: number;
-  if (type === 'face') {
-    const side = Math.max(48, Math.min(minSide * 0.14, Math.min(imageWidth, imageHeight) * 0.45));
-    width = side;
-    height = side;
-  } else {
-    width = Math.max(64, Math.min(minSide * 0.22, imageWidth * 0.5));
-    height = Math.max(28, Math.min(minSide * 0.06, imageHeight * 0.2));
-  }
-  const left = Math.max(0, Math.min(centerX - width / 2, imageWidth - width));
-  const top = Math.max(0, Math.min(centerY - height / 2, imageHeight - height));
-  return {
-    id: `${MANUAL_ID_PREFIX}${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
-    type,
-    left,
-    top,
-    width,
-    height,
-    text: type === 'text' ? '0' : undefined,
-    enabled: true,
   };
 }
 
@@ -145,33 +76,29 @@ export function PrivacyBlurModal({
   const [regions, setRegions] = useState<PrivacyRegion[]>([]);
   const [includeFaces, setIncludeFaces] = useState(true);
   const [includeTexts, setIncludeTexts] = useState(true);
-  const [addType, setAddType] = useState<PrivacyRegionType>('face');
   const [strength, setStrength] = useState<BlurStrength>('medium');
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
-  const stageMaxHeight = Math.min(windowHeight * 0.48, 400);
+  const stageMaxHeight = Math.min(windowHeight * 0.52, 420);
   const stageWidth = Math.min(windowWidth - 32, 520);
 
   const runDetect = useCallback(async (uri: string) => {
     setLoading(true);
     setError(null);
+    setRegions([]);
     setWorkUri(null);
     try {
       const result = await detectPrivacyRegions(uri);
       if (!result) {
         setError('감지할 수 없습니다. 네트워크·Play 서비스 후 다시 시도하거나 닫고 저장하세요.');
         setImageSize({ width: 0, height: 0 });
-        setRegions((prev) => prev.filter((r) => isManualRegionId(r.id)));
         return;
       }
       setWorkUri(result.imageUri || uri);
       setImageSize({ width: result.width, height: result.height });
-      setRegions((prev) => {
-        const manuals = prev.filter((r) => isManualRegionId(r.id));
-        return [...result.regions.map((r) => ({ ...r, enabled: true })), ...manuals];
-      });
+      setRegions(result.regions.map((r) => ({ ...r, enabled: true })));
       if (result.regions.length === 0) {
-        setError('자동 감지된 얼굴·숫자가 없습니다. 사진 빈 곳을 탭해 직접 추가할 수 있습니다.');
+        setError('감지된 얼굴·숫자가 없습니다.');
       }
     } catch {
       setError('감지 중 오류가 발생했습니다.');
@@ -186,10 +113,8 @@ export function PrivacyBlurModal({
     }
     setIncludeFaces(true);
     setIncludeTexts(true);
-    setAddType('face');
     setStrength('medium');
     setWorkUri(null);
-    setRegions([]);
     void runDetect(imageUri);
   }, [visible, imageUri, runDetect]);
 
@@ -204,43 +129,11 @@ export function PrivacyBlurModal({
 
   const counts = countRegionsByType(displayRegions);
   const enabledCount = displayRegions.filter((r) => r.enabled).length;
-  const manualCount = regions.filter((r) => isManualRegionId(r.id)).length;
 
   const toggleRegion = (id: string) => {
     setRegions((prev) =>
       prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r)),
     );
-  };
-
-  const removeManualRegion = (id: string) => {
-    if (!isManualRegionId(id)) {
-      return;
-    }
-    setRegions((prev) => prev.filter((r) => r.id !== id));
-  };
-
-  const handleStagePress = (locationX: number, locationY: number) => {
-    if (loading || applying || imageSize.width <= 0 || imageSize.height <= 0) {
-      return;
-    }
-    if (manualCount >= MAX_MANUAL_REGIONS) {
-      setError(`수동 영역은 최대 ${MAX_MANUAL_REGIONS}개까지 추가할 수 있습니다.`);
-      return;
-    }
-    const point = mapViewPointToImage(
-      locationX,
-      locationY,
-      imageSize.width,
-      imageSize.height,
-      stageSize.width,
-      stageSize.height,
-    );
-    if (!point) {
-      return;
-    }
-    const next = createManualRegion(addType, point.x, point.y, imageSize.width, imageSize.height);
-    setRegions((prev) => [...prev, next]);
-    setError(null);
   };
 
   const handleApply = async () => {
@@ -266,7 +159,7 @@ export function PrivacyBlurModal({
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View style={[styles.root, { paddingBottom: ROOT_PADDING_BOTTOM }]}>
+      <View style={styles.root}>
         <View style={styles.header}>
           <Pressable onPress={onClose} hitSlop={12} accessibilityRole="button">
             <Text style={styles.headerBtn}>취소</Text>
@@ -287,15 +180,8 @@ export function PrivacyBlurModal({
               source={{ uri: normalizeDisplayUri(workUri || imageUri!) }}
               style={StyleSheet.absoluteFill}
               resizeMode="contain"
-              pointerEvents="none"
             />
           ) : null}
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={(e) => handleStagePress(e.nativeEvent.locationX, e.nativeEvent.locationY)}
-            disabled={loading || applying || imageSize.width <= 0}
-            accessibilityLabel="사진 빈 곳 탭하여 영역 추가"
-          />
           {displayRegions.map((region) => {
             const box = mapImageBoxToView(
               region,
@@ -308,16 +194,12 @@ export function PrivacyBlurModal({
               return null;
             }
             const active = region.enabled;
-            const manual = isManualRegionId(region.id);
             return (
               <Pressable
                 key={region.id}
                 onPress={() => toggleRegion(region.id)}
-                onLongPress={manual ? () => removeManualRegion(region.id) : undefined}
-                delayLongPress={400}
                 style={[
                   styles.regionBox,
-                  manual && styles.regionBoxManual,
                   {
                     left: box.left,
                     top: box.top,
@@ -332,19 +214,13 @@ export function PrivacyBlurModal({
                   },
                 ]}
                 accessibilityLabel={
-                  manual
-                    ? region.type === 'face'
-                      ? '수동 얼굴 영역, 길게 누르면 삭제'
-                      : '수동 숫자 영역, 길게 누르면 삭제'
-                    : region.type === 'face'
-                      ? '얼굴 영역'
-                      : `숫자 텍스트 ${region.text ?? ''}`
+                  region.type === 'face' ? '얼굴 영역' : `숫자 텍스트 ${region.text ?? ''}`
                 }
               />
             );
           })}
           {loading ? (
-            <View style={styles.loadingOverlay} pointerEvents="none">
+            <View style={styles.loadingOverlay}>
               <ActivityIndicator color="#fff" />
               <Text style={styles.loadingText}>감지 중…</Text>
             </View>
@@ -353,32 +229,10 @@ export function PrivacyBlurModal({
 
         <Text style={styles.summary}>
           감지: 얼굴 {counts.faces} · 숫자 {counts.texts}
-          {manualCount > 0 ? ` · 수동 ${manualCount}` : ''}
           {enabledCount > 0 ? ` (적용 ${enabledCount})` : ''}
         </Text>
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Text style={styles.hint}>
-          빈 곳을 탭하면 영역을 추가하고, 박스를 탭하면 제외합니다. 수동 박스는 길게 눌러 삭제. 사진은 폰
-          안에서만 처리됩니다.
-        </Text>
-
-        <Text style={styles.label}>탭으로 추가</Text>
-        <View style={styles.row}>
-          <Pressable
-            style={[styles.chip, addType === 'face' && styles.chipOn]}
-            onPress={() => setAddType('face')}
-            accessibilityLabel="탭 추가 모드: 얼굴"
-          >
-            <Text style={[styles.chipText, addType === 'face' && styles.chipTextOn]}>얼굴</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.chip, addType === 'text' && styles.chipOn]}
-            onPress={() => setAddType('text')}
-            accessibilityLabel="탭 추가 모드: 숫자"
-          >
-            <Text style={[styles.chipText, addType === 'text' && styles.chipTextOn]}>숫자</Text>
-          </Pressable>
-        </View>
+        <Text style={styles.hint}>박스를 탭하면 제외합니다. 사진은 폰 안에서만 처리됩니다.</Text>
 
         <View style={styles.row}>
           <Pressable
@@ -447,6 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f172a',
     paddingTop: 48,
     paddingHorizontal: 16,
+    paddingBottom: 24,
   },
   header: {
     flexDirection: 'row',
@@ -476,9 +331,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderWidth: 2,
     backgroundColor: 'rgba(255,255,255,0.08)',
-  },
-  regionBoxManual: {
-    borderStyle: 'dashed',
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -532,7 +384,6 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     flexDirection: 'row',
     gap: 10,
-    paddingTop: 8,
   },
   secondaryBtn: {
     flex: 1,
