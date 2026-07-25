@@ -10,8 +10,6 @@ import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.google.mlkit.vision.label.ImageLabeling
-import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import expo.modules.kotlin.modules.Module
@@ -118,35 +116,6 @@ class VoicestampMlkitModule : Module() {
         mapOf("text" to capped)
       } finally {
         textRecognizer.close()
-      }
-    }
-
-    /** On-device Image Labeling scene tags. Not generative captions; no server upload. */
-    AsyncFunction("labelImage") { localUri: String, maxLabels: Int, minConfidence: Double ->
-      val context = appContext.reactContext ?: throw Exception("React context unavailable")
-      val cacheDir = context.cacheDir
-      val sourceFile = materializeLocalFile(localUri, cacheDir)
-      val image = InputImage.fromFilePath(context, Uri.fromFile(sourceFile))
-      val safeMax = maxLabels.coerceIn(1, 10)
-      val safeConfidence = minConfidence.coerceIn(0.1, 1.0).toFloat()
-      val options =
-        ImageLabelerOptions.Builder().setConfidenceThreshold(safeConfidence).build()
-      val labeler = ImageLabeling.getClient(options)
-      try {
-        val rawLabels = Tasks.await(labeler.process(image), 10, TimeUnit.SECONDS)
-        val labels =
-          rawLabels
-            .sortedByDescending { it.confidence }
-            .take(safeMax)
-            .map { label ->
-              mapOf(
-                "text" to label.text,
-                "confidence" to label.confidence.toDouble(),
-              )
-            }
-        mapOf("labels" to labels)
-      } finally {
-        labeler.close()
       }
     }
 

@@ -80,6 +80,7 @@ const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
 const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
+const MLKIT_SCENE_LABEL_ENABLED_KEY = 'mlkit_scene_label_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -113,6 +114,8 @@ export const DEFAULT_SHUTTER_SOUND = true;
 /** Android on-device face/number mosaic blur. Default off (opt-in). */
 export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
 export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
+/** Android on-device Image Labeling → memo keywords. Default off (opt-in). */
+export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -464,6 +467,7 @@ export type SettingsScreenSnapshot = {
   shutterSound: boolean;
   privacyBlurEnabled: boolean;
   ocrTitleMemoEnabled: boolean;
+  mlkitSceneLabelEnabled: boolean;
   cameraHand: CameraHand;
   floorPickerMode: FloorPickerMode;
   floorDisplayMode: FloorDisplayMode;
@@ -575,6 +579,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       pickSetting(map, OCR_TITLE_MEMO_ENABLED_KEY),
       DEFAULT_OCR_TITLE_MEMO_ENABLED,
     ),
+    mlkitSceneLabelEnabled: parseBooleanSetting(
+      pickSetting(map, MLKIT_SCENE_LABEL_ENABLED_KEY),
+      DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
+    ),
     cameraHand: (() => {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
@@ -674,6 +682,7 @@ export function sanitizeSettingsScreenSnapshot(
     shutterSound: draft.shutterSound,
     privacyBlurEnabled: draft.privacyBlurEnabled,
     ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
+    mlkitSceneLabelEnabled: draft.mlkitSceneLabelEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
     floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
     floorDisplayMode: sanitizeFloorDisplayMode(draft.floorDisplayMode),
@@ -714,6 +723,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
     [PRIVACY_BLUR_ENABLED_KEY, snapshot.privacyBlurEnabled ? 'true' : 'false'],
     [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
+    [MLKIT_SCENE_LABEL_ENABLED_KEY, snapshot.mlkitSceneLabelEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
     [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
     [FLOOR_DISPLAY_MODE_KEY, snapshot.floorDisplayMode],
@@ -1086,6 +1096,20 @@ export async function getOcrTitleMemoEnabled(): Promise<boolean> {
 
 export async function setOcrTitleMemoEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(OCR_TITLE_MEMO_ENABLED_KEY, enabled ? 'true' : 'false');
+  return enabled;
+}
+
+export function mlkitSceneLabelEnabledLabel(enabled: boolean): string {
+  return enabled ? '사용' : '사용 안 함';
+}
+
+export async function getMlkitSceneLabelEnabled(): Promise<boolean> {
+  const value = await readSetting(MLKIT_SCENE_LABEL_ENABLED_KEY);
+  return parseBooleanSetting(value, DEFAULT_MLKIT_SCENE_LABEL_ENABLED);
+}
+
+export async function setMlkitSceneLabelEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(MLKIT_SCENE_LABEL_ENABLED_KEY, enabled ? 'true' : 'false');
   return enabled;
 }
 

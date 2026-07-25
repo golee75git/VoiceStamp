@@ -61,6 +61,7 @@ import {
   DEFAULT_SHUTTER_SOUND,
   DEFAULT_PRIVACY_BLUR_ENABLED,
   DEFAULT_OCR_TITLE_MEMO_ENABLED,
+  DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   FIELD_LABEL_MAX_LENGTH,
@@ -71,6 +72,7 @@ import {
   shutterSoundLabel,
   privacyBlurEnabledLabel,
   ocrTitleMemoEnabledLabel,
+  mlkitSceneLabelEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -184,6 +186,9 @@ export function SettingsScreen({
   const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
   const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabledState] = useState(DEFAULT_OCR_TITLE_MEMO_ENABLED);
+  const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabledState] = useState(
+    DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
+  );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -238,6 +243,7 @@ export function SettingsScreen({
       setShutterSoundState(snapshot.shutterSound);
       setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
+      setMlkitSceneLabelEnabledState(snapshot.mlkitSceneLabelEnabled);
       setCameraHandState(snapshot.cameraHand);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
@@ -283,6 +289,7 @@ export function SettingsScreen({
         shutterSound,
         privacyBlurEnabled,
         ocrTitleMemoEnabled,
+        mlkitSceneLabelEnabled,
         cameraHand,
         floorPickerMode,
         floorDisplayMode,
@@ -319,6 +326,7 @@ export function SettingsScreen({
       setShutterSoundState(saved.shutterSound);
       setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
+      setMlkitSceneLabelEnabledState(saved.mlkitSceneLabelEnabled);
       setCameraHandState(saved.cameraHand);
       setFloorPickerModeState(saved.floorPickerMode);
       setFloorDisplayModeState(saved.floorDisplayMode);
@@ -1077,6 +1085,42 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel(ocrTitleMemoEnabledLabel(true), DEFAULT_OCR_TITLE_MEMO_ENABLED)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>촬영 후 장면 키워드 자동 입력</Text>
+          <Text style={styles.hint}>
+            사용: 저장 화면이 열리면 사진을 폰 안에서만 분석해 메모에 장면 키워드 초안을 넣습니다.
+            서버로 보내지 않으며, 긴 문장 설명이 아닙니다. (Android) 기본은 끔입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !mlkitSceneLabelEnabled && styles.optionButtonSelected]}
+              onPress={() => setMlkitSceneLabelEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !mlkitSceneLabelEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(mlkitSceneLabelEnabledLabel(false), !DEFAULT_MLKIT_SCENE_LABEL_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, mlkitSceneLabelEnabled && styles.optionButtonSelected]}
+              onPress={() => setMlkitSceneLabelEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  mlkitSceneLabelEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(mlkitSceneLabelEnabledLabel(true), DEFAULT_MLKIT_SCENE_LABEL_ENABLED)}
               </Text>
             </Pressable>
           </View>

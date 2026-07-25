@@ -96,7 +96,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 카카오 로컬 API | GPS → 주소 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md), 카카오 개발자 약관 |
 | 전국초중등학교위치표준데이터 | GPS → 학교명 (로컬 DB, 200m) | [공공데이터포털](https://www.data.go.kr/data/15021148/standard.do) — 한국교육시설안전원 제공, **출처 표시** (공공데이터). 빌드 시 `assets/schools.sqlite` 생성 (`npm run build:schools-db`, 기준일 2026-03-20). |
 | OS 음성 인식 | STT | 기기/OS 정책 — [PRIVACY.md](./PRIVACY.md) §2.3 |
-| Google ML Kit (Face Detection, Korean Text Recognition) | 선택: 온디바이스 얼굴·숫자 모자이크 블러 · **OCR 제목·메모 초안** | [ML Kit Terms](https://developers.google.com/ml-kit/terms) · 사진은 서버 미전송 · [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
+| Google ML Kit (Face Detection, Korean Text Recognition, Image Labeling) | 선택: 온디바이스 모자이크 · OCR 제목·메모 · **장면 키워드** | [ML Kit Terms](https://developers.google.com/ml-kit/terms) · 사진은 서버 미전송 · [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) · [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) |
 
 ---
 
@@ -135,3 +135,4 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-07-25 | 저장 템플릿 적용 중/사용자수정 표시: 기기 내 app_settings만 사용. 신규 의존성·권한·네트워크 없음. GPL 없음 |
 | 2026-07-25 | 개인정보 가리기: 하단 버튼 여백 + 탭 수동 영역(기존 모자이크만). 신규 의존성·생성형 AI 없음. GPL 없음 |
 | 2026-07-25 | **AI-ML-03** OCR→제목·메모: 기존 Korean Text Recognition 재사용. 신규 의존성·생성형 AI·GPL 없음. 설정 opt-in |
+| 2026-07-25 | **AI-ML-01** 장면 키워드: `com.google.mlkit:image-labeling` 온디바이스. GPL·생성형 AI 없음. 설정 opt-in |

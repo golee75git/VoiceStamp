@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  InteractionManager,
   KeyboardAvoidingView,
   Modal,
   Platform,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -23,42 +25,49 @@ import {
   formatStampGroupName,
   refreshStampGroupDate,
 } from '../services/fileService';
-import { getCurrentLocationSnapshot, getNearbyCachedPlaceLabel, getQuickLastKnownCoords, type LocationSnapshot } from '../services/locationService';
+import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import {
-  getCameraHand,
   getCurrentSiteName,
-  getMemoTextAlign,
-  getPdfShowDatetime,
-  getStampTextLayout,
-  getWatermarkStyle,
-  getCoordsLabelMode,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
-  getTitleTextAlign,
   setCurrentSiteName,
   setLastCapturePlaceCache,
-  type CameraHand,
-  type CoordsLabelMode,
-  type StampTextLayout,
-  type WatermarkStyle,
-  type TextAlign,
+  setLastPlaceLabel,
+  setTitleFieldLabel as writeTitleFieldLabel,
+  setPlaceFieldLabel as writePlaceFieldLabel,
+  setMemoFieldLabel as writeMemoFieldLabel,
+  setExtra1FieldLabel as writeExtra1FieldLabel,
+  setExtra2FieldLabel as writeExtra2FieldLabel,
+  setExtra3FieldLabel as writeExtra3FieldLabel,
 } from '../services/settingsService';
-import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
+import type { CameraHand, CoordsLabelMode, StampTextLayout, StampTextSize, TextAlign, WatermarkStyle } from '../services/settingsService';
 import {
-  cropStampImage,
-  isStampCropActive,
-  type StampCropViewport,
-} from '../services/stampImageCrop';
+  invalidateStampSaveModalLayoutCache,
+  loadStampSaveModalLayoutSettings,
+  peekStampSaveModalLayoutCache,
+  type StampSaveModalLayoutSettings,
+} from '../services/stampSaveModalLayoutCache';
+import {
+  getActiveFieldPlaceholders,
+  type FieldPlaceholders,
+} from '../services/stampFieldTemplates';
+import { fieldLabelsFromStamp } from '../services/fieldLabels';
+import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
-import { FLOOR_OPTIONS, isSchoolPlaceLabel } from '../services/stampFloor';
+import {
+  FLOOR_OPTIONS,
+  isFloorAllowedForLabels,
+  isSchoolPlaceLabel,
+  resolveStampFloor,
+} from '../services/stampFloor';
 import {
   getFloorDisplayMode,
   getFloorPickerMode,
   getLastFloor,
+  getPrivacyBlurEnabled,
+  getOcrTitleMemoEnabled,
+  inputFontSizeForStampText,
+  isGpsPlaceEnabled,
   setLastFloor,
   type FloorDisplayMode,
   type FloorPickerMode,
@@ -68,10 +77,57 @@ import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
+import { isPrivacyBlurSupported } from '../services/privacyBlurService';
+import {
+  isOcrTitleMemoSupported,
+  recognizeTitleMemoFromImage,
+} from '../services/ocrTitleMemoService';
+import { PrivacyBlurModal } from './PrivacyBlurModal';
 
-type SpeechTarget = 'title' | 'memo' | null;
+/* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
+const zoomEditIcon = require('../../assets/zoom.png');
+
+type SpeechTarget = 'title' | 'memo' | 'place' | 'extra1' | 'extra2' | 'extra3' | null;
 
 type SpeechInsertSlice = { prefix: string; suffix: string };
+
+type TextSelection = { start: number; end: number };
+
+function textWithTrailingGap(text: string): { text: string; selection: TextSelection } {
+  if (!text) {
+    return { text: '', selection: { start: 0, end: 0 } };
+  }
+  const withGap = text.endsWith(' ') ? text : `${text} `;
+  const pos = withGap.length;
+  return { text: withGap, selection: { start: pos, end: pos } };
+}
+
+function prepareSpeechTarget(
+  text: string,
+  selection: TextSelection,
+): { text: string; selection: TextSelection } {
+  if (selection.start !== selection.end) {
+    return { text, selection };
+  }
+  const atEnd = selection.start >= text.length;
+  const untouched = text.length > 0 && selection.start === 0 && selection.end === 0;
+  if (untouched || atEnd) {
+    return textWithTrailingGap(text);
+  }
+  return { text, selection };
+}
+
+function applyTextSelection(
+  selection: TextSelection,
+  ref: { current: TextSelection },
+  setSelection: (value: TextSelection) => void,
+) {
+  ref.current = selection;
+  setSelection(selection);
+  requestAnimationFrame(() => {
+    setSelection({ start: selection.start, end: selection.end });
+  });
+}
 
 function insertSpeechAtCursor(prefix: string, suffix: string, spoken: string): string {
   const trimmed = spoken.trim();
@@ -96,6 +152,53 @@ function speechSliceAtSelection(text: string, start: number, end: number): Speec
   };
 }
 
+function applyStampSaveModalLayoutSettings(
+  settings: StampSaveModalLayoutSettings,
+  apply: {
+    setTitleTextAlign: (value: TextAlign) => void;
+    setMemoTextAlign: (value: TextAlign) => void;
+    setCameraHand: (value: CameraHand) => void;
+    setStampTextLayout: (value: StampTextLayout) => void;
+    setStampTextSize: (value: StampTextSize) => void;
+    setWatermarkStyle: (value: WatermarkStyle) => void;
+    setShowDatetime: (value: boolean) => void;
+    setShowFooterDatetime: (value: boolean) => void;
+    setCoordsLabel: (value: CoordsLabelMode) => void;
+    setFloorDisplayModeState: (value: FloorDisplayMode) => void;
+    setOverlayOrgName: (value: string) => void;
+    setOverlayFooterPhrase: (value: string) => void;
+    setOverlayShowOrgName: (value: boolean) => void;
+    setOverlayShowFooterPhrase: (value: boolean) => void;
+    setTitleFieldLabel: (value: string) => void;
+    setPlaceFieldLabel: (value: string) => void;
+    setMemoFieldLabel: (value: string) => void;
+    setExtra1FieldLabel: (value: string) => void;
+    setExtra2FieldLabel: (value: string) => void;
+    setExtra3FieldLabel: (value: string) => void;
+  },
+): void {
+  apply.setTitleTextAlign(settings.titleTextAlign);
+  apply.setMemoTextAlign(settings.memoTextAlign);
+  apply.setCameraHand(settings.cameraHand);
+  apply.setStampTextLayout(settings.stampTextLayout);
+  apply.setStampTextSize(settings.stampTextSize);
+  apply.setWatermarkStyle(settings.watermarkStyle);
+  apply.setShowDatetime(settings.showDatetime);
+  apply.setShowFooterDatetime(settings.showFooterDatetime);
+  apply.setCoordsLabel(settings.coordsLabel);
+  apply.setFloorDisplayModeState(settings.floorDisplayMode);
+  apply.setOverlayOrgName(settings.overlayOrgName);
+  apply.setOverlayFooterPhrase(settings.overlayFooterPhrase);
+  apply.setOverlayShowOrgName(settings.overlayShowOrgName);
+  apply.setOverlayShowFooterPhrase(settings.overlayShowFooterPhrase);
+  apply.setTitleFieldLabel(settings.titleFieldLabel);
+  apply.setPlaceFieldLabel(settings.placeFieldLabel);
+  apply.setMemoFieldLabel(settings.memoFieldLabel);
+  apply.setExtra1FieldLabel(settings.extra1FieldLabel);
+  apply.setExtra2FieldLabel(settings.extra2FieldLabel);
+  apply.setExtra3FieldLabel(settings.extra3FieldLabel);
+}
+
 type StampSaveModalProps = {
   visible: boolean;
   imageUri: string | null;
@@ -103,6 +206,8 @@ type StampSaveModalProps = {
   captureStampForExport?: CaptureStampForExport;
   prefetchedLocationSnapshot?: LocationSnapshot | null;
   locationPrefetchLoading?: boolean;
+  /** 촬영 직후 prefetch가 끝났으면 모달에서 GPS·카카오 전체 조회를 반복하지 않습니다. */
+  locationPrefetchFinished?: boolean;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -115,6 +220,7 @@ export function StampSaveModal({
   captureStampForExport,
   prefetchedLocationSnapshot = null,
   locationPrefetchLoading = false,
+  locationPrefetchFinished = false,
   onClose,
   onSaved,
   onTrashed,
@@ -124,25 +230,51 @@ export function StampSaveModal({
   const [groupName, setGroupName] = useState('');
   const [title, setTitle] = useState('');
   const [memo, setMemo] = useState('');
+  const [extra1, setExtra1] = useState('');
+  const [extra2, setExtra2] = useState('');
+  const [extra3, setExtra3] = useState('');
   const [saving, setSaving] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
+  const [titleSelection, setTitleSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [placeSelection, setPlaceSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [memoSelection, setMemoSelection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [extra1Selection, setExtra1Selection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [extra2Selection, setExtra2Selection] = useState<TextSelection>({ start: 0, end: 0 });
+  const [extra3Selection, setExtra3Selection] = useState<TextSelection>({ start: 0, end: 0 });
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
+  const [stampTextSize, setStampTextSize] = useState<StampTextSize>('medium');
   const [watermarkStyle, setWatermarkStyle] = useState<WatermarkStyle>('solid_dark');
   const [coordsLabel, setCoordsLabel] = useState<CoordsLabelMode>('off');
   const [overlayOrgName, setOverlayOrgName] = useState('');
   const [overlayFooterPhrase, setOverlayFooterPhrase] = useState('');
   const [overlayShowOrgName, setOverlayShowOrgName] = useState(true);
   const [overlayShowFooterPhrase, setOverlayShowFooterPhrase] = useState(true);
+  const [titleFieldLabel, setTitleFieldLabel] = useState('제목');
+  const [placeFieldLabel, setPlaceFieldLabel] = useState('장소');
+  const [memoFieldLabel, setMemoFieldLabel] = useState('메모');
+  const [extra1FieldLabel, setExtra1FieldLabel] = useState('추가1');
+  const [extra2FieldLabel, setExtra2FieldLabel] = useState('추가2');
+  const [extra3FieldLabel, setExtra3FieldLabel] = useState('추가3');
+  const [fieldPlaceholders, setFieldPlaceholders] = useState<FieldPlaceholders>({
+    title: '',
+    place: '',
+    memo: '',
+    extra1: '',
+    extra2: '',
+    extra3: '',
+  });
   const [showDatetime, setShowDatetime] = useState(true);
+  const [showFooterDatetime, setShowFooterDatetime] = useState(true);
   const [captureCoords, setCaptureCoords] = useState<{ latitude: number; longitude: number } | null>(
     null,
   );
   const [floor, setFloor] = useState<StampFloor | null>(null);
   const [placeLabel, setPlaceLabel] = useState<string | null>(null);
+  const [locationLookupEnabled, setLocationLookupEnabled] = useState(true);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>('school_only');
   const [floorDisplayMode, setFloorDisplayModeState] = useState<FloorDisplayMode>('suffix');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
@@ -153,27 +285,40 @@ export function StampSaveModal({
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
-  const [layoutSettingsLoaded, setLayoutSettingsLoaded] = useState(false);
-  const [applyingCrop, setApplyingCrop] = useState(false);
+  const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
+  const [ocrTitleMemoEnabled, setOcrTitleMemoEnabled] = useState(false);
+  const [ocrBusy, setOcrBusy] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
-  const speechInsertRef = useRef<{ title: SpeechInsertSlice; memo: SpeechInsertSlice }>({
+  const speechInsertRef = useRef<{
+    title: SpeechInsertSlice;
+    memo: SpeechInsertSlice;
+    place: SpeechInsertSlice;
+    extra1: SpeechInsertSlice;
+    extra2: SpeechInsertSlice;
+    extra3: SpeechInsertSlice;
+  }>({
     title: { prefix: '', suffix: '' },
     memo: { prefix: '', suffix: '' },
+    place: { prefix: '', suffix: '' },
+    extra1: { prefix: '', suffix: '' },
+    extra2: { prefix: '', suffix: '' },
+    extra3: { prefix: '', suffix: '' },
   });
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
+  const placeSelectionRef = useRef({ start: 0, end: 0 });
+  const extra1SelectionRef = useRef({ start: 0, end: 0 });
+  const extra2SelectionRef = useRef({ start: 0, end: 0 });
+  const extra3SelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
+  const lastFloorRef = useRef<StampFloor | null>(null);
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
-  const cropViewportRef = useRef<StampCropViewport | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-
-  const handleCropChange = useCallback((viewport: StampCropViewport) => {
-    cropViewportRef.current = viewport;
-  }, []);
 
   const scrollFieldIntoView = () => {
     requestAnimationFrame(() => {
@@ -185,109 +330,224 @@ export function StampSaveModal({
     speechTargetRef.current = speechTarget;
   }, [speechTarget]);
 
+  const handleListeningEnd = useCallback(() => {
+    setSpeechTarget(null);
+  }, []);
+
   const { listening, available, start, stop } = useSpeechInput({
     onResult: (text, isFinal) => {
       const target = speechTargetRef.current;
       if (target === 'title') {
         const { prefix, suffix } = speechInsertRef.current.title;
-        setTitle(insertSpeechAtCursor(prefix, suffix, text));
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setTitle(withGap);
+          applyTextSelection(selection, titleSelectionRef, setTitleSelection);
+        } else {
+          setTitle(merged);
+        }
       } else if (target === 'memo') {
         const { prefix, suffix } = speechInsertRef.current.memo;
-        setMemo(insertSpeechAtCursor(prefix, suffix, text));
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setMemo(withGap);
+          applyTextSelection(selection, memoSelectionRef, setMemoSelection);
+        } else {
+          setMemo(merged);
+        }
+      } else if (target === 'place') {
+        const { prefix, suffix } = speechInsertRef.current.place;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        placeTouchedRef.current = true;
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setPlaceLabel(withGap.trim() ? withGap : null);
+          applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
+        } else {
+          setPlaceLabel(merged.trim() ? merged : null);
+        }
+      } else if (target === 'extra1') {
+        const { prefix, suffix } = speechInsertRef.current.extra1;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setExtra1(withGap);
+          applyTextSelection(selection, extra1SelectionRef, setExtra1Selection);
+        } else {
+          setExtra1(merged);
+        }
+      } else if (target === 'extra2') {
+        const { prefix, suffix } = speechInsertRef.current.extra2;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setExtra2(withGap);
+          applyTextSelection(selection, extra2SelectionRef, setExtra2Selection);
+        } else {
+          setExtra2(merged);
+        }
+      } else if (target === 'extra3') {
+        const { prefix, suffix } = speechInsertRef.current.extra3;
+        const merged = insertSpeechAtCursor(prefix, suffix, text);
+        if (isFinal) {
+          const { text: withGap, selection } = textWithTrailingGap(merged);
+          setExtra3(withGap);
+          applyTextSelection(selection, extra3SelectionRef, setExtra3Selection);
+        } else {
+          setExtra3(merged);
+        }
       }
       if (isFinal) {
         setSpeechTarget(null);
       }
     },
-    onListeningEnd: () => setSpeechTarget(null),
+    onListeningEnd: handleListeningEnd,
   });
 
-  useEffect(() => {
+  const stopRef = useRef(stop);
+  stopRef.current = stop;
+
+  useLayoutEffect(() => {
     if (!visible) {
       return;
     }
 
+    const apply = {
+      setTitleTextAlign,
+      setMemoTextAlign,
+      setCameraHand,
+      setStampTextLayout,
+      setStampTextSize,
+      setWatermarkStyle,
+      setShowDatetime,
+      setShowFooterDatetime,
+      setCoordsLabel,
+      setFloorDisplayModeState,
+      setOverlayOrgName,
+      setOverlayFooterPhrase,
+      setOverlayShowOrgName,
+      setOverlayShowFooterPhrase,
+      setTitleFieldLabel,
+      setPlaceFieldLabel,
+      setMemoFieldLabel,
+      setExtra1FieldLabel,
+      setExtra2FieldLabel,
+      setExtra3FieldLabel,
+    };
+
+    const cached = peekStampSaveModalLayoutCache();
+    if (cached) {
+      applyStampSaveModalLayoutSettings(cached, apply);
+    }
+    if (!stamp) {
+      setFieldPlaceholders(getActiveFieldPlaceholders());
+    }
+
     let cancelled = false;
-    setLayoutSettingsLoaded(false);
-    (async () => {
-      const [titleAlign, memoAlign, hand, textLayout, wmStyle, datetimeVisible, coordsLabelMode, displayMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
-        await Promise.all([
-        getTitleTextAlign(),
-        getMemoTextAlign(),
-        getCameraHand(),
-        getStampTextLayout(),
-        getWatermarkStyle(),
-        getPdfShowDatetime(),
-        getCoordsLabelMode(),
-        getFloorDisplayMode(),
-        getOverlayOrgName(),
-        getOverlayFooterPhrase(),
-        getOverlayShowOrgName(),
-        getOverlayShowFooterPhrase(),
-      ]);
-      if (!cancelled) {
-        setTitleTextAlign(titleAlign);
-        setMemoTextAlign(memoAlign);
-        setCameraHand(hand);
-        setStampTextLayout(textLayout);
-        setWatermarkStyle(wmStyle);
-        setShowDatetime(datetimeVisible);
-        setCoordsLabel(coordsLabelMode);
-        setFloorDisplayModeState(displayMode);
-        setOverlayOrgName(orgName);
-        setOverlayFooterPhrase(footerPhrase);
-        setOverlayShowOrgName(showOrgName);
-        setOverlayShowFooterPhrase(showFooterPhrase);
-        setLayoutSettingsLoaded(true);
+    void loadStampSaveModalLayoutSettings().then((settings) => {
+      if (cancelled) {
+        return;
       }
-    })();
+      applyStampSaveModalLayoutSettings(settings, apply);
+      if (stamp) {
+        const snap = fieldLabelsFromStamp(stamp);
+        setTitleFieldLabel(snap.titleFieldLabel);
+        setPlaceFieldLabel(snap.placeFieldLabel);
+        setMemoFieldLabel(snap.memoFieldLabel);
+        setExtra1FieldLabel(snap.extra1FieldLabel);
+        setExtra2FieldLabel(snap.extra2FieldLabel);
+        setExtra3FieldLabel(snap.extra3FieldLabel);
+        setFieldPlaceholders({
+          title: '',
+          place: '',
+          memo: '',
+          extra1: '',
+          extra2: '',
+          extra3: '',
+        });
+      } else {
+        setFieldPlaceholders(getActiveFieldPlaceholders());
+      }
+    });
 
     return () => {
       cancelled = true;
     };
+  }, [visible, stamp?.id]);
+
+  useEffect(() => {
+    if (visible) {
+      return;
+    }
+    setSiteName('');
+    setGroupName('');
+    setTitle('');
+    setMemo('');
+    setExtra1('');
+    setExtra2('');
+    setExtra3('');
+    setSaving(false);
+    setLocationLoading(false);
+    setError(null);
+    setSpeechTarget(null);
+    setTitleSelection({ start: 0, end: 0 });
+    setPlaceSelection({ start: 0, end: 0 });
+    setMemoSelection({ start: 0, end: 0 });
+    setExtra1Selection({ start: 0, end: 0 });
+    setExtra2Selection({ start: 0, end: 0 });
+    setExtra3Selection({ start: 0, end: 0 });
+    titleSelectionRef.current = { start: 0, end: 0 };
+    placeSelectionRef.current = { start: 0, end: 0 };
+    memoSelectionRef.current = { start: 0, end: 0 };
+    extra1SelectionRef.current = { start: 0, end: 0 };
+    extra2SelectionRef.current = { start: 0, end: 0 };
+    extra3SelectionRef.current = { start: 0, end: 0 };
+    setImageViewerVisible(false);
+    setFolderPickerVisible(false);
+    setFolderOptions([]);
+    setFolderOptionsLoading(false);
+    setDeleting(false);
+    titleTouchedRef.current = false;
+    placeTouchedRef.current = false;
+    siteNameTouchedRef.current = false;
+    floorTouchedRef.current = false;
+    lastFloorRef.current = null;
+    captureCoordsRef.current = null;
+    originalCameraUriRef.current = null;
+    setWorkingImageUri(null);
+    setPreviewThumbUri(null);
+    setPrivacyModalOpen(false);
+    setCaptureCoords(null);
+    setFloor(null);
+    setPlaceLabel(null);
+    stopRef.current();
   }, [visible]);
 
   useEffect(() => {
-    if (!visible) {
-      setSiteName('');
-      setGroupName('');
-      setTitle('');
-      setMemo('');
-      setSaving(false);
-      setLocationLoading(false);
-      setError(null);
-      setSpeechTarget(null);
-      setImageViewerVisible(false);
-      setFolderPickerVisible(false);
-      setFolderOptions([]);
-      setFolderOptionsLoading(false);
-      setDeleting(false);
-      titleTouchedRef.current = false;
-      placeTouchedRef.current = false;
-      siteNameTouchedRef.current = false;
-      floorTouchedRef.current = false;
-      captureCoordsRef.current = null;
-      cropViewportRef.current = null;
-      originalCameraUriRef.current = null;
-      setWorkingImageUri(null);
-      setPreviewThumbUri(null);
-      setLayoutSettingsLoaded(false);
-      setApplyingCrop(false);
-      setCaptureCoords(null);
-      setFloor(null);
-      setPlaceLabel(null);
-      stop();
-    } else if (stamp) {
-      setTitle(stamp.title);
-      setMemo(stamp.memo);
-      setFloor(stamp.floor ?? null);
-      setPlaceLabel(stamp.placeLabel ?? null);
-      setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
-      titleTouchedRef.current = true;
-      placeTouchedRef.current = true;
-      floorTouchedRef.current = Boolean(stamp.floor);
+    if (!visible || !stamp) {
+      return;
     }
-  }, [visible, stamp, stop]);
+    setTitle(stamp.title);
+    setMemo(stamp.memo);
+    setExtra1(stamp.extra1 ?? '');
+    setExtra2(stamp.extra2 ?? '');
+    setExtra3(stamp.extra3 ?? '');
+    setFloor(stamp.floor ?? null);
+    setPlaceLabel(stamp.placeLabel ?? null);
+    setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
+    const snap = fieldLabelsFromStamp(stamp);
+    setTitleFieldLabel(snap.titleFieldLabel);
+    setPlaceFieldLabel(snap.placeFieldLabel);
+    setMemoFieldLabel(snap.memoFieldLabel);
+    setExtra1FieldLabel(snap.extra1FieldLabel);
+    setExtra2FieldLabel(snap.extra2FieldLabel);
+    setExtra3FieldLabel(snap.extra3FieldLabel);
+    titleTouchedRef.current = true;
+    placeTouchedRef.current = true;
+    floorTouchedRef.current = Boolean(stamp.floor);
+  }, [visible, stamp?.id]);
 
   useEffect(() => {
     if (!visible || !imageUri) {
@@ -303,6 +563,24 @@ export function StampSaveModal({
     if (!visible) {
       return;
     }
+    let cancelled = false;
+    void Promise.all([getPrivacyBlurEnabled(), getOcrTitleMemoEnabled()]).then(
+      ([blurEnabled, ocrEnabled]) => {
+        if (!cancelled) {
+          setPrivacyBlurEnabled(blurEnabled);
+          setOcrTitleMemoEnabled(ocrEnabled);
+        }
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
     const sourceUri = workingImageUri ?? imageUri;
     if (!sourceUri) {
       setPreviewThumbUri(null);
@@ -310,24 +588,43 @@ export function StampSaveModal({
     }
 
     let cancelled = false;
-    setPreviewThumbUri(null);
-
-    prepareStampPreviewThumb(sourceUri)
-      .then((uri) => {
-        if (!cancelled) {
-          setPreviewThumbUri(uri);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPreviewThumbUri(normalizeDisplayUri(sourceUri));
-        }
-      });
+    const interactionTask = InteractionManager.runAfterInteractions(() => {
+      if (cancelled) {
+        return;
+      }
+      prepareStampPreviewThumb(sourceUri)
+        .then((uri) => {
+          if (!cancelled) {
+            setPreviewThumbUri(uri);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setPreviewThumbUri(normalizeDisplayUri(sourceUri));
+          }
+        });
+    });
 
     return () => {
       cancelled = true;
+      interactionTask.cancel();
     };
   }, [visible, workingImageUri, imageUri]);
+
+  useEffect(() => {
+    if (!visible || isEdit || !prefetchedLocationSnapshot) {
+      return;
+    }
+    if (!placeTouchedRef.current) {
+      setPlaceLabel(prefetchedLocationSnapshot.placeLabel);
+    }
+    const coords = {
+      latitude: prefetchedLocationSnapshot.latitude,
+      longitude: prefetchedLocationSnapshot.longitude,
+    };
+    captureCoordsRef.current = coords;
+    setCaptureCoords(coords);
+  }, [visible, isEdit, prefetchedLocationSnapshot]);
 
   useEffect(() => {
     if (!visible || isEdit || !imageUri) {
@@ -349,7 +646,8 @@ export function StampSaveModal({
       if (!snapshot) {
         return;
       }
-      if (!placeTouchedRef.current) {
+      // 빈 장소명으로 이미 채워진 값을 지우지 않음(재조회 실패 시 보호)
+      if (!placeTouchedRef.current && snapshot.placeLabel?.trim()) {
         setPlaceLabel(snapshot.placeLabel);
       }
       const coords = {
@@ -370,7 +668,9 @@ export function StampSaveModal({
         return;
       }
       setFloorPickerModeState(pickerMode);
-      if (!floorTouchedRef.current && lastFloor) {
+      lastFloorRef.current = lastFloor;
+      // always만 즉시 적용. school_only는 장소 확정 후 useEffect에서 적용(비학교 lastFloor 오염 방지)
+      if (!floorTouchedRef.current && lastFloor && pickerMode === 'always') {
         setFloor(lastFloor);
       }
       if (!siteNameTouchedRef.current) {
@@ -378,16 +678,28 @@ export function StampSaveModal({
       }
     };
 
+    const applyQuickLocationCache = async () => {
+      const fast = await getFastLocationSnapshot();
+      if (cancelled || !fast) {
+        return;
+      }
+      if (!placeTouchedRef.current && fast.placeLabel) {
+        setPlaceLabel(fast.placeLabel);
+      }
+      if (!captureCoordsRef.current) {
+        const coords = {
+          latitude: fast.latitude,
+          longitude: fast.longitude,
+        };
+        captureCoordsRef.current = coords;
+        setCaptureCoords(coords);
+      }
+    };
+
     const fetchLocationFallback = async () => {
       setLocationLoading(true);
       try {
-        const quickCoords = await getQuickLastKnownCoords();
-        if (!cancelled && quickCoords && !placeTouchedRef.current) {
-          const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-          if (cachedPlace) {
-            setPlaceLabel(cachedPlace);
-          }
-        }
+        await applyQuickLocationCache();
 
         const snapshot = await getCurrentLocationSnapshot();
         if (cancelled) {
@@ -408,38 +720,74 @@ export function StampSaveModal({
 
     void loadSiteSettings();
 
-    if (prefetchedLocationSnapshot) {
-      applySnapshot(prefetchedLocationSnapshot);
-      setLocationLoading(false);
-      return () => {
-        cancelled = true;
-      };
-    }
+    void (async () => {
+      const gpsEnabled = await isGpsPlaceEnabled();
+      if (cancelled) {
+        return;
+      }
+      // 층 칩·로딩: GPS 장소 조회(사용/사용 안 함 모두). 카카오는 locationService에서만 분기.
+      setLocationLookupEnabled(gpsEnabled);
+      if (!gpsEnabled) {
+        setLocationLoading(false);
+        return;
+      }
 
-    if (locationPrefetchLoading) {
-      setLocationLoading(true);
-      void (async () => {
-        const quickCoords = await getQuickLastKnownCoords();
-        if (cancelled || !quickCoords || placeTouchedRef.current) {
+      if (prefetchedLocationSnapshot) {
+        applySnapshot(prefetchedLocationSnapshot);
+        // 장소명이 이미 있으면 중복 조회 생략. 좌표만 있거나 장소명이 비면 한 번 더 조회.
+        if (prefetchedLocationSnapshot.placeLabel?.trim()) {
+          setLocationLoading(false);
           return;
         }
-        const cachedPlace = await getNearbyCachedPlaceLabel(quickCoords);
-        if (cancelled || !cachedPlace) {
-          return;
-        }
-        setPlaceLabel(cachedPlace);
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }
+        setLocationLoading(true);
+        void (async () => {
+          try {
+            const refined = await getCurrentLocationSnapshot();
+            if (cancelled) {
+              return;
+            }
+            if (refined) {
+              applySnapshot(refined);
+            } else {
+              await applyQuickLocationCache();
+            }
+          } catch {
+            // 프리페치 좌표는 유지
+          } finally {
+            if (!cancelled) {
+              setLocationLoading(false);
+            }
+          }
+        })();
+        return;
+      }
 
-    void fetchLocationFallback();
+      if (locationPrefetchLoading) {
+        setLocationLoading(true);
+        void applyQuickLocationCache();
+        return;
+      }
+
+      if (locationPrefetchFinished) {
+        // 프리페치가 장소명 없이 끝난 경우 전체 조회로 보완
+        void fetchLocationFallback();
+        return;
+      }
+
+      void fetchLocationFallback();
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, [visible, imageUri, isEdit, prefetchedLocationSnapshot, locationPrefetchLoading]);
+  }, [
+    visible,
+    imageUri,
+    isEdit,
+    prefetchedLocationSnapshot,
+    locationPrefetchLoading,
+    locationPrefetchFinished,
+  ]);
 
   useEffect(() => {
     if (!visible || !isEdit) {
@@ -457,6 +805,36 @@ export function StampSaveModal({
     };
   }, [visible, isEdit]);
 
+  // school_only: 장소·폴더가 학교일 때만 lastFloor 적용, 아니면 층 제거
+  useEffect(() => {
+    if (!visible || isEdit || floorTouchedRef.current) {
+      return;
+    }
+    if (floorPickerMode === 'off') {
+      setFloor(null);
+      return;
+    }
+    if (floorPickerMode === 'always') {
+      if (lastFloorRef.current) {
+        setFloor(lastFloorRef.current);
+      }
+      return;
+    }
+    const allowed = isFloorAllowedForLabels(
+      'school_only',
+      placeLabel,
+      siteName,
+      groupName,
+    );
+    if (allowed) {
+      if (lastFloorRef.current) {
+        setFloor(lastFloorRef.current);
+      }
+    } else {
+      setFloor(null);
+    }
+  }, [visible, isEdit, floorPickerMode, placeLabel, siteName, groupName]);
+
   const handleMicPress = async (target: SpeechTarget) => {
     if (listening && speechTarget === target) {
       stop();
@@ -470,16 +848,60 @@ export function StampSaveModal({
 
     if (target === 'title') {
       titleTouchedRef.current = true;
+      const { text: prepared, selection } = prepareSpeechTarget(title, titleSelectionRef.current);
+      setTitle(prepared);
+      applyTextSelection(selection, titleSelectionRef, setTitleSelection);
       speechInsertRef.current.title = speechSliceAtSelection(
-        title,
-        titleSelectionRef.current.start,
-        titleSelectionRef.current.end,
+        prepared,
+        selection.start,
+        selection.end,
       );
     } else if (target === 'memo') {
+      const { text: prepared, selection } = prepareSpeechTarget(memo, memoSelectionRef.current);
+      setMemo(prepared);
+      applyTextSelection(selection, memoSelectionRef, setMemoSelection);
       speechInsertRef.current.memo = speechSliceAtSelection(
-        memo,
-        memoSelectionRef.current.start,
-        memoSelectionRef.current.end,
+        prepared,
+        selection.start,
+        selection.end,
+      );
+    } else if (target === 'place') {
+      placeTouchedRef.current = true;
+      const placeText = placeLabel ?? '';
+      const { text: prepared, selection } = prepareSpeechTarget(placeText, placeSelectionRef.current);
+      setPlaceLabel(prepared.trim() ? prepared : null);
+      applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
+      speechInsertRef.current.place = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
+      );
+    } else if (target === 'extra1') {
+      const { text: prepared, selection } = prepareSpeechTarget(extra1, extra1SelectionRef.current);
+      setExtra1(prepared);
+      applyTextSelection(selection, extra1SelectionRef, setExtra1Selection);
+      speechInsertRef.current.extra1 = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
+      );
+    } else if (target === 'extra2') {
+      const { text: prepared, selection } = prepareSpeechTarget(extra2, extra2SelectionRef.current);
+      setExtra2(prepared);
+      applyTextSelection(selection, extra2SelectionRef, setExtra2Selection);
+      speechInsertRef.current.extra2 = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
+      );
+    } else if (target === 'extra3') {
+      const { text: prepared, selection } = prepareSpeechTarget(extra3, extra3SelectionRef.current);
+      setExtra3(prepared);
+      applyTextSelection(selection, extra3SelectionRef, setExtra3Selection);
+      speechInsertRef.current.extra3 = speechSliceAtSelection(
+        prepared,
+        selection.start,
+        selection.end,
       );
     }
 
@@ -565,30 +987,84 @@ export function StampSaveModal({
     setImageViewerVisible(false);
   };
 
-  const handleApplyCrop = async () => {
-    if (!workingImageUri || applyingCrop || saving) {
-      if (!applyingCrop && !saving) {
-        handleCloseViewer();
+  const persistFieldLabel = useCallback(
+    async (
+      field: 'title' | 'place' | 'memo' | 'extra1' | 'extra2' | 'extra3',
+      nextLabel: string,
+    ) => {
+      try {
+        if (field === 'title') {
+          const safe = await writeTitleFieldLabel(nextLabel);
+          setTitleFieldLabel(safe);
+        } else if (field === 'place') {
+          const safe = await writePlaceFieldLabel(nextLabel);
+          setPlaceFieldLabel(safe);
+        } else if (field === 'memo') {
+          const safe = await writeMemoFieldLabel(nextLabel);
+          setMemoFieldLabel(safe);
+        } else if (field === 'extra1') {
+          const safe = await writeExtra1FieldLabel(nextLabel);
+          setExtra1FieldLabel(safe);
+        } else if (field === 'extra2') {
+          const safe = await writeExtra2FieldLabel(nextLabel);
+          setExtra2FieldLabel(safe);
+        } else {
+          const safe = await writeExtra3FieldLabel(nextLabel);
+          setExtra3FieldLabel(safe);
+        }
+        invalidateStampSaveModalLayoutCache();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '표시명 저장에 실패했습니다.');
       }
+    },
+    [],
+  );
+
+  const handleOpenViewer = () => {
+    const source = workingImageUri ?? imageUri;
+    if (!source || saving) {
       return;
     }
-
-    setApplyingCrop(true);
-    setError(null);
-    try {
-      const cropState = cropViewportRef.current;
-      if (isStampCropActive(cropState)) {
-        const croppedUri = await cropStampImage(workingImageUri, cropState);
-        setWorkingImageUri(croppedUri);
-      }
-      cropViewportRef.current = null;
-      setImageViewerVisible(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '크기 적용에 실패했습니다.');
-    } finally {
-      setApplyingCrop(false);
-    }
+    // View-only zoom: do not re-encode / crop (Apply disabled).
+    setImageViewerVisible(true);
   };
+
+  const handleOcrFill = useCallback(async () => {
+    const uri = workingImageUri || imageUri;
+    if (!uri || ocrBusy || saving) {
+      return;
+    }
+    setOcrBusy(true);
+    try {
+      const draft = await recognizeTitleMemoFromImage(uri);
+      if (!draft) {
+        Alert.alert('글자 읽기', '글자를 찾지 못했거나 읽을 수 없습니다.');
+        return;
+      }
+      if (draft.title) {
+        titleTouchedRef.current = true;
+        setTitle(draft.title);
+        applyTextSelection(
+          { start: draft.title.length, end: draft.title.length },
+          titleSelectionRef,
+          setTitleSelection,
+        );
+      }
+      if (draft.memo) {
+        setMemo(draft.memo);
+        applyTextSelection(
+          { start: draft.memo.length, end: draft.memo.length },
+          memoSelectionRef,
+          setMemoSelection,
+        );
+      }
+      Alert.alert('글자 읽기', '제목·메모 초안을 넣었습니다. 필요하면 수정하세요.');
+    } catch {
+      Alert.alert('글자 읽기', '읽는 중 오류가 발생했습니다.');
+    } finally {
+      setOcrBusy(false);
+    }
+  }, [workingImageUri, imageUri, ocrBusy, saving]);
 
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
@@ -600,22 +1076,40 @@ export function StampSaveModal({
     setError(null);
 
     try {
+      const folderLabel = isEdit ? groupName : siteName;
+      const effectiveFloor = resolveStampFloor(
+        floorPickerMode,
+        floor,
+        placeLabel,
+        folderLabel,
+      );
       if (isEdit && stamp) {
         const croppedImageUri = photoUri !== imageUri ? photoUri : undefined;
         await updateStamp({
           id: stamp.id,
           title,
           memo,
+          extra1,
+          extra2,
+          extra3,
           groupName,
-          floor,
+          floor: effectiveFloor,
           placeLabel,
           croppedImageUri,
           captureForExport: captureStampForExport,
+          fieldLabels: {
+            titleFieldLabel,
+            placeFieldLabel,
+            memoFieldLabel,
+            extra1FieldLabel,
+            extra2FieldLabel,
+            extra3FieldLabel,
+          },
         });
       } else {
         await setCurrentSiteName(siteName);
-        if (floor) {
-          await setLastFloor(floor);
+        if (effectiveFloor) {
+          await setLastFloor(effectiveFloor);
         }
         const originalTempUri =
           originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
@@ -626,13 +1120,27 @@ export function StampSaveModal({
           originalTempUri,
           title,
           memo,
+          extra1,
+          extra2,
+          extra3,
           groupName: siteName,
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
-          floor,
+          floor: effectiveFloor,
           placeLabel,
           captureForExport: captureStampForExport,
+          fieldLabels: {
+            titleFieldLabel,
+            placeFieldLabel,
+            memoFieldLabel,
+            extra1FieldLabel,
+            extra2FieldLabel,
+            extra3FieldLabel,
+          },
         });
+        if (placeLabel?.trim()) {
+          await setLastPlaceLabel(placeLabel);
+        }
         const coords = captureCoordsRef.current;
         if (coords && placeLabel) {
           await setLastCapturePlaceCache({
@@ -665,24 +1173,28 @@ export function StampSaveModal({
       if (floorDisplayMode !== 'cursor' || !value) {
         return;
       }
+      const placeText = placeLabel ?? '';
       const { prefix, suffix } = speechSliceAtSelection(
-        title,
-        titleSelectionRef.current.start,
-        titleSelectionRef.current.end,
+        placeText,
+        placeSelectionRef.current.start,
+        placeSelectionRef.current.end,
       );
-      titleTouchedRef.current = true;
-      setTitle(insertSpeechAtCursor(prefix, suffix, `${value}층`));
+      placeTouchedRef.current = true;
+      const merged = insertSpeechAtCursor(prefix, suffix, `${value}층`);
+      setPlaceLabel(merged.trim() ? merged : null);
     },
-    [floorDisplayMode, title],
+    [floorDisplayMode, placeLabel],
   );
 
   const showFloorPicker =
-    floorPickerMode !== 'off' &&
-    (floorPickerMode === 'always' ||
-      isSchoolPlaceLabel(placeLabel) ||
-      isSchoolPlaceLabel(siteName) ||
-      isSchoolPlaceLabel(groupName) ||
-      Boolean(isEdit && stamp?.floor));
+    (locationLookupEnabled &&
+      floorPickerMode !== 'off' &&
+      (floorPickerMode === 'always' ||
+        isSchoolPlaceLabel(placeLabel) ||
+        isSchoolPlaceLabel(siteName) ||
+        isSchoolPlaceLabel(groupName) ||
+        Boolean(isEdit && stamp?.floor))) ||
+    Boolean(isEdit && stamp?.floor);
 
   return (
     <>
@@ -703,28 +1215,86 @@ export function StampSaveModal({
             <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
             {photoUri ? (
-              <Pressable onPress={() => setImageViewerVisible(true)} accessibilityLabel="사진 전체 보기">
-                <StampSavePreview
-                  imageUri={previewThumbUri ?? ''}
-                  imageLoading={!layoutSettingsLoaded || !previewThumbUri}
-                  title={title}
-                  memo={memo}
-                  placeLabel={placeLabel}
-                  titleAlign={titleTextAlign}
-                  memoAlign={memoTextAlign}
-                  textLayout={stampTextLayout}
-                  watermarkStyle={watermarkStyle}
-                  coordsLabel={coordsLabel}
-                  showDatetime={showDatetime}
-                  orgName={overlayOrgName}
-                  footerPhrase={overlayFooterPhrase}
-                  showOrgName={overlayShowOrgName}
-                  showFooterPhrase={overlayShowFooterPhrase}
-                  floor={floor}
-                  latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
-                  longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
-                  variant="thumbnail"
-                />
+              <Pressable
+                onPress={handleOpenViewer}
+                disabled={saving}
+                accessibilityLabel="사진 크게 보기"
+                accessibilityHint="탭하면 확대 화면이 열립니다. 자르기는 지원하지 않습니다."
+              >
+                <View style={styles.previewWrap}>
+                  <StampSavePreview
+                    imageUri={previewThumbUri ?? normalizeDisplayUri(photoUri)}
+                    imageLoading={false}
+                    title={title}
+                    memo={memo}
+                    extra1={extra1}
+                    extra2={extra2}
+                    extra3={extra3}
+                    placeLabel={placeLabel}
+                    titleAlign={titleTextAlign}
+                    memoAlign={memoTextAlign}
+                    textLayout={stampTextLayout}
+                    stampTextSize={stampTextSize}
+                    watermarkStyle={watermarkStyle}
+                    coordsLabel={coordsLabel}
+                    showDatetime={showDatetime}
+                    showFooterDatetime={showFooterDatetime}
+                    createdAt={isEdit && stamp ? stamp.createdAt : Date.now()}
+                    orgName={overlayOrgName}
+                    footerPhrase={overlayFooterPhrase}
+                    showOrgName={overlayShowOrgName}
+                    showFooterPhrase={overlayShowFooterPhrase}
+                    titleFieldLabel={titleFieldLabel}
+                    placeFieldLabel={placeFieldLabel}
+                    memoFieldLabel={memoFieldLabel}
+                    extra1FieldLabel={extra1FieldLabel}
+                    extra2FieldLabel={extra2FieldLabel}
+                    extra3FieldLabel={extra3FieldLabel}
+                    floor={floor}
+                    latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
+                    longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+                    variant="thumbnail"
+                  />
+                  <Image
+                      source={zoomEditIcon}
+                      style={[
+                        styles.zoomEditBadge,
+                        cameraHand === 'left' ? styles.zoomEditBadgeLeft : styles.zoomEditBadgeRight,
+                      ]}
+                      resizeMode="contain"
+                      pointerEvents="none"
+                      accessibilityElementsHidden
+                      importantForAccessibility="no-hide-descendants"
+                    />
+                </View>
+              </Pressable>
+            ) : null}
+
+            {photoUri && privacyBlurEnabled && isPrivacyBlurSupported() ? (
+              <Pressable
+                style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
+                onPress={() => setPrivacyModalOpen(true)}
+                disabled={saving}
+                accessibilityRole="button"
+                accessibilityLabel="개인정보 가리기"
+              >
+                <Text style={styles.privacyBlurBtnText}>개인정보 가리기</Text>
+              </Pressable>
+            ) : null}
+
+            {photoUri && ocrTitleMemoEnabled && isOcrTitleMemoSupported() ? (
+              <Pressable
+                style={[styles.ocrFillBtn, saving || ocrBusy ? { opacity: 0.5 } : null]}
+                onPress={() => void handleOcrFill()}
+                disabled={saving || ocrBusy}
+                accessibilityRole="button"
+                accessibilityLabel="글자 읽어 채우기"
+              >
+                {ocrBusy ? (
+                  <ActivityIndicator color="#0f766e" />
+                ) : (
+                  <Text style={styles.ocrFillBtnText}>글자 읽어 채우기</Text>
+                )}
               </Pressable>
             ) : null}
 
@@ -732,6 +1302,11 @@ export function StampSaveModal({
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
                 <View style={styles.folderInputRow}>
+                  {cameraHand === 'left' ? (
+                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                      <Text style={styles.folderPickButtonText}>선택</Text>
+                    </Pressable>
+                  ) : null}
                   <TextInput
                     style={styles.folderInput}
                     value={siteName}
@@ -743,11 +1318,13 @@ export function StampSaveModal({
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
-                  <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                    <Text style={styles.folderPickButtonText}>선택</Text>
-                  </Pressable>
+                  {cameraHand === 'right' ? (
+                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                      <Text style={styles.folderPickButtonText}>선택</Text>
+                    </Pressable>
+                  ) : null}
                 </View>
-                {locationLoading ? (
+                {locationLookupEnabled && locationLoading ? (
                   <Text style={styles.locationHint}>위치 확인 중…</Text>
                 ) : null}
               </View>
@@ -755,6 +1332,11 @@ export function StampSaveModal({
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
                 <View style={styles.folderInputRow}>
+                  {cameraHand === 'left' ? (
+                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                      <Text style={styles.folderPickButtonText}>선택</Text>
+                    </Pressable>
+                  ) : null}
                   <TextInput
                     style={styles.folderInput}
                     value={groupName}
@@ -763,9 +1345,11 @@ export function StampSaveModal({
                     onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
-                  <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
-                    <Text style={styles.folderPickButtonText}>선택</Text>
-                  </Pressable>
+                  {cameraHand === 'right' ? (
+                    <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
+                      <Text style={styles.folderPickButtonText}>선택</Text>
+                    </Pressable>
+                  ) : null}
                 </View>
                 <Text style={styles.locationHint}>
                   선택한 스탬프만 이동합니다. 앱 폴더와 갤러리 앨범이 함께 변경됩니다.
@@ -773,20 +1357,55 @@ export function StampSaveModal({
               </View>
             )}
 
-            <View style={styles.siteField}>
-              <Text style={styles.siteLabel}>장소</Text>
-              <TextInput
-                style={styles.folderInput}
-                value={placeLabel ?? ''}
+            <View>
+              <VoiceInputField
+                label={titleFieldLabel}
+                labelEditable
+                onLabelCommit={(next) => void persistFieldLabel('title', next)}
+                value={title}
                 onChangeText={(text) => {
-                  placeTouchedRef.current = true;
-                  setPlaceLabel(text.trim() ? text : null);
+                  titleTouchedRef.current = true;
+                  setTitle(text);
                 }}
-                placeholder={locationLoading ? '위치 확인 중…' : '예: 역삼초등학교'}
+                onMicPress={() => handleMicPress('title')}
+                listening={listening && speechTarget === 'title'}
+                speechAvailable={available}
                 onFocus={scrollFieldIntoView}
-                maxLength={120}
+                selection={titleSelection}
+                onSelectionChange={(selection) => {
+                  titleSelectionRef.current = selection;
+                  setTitleSelection(selection);
+                }}
+                textAlign={titleTextAlign}
+                cameraHand={cameraHand}
+                fontSize={inputFontSizeForStampText(stampTextSize)}
+                placeholderHint={fieldPlaceholders.title}
               />
             </View>
+
+            <VoiceInputField
+              label={placeFieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('place', next)}
+              value={placeLabel ?? ''}
+              onChangeText={(text) => {
+                placeTouchedRef.current = true;
+                setPlaceLabel(text.trim() ? text : null);
+              }}
+              onMicPress={() => handleMicPress('place')}
+              listening={listening && speechTarget === 'place'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={placeSelection}
+              onSelectionChange={(selection) => {
+                placeSelectionRef.current = selection;
+                setPlaceSelection(selection);
+              }}
+              textAlign="left"
+              cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
+              placeholderHint={fieldPlaceholders.place}
+            />
 
             {showFloorPicker ? (
               <View style={styles.siteField}>
@@ -812,28 +1431,73 @@ export function StampSaveModal({
               </View>
             ) : null}
 
-            <View>
-              <VoiceInputField
-                label="제목"
-                value={title}
-                onChangeText={(text) => {
-                  titleTouchedRef.current = true;
-                  setTitle(text);
-                }}
-                onMicPress={() => handleMicPress('title')}
-                listening={listening && speechTarget === 'title'}
-                speechAvailable={available}
-                onFocus={scrollFieldIntoView}
-                onSelectionChange={(selection) => {
-                  titleSelectionRef.current = selection;
-                }}
-                textAlign={titleTextAlign}
-                cameraHand={cameraHand}
-              />
-            </View>
+            <VoiceInputField
+              label={extra1FieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('extra1', next)}
+              value={extra1}
+              onChangeText={setExtra1}
+              onMicPress={() => handleMicPress('extra1')}
+              listening={listening && speechTarget === 'extra1'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={extra1Selection}
+              onSelectionChange={(selection) => {
+                extra1SelectionRef.current = selection;
+                setExtra1Selection(selection);
+              }}
+              textAlign={titleTextAlign}
+              cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
+              placeholderHint={fieldPlaceholders.extra1}
+            />
 
             <VoiceInputField
-              label="메모"
+              label={extra2FieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('extra2', next)}
+              value={extra2}
+              onChangeText={setExtra2}
+              onMicPress={() => handleMicPress('extra2')}
+              listening={listening && speechTarget === 'extra2'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={extra2Selection}
+              onSelectionChange={(selection) => {
+                extra2SelectionRef.current = selection;
+                setExtra2Selection(selection);
+              }}
+              textAlign={titleTextAlign}
+              cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
+              placeholderHint={fieldPlaceholders.extra2}
+            />
+
+            <VoiceInputField
+              label={extra3FieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('extra3', next)}
+              value={extra3}
+              onChangeText={setExtra3}
+              onMicPress={() => handleMicPress('extra3')}
+              listening={listening && speechTarget === 'extra3'}
+              speechAvailable={available}
+              onFocus={scrollFieldIntoView}
+              selection={extra3Selection}
+              onSelectionChange={(selection) => {
+                extra3SelectionRef.current = selection;
+                setExtra3Selection(selection);
+              }}
+              textAlign={titleTextAlign}
+              cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
+              placeholderHint={fieldPlaceholders.extra3}
+            />
+
+            <VoiceInputField
+              label={memoFieldLabel}
+              labelEditable
+              onLabelCommit={(next) => void persistFieldLabel('memo', next)}
               value={memo}
               onChangeText={setMemo}
               onMicPress={() => handleMicPress('memo')}
@@ -841,11 +1505,15 @@ export function StampSaveModal({
               speechAvailable={available}
               multiline
               onFocus={scrollFieldIntoView}
+              selection={memoSelection}
               onSelectionChange={(selection) => {
                 memoSelectionRef.current = selection;
+                setMemoSelection(selection);
               }}
               textAlign={memoTextAlign}
               cameraHand={cameraHand}
+              fontSize={inputFontSizeForStampText(stampTextSize)}
+              placeholderHint={fieldPlaceholders.memo}
             />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -877,7 +1545,22 @@ export function StampSaveModal({
     >
       <GestureHandlerRootView style={styles.imageViewerRoot}>
         <View style={styles.imageViewerOverlay}>
-          <View style={styles.imageViewerTopBar}>
+          {workingImageUri ?? imageUri ? (
+            <View style={styles.imageViewerContent}>
+              <StampSaveZoomViewer
+                imageUri={workingImageUri ?? imageUri!}
+              />
+            </View>
+          ) : null}
+          {/* VIEWER_ACTION_HAND: 닫기를 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 자르기 적용은 비활성(A). */}
+          <View
+            style={[
+              styles.imageViewerActionBar,
+              cameraHand === 'left'
+                ? styles.imageViewerActionBarLeft
+                : styles.imageViewerActionBarRight,
+            ]}
+          >
             <Pressable
               style={styles.imageViewerCloseButton}
               onPress={handleCloseViewer}
@@ -885,27 +1568,7 @@ export function StampSaveModal({
             >
               <Text style={styles.imageViewerCloseText}>닫기</Text>
             </Pressable>
-            <Pressable
-              style={[styles.imageViewerApplyButton, applyingCrop && styles.imageViewerApplyButtonDisabled]}
-              onPress={() => void handleApplyCrop()}
-              disabled={applyingCrop || saving}
-              accessibilityLabel="크기 적용"
-            >
-              {applyingCrop ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.imageViewerApplyText}>적용</Text>
-              )}
-            </Pressable>
           </View>
-          {workingImageUri ?? imageUri ? (
-            <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                imageUri={workingImageUri ?? imageUri!}
-                onCropChange={handleCropChange}
-              />
-            </View>
-          ) : null}
           <View style={styles.imageViewerDeleteBar}>
             <Pressable
               style={[styles.imageViewerDeleteButton, deleting && styles.imageViewerDeleteButtonDisabled]}
@@ -969,6 +1632,16 @@ export function StampSaveModal({
         </Pressable>
       </Pressable>
     </Modal>
+
+    <PrivacyBlurModal
+      visible={privacyModalOpen}
+      imageUri={photoUri}
+      onClose={() => setPrivacyModalOpen(false)}
+      onApplied={(blurredUri) => {
+        setWorkingImageUri(blurredUri);
+        setPrivacyModalOpen(false);
+      }}
+    />
     </>
   );
 }
@@ -1006,6 +1679,62 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
+  /* STAMP_PREVIEW_ZOOM_BADGE — 손잡이 쪽 상단(왼손=좌, 오른손=우) */
+  previewWrap: {
+    position: 'relative',
+  },
+  zoomEditBadge: {
+    position: 'absolute',
+    top: 8,
+    width: 44,
+    height: 44,
+    backgroundColor: 'transparent',
+  },
+  zoomEditBadgeLeft: {
+    left: 8,
+  },
+  zoomEditBadgeRight: {
+    right: 8,
+  },
+  privacyBlurBtn: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+  },
+  privacyBlurBtnText: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  ocrFillBtn: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#f0fdfa',
+    borderWidth: 1,
+    borderColor: '#99f6e4',
+    minHeight: 36,
+    justifyContent: 'center',
+  },
+  ocrFillBtnText: {
+    color: '#0f766e',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  viewerPreparingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    borderRadius: 8,
+  },
   imageViewerRoot: {
     flex: 1,
   },
@@ -1013,16 +1742,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  imageViewerTopBar: {
+  imageViewerActionBar: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    bottom: 108,
     zIndex: 2,
-    paddingTop: 48,
-    paddingHorizontal: 16,
-    alignItems: 'flex-end',
     gap: 8,
+  },
+  imageViewerActionBarLeft: {
+    left: 20,
+    alignItems: 'flex-start',
+  },
+  imageViewerActionBarRight: {
+    right: 20,
+    alignItems: 'flex-end',
   },
   imageViewerCloseButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
@@ -1054,8 +1786,8 @@ const styles = StyleSheet.create({
   imageViewerContent: {
     flex: 1,
     width: '100%',
-    paddingTop: 96,
-    paddingBottom: 96,
+    paddingTop: 48,
+    paddingBottom: 168,
   },
   imageViewerDeleteBar: {
     position: 'absolute',

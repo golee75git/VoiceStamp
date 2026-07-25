@@ -3023,3 +3023,18 @@ restore-inapp-camera-facing.bat
 ```
 
 `src.pre-inapp-camera-facing/` 스냅샷으로 `CameraScreen`·`InAppCameraPreview`·도움말을 되돌립니다.
+
+---
+
+---
+
+## 191. ML Kit scene keywords (AI-ML-01) rollback (optional)
+
+If scene keyword auto-fill (Image Labeling) causes issues:
+
+```bat
+restore-mlkit-scene.bat
+```
+
+Restores settings / save modal / native module from `src.pre-mlkit-scene/`.
+DB key `mlkit_scene_label_enabled` may remain and is harmless.

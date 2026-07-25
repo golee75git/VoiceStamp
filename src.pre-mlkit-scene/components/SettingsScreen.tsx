@@ -17,9 +17,12 @@ import {
 const backButtonImage = require('../../assets/back-icon.png');
 
 const BACK_ICON_SIZE = 83;
-const BACK_ICON_BOTTOM = Platform.OS === 'ios' ? 28 : 16;
+const BOTTOM_BAR_OFFSET = 31;
+const SCROLL_BOTTOM_INSET = BOTTOM_BAR_OFFSET + 12 + BACK_ICON_SIZE + (Platform.OS === 'ios' ? 28 : 16);
 
 import { openInfoPage } from '../constants/infoUrls';
+import { APK_BUILD_FILENAME } from '../constants/apkBuildLabel';
+import { invalidateStampSaveModalLayoutCache } from '../services/stampSaveModalLayoutCache';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
@@ -29,92 +32,84 @@ import {
   DEFAULT_PDF_IMAGE_QUALITY,
   DEFAULT_PDF_PHOTOS_PER_PAGE,
   DEFAULT_PDF_SHOW_DATETIME,
+  DEFAULT_EXPORT_FOOTER_DATETIME,
   DEFAULT_STAMPS_FOLDER,
   DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
+  DEFAULT_PRIMARY_CAPTURE_CAMERA,
+  DEFAULT_CAPTURE_AFTER_MODE,
   DEFAULT_COORDS_LABEL_MODE,
+  DEFAULT_LOCATION_MODE,
   DEFAULT_FLOOR_PICKER_MODE,
   DEFAULT_FLOOR_DISPLAY_MODE,
   DEFAULT_TITLE_DATETIME_MODE,
   DEFAULT_STAMP_TEXT_LAYOUT,
+  DEFAULT_STAMP_TEXT_SIZE,
+  DEFAULT_STAMP_LIST_DISPLAY_MODE,
   DEFAULT_WATERMARK_STYLE,
   DEFAULT_TITLE_TEXT_ALIGN,
   DEFAULT_OVERLAY_ORG_NAME,
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
+  DEFAULT_FIELD_TITLE_LABEL,
+  DEFAULT_FIELD_PLACE_LABEL,
+  DEFAULT_FIELD_MEMO_LABEL,
+  DEFAULT_FIELD_EXTRA1_LABEL,
+  DEFAULT_FIELD_EXTRA2_LABEL,
+  DEFAULT_FIELD_EXTRA3_LABEL,
+  DEFAULT_SHUTTER_SOUND,
+  DEFAULT_PRIVACY_BLUR_ENABLED,
+  DEFAULT_OCR_TITLE_MEMO_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
+  FIELD_LABEL_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
+  primaryCaptureCameraLabel,
+  captureAfterModeLabel,
+  shutterSoundLabel,
+  privacyBlurEnabledLabel,
+  ocrTitleMemoEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
   coordsLabelModeLabel,
-  getCoordsLabelMode,
-  getFloorDisplayMode,
-  getFloorPickerMode,
-  getTitleDatetimeMode,
-  getCameraHand,
-  getGallerySaveMode,
-  getContinuousCaptureCamera,
-  getMemoTextAlign,
-  getOverlayFooterPhrase,
-  getOverlayOrgName,
-  getOverlayShowFooterPhrase,
-  getOverlayShowOrgName,
-  getPdfFilenameIncludeDatetime,
-  getPdfImageQuality,
-  getPdfPhotosPerPage,
-  getPdfShowDatetime,
-  getStampTextLayout,
-  getWatermarkStyle,
-  getStampsFolderName,
-  getTitleTextAlign,
+  locationModeLabel,
+  loadSettingsForScreen,
+  saveSettingsForScreen,
   type CameraHand,
   type CoordsLabelMode,
+  type LocationMode,
   type PdfImageQuality,
   type PdfPhotosPerPage,
-  setCameraHand,
-  setCoordsLabelMode,
-  setFloorDisplayMode,
-  setFloorPickerMode,
-  setTitleDatetimeMode,
-  setGallerySaveMode,
-  setContinuousCaptureCamera,
-  setMemoTextAlign,
-  setOverlayFooterPhrase,
-  setOverlayOrgName,
-  setOverlayShowFooterPhrase,
-  setOverlayShowOrgName,
-  setPdfFilenameIncludeDatetime,
-  setPdfImageQuality,
-  setPdfPhotosPerPage,
-  setPdfShowDatetime,
-  setStampTextLayout,
-  setWatermarkStyle,
-  setStampsFolderName,
-  setTitleTextAlign,
   stampTextLayoutLabel,
+  stampTextSizeLabel,
+  stampListDisplayModeLabel,
   watermarkStyleLabel,
   WATERMARK_STYLE_OPTIONS,
   TEXT_ALIGN_OPTIONS,
+  STAMP_TEXT_SIZE_OPTIONS,
   type FloorPickerMode,
   type FloorDisplayMode,
   type TitleDatetimeMode,
   type GallerySaveMode,
   type ContinuousCaptureCamera,
+  type CaptureAfterMode,
   type StampTextLayout,
+  type StampTextSize,
+  type StampListDisplayMode,
   type WatermarkStyle,
   type TextAlign,
   textAlignLabel,
 } from '../services/settingsService';
-import { confirmAlert, showAlert } from '../utils/confirmAlert';
 
 const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
 const FLOOR_DISPLAY_OPTIONS: FloorDisplayMode[] = ['suffix', 'cursor'];
 const TITLE_DATETIME_OPTIONS: TitleDatetimeMode[] = ['none', 'date', 'datetime'];
 const COORDS_LABEL_OPTIONS: CoordsLabelMode[] = ['gps', 'coords', 'off'];
+const LOCATION_MODE_OPTIONS: LocationMode[] = ['auto', 'off'];
+const STAMP_LIST_DISPLAY_OPTIONS: StampListDisplayMode[] = ['title_date', 'full'];
 
 const PDF_OPTIONS: PdfPhotosPerPage[] = [1, 2, 3, 4];
 const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
@@ -125,6 +120,10 @@ const PDF_QUALITY_OPTIONS: { value: PdfImageQuality; label: string }[] = [
 
 function pdfQualityLabel(quality: PdfImageQuality): string {
   return PDF_QUALITY_OPTIONS.find((option) => option.value === quality)?.label ?? '원본';
+}
+
+function chipLabel(label: string, isDefault: boolean): string {
+  return isDefault ? `${label} · 기본` : label;
 }
 
 type SettingsScreenProps = {
@@ -154,11 +153,18 @@ export function SettingsScreen({
   const [titleTextAlign, setTitleTextAlignState] = useState<TextAlign>(DEFAULT_TITLE_TEXT_ALIGN);
   const [memoTextAlign, setMemoTextAlignState] = useState<TextAlign>(DEFAULT_MEMO_TEXT_ALIGN);
   const [pdfShowDatetime, setPdfShowDatetimeState] = useState(DEFAULT_PDF_SHOW_DATETIME);
+  const [exportFooterDatetime, setExportFooterDatetimeState] = useState(
+    DEFAULT_EXPORT_FOOTER_DATETIME,
+  );
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetimeState] = useState(
     DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   );
   const [stampTextLayout, setStampTextLayoutState] = useState<StampTextLayout>(
     DEFAULT_STAMP_TEXT_LAYOUT,
+  );
+  const [stampTextSize, setStampTextSizeState] = useState<StampTextSize>(DEFAULT_STAMP_TEXT_SIZE);
+  const [stampListDisplayMode, setStampListDisplayModeState] = useState<StampListDisplayMode>(
+    DEFAULT_STAMP_LIST_DISPLAY_MODE,
   );
   const [watermarkStyle, setWatermarkStyleState] = useState<WatermarkStyle>(
     DEFAULT_WATERMARK_STYLE,
@@ -169,6 +175,15 @@ export function SettingsScreen({
   const [continuousCaptureCamera, setContinuousCaptureCameraState] = useState<ContinuousCaptureCamera>(
     DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
   );
+  const [primaryCaptureCamera, setPrimaryCaptureCameraState] = useState<ContinuousCaptureCamera>(
+    DEFAULT_PRIMARY_CAPTURE_CAMERA,
+  );
+  const [captureAfterMode, setCaptureAfterModeState] = useState<CaptureAfterMode>(
+    DEFAULT_CAPTURE_AFTER_MODE,
+  );
+  const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
+  const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
+  const [ocrTitleMemoEnabled, setOcrTitleMemoEnabledState] = useState(DEFAULT_OCR_TITLE_MEMO_ENABLED);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -182,140 +197,147 @@ export function SettingsScreen({
   const [coordsLabelMode, setCoordsLabelModeState] = useState<CoordsLabelMode>(
     DEFAULT_COORDS_LABEL_MODE,
   );
+  const [locationMode, setLocationModeState] = useState<LocationMode>(DEFAULT_LOCATION_MODE);
   const [overlayOrgName, setOverlayOrgNameState] = useState(DEFAULT_OVERLAY_ORG_NAME);
   const [overlayFooterPhrase, setOverlayFooterPhraseState] = useState(DEFAULT_OVERLAY_FOOTER_PHRASE);
   const [overlayShowOrgName, setOverlayShowOrgNameState] = useState(DEFAULT_OVERLAY_SHOW_ORG_NAME);
   const [overlayShowFooterPhrase, setOverlayShowFooterPhraseState] = useState(
     DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   );
-  const [loading, setLoading] = useState(true);
+  const [titleFieldLabel, setTitleFieldLabelState] = useState(DEFAULT_FIELD_TITLE_LABEL);
+  const [placeFieldLabel, setPlaceFieldLabelState] = useState(DEFAULT_FIELD_PLACE_LABEL);
+  const [memoFieldLabel, setMemoFieldLabelState] = useState(DEFAULT_FIELD_MEMO_LABEL);
+  const [extra1FieldLabel, setExtra1FieldLabelState] = useState(DEFAULT_FIELD_EXTRA1_LABEL);
+  const [extra2FieldLabel, setExtra2FieldLabelState] = useState(DEFAULT_FIELD_EXTRA2_LABEL);
+  const [extra3FieldLabel, setExtra3FieldLabelState] = useState(DEFAULT_FIELD_EXTRA3_LABEL);
   const [saving, setSaving] = useState(false);
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const [name, perPage, quality, titleAlign, memoAlign, showDatetime, filenameDatetime, textLayout, wmStyle, galleryMode, continuousCamera, hand, floorMode, floorDisplay, titleDatetime, coordsMode, orgName, footerPhrase, showOrgName, showFooterPhrase] =
-          await Promise.all([
-          getStampsFolderName(),
-          getPdfPhotosPerPage(),
-          getPdfImageQuality(),
-          getTitleTextAlign(),
-          getMemoTextAlign(),
-          getPdfShowDatetime(),
-          getPdfFilenameIncludeDatetime(),
-          getStampTextLayout(),
-          getWatermarkStyle(),
-          getGallerySaveMode(),
-          getContinuousCaptureCamera(),
-          getCameraHand(),
-          getFloorPickerMode(),
-          getFloorDisplayMode(),
-          getTitleDatetimeMode(),
-          getCoordsLabelMode(),
-          getOverlayOrgName(),
-          getOverlayFooterPhrase(),
-          getOverlayShowOrgName(),
-          getOverlayShowFooterPhrase(),
-        ]);
-        setFolderName(name);
-        setPdfPhotosPerPageState(perPage);
-        setPdfImageQualityState(quality);
-        setTitleTextAlignState(titleAlign);
-        setMemoTextAlignState(memoAlign);
-        setPdfShowDatetimeState(showDatetime);
-        setPdfFilenameIncludeDatetimeState(filenameDatetime);
-        setStampTextLayoutState(textLayout);
-        setWatermarkStyleState(wmStyle);
-        setGallerySaveModeState(galleryMode);
-        setContinuousCaptureCameraState(continuousCamera);
-        setCameraHandState(hand);
-        setFloorPickerModeState(floorMode);
-        setFloorDisplayModeState(floorDisplay);
-        setTitleDatetimeModeState(titleDatetime);
-        setCoordsLabelModeState(coordsMode);
-        setOverlayOrgNameState(orgName);
-        setOverlayFooterPhraseState(footerPhrase);
-        setOverlayShowOrgNameState(showOrgName);
-        setOverlayShowFooterPhraseState(showFooterPhrase);
-      } finally {
-        setLoading(false);
+    let cancelled = false;
+    void loadSettingsForScreen().then((snapshot) => {
+      if (cancelled) {
+        return;
       }
-    })();
+      setFolderName(snapshot.folderName);
+      setPdfPhotosPerPageState(snapshot.pdfPhotosPerPage);
+      setPdfImageQualityState(snapshot.pdfImageQuality);
+      setTitleTextAlignState(snapshot.titleTextAlign);
+      setMemoTextAlignState(snapshot.memoTextAlign);
+      setPdfShowDatetimeState(snapshot.pdfShowDatetime);
+      setExportFooterDatetimeState(snapshot.exportFooterDatetime);
+      setPdfFilenameIncludeDatetimeState(snapshot.pdfFilenameIncludeDatetime);
+      setStampTextLayoutState(snapshot.stampTextLayout);
+      setStampTextSizeState(snapshot.stampTextSize);
+      setStampListDisplayModeState(snapshot.stampListDisplayMode);
+      setWatermarkStyleState(snapshot.watermarkStyle);
+      setGallerySaveModeState(snapshot.gallerySaveMode);
+      setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
+      setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
+      setCaptureAfterModeState(snapshot.captureAfterMode);
+      setShutterSoundState(snapshot.shutterSound);
+      setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
+      setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
+      setCameraHandState(snapshot.cameraHand);
+      setFloorPickerModeState(snapshot.floorPickerMode);
+      setFloorDisplayModeState(snapshot.floorDisplayMode);
+      setTitleDatetimeModeState(snapshot.titleDatetimeMode);
+      setCoordsLabelModeState(snapshot.coordsLabelMode);
+      setLocationModeState(snapshot.locationMode);
+      setOverlayOrgNameState(snapshot.overlayOrgName);
+      setOverlayFooterPhraseState(snapshot.overlayFooterPhrase);
+      setOverlayShowOrgNameState(snapshot.overlayShowOrgName);
+      setOverlayShowFooterPhraseState(snapshot.overlayShowFooterPhrase);
+      setTitleFieldLabelState(snapshot.titleFieldLabel);
+      setPlaceFieldLabelState(snapshot.placeFieldLabel);
+      setMemoFieldLabelState(snapshot.memoFieldLabel);
+      setExtra1FieldLabelState(snapshot.extra1FieldLabel);
+      setExtra2FieldLabelState(snapshot.extra2FieldLabel);
+      setExtra3FieldLabelState(snapshot.extra3FieldLabel);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [refreshKey]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const [
-        savedFolder,
-        savedPerPage,
-        savedQuality,
-        savedTitleAlign,
-        savedMemoAlign,
-        savedShowDatetime,
-        savedFilenameDatetime,
-        savedTextLayout,
-        savedWatermarkStyle,
-        savedGalleryMode,
-        savedContinuousCaptureCamera,
-        savedCameraHand,
-        savedFloorPickerMode,
-        savedFloorDisplayMode,
-        savedTitleDatetimeMode,
-        savedCoordsLabelMode,
-        savedOrgName,
-        savedFooterPhrase,
-        savedShowOrgName,
-        savedShowFooterPhrase,
-      ] = await Promise.all([
-          setStampsFolderName(folderName),
-          setPdfPhotosPerPage(pdfPhotosPerPage),
-          setPdfImageQuality(pdfImageQuality),
-          setTitleTextAlign(titleTextAlign),
-          setMemoTextAlign(memoTextAlign),
-          setPdfShowDatetime(pdfShowDatetime),
-          setPdfFilenameIncludeDatetime(pdfFilenameIncludeDatetime),
-          setStampTextLayout(stampTextLayout),
-          setWatermarkStyle(watermarkStyle),
-          setGallerySaveMode(gallerySaveMode),
-          setContinuousCaptureCamera(continuousCaptureCamera),
-          setCameraHand(cameraHand),
-          setFloorPickerMode(floorPickerMode),
-          setFloorDisplayMode(floorDisplayMode),
-          setTitleDatetimeMode(titleDatetimeMode),
-          setCoordsLabelMode(coordsLabelMode),
-          setOverlayOrgName(overlayOrgName),
-          setOverlayFooterPhrase(overlayFooterPhrase),
-          setOverlayShowOrgName(overlayShowOrgName),
-          setOverlayShowFooterPhrase(overlayShowFooterPhrase),
-        ]);
-      setFolderName(savedFolder);
-      setPdfPhotosPerPageState(savedPerPage);
-      setPdfImageQualityState(savedQuality);
-      setTitleTextAlignState(savedTitleAlign);
-      setMemoTextAlignState(savedMemoAlign);
-      setPdfShowDatetimeState(savedShowDatetime);
-      setPdfFilenameIncludeDatetimeState(savedFilenameDatetime);
-      setStampTextLayoutState(savedTextLayout);
-      setWatermarkStyleState(savedWatermarkStyle);
-      setGallerySaveModeState(savedGalleryMode);
-      setContinuousCaptureCameraState(savedContinuousCaptureCamera);
-      setCameraHandState(savedCameraHand);
-      setFloorPickerModeState(savedFloorPickerMode);
-      setFloorDisplayModeState(savedFloorDisplayMode);
-      setTitleDatetimeModeState(savedTitleDatetimeMode);
-      setCoordsLabelModeState(savedCoordsLabelMode);
-      setOverlayOrgNameState(savedOrgName);
-      setOverlayFooterPhraseState(savedFooterPhrase);
-      setOverlayShowOrgNameState(savedShowOrgName);
-      setOverlayShowFooterPhraseState(savedShowFooterPhrase);
-      onSettingsSaved?.();
-      Alert.alert(
-        '저장 완료',
-        `새 사진은 "${savedFolder}" 폴더에 저장됩니다.\n카메라 메뉴: ${savedCameraHand === 'left' ? '왼손(왼쪽 하단)' : '오른손(오른쪽 하단)'}.\n연속 촬영: ${continuousCaptureCameraLabel(savedContinuousCaptureCamera)}.\n자동 제목: ${titleDatetimeModeLabel(savedTitleDatetimeMode)}.\nPDF는 페이지당 ${savedPerPage}장, 화질 ${pdfQualityLabel(savedQuality)}.\nPDF 일시 ${savedShowDatetime ? '표시' : '숨김'}, 파일명 날짜·시간 ${savedFilenameDatetime ? '포함' : '제외'}.\n제목·메모 ${stampTextLayoutLabel(savedTextLayout)}${savedTextLayout === 'watermark' ? ` (${watermarkStyleLabel(savedWatermarkStyle)})` : ''}, 좌표 표기 ${coordsLabelModeLabel(savedCoordsLabelMode)}, 제목 ${textAlignLabel(savedTitleAlign)}, 메모 ${textAlignLabel(savedMemoAlign)} 정렬.\n층 선택: ${floorPickerModeLabel(savedFloorPickerMode)}, 층 표기: ${floorDisplayModeLabel(savedFloorDisplayMode)}.\n저장 시 갤러리: ${gallerySaveModeLabel(savedGalleryMode)}.`,
-      );
+      const saved = await saveSettingsForScreen({
+        folderName,
+        pdfPhotosPerPage,
+        pdfImageQuality,
+        titleTextAlign,
+        memoTextAlign,
+        pdfShowDatetime,
+        exportFooterDatetime,
+        pdfFilenameIncludeDatetime,
+        stampTextLayout,
+        stampTextSize,
+        stampListDisplayMode,
+        watermarkStyle,
+        gallerySaveMode,
+        primaryCaptureCamera,
+        continuousCaptureCamera,
+        captureAfterMode,
+        shutterSound,
+        privacyBlurEnabled,
+        ocrTitleMemoEnabled,
+        cameraHand,
+        floorPickerMode,
+        floorDisplayMode,
+        titleDatetimeMode,
+        coordsLabelMode,
+        locationMode,
+        overlayOrgName,
+        overlayFooterPhrase,
+        overlayShowOrgName,
+        overlayShowFooterPhrase,
+        titleFieldLabel,
+        placeFieldLabel,
+        memoFieldLabel,
+        extra1FieldLabel,
+        extra2FieldLabel,
+        extra3FieldLabel,
+      });
+      setFolderName(saved.folderName);
+      setPdfPhotosPerPageState(saved.pdfPhotosPerPage);
+      setPdfImageQualityState(saved.pdfImageQuality);
+      setTitleTextAlignState(saved.titleTextAlign);
+      setMemoTextAlignState(saved.memoTextAlign);
+      setPdfShowDatetimeState(saved.pdfShowDatetime);
+      setExportFooterDatetimeState(saved.exportFooterDatetime);
+      setPdfFilenameIncludeDatetimeState(saved.pdfFilenameIncludeDatetime);
+      setStampTextLayoutState(saved.stampTextLayout);
+      setStampTextSizeState(saved.stampTextSize);
+      setStampListDisplayModeState(saved.stampListDisplayMode);
+      setWatermarkStyleState(saved.watermarkStyle);
+      setGallerySaveModeState(saved.gallerySaveMode);
+      setPrimaryCaptureCameraState(saved.primaryCaptureCamera);
+      setContinuousCaptureCameraState(saved.continuousCaptureCamera);
+      setCaptureAfterModeState(saved.captureAfterMode);
+      setShutterSoundState(saved.shutterSound);
+      setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
+      setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
+      setCameraHandState(saved.cameraHand);
+      setFloorPickerModeState(saved.floorPickerMode);
+      setFloorDisplayModeState(saved.floorDisplayMode);
+      setTitleDatetimeModeState(saved.titleDatetimeMode);
+      setCoordsLabelModeState(saved.coordsLabelMode);
+      setLocationModeState(saved.locationMode);
+      setOverlayOrgNameState(saved.overlayOrgName);
+      setOverlayFooterPhraseState(saved.overlayFooterPhrase);
+      setOverlayShowOrgNameState(saved.overlayShowOrgName);
+      setOverlayShowFooterPhraseState(saved.overlayShowFooterPhrase);
+      setTitleFieldLabelState(saved.titleFieldLabel);
+      setPlaceFieldLabelState(saved.placeFieldLabel);
+      setMemoFieldLabelState(saved.memoFieldLabel);
+      setExtra1FieldLabelState(saved.extra1FieldLabel);
+      setExtra2FieldLabelState(saved.extra2FieldLabel);
+      setExtra3FieldLabelState(saved.extra3FieldLabel);
+      invalidateStampSaveModalLayoutCache();
+      // 저장 직후 refreshKey bump 생략 — 설정 화면 재로드를 피함. 카메라/목록은 복귀 시 remount로 반영.
+      Alert.alert('저장 완료', '설정을 저장했습니다.');
     } catch (e) {
       Alert.alert(
         '저장 실패',
@@ -326,41 +348,21 @@ export function SettingsScreen({
     }
   };
 
-  const handleReset = () => {
-    setFolderName(DEFAULT_STAMPS_FOLDER);
-    setPdfPhotosPerPageState(DEFAULT_PDF_PHOTOS_PER_PAGE);
-    setPdfImageQualityState(DEFAULT_PDF_IMAGE_QUALITY);
-    setTitleTextAlignState(DEFAULT_TITLE_TEXT_ALIGN);
-    setMemoTextAlignState(DEFAULT_MEMO_TEXT_ALIGN);
-    setPdfShowDatetimeState(DEFAULT_PDF_SHOW_DATETIME);
-    setPdfFilenameIncludeDatetimeState(DEFAULT_PDF_FILENAME_INCLUDE_DATETIME);
-    setStampTextLayoutState(DEFAULT_STAMP_TEXT_LAYOUT);
-    setWatermarkStyleState(DEFAULT_WATERMARK_STYLE);
-    setGallerySaveModeState(DEFAULT_GALLERY_SAVE_MODE);
-    setContinuousCaptureCameraState(DEFAULT_CONTINUOUS_CAPTURE_CAMERA);
-    setCameraHandState(DEFAULT_CAMERA_HAND);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>설정</Text>
       </View>
 
-      {loading ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.body}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
-        >
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.body, styles.bodyWithBottomBar]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator
+      >
           <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
-            앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다.
+            앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다. 기본값: {DEFAULT_STAMPS_FOLDER}
           </Text>
           {Platform.OS === 'web' && (
             <Text style={styles.webNote}>웹에서는 사진이 DB에 저장되어 이 설정이 적용되지 않습니다.</Text>
@@ -374,9 +376,33 @@ export function SettingsScreen({
             editable={!saving}
           />
 
+          <Text style={[styles.label, styles.sectionGap]}>위치 조회</Text>
+          <Text style={styles.hint}>
+            사용: GPS·로컬 학교 DB·카카오 주소/POI로 장소를 채웁니다. 사용 안 함: GPS와 로컬 학교 DB만 비교해 학교 근처면 학교명을 넣고, 카카오(네트워크) 조회는 하지 않습니다. 학교 밖이면 장소란을 비웁니다. 촬영 후 3버튼(연속·저장·다시 촬영)은 그대로입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {LOCATION_MODE_OPTIONS.map((option) => {
+              const selected = locationMode === option;
+              return (
+                <Pressable
+                  key={option}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setLocationModeState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {chipLabel(locationModeLabel(option), option === DEFAULT_LOCATION_MODE)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
           <Text style={[styles.label, styles.sectionGap]}>자동 제목</Text>
           <Text style={styles.hint}>
-            새 사진 저장·수정 모달에 채워 넣을 제목 앞부분입니다. 위치는 GPS 조회 후 뒤에 붙습니다.
+            새 사진 저장·수정 모달에 채워 넣을 제목 앞부분입니다. 위치 조회를 사용할 때는 장소 필드에 GPS·장소명이 따로 채워집니다.
           </Text>
           <View style={styles.optionRow}>
             {TITLE_DATETIME_OPTIONS.map((option) => {
@@ -391,7 +417,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {titleDatetimeModeLabel(option)}
+                    {chipLabel(titleDatetimeModeLabel(option), option === DEFAULT_TITLE_DATETIME_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -411,7 +437,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, cameraHand === 'left' && styles.optionButtonTextSelected]}
               >
-                왼손
+                {chipLabel('왼손', DEFAULT_CAMERA_HAND === 'left')}
               </Text>
             </Pressable>
             <Pressable
@@ -422,7 +448,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, cameraHand === 'right' && styles.optionButtonTextSelected]}
               >
-                오른손
+                {chipLabel('오른손', DEFAULT_CAMERA_HAND === 'right')}
               </Text>
             </Pressable>
           </View>
@@ -440,7 +466,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option}
+                    {chipLabel(String(option), option === DEFAULT_PDF_PHOTOS_PER_PAGE)}
                   </Text>
                 </Pressable>
               );
@@ -460,7 +486,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option.label}
+                    {chipLabel(option.label, option.value === DEFAULT_PDF_IMAGE_QUALITY)}
                   </Text>
                 </Pressable>
               );
@@ -469,7 +495,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>PDF 촬영 일시 표시</Text>
           <Text style={styles.hint}>
-            끄면 PDF 제목의 날짜·시간(20260607_1045)과 하단 일시 줄을 표시하지 않습니다.
+            끄면 PDF·이미지·미리보기 제목의 날짜·시간 접두어(20260607_1045)를 표시하지 않습니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable
@@ -480,7 +506,7 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_PDF_SHOW_DATETIME)}
               </Text>
             </Pressable>
             <Pressable
@@ -491,7 +517,43 @@ export function SettingsScreen({
               <Text
                 style={[styles.optionButtonText, !pdfShowDatetime && styles.optionButtonTextSelected]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_PDF_SHOW_DATETIME)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>하단 촬영 일시</Text>
+          <Text style={styles.hint}>
+            PDF·이미지의 「사진 아래(별도 영역)」맨 아래에 촬영(저장) 일시를 표시합니다. 워터마크 모드에는
+            적용되지 않습니다. 제목 접두어와는 별개입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, exportFooterDatetime && styles.optionButtonSelected]}
+              onPress={() => setExportFooterDatetimeState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  exportFooterDatetime && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('표시', DEFAULT_EXPORT_FOOTER_DATETIME)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !exportFooterDatetime && styles.optionButtonSelected]}
+              onPress={() => setExportFooterDatetimeState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !exportFooterDatetime && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('숨김', !DEFAULT_EXPORT_FOOTER_DATETIME)}
               </Text>
             </Pressable>
           </View>
@@ -510,7 +572,7 @@ export function SettingsScreen({
                   pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                포함
+                {chipLabel('포함', DEFAULT_PDF_FILENAME_INCLUDE_DATETIME)}
               </Text>
             </Pressable>
             <Pressable
@@ -524,10 +586,69 @@ export function SettingsScreen({
                   !pdfFilenameIncludeDatetime && styles.optionButtonTextSelected,
                 ]}
               >
-                제외
+                {chipLabel('제외', !DEFAULT_PDF_FILENAME_INCLUDE_DATETIME)}
               </Text>
             </Pressable>
           </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>필드 표시명</Text>
+          <Text style={styles.hint}>
+            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 저장 화면에서 칸 이름을 탭해도 여기와 같이 저장됩니다. 비우면 기본값(제목·장소·메모·추가1·추가2·추가3)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
+          </Text>
+          <Text style={styles.label}>제목 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={titleFieldLabel}
+            onChangeText={setTitleFieldLabelState}
+            placeholder={DEFAULT_FIELD_TITLE_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>장소 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={placeFieldLabel}
+            onChangeText={setPlaceFieldLabelState}
+            placeholder={DEFAULT_FIELD_PLACE_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>메모 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={memoFieldLabel}
+            onChangeText={setMemoFieldLabelState}
+            placeholder={DEFAULT_FIELD_MEMO_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>추가1 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={extra1FieldLabel}
+            onChangeText={setExtra1FieldLabelState}
+            placeholder={DEFAULT_FIELD_EXTRA1_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>추가2 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={extra2FieldLabel}
+            onChangeText={setExtra2FieldLabelState}
+            placeholder={DEFAULT_FIELD_EXTRA2_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
+          <Text style={styles.label}>추가3 칸 이름</Text>
+          <TextInput
+            style={styles.input}
+            value={extra3FieldLabel}
+            onChangeText={setExtra3FieldLabelState}
+            placeholder={DEFAULT_FIELD_EXTRA3_LABEL}
+            maxLength={FIELD_LABEL_MAX_LENGTH}
+            editable={!saving}
+          />
 
           <Text style={[styles.label, styles.sectionGap]}>사진 오버레이 문구</Text>
           <Text style={styles.hint}>
@@ -554,7 +675,7 @@ export function SettingsScreen({
                   overlayShowOrgName && styles.optionButtonTextSelected,
                 ]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_ORG_NAME)}
               </Text>
             </Pressable>
             <Pressable
@@ -568,7 +689,7 @@ export function SettingsScreen({
                   !overlayShowOrgName && styles.optionButtonTextSelected,
                 ]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_ORG_NAME)}
               </Text>
             </Pressable>
           </View>
@@ -594,7 +715,7 @@ export function SettingsScreen({
                   overlayShowFooterPhrase && styles.optionButtonTextSelected,
                 ]}
               >
-                표시
+                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE)}
               </Text>
             </Pressable>
             <Pressable
@@ -608,14 +729,14 @@ export function SettingsScreen({
                   !overlayShowFooterPhrase && styles.optionButtonTextSelected,
                 ]}
               >
-                숨김
+                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE)}
               </Text>
             </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>제목·메모 표시 방식</Text>
           <Text style={styles.hint}>
-            PDF·이미지 저장 시 제목과 메모를 사진 아래(별도 영역) 또는 사진 위(워터마크)에 표시합니다.
+            PDF·이미지 저장 시 제목과 메모를 사진 아래(별도 영역·표) 또는 사진 위(워터마크·줄글)에 표시합니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable
@@ -629,7 +750,7 @@ export function SettingsScreen({
                   stampTextLayout === 'caption' && styles.optionButtonTextSelected,
                 ]}
               >
-                별도 영역
+                {chipLabel('별도 영역', DEFAULT_STAMP_TEXT_LAYOUT === 'caption')}
               </Text>
             </Pressable>
             <Pressable
@@ -643,7 +764,7 @@ export function SettingsScreen({
                   stampTextLayout === 'watermark' && styles.optionButtonTextSelected,
                 ]}
               >
-                워터마크
+                {chipLabel('워터마크', DEFAULT_STAMP_TEXT_LAYOUT === 'watermark')}
               </Text>
             </Pressable>
           </View>
@@ -679,7 +800,7 @@ export function SettingsScreen({
                         style={[styles.paletteLabel, selected && styles.paletteLabelSelected]}
                         numberOfLines={1}
                       >
-                        {watermarkStyleLabel(option)}
+                        {chipLabel(watermarkStyleLabel(option), option === DEFAULT_WATERMARK_STYLE)}
                       </Text>
                     </Pressable>
                   );
@@ -705,7 +826,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {coordsLabelModeLabel(option)}
+                    {chipLabel(coordsLabelModeLabel(option), option === DEFAULT_COORDS_LABEL_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -714,7 +835,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>층 선택</Text>
           <Text style={styles.hint}>
-            학교 근처 촬영 시 저장·수정 모달에 1~5층 칩을 표시합니다.
+            「학교일 때만」은 장소·폴더명에 학교가 있을 때만 층 칩을 보이고, 직전 층도 학교에만 이어집니다. 비학교에는 층을 저장하지 않습니다.
           </Text>
           <View style={styles.optionRow}>
             {FLOOR_PICKER_OPTIONS.map((option) => {
@@ -729,7 +850,7 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {floorPickerModeLabel(option)}
+                    {chipLabel(floorPickerModeLabel(option), option === DEFAULT_FLOOR_PICKER_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -738,7 +859,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>층 표기</Text>
           <Text style={styles.hint}>
-            층 칩을 눌렀을 때 제목에 넣는 방식입니다. 「제목 커서에 삽입」은 제목 입력란의 커서 위치에 3층 등을 넣습니다.
+            층 칩을 눌렀을 때 장소에 넣는 방식입니다. 「장소 커서에 삽입」은 장소 입력란의 커서 위치에 3층 등을 넣습니다.
           </Text>
           <View style={styles.optionRow}>
             {FLOOR_DISPLAY_OPTIONS.map((option) => {
@@ -753,7 +874,55 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {floorDisplayModeLabel(option)}
+                    {chipLabel(floorDisplayModeLabel(option), option === DEFAULT_FLOOR_DISPLAY_MODE)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>일반 촬영 카메라</Text>
+          <Text style={styles.hint}>
+            홈에서 사진 1장을 찍을 때 사용합니다. 시스템은 화질·줌에 유리하고, 앱 내는 확인 화면 없이 빠르며 1x·3x·5x 배율과 핀치·더블탭으로 확대할 수 있습니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {(['system', 'in_app'] as ContinuousCaptureCamera[]).map((option) => {
+              const selected = primaryCaptureCamera === option;
+              return (
+                <Pressable
+                  key={`primary-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setPrimaryCaptureCameraState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {chipLabel(primaryCaptureCameraLabel(option), option === DEFAULT_PRIMARY_CAPTURE_CAMERA)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>촬영 후</Text>
+          <Text style={styles.hint}>
+            「선택 화면」은 연속 촬영·저장·다시 촬영 중 고릅니다. 「저장 화면 바로」는 런처 없이 제목·메모 입력 화면으로 바로 갑니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {(['action_sheet', 'save_modal'] as CaptureAfterMode[]).map((option) => {
+              const selected = captureAfterMode === option;
+              return (
+                <Pressable
+                  key={option}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setCaptureAfterModeState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {chipLabel(captureAfterModeLabel(option), option === DEFAULT_CAPTURE_AFTER_MODE)}
                   </Text>
                 </Pressable>
               );
@@ -762,14 +931,14 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>연속 촬영 카메라</Text>
           <Text style={styles.hint}>
-            연속 촬영 2장째부터 사용합니다. 1장은 시스템 카메라로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠릅니다. 일반 촬영은 항상 시스템 카메라입니다.
+            연속 촬영 2장째부터 사용합니다. 1장은 일반 촬영 카메라 설정으로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠르며 1x·3x·5x 배율과 핀치·더블탭 확대를 지원합니다.
           </Text>
           <View style={styles.optionRow}>
             {(['in_app', 'system'] as ContinuousCaptureCamera[]).map((option) => {
               const selected = continuousCaptureCamera === option;
               return (
                 <Pressable
-                  key={option}
+                  key={`continuous-${option}`}
                   style={[styles.optionButton, selected && styles.optionButtonSelected]}
                   onPress={() => setContinuousCaptureCameraState(option)}
                   disabled={saving}
@@ -777,19 +946,49 @@ export function SettingsScreen({
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                   >
-                    {continuousCaptureCameraLabel(option)}
+                    {chipLabel(continuousCaptureCameraLabel(option), option === DEFAULT_CONTINUOUS_CAPTURE_CAMERA)}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
+          <Text style={[styles.label, styles.sectionGap]}>앱 내 촬영음</Text>
           <Text style={styles.hint}>
-            스탬프 저장 시 갤러리 앨범에 넣을 사진입니다. 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
+            앱 내 카메라로 찍을 때만 적용됩니다. 시스템 카메라는 기기 설정을 따릅니다. 일부 기기에서는 OS 정책으로 끌 수 없을 수 있습니다.
           </Text>
           <View style={styles.optionRow}>
-            {(['original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(
+            <Pressable
+              style={[styles.optionButton, shutterSound && styles.optionButtonSelected]}
+              onPress={() => setShutterSoundState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[styles.optionButtonText, shutterSound && styles.optionButtonTextSelected]}
+              >
+                {chipLabel('켜기', DEFAULT_SHUTTER_SOUND)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !shutterSound && styles.optionButtonSelected]}
+              onPress={() => setShutterSoundState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[styles.optionButtonText, !shutterSound && styles.optionButtonTextSelected]}
+              >
+                {chipLabel('끄기', !DEFAULT_SHUTTER_SOUND)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
+          <Text style={styles.hint}>
+            스탬프는 항상 앱 목록에 저장됩니다. 앱만: 갤러리에 넣지 않습니다 (연속 촬영에 가장 빠름). 그 외는
+            갤러리 앨범에 저장하며, 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {(['app_only', 'original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(
               (option) => {
                 const selected = gallerySaveMode === option;
                 return (
@@ -802,12 +1001,84 @@ export function SettingsScreen({
                     <Text
                       style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
                     >
-                      {gallerySaveModeLabel(option)}
+                      {chipLabel(gallerySaveModeLabel(option), option === DEFAULT_GALLERY_SAVE_MODE)}
                     </Text>
                   </Pressable>
                 );
               },
             )}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>개인정보 가리기</Text>
+          <Text style={styles.hint}>
+            사용: 저장 화면에서 얼굴·숫자 영역을 폰 안에서만 흐리게 할 수 있습니다. 서버로 보내지 않습니다.
+            (Android) 기본은 끔이며, 버튼을 눌러 확인 후 적용합니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !privacyBlurEnabled && styles.optionButtonSelected]}
+              onPress={() => setPrivacyBlurEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !privacyBlurEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(privacyBlurEnabledLabel(false), !DEFAULT_PRIVACY_BLUR_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, privacyBlurEnabled && styles.optionButtonSelected]}
+              onPress={() => setPrivacyBlurEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  privacyBlurEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(privacyBlurEnabledLabel(true), DEFAULT_PRIVACY_BLUR_ENABLED)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>사진 글자로 제목·메모</Text>
+          <Text style={styles.hint}>
+            사용: 저장 화면에서 「글자 읽어 채우기」로 사진 속 글자를 폰 안에서만 읽어 제목·메모 초안을
+            만듭니다. 서버로 보내지 않으며, AI로 문장을 새로 쓰지 않습니다. (Android) 기본은 끔입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !ocrTitleMemoEnabled && styles.optionButtonSelected]}
+              onPress={() => setOcrTitleMemoEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !ocrTitleMemoEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(ocrTitleMemoEnabledLabel(false), !DEFAULT_OCR_TITLE_MEMO_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, ocrTitleMemoEnabled && styles.optionButtonSelected]}
+              onPress={() => setOcrTitleMemoEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  ocrTitleMemoEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(ocrTitleMemoEnabledLabel(true), DEFAULT_OCR_TITLE_MEMO_ENABLED)}
+              </Text>
+            </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>제목 정렬</Text>
@@ -823,7 +1094,7 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
+                    {chipLabel(textAlignLabel(option), option === DEFAULT_TITLE_TEXT_ALIGN)}
                   </Text>
                 </Pressable>
               );
@@ -843,32 +1114,66 @@ export function SettingsScreen({
                   disabled={saving}
                 >
                   <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {textAlignLabel(option)}
+                    {chipLabel(textAlignLabel(option), option === DEFAULT_MEMO_TEXT_ALIGN)}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
 
-          <Pressable
-            style={[styles.primaryButton, saving && styles.buttonDisabled]}
-            onPress={handleSave}
-            disabled={saving}
-          >
-            {saving ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.primaryButtonText}>저장</Text>
-            )}
-          </Pressable>
-          <Pressable style={styles.secondaryButton} onPress={handleReset} disabled={saving}>
-            <Text style={styles.secondaryButtonText}>
-              기본값 (폴더: {DEFAULT_STAMPS_FOLDER}, PDF: {DEFAULT_PDF_PHOTOS_PER_PAGE}장, 원본, 정렬 왼쪽)
-            </Text>
-          </Pressable>
+          <Text style={[styles.label, styles.sectionGap]}>저장 목록 표시</Text>
+          <Text style={styles.hint}>
+            목록 카드에 제목·날짜만 보일지, 장소·추가·메모까지 모두 보일지 선택합니다. PDF·이미지 내보내기에는
+            영향 없습니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {STAMP_LIST_DISPLAY_OPTIONS.map((option) => {
+              const selected = stampListDisplayMode === option;
+              return (
+                <Pressable
+                  key={`list-display-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setStampListDisplayModeState(option)}
+                  disabled={saving}
+                >
+                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
+                    {chipLabel(
+                      stampListDisplayModeLabel(option),
+                      option === DEFAULT_STAMP_LIST_DISPLAY_MODE,
+                    )}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>글자 크기</Text>
+          <Text style={styles.hint}>
+            저장·수정 입력칸과 미리보기·워터마크·PDF·갤러리 이미지 저장에 적용됩니다. 시스템 글꼴만 사용합니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {STAMP_TEXT_SIZE_OPTIONS.map((option) => {
+              const selected = stampTextSize === option;
+              return (
+                <Pressable
+                  key={`text-size-${option}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setStampTextSizeState(option)}
+                  disabled={saving}
+                >
+                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
+                    {chipLabel(stampTextSizeLabel(option), option === DEFAULT_STAMP_TEXT_SIZE)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
           <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>
-          <Text style={styles.hint}>VoiceStamp {appVersion}</Text>
+          <Text style={styles.hint}>
+            VoiceStamp {appVersion}
+            {Platform.OS === 'android' && APK_BUILD_FILENAME ? ` · ${APK_BUILD_FILENAME}` : ''}
+          </Text>
           <Pressable
             style={styles.secondaryButton}
             onPress={() => void openInfoPage('/privacy')}
@@ -902,17 +1207,29 @@ export function SettingsScreen({
             <Text style={styles.secondaryButtonText}>도움말</Text>
           </Pressable>
           <Text style={styles.copyright}>© 2026 이형우</Text>
-        </ScrollView>
-      )}
+      </ScrollView>
 
-      <Pressable
-        style={styles.bottomBackButton}
-        onPress={onBack}
-        accessibilityRole="button"
-        accessibilityLabel={`뒤로가기, ${backLabel}`}
-      >
-        <Image source={backButtonImage} style={styles.bottomBackButtonImage} resizeMode="contain" />
-      </Pressable>
+      <View style={styles.bottomBar}>
+          <Pressable
+            style={styles.bottomBackSlot}
+            onPress={onBack}
+            accessibilityRole="button"
+            accessibilityLabel={`뒤로가기, ${backLabel}`}
+          >
+            <Image source={backButtonImage} style={styles.bottomBackButtonImage} resizeMode="contain" />
+          </Pressable>
+          <Pressable
+            style={[styles.primaryButton, styles.saveInBar, saving && styles.buttonDisabled]}
+            onPress={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.primaryButtonText}>저장</Text>
+            )}
+          </Pressable>
+      </View>
     </View>
   );
 }
@@ -936,29 +1253,41 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   scroll: {
     flex: 1,
   },
   body: {
     padding: 20,
-    paddingBottom: 100,
+    paddingBottom: 24,
     gap: 12,
   },
-  bottomBackButton: {
+  bodyWithBottomBar: {
+    paddingBottom: SCROLL_BOTTOM_INSET,
+  },
+  bottomBar: {
     position: 'absolute',
-    left: 8,
-    bottom: BACK_ICON_BOTTOM + BACK_ICON_SIZE * 0.5,
-    backgroundColor: 'transparent',
-    padding: 4,
-    minWidth: BACK_ICON_SIZE,
-    minHeight: BACK_ICON_SIZE,
+    left: 0,
+    right: 0,
+    bottom: BOTTOM_BAR_OFFSET,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 8,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  bottomBackSlot: {
+    width: BACK_ICON_SIZE,
+    height: BACK_ICON_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  saveInBar: {
+    flex: 1,
+    marginTop: 0,
   },
   bottomBackButtonImage: {
     width: BACK_ICON_SIZE,
@@ -1010,9 +1339,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#eff6ff',
   },
   optionButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#4b5563',
+    textAlign: 'center',
   },
   optionButtonTextSelected: {
     color: '#2563eb',
@@ -1043,7 +1373,7 @@ const styles = StyleSheet.create({
     borderColor: '#2563eb',
   },
   paletteLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#6b7280',
     textAlign: 'center',
   },

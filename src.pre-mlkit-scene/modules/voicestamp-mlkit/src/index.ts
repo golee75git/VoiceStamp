@@ -18,19 +18,9 @@ export type NativeDetectResult = {
   regions: NativePrivacyRegion[];
 };
 
-export type NativeSceneLabel = {
-  text: string;
-  confidence: number;
-};
-
 type VoicestampMlkitNative = {
   detectPrivacyRegions(localUri: string): Promise<NativeDetectResult>;
   recognizeText(localUri: string): Promise<{ text: string }>;
-  labelImage(
-    localUri: string,
-    maxLabels: number,
-    minConfidence: number,
-  ): Promise<{ labels: NativeSceneLabel[] }>;
   applyBlurRegions(
     localUri: string,
     regionsJson: string,
@@ -96,27 +86,5 @@ export function isPrivacyBlurNativeAvailable(): boolean {
 
 /** Same native module as privacy blur; OCR uses Korean Text Recognition. */
 export function isOcrNativeAvailable(): boolean {
-  return getNativeModule() != null;
-}
-
-export async function nativeLabelImage(
-  localUri: string,
-  maxLabels = 5,
-  minConfidence = 0.6,
-): Promise<NativeSceneLabel[]> {
-  const mod = getNativeModule();
-  if (!mod?.labelImage) {
-    return [];
-  }
-  try {
-    const result = await mod.labelImage(localUri, maxLabels, minConfidence);
-    return Array.isArray(result?.labels) ? result.labels : [];
-  } catch {
-    return [];
-  }
-}
-
-/** Same native module; Image Labeling for scene keyword drafts. */
-export function isSceneLabelNativeAvailable(): boolean {
   return getNativeModule() != null;
 }

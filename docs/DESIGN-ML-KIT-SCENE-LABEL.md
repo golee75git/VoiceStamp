@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 1.0 |
 | 작성일 | 2026-06-25 |
-| 상태 | 📋 **설계만** (구현 전) |
+| 상태 | ✅ **구현됨** (재도입) |
 | 기능 ID | **AI-ML-01** |
 | 관련 문서 | [PRD.md](./PRD.md) §1.4, [PLAN.md](./PLAN.md) §4, [PRIVACY.md](./PRIVACY.md), [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) |
 | 기준 커밋 | `847ea63` (main, 설계 시점) |

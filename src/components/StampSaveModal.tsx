@@ -66,6 +66,7 @@ import {
   getLastFloor,
   getPrivacyBlurEnabled,
   getOcrTitleMemoEnabled,
+  getMlkitSceneLabelEnabled,
   inputFontSizeForStampText,
   isGpsPlaceEnabled,
   setLastFloor,
@@ -82,6 +83,10 @@ import {
   isOcrTitleMemoSupported,
   recognizeTitleMemoFromImage,
 } from '../services/ocrTitleMemoService';
+import {
+  isSceneLabelSupported,
+  suggestSceneMemo,
+} from '../services/sceneLabelService';
 import { PrivacyBlurModal } from './PrivacyBlurModal';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
@@ -288,6 +293,8 @@ export function StampSaveModal({
   const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabled] = useState(false);
   const [ocrBusy, setOcrBusy] = useState(false);
+  const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabled] = useState(false);
+  const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
@@ -312,6 +319,7 @@ export function StampSaveModal({
   const extra2SelectionRef = useRef({ start: 0, end: 0 });
   const extra3SelectionRef = useRef({ start: 0, end: 0 });
   const titleTouchedRef = useRef(false);
+  const memoTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
   const siteNameTouchedRef = useRef(false);
   const floorTouchedRef = useRef(false);
@@ -348,6 +356,7 @@ export function StampSaveModal({
           setTitle(merged);
         }
       } else if (target === 'memo') {
+        memoTouchedRef.current = true;
         const { prefix, suffix } = speechInsertRef.current.memo;
         const merged = insertSpeechAtCursor(prefix, suffix, text);
         if (isFinal) {
@@ -510,6 +519,7 @@ export function StampSaveModal({
     setFolderOptionsLoading(false);
     setDeleting(false);
     titleTouchedRef.current = false;
+    memoTouchedRef.current = false;
     placeTouchedRef.current = false;
     siteNameTouchedRef.current = false;
     floorTouchedRef.current = false;
@@ -519,6 +529,7 @@ export function StampSaveModal({
     setWorkingImageUri(null);
     setPreviewThumbUri(null);
     setPrivacyModalOpen(false);
+    setSceneAnalyzing(false);
     setCaptureCoords(null);
     setFloor(null);
     setPlaceLabel(null);
@@ -545,6 +556,7 @@ export function StampSaveModal({
     setExtra2FieldLabel(snap.extra2FieldLabel);
     setExtra3FieldLabel(snap.extra3FieldLabel);
     titleTouchedRef.current = true;
+    memoTouchedRef.current = true;
     placeTouchedRef.current = true;
     floorTouchedRef.current = Boolean(stamp.floor);
   }, [visible, stamp?.id]);
@@ -564,18 +576,50 @@ export function StampSaveModal({
       return;
     }
     let cancelled = false;
-    void Promise.all([getPrivacyBlurEnabled(), getOcrTitleMemoEnabled()]).then(
-      ([blurEnabled, ocrEnabled]) => {
-        if (!cancelled) {
-          setPrivacyBlurEnabled(blurEnabled);
-          setOcrTitleMemoEnabled(ocrEnabled);
-        }
-      },
-    );
+    void Promise.all([
+      getPrivacyBlurEnabled(),
+      getOcrTitleMemoEnabled(),
+      getMlkitSceneLabelEnabled(),
+    ]).then(([blurEnabled, ocrEnabled, sceneEnabled]) => {
+      if (!cancelled) {
+        setPrivacyBlurEnabled(blurEnabled);
+        setOcrTitleMemoEnabled(ocrEnabled);
+        setMlkitSceneLabelEnabled(sceneEnabled);
+      }
+    });
     return () => {
       cancelled = true;
     };
   }, [visible]);
+
+  useEffect(() => {
+    if (!visible || isEdit || !mlkitSceneLabelEnabled || !isSceneLabelSupported()) {
+      return;
+    }
+    const uri = workingImageUri ?? imageUri;
+    if (!uri) {
+      return;
+    }
+    let cancelled = false;
+    setSceneAnalyzing(true);
+    void (async () => {
+      try {
+        const draft = await suggestSceneMemo(uri);
+        if (cancelled || memoTouchedRef.current || !draft) {
+          return;
+        }
+        setMemo((prev) => (prev.trim() ? prev : draft));
+      } finally {
+        if (!cancelled) {
+          setSceneAnalyzing(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+      setSceneAnalyzing(false);
+    };
+  }, [visible, isEdit, mlkitSceneLabelEnabled, imageUri, workingImageUri]);
 
   useEffect(() => {
     if (!visible) {
@@ -857,6 +901,7 @@ export function StampSaveModal({
         selection.end,
       );
     } else if (target === 'memo') {
+      memoTouchedRef.current = true;
       const { text: prepared, selection } = prepareSpeechTarget(memo, memoSelectionRef.current);
       setMemo(prepared);
       applyTextSelection(selection, memoSelectionRef, setMemoSelection);
@@ -1051,6 +1096,7 @@ export function StampSaveModal({
         );
       }
       if (draft.memo) {
+        memoTouchedRef.current = true;
         setMemo(draft.memo);
         applyTextSelection(
           { start: draft.memo.length, end: draft.memo.length },
@@ -1499,7 +1545,10 @@ export function StampSaveModal({
               labelEditable
               onLabelCommit={(next) => void persistFieldLabel('memo', next)}
               value={memo}
-              onChangeText={setMemo}
+              onChangeText={(text) => {
+                memoTouchedRef.current = true;
+                setMemo(text);
+              }}
               onMicPress={() => handleMicPress('memo')}
               listening={listening && speechTarget === 'memo'}
               speechAvailable={available}
@@ -1515,6 +1564,9 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.memo}
             />
+            {sceneAnalyzing ? (
+              <Text style={styles.locationHint}>장면 분석 중…</Text>
+            ) : null}
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
           </View>
