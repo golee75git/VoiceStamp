@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-24**
-최신 기능 커밋 기준: `f6403fe` — **하단 촬영 일시 설정** + 개인정보 가리기(해상도 비례) · APK `VoiceStamp_20260724_114341`
+문서 작성일: **2026-07-25**
+최신 기능 커밋 기준: `94950ff` — 개인정보 가리기 수동 영역 · APK `VoiceStamp_20260725_101238`
 
 ---
 
@@ -408,8 +408,16 @@ VoiceStamp/
 | 308 | GitHub APK `releases/20260724_111410` · 랜딩·`/info` · 도움말 | `239883c` | — |
 | 309 | **하단 촬영 일시** 설정(`export_footer_datetime`) — PDF·캡션 하단 | `f6403fe` | `restore-export-footer-datetime.bat` §188 |
 | 310 | GitHub APK `releases/20260724_114341` · 랜딩·`/info` · 도움말 | `f6403fe` | — |
+| 311 | **가리기 EXIF 정렬**(시스템 카메라) | `35f6d9b` | — |
+| 312 | GitHub APK `releases/20260724_182721` | `35f6d9b` | — |
+| 313 | **앱 내 카메라 전후면 전환** | `39b3447` | — |
+| 314 | **저장 템플릿 적용 중/사용자수정** | `a084982` | `restore-active-template-status.bat` |
+| 315 | GitHub APK `releases/20260725_095546` | `658af2b` | — |
+| 316 | **가리기 탭 수동 영역** + 하단 여백 | `29b86a1` | `restore-privacy-manual-region.bat` |
+| 317 | GitHub APK `releases/20260725_101238` · 랜딩·`/info` | `94950ff` | — |
+| 318 | **AI-ML-03** OCR→제목·메모 설계 문서 | (docs) | [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
 
-> **권장 APK:** `releases/VoiceStamp_20260724_114341.apk` (`f6403fe`).
+> **권장 APK:** `releases/VoiceStamp_20260725_101238.apk` (`94950ff`).
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -475,7 +483,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260724_114341.apk`** | `f6403fe` | **설치·GitHub 권장** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) + 07-24 누적 |
+| **`releases/VoiceStamp_20260725_101238.apk`** | `94950ff` | **설치·GitHub 권장** — 가리기 **수동 영역** + 하단 여백 + 07-25 누적 |
+| **`releases/VoiceStamp_20260725_095546.apk`** | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** |
+| **`releases/VoiceStamp_20260724_182721.apk`** | `35f6d9b` | **이전** — 가리기 **EXIF 정렬** |
+| **`releases/VoiceStamp_20260724_114341.apk`** | `f6403fe` | **이전** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
 | **`releases/VoiceStamp_20260724_111410.apk`** | `239883c` | **이전** — 모자이크 **해상도·영역 비례** 약·중·강 |
 | **`releases/VoiceStamp_20260724_105355.apk`** | `449da4d` | **이전** — **AI-ML-02** 개인정보 가리기 MVP |
 | **`releases/VoiceStamp_20260723_185321.apk`** | `8bad078` | **이전** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) + 07-23 누적 |
@@ -574,11 +585,19 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-25
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **권장** — 개인정보 가리기 **탭 수동 영역** + 하단 버튼 여백 · `restore-privacy-manual-region.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260725_095546.apk` | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** · `restore-active-template-status.bat` | **GitHub `releases/`** |
+
 #### 2026-07-24
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **권장** — **하단 촬영 일시** 설정(PDF·캡션 하단, 제목 접두어와 분리) + 블러 누적 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260724_182721.apk` | `35f6d9b` | **이전** — 개인정보 가리기 **EXIF 정렬**(시스템 카메라) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **이전** — **하단 촬영 일시** 설정(PDF·캡션 하단, 제목 접두어와 분리) + 블러 누적 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260724_111410.apk` | `239883c` | **이전** — 모자이크 **해상도·영역 비례** 약·중·강 | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260724_105355.apk` | `449da4d` | **이전** — **AI-ML-02** 얼굴·숫자 온디바이스 블러 MVP · 설정 opt-in | **GitHub `releases/`** |
 
@@ -1038,16 +1057,30 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-25
+
+| 커밋 | 내용 |
+|------|------|
+| `94950ff` | **개인정보 가리기 수동 영역 APK** — `releases/VoiceStamp_20260725_101238` · 랜딩·`/info` · Vercel |
+| `29b86a1` | **가리기 푸터 여백 + 탭 수동 모자이크 영역** · 도움말·PRIVACY · `restore-privacy-manual-region.bat` |
+| `658af2b` | **저장 템플릿 적용 상태 APK** — `releases/VoiceStamp_20260725_095546` |
+| `a084982` | **저장 템플릿 적용 중/사용자수정** · `restore-active-template-status.bat` |
+| (본 문서) | PRD·PROJECT·PLAN·README·**AI-ML-03** 설계 동기화 (`94950ff`) — **소스 변경 없음** |
+
+> **권장 APK:** `releases/VoiceStamp_20260725_101238.apk` (`94950ff`). 랜딩·`/info` 다운로드 링크 동기화됨.
+
 ### 2026-07-24
 
 | 커밋 | 내용 |
 |------|------|
+| `39b3447` | **앱 내 카메라 전후면 전환** · 셀피 미러 |
+| `35f6d9b` | **개인정보 가리기 EXIF 정렬** — 시스템 카메라 JPEG · APK `releases/VoiceStamp_20260724_182721` · Vercel |
 | `f6403fe` | **하단 촬영 일시** — 설정 `export_footer_datetime`(기본 표시) · PDF·캡션 이미지 하단만 · 제목 접두어(`pdf_show_datetime`)·워터마크와 분리 · 도움말 · APK `releases/VoiceStamp_20260724_114341` · Vercel · `restore-export-footer-datetime.bat` §188 |
 | `239883c` | **모자이크 해상도·영역 비례 강도** — 약·중·강 · APK `releases/VoiceStamp_20260724_111410` · Vercel · `restore-privacy-blur-scale.bat` §187 |
 | `449da4d` | **AI-ML-02 개인정보 가리기** — ML Kit Face+한글 OCR → 온디바이스 모자이크 · 설정 opt-in · `modules/voicestamp-mlkit` · 도움말·PRIVACY · APK `releases/VoiceStamp_20260724_105355` · Vercel · `restore-privacy-blur.bat` §186 |
-| (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`f6403fe` 기준) — **소스 변경 없음** |
+| `b70d3a0` | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`f6403fe` 기준) — **소스 변경 없음** |
 
-> **권장 APK:** `releases/VoiceStamp_20260724_114341.apk` (`f6403fe`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **당시 권장 APK (07-24 말 EXIF):** `releases/VoiceStamp_20260724_182721.apk` (`35f6d9b`). (이후 **`101238`** — §12 2026-07-25)
 
 ### 2026-07-23
 

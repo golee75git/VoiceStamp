@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.5 |
-| 작성일 | 2026-07-24 |
-| 기준 커밋 | `f6403fe` (main) — **하단 촬영 일시** + 개인정보 가리기 · APK `114341` |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
+| 문서 버전 | 3.6 |
+| 작성일 | 2026-07-25 |
+| 기준 커밋 | `94950ff` (main) — 개인정보 가리기 수동 영역 · APK `101238` |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -589,8 +589,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | ID | 내용 | 비고 |
 |----|------|------|
-| **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기(되돌림 이력) |
-| **AI-ML-02** | **ML Kit Face + OCR** — 얼굴·숫자 **블러**(개인정보 가리기) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · ✅ MVP (`449da4d`) · 해상도 비례(`239883c`) · `restore-privacy-blur.bat` §186 · `restore-privacy-blur-scale.bat` §187 |
+| **AI-ML-01** | **ML Kit Image Labeling** — 촬영 후 메모 키워드 초안 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), 구현 대기(되돌림 이력) · **미재도입** |
+| **AI-ML-02** | **ML Kit Face + OCR** — 얼굴·숫자 **블러**(개인정보 가리기) | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) · ✅ MVP+ 수동 탭·푸터 여백(`101238`) · `restore-privacy-manual-region.bat` |
+| **AI-ML-03** | **ML Kit Korean OCR** — 사진 글자 → **제목·메모 초안**(규칙, 생성형 없음) | [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) · 📋 설계만 · **소스 미구현** |
 
 ### 4.5 연동·클라우드 (설계만)
 
@@ -615,13 +616,15 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 순서 | 작업 | 이유 |
 |------|------|------|
 | 1 | LEG-05 Play 스토어 스크린샷·등록 | 정책 URL 준비됨 |
-| 2 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
-| 3 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
-| 4 | UX-PURPOSE 목적별 필드 라벨 | 기획 메모 반영 |
-| 5 | FEAT-03 로컬 JSON 백업/복원 | 재설치 시나리오 (오프라인) |
-| 5b | **FEAT-03-NCP** NCP 백업/복원 | §12 설계 기준, NCP 인프라 선행 |
-| 6 | RPT-01 보고서 서식 | 별도 PDCA·POC 필요 |
-| 7 | **GS-UPLOAD-01** 앱 연동 (초안 있음) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) — 공용 시트·토큰 보안 검토 후 |
+| 2 | **AI-ML-03** OCR→제목·메모 초안 | 설계 완료 · 기존 Korean OCR 재사용 · [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
+| 3 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
+| 4 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
+| 5 | UX-PURPOSE 목적별 필드 라벨 | 기획 메모 반영 |
+| 6 | FEAT-03 로컬 JSON 백업/복원 | 재설치 시나리오 (오프라인) |
+| 6b | **FEAT-03-NCP** NCP 백업/복원 | §12 설계 기준, NCP 인프라 선행 |
+| 7 | RPT-01 보고서 서식 | 별도 PDCA·POC 필요 |
+| 8 | **GS-UPLOAD-01** 앱 연동 (초안 있음) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) — 공용 시트·토큰 보안 검토 후 |
+| 9 | **AI-ML-01** Image Labeling 재도입(선택) | 장면 키워드 · 문장 설명 아님 |
 
 ---
 
@@ -631,9 +634,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260720_225635.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260720_225635.apk |
-| 최신 소스 | `6060a48` — **PDF → 현장 폴더 archive** + 카메라 권한 홈 즉시 + 내보내기 OOM 수정 + ZIP PDF 미포함 + `/report` 행 삭제 |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260725_101238.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260725_101238.apk |
+| 최신 소스 | `94950ff` — 개인정보 가리기 수동 영역 + 템플릿 적용 상태 + EXIF·전후면 등 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -662,6 +665,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 정보·정책 페이지 설계·구현 (`a4a55d2`) |
 | [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | ML Kit 장면 라벨 설계 (AI-ML-01) |
 | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) | 개인정보 가리기(블러) MVP 설계 (AI-ML-02) |
+| [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) | OCR→제목·메모 초안 설계 (AI-ML-03, 미구현) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | Google Sheets 업로드 설계 (GS-UPLOAD-01, 초안) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 (LEG-06) |
 | NCP-KEY-SECURITY.md (예정) | NCP API 인증키·Presigned URL 보안 체크리스트 |
@@ -709,17 +713,21 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-21 | 2AC·3 | 크롭 시도·롤백 · APK `235129` (`ee75aa8`) |
 | 2026-07-22 | 2AC·3 | 필드 표시명·추가 필드·표 · **자르기 적용 비활성**(`170650`) · **글자 크기**(`182753`) · APK `095047`~`182753` |
 | 2026-07-23 | 2AD·3 | 저장 템플릿·목록 표시·표·초록 테두리·**별도영역 이미지 흐림 수정** · APK `185321` (`8bad078`) · 문서 이력 보강(소스 없음) |
-| 2026-07-24 | 2AE·3·4 | **AI-ML-02** 블러 MVP(`105355`) · 모자이크 **해상도 비례**(`111410`) · **하단 촬영 일시**(`114341`) · `restore-privacy-blur*.bat` §186–187 · `restore-export-footer-datetime.bat` §188 · 문서 동기화(소스 없음) |
+| 2026-07-24 | 2AE·3·4 | **AI-ML-02** 블러 MVP(`105355`) · 해상도 비례(`111410`) · **하단 촬영 일시**(`114341`) · **EXIF**(`182721`) · **전후면**(`39b3447`) · restore §186–188 · 문서 동기화 |
+| 2026-07-25 | 2AF·3·4 | 템플릿 **적용 중/사용자수정**(`095546`) · 가리기 **수동 탭**+푸터 여백(`101238`) · **AI-ML-03** 설계 · 문서 동기화(**소스 없음**) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-24:** 권장 = `releases/VoiceStamp_20260724_114341.apk`.
+> **2026-07-25:** 권장 = `releases/VoiceStamp_20260725_101238.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **설치·GitHub 권장** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
+| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **설치·GitHub 권장** — 가리기 **수동 영역** + 하단 여백 |
+| `releases/VoiceStamp_20260725_095546.apk` | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** |
+| `releases/VoiceStamp_20260724_182721.apk` | `35f6d9b` | **이전** — 가리기 **EXIF 정렬** |
+| `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **이전** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
 | `releases/VoiceStamp_20260724_111410.apk` | `239883c` | **이전** — 모자이크 **해상도·영역 비례** |
 | `releases/VoiceStamp_20260724_105355.apk` | `449da4d` | **이전** — **AI-ML-02** 개인정보 가리기 MVP |
 | `releases/VoiceStamp_20260723_185321.apk` | `8bad078` | **이전** — **별도영역 이미지 흐림 수정**(네이티브 불투명 JPEG) |
