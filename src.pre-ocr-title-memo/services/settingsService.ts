@@ -79,7 +79,6 @@ const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
 const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
 const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
-const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -112,7 +111,6 @@ export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
 export const DEFAULT_SHUTTER_SOUND = true;
 /** Android on-device face/number mosaic blur. Default off (opt-in). */
 export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
-export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -463,7 +461,6 @@ export type SettingsScreenSnapshot = {
   captureAfterMode: CaptureAfterMode;
   shutterSound: boolean;
   privacyBlurEnabled: boolean;
-  ocrTitleMemoEnabled: boolean;
   cameraHand: CameraHand;
   floorPickerMode: FloorPickerMode;
   floorDisplayMode: FloorDisplayMode;
@@ -571,10 +568,6 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       pickSetting(map, PRIVACY_BLUR_ENABLED_KEY),
       DEFAULT_PRIVACY_BLUR_ENABLED,
     ),
-    ocrTitleMemoEnabled: parseBooleanSetting(
-      pickSetting(map, OCR_TITLE_MEMO_ENABLED_KEY),
-      DEFAULT_OCR_TITLE_MEMO_ENABLED,
-    ),
     cameraHand: (() => {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
@@ -673,7 +666,6 @@ export function sanitizeSettingsScreenSnapshot(
     captureAfterMode: sanitizeCaptureAfterMode(draft.captureAfterMode),
     shutterSound: draft.shutterSound,
     privacyBlurEnabled: draft.privacyBlurEnabled,
-    ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
     floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
     floorDisplayMode: sanitizeFloorDisplayMode(draft.floorDisplayMode),
@@ -713,7 +705,6 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [CAPTURE_AFTER_MODE_KEY, snapshot.captureAfterMode],
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
     [PRIVACY_BLUR_ENABLED_KEY, snapshot.privacyBlurEnabled ? 'true' : 'false'],
-    [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
     [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
     [FLOOR_DISPLAY_MODE_KEY, snapshot.floorDisplayMode],
@@ -1072,20 +1063,6 @@ export async function getPrivacyBlurEnabled(): Promise<boolean> {
 
 export async function setPrivacyBlurEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(PRIVACY_BLUR_ENABLED_KEY, enabled ? 'true' : 'false');
-  return enabled;
-}
-
-export function ocrTitleMemoEnabledLabel(enabled: boolean): string {
-  return enabled ? '사용' : '사용 안 함';
-}
-
-export async function getOcrTitleMemoEnabled(): Promise<boolean> {
-  const value = await readSetting(OCR_TITLE_MEMO_ENABLED_KEY);
-  return parseBooleanSetting(value, DEFAULT_OCR_TITLE_MEMO_ENABLED);
-}
-
-export async function setOcrTitleMemoEnabled(enabled: boolean): Promise<boolean> {
-  await writeSetting(OCR_TITLE_MEMO_ENABLED_KEY, enabled ? 'true' : 'false');
   return enabled;
 }
 

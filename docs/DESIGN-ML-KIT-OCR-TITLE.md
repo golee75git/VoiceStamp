@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 1.0 |
 | 작성일 | 2026-07-25 |
-| 상태 | 📋 **설계만** (구현 전 · **소스 변경 없음**) |
+| 상태 | ✅ **MVP 구현** (2026-07-25) |
 | 기능 ID | **AI-ML-03** |
 | 관련 문서 | [PRD.md](./PRD.md), [PLAN.md](./PLAN.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md), [PRIVACY.md](./PRIVACY.md), [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) |
 | 기준 커밋 | `94950ff` (main, 설계 시점) |
@@ -79,4 +79,4 @@
 | 단계 | 상태 |
 |------|------|
 | 설계 문서 | ✅ 본 문서 (2026-07-25) |
-| 소스·APK | ❌ 미착수 (`소스 수정 금지` 문서 동기화 시점) |
+| 소스·APK | ✅ MVP — `recognizeText` · 설정 opt-in · 「글자 읽어 채우기」 · `restore-ocr-title-memo.bat` |

@@ -64,8 +64,6 @@ import {
   getFloorDisplayMode,
   getFloorPickerMode,
   getLastFloor,
-  getPrivacyBlurEnabled,
-  getOcrTitleMemoEnabled,
   inputFontSizeForStampText,
   isGpsPlaceEnabled,
   setLastFloor,
@@ -77,12 +75,9 @@ import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
-import { isPrivacyBlurSupported } from '../services/privacyBlurService';
-import {
-  isOcrTitleMemoSupported,
-  recognizeTitleMemoFromImage,
-} from '../services/ocrTitleMemoService';
 import { PrivacyBlurModal } from './PrivacyBlurModal';
+import { getPrivacyBlurEnabled } from '../services/settingsService';
+import { isPrivacyBlurSupported } from '../services/privacyBlurService';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
 const zoomEditIcon = require('../../assets/zoom.png');
@@ -286,8 +281,6 @@ export function StampSaveModal({
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
   const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
-  const [ocrTitleMemoEnabled, setOcrTitleMemoEnabled] = useState(false);
-  const [ocrBusy, setOcrBusy] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
@@ -564,14 +557,11 @@ export function StampSaveModal({
       return;
     }
     let cancelled = false;
-    void Promise.all([getPrivacyBlurEnabled(), getOcrTitleMemoEnabled()]).then(
-      ([blurEnabled, ocrEnabled]) => {
-        if (!cancelled) {
-          setPrivacyBlurEnabled(blurEnabled);
-          setOcrTitleMemoEnabled(ocrEnabled);
-        }
-      },
-    );
+    void getPrivacyBlurEnabled().then((enabled) => {
+      if (!cancelled) {
+        setPrivacyBlurEnabled(enabled);
+      }
+    });
     return () => {
       cancelled = true;
     };
@@ -1029,43 +1019,6 @@ export function StampSaveModal({
     setImageViewerVisible(true);
   };
 
-  const handleOcrFill = useCallback(async () => {
-    const uri = workingImageUri || imageUri;
-    if (!uri || ocrBusy || saving) {
-      return;
-    }
-    setOcrBusy(true);
-    try {
-      const draft = await recognizeTitleMemoFromImage(uri);
-      if (!draft) {
-        Alert.alert('글자 읽기', '글자를 찾지 못했거나 읽을 수 없습니다.');
-        return;
-      }
-      if (draft.title) {
-        titleTouchedRef.current = true;
-        setTitle(draft.title);
-        applyTextSelection(
-          { start: draft.title.length, end: draft.title.length },
-          titleSelectionRef,
-          setTitleSelection,
-        );
-      }
-      if (draft.memo) {
-        setMemo(draft.memo);
-        applyTextSelection(
-          { start: draft.memo.length, end: draft.memo.length },
-          memoSelectionRef,
-          setMemoSelection,
-        );
-      }
-      Alert.alert('글자 읽기', '제목·메모 초안을 넣었습니다. 필요하면 수정하세요.');
-    } catch {
-      Alert.alert('글자 읽기', '읽는 중 오류가 발생했습니다.');
-    } finally {
-      setOcrBusy(false);
-    }
-  }, [workingImageUri, imageUri, ocrBusy, saving]);
-
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
     if (!photoUri || saving) {
@@ -1279,22 +1232,6 @@ export function StampSaveModal({
                 accessibilityLabel="개인정보 가리기"
               >
                 <Text style={styles.privacyBlurBtnText}>개인정보 가리기</Text>
-              </Pressable>
-            ) : null}
-
-            {photoUri && ocrTitleMemoEnabled && isOcrTitleMemoSupported() ? (
-              <Pressable
-                style={[styles.ocrFillBtn, saving || ocrBusy ? { opacity: 0.5 } : null]}
-                onPress={() => void handleOcrFill()}
-                disabled={saving || ocrBusy}
-                accessibilityRole="button"
-                accessibilityLabel="글자 읽어 채우기"
-              >
-                {ocrBusy ? (
-                  <ActivityIndicator color="#0f766e" />
-                ) : (
-                  <Text style={styles.ocrFillBtnText}>글자 읽어 채우기</Text>
-                )}
               </Pressable>
             ) : null}
 
@@ -1708,23 +1645,6 @@ const styles = StyleSheet.create({
   },
   privacyBlurBtnText: {
     color: '#1d4ed8',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  ocrFillBtn: {
-    alignSelf: 'flex-start',
-    marginTop: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#f0fdfa',
-    borderWidth: 1,
-    borderColor: '#99f6e4',
-    minHeight: 36,
-    justifyContent: 'center',
-  },
-  ocrFillBtnText: {
-    color: '#0f766e',
     fontSize: 14,
     fontWeight: '600',
   },

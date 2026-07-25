@@ -100,25 +100,6 @@ class VoicestampMlkitModule : Module() {
       }
     }
 
-    /** Full Korean OCR text for title/memo drafts. On-device only; not for cloud upload. */
-    AsyncFunction("recognizeText") { localUri: String ->
-      val context = appContext.reactContext ?: throw Exception("React context unavailable")
-      val cacheDir = context.cacheDir
-      val sourceFile = materializeLocalFile(localUri, cacheDir)
-      val image = InputImage.fromFilePath(context, Uri.fromFile(sourceFile))
-      val textRecognizer =
-        TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
-      try {
-        val textResult = Tasks.await(textRecognizer.process(image), 12, TimeUnit.SECONDS)
-        val raw = (textResult.text ?: "").trim()
-        // Cap payload size for JS bridge / UI (full document OCR can be large).
-        val capped = if (raw.length > 8000) raw.take(8000) else raw
-        mapOf("text" to capped)
-      } finally {
-        textRecognizer.close()
-      }
-    }
-
     AsyncFunction("applyBlurRegions") { localUri: String, regionsJson: String, strength: String ->
       val context = appContext.reactContext ?: throw Exception("React context unavailable")
       val cacheDir = context.cacheDir

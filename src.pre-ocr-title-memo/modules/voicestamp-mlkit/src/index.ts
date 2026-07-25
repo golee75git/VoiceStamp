@@ -20,7 +20,6 @@ export type NativeDetectResult = {
 
 type VoicestampMlkitNative = {
   detectPrivacyRegions(localUri: string): Promise<NativeDetectResult>;
-  recognizeText(localUri: string): Promise<{ text: string }>;
   applyBlurRegions(
     localUri: string,
     regionsJson: string,
@@ -66,25 +65,6 @@ export async function nativeApplyBlurRegions(
   return mod.applyBlurRegions(localUri, regionsJson, strength);
 }
 
-export async function nativeRecognizeText(localUri: string): Promise<string | null> {
-  const mod = getNativeModule();
-  if (!mod?.recognizeText) {
-    return null;
-  }
-  try {
-    const result = await mod.recognizeText(localUri);
-    const text = typeof result?.text === 'string' ? result.text.trim() : '';
-    return text.length > 0 ? text : '';
-  } catch {
-    return null;
-  }
-}
-
 export function isPrivacyBlurNativeAvailable(): boolean {
-  return getNativeModule() != null;
-}
-
-/** Same native module as privacy blur; OCR uses Korean Text Recognition. */
-export function isOcrNativeAvailable(): boolean {
   return getNativeModule() != null;
 }

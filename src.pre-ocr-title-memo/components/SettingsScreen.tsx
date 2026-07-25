@@ -60,7 +60,6 @@ import {
   DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_SHUTTER_SOUND,
   DEFAULT_PRIVACY_BLUR_ENABLED,
-  DEFAULT_OCR_TITLE_MEMO_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   FIELD_LABEL_MAX_LENGTH,
@@ -70,7 +69,6 @@ import {
   captureAfterModeLabel,
   shutterSoundLabel,
   privacyBlurEnabledLabel,
-  ocrTitleMemoEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -183,7 +181,6 @@ export function SettingsScreen({
   );
   const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
   const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
-  const [ocrTitleMemoEnabled, setOcrTitleMemoEnabledState] = useState(DEFAULT_OCR_TITLE_MEMO_ENABLED);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
@@ -237,7 +234,6 @@ export function SettingsScreen({
       setCaptureAfterModeState(snapshot.captureAfterMode);
       setShutterSoundState(snapshot.shutterSound);
       setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
-      setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
       setCameraHandState(snapshot.cameraHand);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
@@ -282,7 +278,6 @@ export function SettingsScreen({
         captureAfterMode,
         shutterSound,
         privacyBlurEnabled,
-        ocrTitleMemoEnabled,
         cameraHand,
         floorPickerMode,
         floorDisplayMode,
@@ -318,7 +313,6 @@ export function SettingsScreen({
       setCaptureAfterModeState(saved.captureAfterMode);
       setShutterSoundState(saved.shutterSound);
       setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
-      setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
       setCameraHandState(saved.cameraHand);
       setFloorPickerModeState(saved.floorPickerMode);
       setFloorDisplayModeState(saved.floorDisplayMode);
@@ -1041,42 +1035,6 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel(privacyBlurEnabledLabel(true), DEFAULT_PRIVACY_BLUR_ENABLED)}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>사진 글자로 제목·메모</Text>
-          <Text style={styles.hint}>
-            사용: 저장 화면에서 「글자 읽어 채우기」로 사진 속 글자를 폰 안에서만 읽어 제목·메모 초안을
-            만듭니다. 서버로 보내지 않으며, AI로 문장을 새로 쓰지 않습니다. (Android) 기본은 끔입니다.
-          </Text>
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, !ocrTitleMemoEnabled && styles.optionButtonSelected]}
-              onPress={() => setOcrTitleMemoEnabledState(false)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  !ocrTitleMemoEnabled && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel(ocrTitleMemoEnabledLabel(false), !DEFAULT_OCR_TITLE_MEMO_ENABLED)}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, ocrTitleMemoEnabled && styles.optionButtonSelected]}
-              onPress={() => setOcrTitleMemoEnabledState(true)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  ocrTitleMemoEnabled && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel(ocrTitleMemoEnabledLabel(true), DEFAULT_OCR_TITLE_MEMO_ENABLED)}
               </Text>
             </Pressable>
           </View>
