@@ -117,6 +117,7 @@ export function VoiceInputField({
         placeholder={placeholderHint?.trim() || `${label} 입력`}
         placeholderTextColor="#9ca3af"
         multiline={multiline}
+        scrollEnabled={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}
       />
       {!speechAvailable ? (
@@ -200,6 +201,7 @@ const styles = StyleSheet.create({
   },
   inputMultiline: {
     minHeight: 96,
+    maxHeight: 200,
   },
   hint: {
     fontSize: 12,

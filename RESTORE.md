@@ -3038,3 +3038,15 @@ restore-mlkit-scene.bat
 
 Restores settings / save modal / native module from `src.pre-mlkit-scene/`.
 DB key `mlkit_scene_label_enabled` may remain and is harmless.
+
+---
+
+## 192. OCR 메모 긴 글 스크롤 되돌리기 (선택)
+
+「글자 읽어 채우기」 후 긴 메모 칸·시트 스크롤을 넣은 뒤 문제가 생기면:
+
+```bat
+restore-ocr-memo-scroll.bat
+```
+
+`src.pre-ocr-memo-scroll/` 스냅샷으로 `VoiceInputField`·`StampSaveModal`·도움말을 되돌립니다.

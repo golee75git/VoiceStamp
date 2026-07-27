@@ -1056,7 +1056,8 @@ export function SettingsScreen({
           <Text style={[styles.label, styles.sectionGap]}>사진 글자로 제목·메모</Text>
           <Text style={styles.hint}>
             사용: 저장 화면에서 「글자 읽어 채우기」로 사진 속 글자를 폰 안에서만 읽어 제목·메모 초안을
-            만듭니다. 서버로 보내지 않으며, AI로 문장을 새로 쓰지 않습니다. (Android) 기본은 끔입니다.
+            만듭니다. 긴 글은 메모 칸·저장 시트에서 스크롤됩니다. 서버로 보내지 않으며, AI로 문장을
+            새로 쓰지 않습니다. (Android) 기본은 끔입니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable

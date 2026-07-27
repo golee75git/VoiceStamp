@@ -1104,6 +1104,10 @@ export function StampSaveModal({
           setMemoSelection,
         );
       }
+      // Long OCR memo: scroll sheet so memo field is visible; field itself scrolls inside maxHeight.
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollToEnd({ animated: true });
+      });
       Alert.alert('글자 읽기', '제목·메모 초안을 넣었습니다. 필요하면 수정하세요.');
     } catch {
       Alert.alert('글자 읽기', '읽는 중 오류가 발생했습니다.');
