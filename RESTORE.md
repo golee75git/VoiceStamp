@@ -3050,3 +3050,15 @@ restore-ocr-memo-scroll.bat
 ```
 
 `src.pre-ocr-memo-scroll/` 스냅샷으로 `VoiceInputField`·`StampSaveModal`·도움말을 되돌립니다.
+
+---
+
+## 193. 웹 제한 안내 + OCR/가리기 버튼 가로 배치 되돌리기 (선택)
+
+웹 `/app` 진입 전 안내 화면 또는 저장 화면 버튼 가로 배치 후 문제가 생기면:
+
+```bat
+restore-web-limit-ocr-row.bat
+```
+
+`src.pre-web-limit-ocr-row/` 스냅샷으로 `App.tsx`·`StampSaveModal`·도움말을 되돌리고 `WebLimitNoticeScreen.tsx`를 삭제합니다.

@@ -1320,32 +1320,37 @@ export function StampSaveModal({
               </Pressable>
             ) : null}
 
-            {photoUri && privacyBlurEnabled && isPrivacyBlurSupported() ? (
-              <Pressable
-                style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
-                onPress={() => setPrivacyModalOpen(true)}
-                disabled={saving}
-                accessibilityRole="button"
-                accessibilityLabel="개인정보 가리기"
-              >
-                <Text style={styles.privacyBlurBtnText}>개인정보 가리기</Text>
-              </Pressable>
-            ) : null}
-
-            {photoUri && ocrTitleMemoEnabled && isOcrTitleMemoSupported() ? (
-              <Pressable
-                style={[styles.ocrFillBtn, saving || ocrBusy ? { opacity: 0.5 } : null]}
-                onPress={() => void handleOcrFill()}
-                disabled={saving || ocrBusy}
-                accessibilityRole="button"
-                accessibilityLabel="글자 읽어 채우기"
-              >
-                {ocrBusy ? (
-                  <ActivityIndicator color="#0f766e" />
-                ) : (
-                  <Text style={styles.ocrFillBtnText}>글자 읽어 채우기</Text>
-                )}
-              </Pressable>
+            {photoUri &&
+            ((privacyBlurEnabled && isPrivacyBlurSupported()) ||
+              (ocrTitleMemoEnabled && isOcrTitleMemoSupported())) ? (
+              <View style={styles.photoActionRow}>
+                {privacyBlurEnabled && isPrivacyBlurSupported() ? (
+                  <Pressable
+                    style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
+                    onPress={() => setPrivacyModalOpen(true)}
+                    disabled={saving}
+                    accessibilityRole="button"
+                    accessibilityLabel="개인정보 가리기"
+                  >
+                    <Text style={styles.privacyBlurBtnText}>개인정보 가리기</Text>
+                  </Pressable>
+                ) : null}
+                {ocrTitleMemoEnabled && isOcrTitleMemoSupported() ? (
+                  <Pressable
+                    style={[styles.ocrFillBtn, saving || ocrBusy ? { opacity: 0.5 } : null]}
+                    onPress={() => void handleOcrFill()}
+                    disabled={saving || ocrBusy}
+                    accessibilityRole="button"
+                    accessibilityLabel="글자 읽어 채우기"
+                  >
+                    {ocrBusy ? (
+                      <ActivityIndicator color="#0f766e" />
+                    ) : (
+                      <Text style={styles.ocrFillBtnText}>글자 읽어 채우기</Text>
+                    )}
+                  </Pressable>
+                ) : null}
+              </View>
             ) : null}
 
             {!isEdit ? (
@@ -1752,9 +1757,14 @@ const styles = StyleSheet.create({
   zoomEditBadgeRight: {
     right: 8,
   },
-  privacyBlurBtn: {
-    alignSelf: 'flex-start',
+  photoActionRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
     marginTop: 4,
+  },
+  privacyBlurBtn: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -1768,8 +1778,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   ocrFillBtn: {
-    alignSelf: 'flex-start',
-    marginTop: 4,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { IntroScreen } from './src/components/IntroScreen';
 import { StartScreen } from './src/components/StartScreen';
+import { WebLimitNoticeScreen } from './src/components/WebLimitNoticeScreen';
 import { MainScreen } from './src/screens/MainScreen';
 import {
   getFloorDisplayMode,
@@ -13,7 +14,7 @@ import {
   shouldShowStartScreen,
 } from './src/services/settingsService';
 
-type AppPhase = 'boot' | 'intro' | 'start' | 'main';
+type AppPhase = 'boot' | 'intro' | 'start' | 'webNotice' | 'main';
 
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>('boot');
@@ -23,14 +24,23 @@ export default function App() {
     setPhase('main');
   }, []);
 
+  /** Web (/app): show limits notice once per visit before main. Native unchanged. */
+  const proceedTowardMain = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      setPhase('webNotice');
+      return;
+    }
+    await enterMain();
+  }, [enterMain]);
+
   const goToStartOrMain = useCallback(async () => {
     const showStart = await shouldShowStartScreen();
     if (showStart) {
       setPhase('start');
       return;
     }
-    await enterMain();
-  }, [enterMain]);
+    await proceedTowardMain();
+  }, [proceedTowardMain]);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,7 +74,9 @@ export default function App() {
       />
     );
   } else if (phase === 'start') {
-    content = <StartScreen onComplete={() => void enterMain()} />;
+    content = <StartScreen onComplete={() => void proceedTowardMain()} />;
+  } else if (phase === 'webNotice') {
+    content = <WebLimitNoticeScreen onContinue={() => void enterMain()} />;
   } else if (phase === 'main') {
     content = <MainScreen />;
   }
