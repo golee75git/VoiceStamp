@@ -471,7 +471,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>카메라 홈 배경</Text>
           <Text style={styles.hint}>
-            촬영 전 화면 키비주얼입니다(뒤 배경은 검정). 앱에 포함된 이미지만 선택할 수 있습니다. 기본값은 「기본」입니다.
+            촬영 전 화면 키비주얼입니다. 「기본」은 검정 뒤 배경, 「스타일 2」는 흰색 뒤 배경입니다. 앱에 포함된 이미지만 선택할 수 있습니다.
           </Text>
           <View style={styles.optionRow}>
             {CAMERA_HOME_BG_OPTIONS.map((option) => {

@@ -3110,3 +3110,15 @@ restore-camera-home-default-mainint1.bat
 ```
 
 `src.pre-camera-home-default-mainint1/`·`public.pre-camera-home-default-mainint1/` 스냅샷으로 되돌립니다.
+
+---
+
+## 198. 카메라 홈 기본/스타일2 뒤 배경색 되돌리기 (선택)
+
+기본=mainint(검정)·스타일2=mainint1(흰색) 매핑 후 문제가 생기면:
+
+```bat
+restore-camera-home-bg-colors.bat
+```
+
+`src.pre-camera-home-bg-colors/`·`public.pre-camera-home-bg-colors/`·`assets.pre-camera-home-bg-colors/` 스냅샷으로 되돌립니다.

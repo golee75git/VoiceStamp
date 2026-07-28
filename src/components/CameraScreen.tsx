@@ -20,7 +20,7 @@ import { FieldTemplateSheet } from './FieldTemplateSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, type CameraHand, type CameraHomeBg } from '../services/settingsService';
+import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, cameraHomeBgFill, type CameraHand, type CameraHomeBg } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
@@ -74,7 +74,7 @@ export function CameraScreen({
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
-  const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint1');
+  const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
@@ -742,8 +742,8 @@ export function CameraScreen({
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.launcher}>
+    <View style={[styles.container, { backgroundColor: cameraHomeBgFill(cameraHomeBg) }]}>
+      <View style={[styles.launcher, { backgroundColor: cameraHomeBgFill(cameraHomeBg) }]}>
         <View style={styles.launcherSplash}>
           <Image
             source={CAMERA_HOME_IMAGES[cameraHomeBg]}
@@ -753,13 +753,21 @@ export function CameraScreen({
           />
         </View>
         <Pressable
-          style={styles.launchCaptureButton}
+          style={[
+            styles.launchCaptureButton,
+            cameraHomeBg === 'mainint1' && styles.launchCaptureButtonOnLight,
+          ]}
           onPress={() => void openPrimaryCapture()}
           disabled={cameraBusy || actionSheetVisible}
           accessibilityRole="button"
           accessibilityLabel="사진 촬영"
         >
-          <View style={styles.launchCaptureInner} />
+          <View
+            style={[
+              styles.launchCaptureInner,
+              cameraHomeBg === 'mainint1' && styles.launchCaptureInnerOnLight,
+            ]}
+          />
         </Pressable>
         {cameraBusy ? (
           <View style={styles.busyOverlay}>
@@ -880,11 +888,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  launchCaptureButtonOnLight: {
+    borderColor: '#111',
+  },
   launchCaptureInner: {
     width: 58,
     height: 58,
     borderRadius: 29,
     backgroundColor: '#fff',
+  },
+  launchCaptureInnerOnLight: {
+    backgroundColor: '#111',
   },
   busyOverlay: {
     ...StyleSheet.absoluteFillObject,

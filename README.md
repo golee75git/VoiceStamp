@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260728_132816.apk` — **카메라 홈 기본 mainint1** — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260728_135843.apk` — **카메라 홈 기본(검정)/스타일2(흰색)** — 상세는 [docs/README.md](./docs/README.md)
