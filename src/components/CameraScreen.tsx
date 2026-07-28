@@ -74,7 +74,7 @@ export function CameraScreen({
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
-  const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
+  const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint1');
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);

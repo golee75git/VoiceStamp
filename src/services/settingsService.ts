@@ -100,8 +100,8 @@ export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_EXPORT_FOOTER_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
-export const DEFAULT_CAMERA_HOME_BG: CameraHomeBg = 'mainint';
-export const CAMERA_HOME_BG_OPTIONS: CameraHomeBg[] = ['mainint', 'mainint1'];
+export const DEFAULT_CAMERA_HOME_BG: CameraHomeBg = 'mainint1';
+export const CAMERA_HOME_BG_OPTIONS: CameraHomeBg[] = ['mainint1', 'mainint'];
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_STAMP_TEXT_SIZE = 'medium' as const;
 /** Cleaner list cards by default: title + date only. */
@@ -940,11 +940,11 @@ export function sanitizeCameraHand(value: string): CameraHand {
 }
 
 export function sanitizeCameraHomeBg(value: string): CameraHomeBg {
-  return value === 'mainint1' ? 'mainint1' : 'mainint';
+  return value === 'mainint' ? 'mainint' : 'mainint1';
 }
 
 export function cameraHomeBgLabel(bg: CameraHomeBg): string {
-  return bg === 'mainint1' ? '스타일 2' : '기본';
+  return bg === 'mainint' ? '스타일 2' : '기본';
 }
 
 export async function getCameraHand(): Promise<CameraHand> {

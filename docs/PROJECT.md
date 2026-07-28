@@ -420,10 +420,12 @@ VoiceStamp/
 | 320 | GitHub APK `releases/20260728_105823` · 랜딩·`/info` · 도움말 | `7e6fa63` | `restore-apk-download-20260728_105823.bat` |
 | 321 | **카메라 홈** `mainint` (`camera-home.png`) · 시작 배너 원복 | `2124da6` | `restore-camera-home-mainint.bat` §195 |
 | 322 | GitHub APK `releases/20260728_111800` · 랜딩·`/info` · 도움말 | `2124da6` | `restore-apk-download-20260728_111800.bat` |
-| 323 | **카메라 홈 배경** 설정(기본/스타일 2) | (이번) | `restore-camera-home-bg.bat` §196 |
-| 324 | GitHub APK `releases/20260728_113356` · 랜딩·`/info` · 도움말 | (이번) | `restore-apk-download-20260728_113356.bat` |
+| 323 | **카메라 홈 배경** 설정(기본/스타일 2) | `00090a2` | `restore-camera-home-bg.bat` §196 |
+| 324 | GitHub APK `releases/20260728_113356` · 랜딩·`/info` · 도움말 | `00090a2` | `restore-apk-download-20260728_113356.bat` |
+| 325 | **카메라 홈 기본값** mainint1 · 검정 배경 유지 | (이번) | `restore-camera-home-default-mainint1.bat` §197 |
+| 326 | GitHub APK `releases/20260728_132816` · 랜딩·`/info` · 도움말 | (이번) | `restore-apk-download-20260728_132816.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260728_113356.apk`
+> **권장 APK:** `releases/VoiceStamp_20260728_132816.apk`
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
