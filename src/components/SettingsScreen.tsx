@@ -27,6 +27,8 @@ import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
 
 import {
   DEFAULT_CAMERA_HAND,
+  DEFAULT_CAMERA_HOME_BG,
+  CAMERA_HOME_BG_OPTIONS,
   DEFAULT_MEMO_TEXT_ALIGN,
   DEFAULT_PDF_FILENAME_INCLUDE_DATETIME,
   DEFAULT_PDF_IMAGE_QUALITY,
@@ -80,7 +82,9 @@ import {
   locationModeLabel,
   loadSettingsForScreen,
   saveSettingsForScreen,
+  cameraHomeBgLabel,
   type CameraHand,
+  type CameraHomeBg,
   type CoordsLabelMode,
   type LocationMode,
   type PdfImageQuality,
@@ -190,6 +194,7 @@ export function SettingsScreen({
     DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
+  const [cameraHomeBg, setCameraHomeBgState] = useState<CameraHomeBg>(DEFAULT_CAMERA_HOME_BG);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
     DEFAULT_FLOOR_PICKER_MODE,
   );
@@ -245,6 +250,7 @@ export function SettingsScreen({
       setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
       setMlkitSceneLabelEnabledState(snapshot.mlkitSceneLabelEnabled);
       setCameraHandState(snapshot.cameraHand);
+      setCameraHomeBgState(snapshot.cameraHomeBg);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
       setTitleDatetimeModeState(snapshot.titleDatetimeMode);
@@ -291,6 +297,7 @@ export function SettingsScreen({
         ocrTitleMemoEnabled,
         mlkitSceneLabelEnabled,
         cameraHand,
+        cameraHomeBg,
         floorPickerMode,
         floorDisplayMode,
         titleDatetimeMode,
@@ -328,6 +335,7 @@ export function SettingsScreen({
       setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
       setMlkitSceneLabelEnabledState(saved.mlkitSceneLabelEnabled);
       setCameraHandState(saved.cameraHand);
+      setCameraHomeBgState(saved.cameraHomeBg);
       setFloorPickerModeState(saved.floorPickerMode);
       setFloorDisplayModeState(saved.floorDisplayMode);
       setTitleDatetimeModeState(saved.titleDatetimeMode);
@@ -459,6 +467,30 @@ export function SettingsScreen({
                 {chipLabel('오른손', DEFAULT_CAMERA_HAND === 'right')}
               </Text>
             </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>카메라 홈 배경</Text>
+          <Text style={styles.hint}>
+            촬영 전 화면에 표시되는 키비주얼입니다. 앱에 포함된 이미지만 선택할 수 있습니다.
+          </Text>
+          <View style={styles.optionRow}>
+            {CAMERA_HOME_BG_OPTIONS.map((option) => {
+              const selected = cameraHomeBg === option;
+              return (
+                <Pressable
+                  key={option}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => setCameraHomeBgState(option)}
+                  disabled={saving}
+                >
+                  <Text
+                    style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                  >
+                    {chipLabel(cameraHomeBgLabel(option), option === DEFAULT_CAMERA_HOME_BG)}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>PDF 페이지당 사진 수</Text>

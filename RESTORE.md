@@ -3086,3 +3086,15 @@ restore-camera-home-mainint.bat
 ```
 
 `assets.pre-camera-home-mainint/`·`public.pre-camera-home-mainint/` 스냅샷으로 `camera-home.png`·도움말을 되돌립니다.
+
+---
+
+## 196. 카메라 홈 배경 설정 되돌리기 (선택)
+
+설정에서 카메라 홈 배경(기본/스타일 2)을 고르는 기능을 넣은 뒤 문제가 생기면:
+
+```bat
+restore-camera-home-bg.bat
+```
+
+`src.pre-camera-home-bg/`·`public.pre-camera-home-bg/` 스냅샷으로 설정·카메라 화면·도움말을 되돌립니다. DB 키 `camera_home_bg`는 남아도 무해합니다.

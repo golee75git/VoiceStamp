@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260728_111800.apk` — **카메라 홈 mainint** — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260728_113356.apk` — **카메라 홈 배경 설정** — 상세는 [docs/README.md](./docs/README.md)

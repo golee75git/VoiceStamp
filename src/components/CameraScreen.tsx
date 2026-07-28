@@ -20,7 +20,7 @@ import { FieldTemplateSheet } from './FieldTemplateSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, type CameraHand } from '../services/settingsService';
+import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, type CameraHand, type CameraHomeBg } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { pickLargestPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
@@ -39,7 +39,14 @@ const settingsIcon = require('../../assets/settings-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const templateIcon = require('../../assets/template-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const cameraHomeImage = require('../../assets/camera-home.png');
+const cameraHomeMainint = require('../../assets/camera-home.png');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const cameraHomeMainint1 = require('../../assets/camera-home-mainint1.png');
+
+const CAMERA_HOME_IMAGES: Record<CameraHomeBg, number> = {
+  mainint: cameraHomeMainint,
+  mainint1: cameraHomeMainint1,
+};
 
 type CameraScreenProps = {
   refreshKey: number;
@@ -67,6 +74,7 @@ export function CameraScreen({
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
+  const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
   const [autoLaunch, setAutoLaunch] = useState(false);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
@@ -175,6 +183,7 @@ export function CameraScreen({
 
   useEffect(() => {
     getCameraHand().then(setCameraHand);
+    getCameraHomeBg().then(setCameraHomeBg);
     void loadStampSaveModalLayoutSettings();
   }, [refreshKey]);
 
@@ -737,7 +746,7 @@ export function CameraScreen({
       <View style={styles.launcher}>
         <View style={styles.launcherSplash}>
           <Image
-            source={cameraHomeImage}
+            source={CAMERA_HOME_IMAGES[cameraHomeBg]}
             style={styles.launcherImage}
             resizeMode="contain"
             accessibilityIgnoresInvertColors

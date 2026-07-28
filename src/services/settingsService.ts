@@ -45,6 +45,7 @@ const PDF_SHOW_DATETIME_KEY = 'pdf_show_datetime';
 const PDF_FILENAME_INCLUDE_DATETIME_KEY = 'pdf_filename_include_datetime';
 const EXPORT_FOOTER_DATETIME_KEY = 'export_footer_datetime';
 const CAMERA_HAND_KEY = 'camera_hand';
+const CAMERA_HOME_BG_KEY = 'camera_home_bg';
 const STAMP_TEXT_LAYOUT_KEY = 'stamp_text_layout';
 const STAMP_TEXT_SIZE_KEY = 'stamp_text_size';
 const WATERMARK_STYLE_KEY = 'watermark_style';
@@ -99,6 +100,8 @@ export const DEFAULT_PDF_SHOW_DATETIME = true;
 export const DEFAULT_EXPORT_FOOTER_DATETIME = true;
 export const DEFAULT_PDF_FILENAME_INCLUDE_DATETIME = true;
 export const DEFAULT_CAMERA_HAND = 'right' as const;
+export const DEFAULT_CAMERA_HOME_BG: CameraHomeBg = 'mainint';
+export const CAMERA_HOME_BG_OPTIONS: CameraHomeBg[] = ['mainint', 'mainint1'];
 export const DEFAULT_STAMP_TEXT_LAYOUT = 'caption' as const;
 export const DEFAULT_STAMP_TEXT_SIZE = 'medium' as const;
 /** Cleaner list cards by default: title + date only. */
@@ -147,6 +150,8 @@ export type PdfImageQuality = 'original' | 'standard' | 'compressed';
 export type TextAlign = 'left' | 'center' | 'right';
 export type StampTextSize = 'small' | 'medium' | 'large';
 export type CameraHand = 'left' | 'right';
+/** Pre-capture launcher splash art (bundled assets only). */
+export type CameraHomeBg = 'mainint' | 'mainint1';
 export type StampTextLayout = 'caption' | 'watermark';
 export type WatermarkStyle =
   | 'solid_dark'
@@ -469,6 +474,7 @@ export type SettingsScreenSnapshot = {
   ocrTitleMemoEnabled: boolean;
   mlkitSceneLabelEnabled: boolean;
   cameraHand: CameraHand;
+  cameraHomeBg: CameraHomeBg;
   floorPickerMode: FloorPickerMode;
   floorDisplayMode: FloorDisplayMode;
   titleDatetimeMode: TitleDatetimeMode;
@@ -587,6 +593,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
     })(),
+    cameraHomeBg: (() => {
+      const raw = pickSetting(map, CAMERA_HOME_BG_KEY);
+      return raw ? sanitizeCameraHomeBg(raw) : DEFAULT_CAMERA_HOME_BG;
+    })(),
     floorPickerMode: (() => {
       const raw = pickSetting(map, FLOOR_PICKER_MODE_KEY);
       return raw ? sanitizeFloorPickerMode(raw) : DEFAULT_FLOOR_PICKER_MODE;
@@ -684,6 +694,7 @@ export function sanitizeSettingsScreenSnapshot(
     ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
     mlkitSceneLabelEnabled: draft.mlkitSceneLabelEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
+    cameraHomeBg: sanitizeCameraHomeBg(draft.cameraHomeBg),
     floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
     floorDisplayMode: sanitizeFloorDisplayMode(draft.floorDisplayMode),
     titleDatetimeMode: sanitizeTitleDatetimeMode(draft.titleDatetimeMode),
@@ -725,6 +736,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
     [MLKIT_SCENE_LABEL_ENABLED_KEY, snapshot.mlkitSceneLabelEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
+    [CAMERA_HOME_BG_KEY, snapshot.cameraHomeBg],
     [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
     [FLOOR_DISPLAY_MODE_KEY, snapshot.floorDisplayMode],
     [TITLE_DATETIME_MODE_KEY, snapshot.titleDatetimeMode],
@@ -927,6 +939,14 @@ export function sanitizeCameraHand(value: string): CameraHand {
   return value === 'left' ? 'left' : 'right';
 }
 
+export function sanitizeCameraHomeBg(value: string): CameraHomeBg {
+  return value === 'mainint1' ? 'mainint1' : 'mainint';
+}
+
+export function cameraHomeBgLabel(bg: CameraHomeBg): string {
+  return bg === 'mainint1' ? '스타일 2' : '기본';
+}
+
 export async function getCameraHand(): Promise<CameraHand> {
   const value = await readSetting(CAMERA_HAND_KEY);
   if (!value) {
@@ -939,6 +959,20 @@ export async function setCameraHand(hand: CameraHand): Promise<CameraHand> {
   const safeHand = sanitizeCameraHand(hand);
   await writeSetting(CAMERA_HAND_KEY, safeHand);
   return safeHand;
+}
+
+export async function getCameraHomeBg(): Promise<CameraHomeBg> {
+  const value = await readSetting(CAMERA_HOME_BG_KEY);
+  if (!value) {
+    return DEFAULT_CAMERA_HOME_BG;
+  }
+  return sanitizeCameraHomeBg(value);
+}
+
+export async function setCameraHomeBg(bg: CameraHomeBg): Promise<CameraHomeBg> {
+  const safe = sanitizeCameraHomeBg(bg);
+  await writeSetting(CAMERA_HOME_BG_KEY, safe);
+  return safe;
 }
 
 export async function getStampTextLayout(): Promise<StampTextLayout> {
