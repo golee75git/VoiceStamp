@@ -40,4 +40,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260724_182721.apk` — **앱 내 카메라 전·후면** — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260728_105823.apk` — **시작 배너 mainint** — 상세는 [docs/README.md](./docs/README.md)

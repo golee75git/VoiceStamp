@@ -3062,3 +3062,15 @@ restore-web-limit-ocr-row.bat
 ```
 
 `src.pre-web-limit-ocr-row/` 스냅샷으로 `App.tsx`·`StampSaveModal`·도움말을 되돌리고 `WebLimitNoticeScreen.tsx`를 삭제합니다.
+
+---
+
+## 194. 시작 배너(mainint) 되돌리기 (선택)
+
+시작 화면(`assets/start.png`)을 `mainint` 키비주얼로 교체한 뒤 문제가 생기면:
+
+```bat
+restore-start-mainint.bat
+```
+
+`assets.pre-start-mainint/`·`src.pre-start-mainint/`·`public.pre-start-mainint/` 스냅샷으로 `start.png`·`StartScreen.tsx`·도움말을 되돌립니다.
