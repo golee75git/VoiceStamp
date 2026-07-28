@@ -46,7 +46,7 @@ export function StartScreen({ onComplete }: StartScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#E8F4FE',
   },
   imageWrap: {
     flex: 1,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   snoozeText: {
-    color: '#9ca3af',
+    color: '#6b7280',
     fontSize: 15,
     fontWeight: '600',
     textDecorationLine: 'underline',

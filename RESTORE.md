@@ -3074,3 +3074,15 @@ restore-start-mainint.bat
 ```
 
 `assets.pre-start-mainint/`·`src.pre-start-mainint/`·`public.pre-start-mainint/` 스냅샷으로 `start.png`·`StartScreen.tsx`·도움말을 되돌립니다.
+
+---
+
+## 195. 카메라 홈(mainint) 되돌리기 (선택)
+
+촬영 전 카메라 홈(`assets/camera-home.png`)을 `mainint` 키비주얼로 교체한 뒤 문제가 생기면:
+
+```bat
+restore-camera-home-mainint.bat
+```
+
+`assets.pre-camera-home-mainint/`·`public.pre-camera-home-mainint/` 스냅샷으로 `camera-home.png`·도움말을 되돌립니다.
