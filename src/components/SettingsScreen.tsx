@@ -63,6 +63,7 @@ import {
   DEFAULT_SHUTTER_SOUND,
   DEFAULT_PRIVACY_BLUR_ENABLED,
   DEFAULT_OCR_TITLE_MEMO_ENABLED,
+  DEFAULT_QR_CAPTION_ENABLED,
   DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
@@ -74,6 +75,7 @@ import {
   shutterSoundLabel,
   privacyBlurEnabledLabel,
   ocrTitleMemoEnabledLabel,
+  qrCaptionEnabledLabel,
   mlkitSceneLabelEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
@@ -190,6 +192,7 @@ export function SettingsScreen({
   const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
   const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabledState] = useState(DEFAULT_OCR_TITLE_MEMO_ENABLED);
+  const [qrCaptionEnabled, setQrCaptionEnabledState] = useState(DEFAULT_QR_CAPTION_ENABLED);
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabledState] = useState(
     DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   );
@@ -248,6 +251,7 @@ export function SettingsScreen({
       setShutterSoundState(snapshot.shutterSound);
       setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
+      setQrCaptionEnabledState(snapshot.qrCaptionEnabled);
       setMlkitSceneLabelEnabledState(snapshot.mlkitSceneLabelEnabled);
       setCameraHandState(snapshot.cameraHand);
       setCameraHomeBgState(snapshot.cameraHomeBg);
@@ -295,6 +299,7 @@ export function SettingsScreen({
         shutterSound,
         privacyBlurEnabled,
         ocrTitleMemoEnabled,
+        qrCaptionEnabled,
         mlkitSceneLabelEnabled,
         cameraHand,
         cameraHomeBg,
@@ -333,6 +338,7 @@ export function SettingsScreen({
       setShutterSoundState(saved.shutterSound);
       setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
+      setQrCaptionEnabledState(saved.qrCaptionEnabled);
       setMlkitSceneLabelEnabledState(saved.mlkitSceneLabelEnabled);
       setCameraHandState(saved.cameraHand);
       setCameraHomeBgState(saved.cameraHomeBg);
@@ -1118,6 +1124,43 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel(ocrTitleMemoEnabledLabel(true), DEFAULT_OCR_TITLE_MEMO_ENABLED)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>사진 URL → QR (별도 영역)</Text>
+          <Text style={styles.hint}>
+            사용: 저장 화면에서 URL을 확인·수정한 뒤, 「사진 아래(별도 영역)」이미지에 QR을
+            넣습니다. 자동 찾기는 Android에서 사진 글자(OCR)로만 하며 서버로 보내지 않습니다.
+            http(s)만 허용합니다. 워터마크 모드에는 아직 적용되지 않습니다. 기본은 끔입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !qrCaptionEnabled && styles.optionButtonSelected]}
+              onPress={() => setQrCaptionEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !qrCaptionEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(qrCaptionEnabledLabel(false), !DEFAULT_QR_CAPTION_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, qrCaptionEnabled && styles.optionButtonSelected]}
+              onPress={() => setQrCaptionEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  qrCaptionEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(qrCaptionEnabledLabel(true), DEFAULT_QR_CAPTION_ENABLED)}
               </Text>
             </Pressable>
           </View>

@@ -14,6 +14,7 @@ import {
   ALTER_STAMPS_ADD_EXTRA1_FIELD_LABEL,
   ALTER_STAMPS_ADD_EXTRA2_FIELD_LABEL,
   ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL,
+  ALTER_STAMPS_ADD_SOURCE_URL,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_SETTINGS_TABLE,
@@ -85,6 +86,10 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasExtra3FieldLabel = columns.some((column) => column.name === 'extra3_field_label');
   if (!hasExtra3FieldLabel) {
     await db.execAsync(ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL);
+  }
+  const hasSourceUrl = columns.some((column) => column.name === 'source_url');
+  if (!hasSourceUrl) {
+    await db.execAsync(ALTER_STAMPS_ADD_SOURCE_URL);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
 }

@@ -68,6 +68,7 @@ type SaveStampInput = {
   extra1?: string | null;
   extra2?: string | null;
   extra3?: string | null;
+  sourceUrl?: string | null;
   /** Save-time field display names (avoids settings race; stored on stamp). */
   fieldLabels?: Partial<FieldLabels> | null;
   captureForExport?: (
@@ -310,6 +311,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     extra1: input.extra1?.trim() || null,
     extra2: input.extra2?.trim() || null,
     extra3: input.extra3?.trim() || null,
+    sourceUrl: input.sourceUrl?.trim() || null,
     titleFieldLabel: fieldLabels.titleFieldLabel,
     placeFieldLabel: fieldLabels.placeFieldLabel,
     memoFieldLabel: fieldLabels.memoFieldLabel,
@@ -342,6 +344,7 @@ export async function updateStamp(input: {
   extra1?: string | null;
   extra2?: string | null;
   extra3?: string | null;
+  sourceUrl?: string | null;
   fieldLabels?: Partial<FieldLabels> | null;
   croppedImageUri?: string;
   captureForExport?: SaveStampInput['captureForExport'];
@@ -357,6 +360,7 @@ export async function updateStamp(input: {
   const extra1 = input.extra1?.trim() || null;
   const extra2 = input.extra2?.trim() || null;
   const extra3 = input.extra3?.trim() || null;
+  const sourceUrl = input.sourceUrl?.trim() || null;
   const fieldLabels = resolveFieldLabels(
     input.fieldLabels ?? {
       titleFieldLabel: stamp.titleFieldLabel,
@@ -433,6 +437,7 @@ export async function updateStamp(input: {
     extra1 !== (stamp.extra1?.trim() || null) ||
     extra2 !== (stamp.extra2?.trim() || null) ||
     extra3 !== (stamp.extra3?.trim() || null) ||
+    sourceUrl !== (stamp.sourceUrl?.trim() || null) ||
     labelsChanged;
 
   if (metadataChanged) {
@@ -448,6 +453,7 @@ export async function updateStamp(input: {
       extra2,
       extra3,
       fieldLabels,
+      sourceUrl,
     );
   } else {
     await updateStampMetadata(
@@ -460,10 +466,11 @@ export async function updateStamp(input: {
       extra2,
       extra3,
       fieldLabels,
+      sourceUrl,
     );
   }
 
-  if (imageCropped && Platform.OS !== 'web') {
+  if ((imageCropped || sourceUrl !== (stamp.sourceUrl?.trim() || null)) && Platform.OS !== 'web') {
     void ensureStampThumb(stamp.id, resolveImageUri(imagePath), { force: true }).catch(() => {});
     const updatedStamp: Stamp = {
       ...stamp,
@@ -476,6 +483,7 @@ export async function updateStamp(input: {
       extra1,
       extra2,
       extra3,
+      sourceUrl,
       titleFieldLabel: fieldLabels.titleFieldLabel,
       placeFieldLabel: fieldLabels.placeFieldLabel,
       memoFieldLabel: fieldLabels.memoFieldLabel,

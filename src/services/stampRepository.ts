@@ -1,13 +1,21 @@
 import { getDatabase } from '../db/database';
 import { sanitizeStampFloor } from './stampFloor';
 import { resolveFieldLabels, type FieldLabels } from './fieldLabels';
+import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label';
 
 function normalizeOptionalText(value?: string | null): string | null {
   return value?.trim() || null;
+}
+
+function normalizeSourceUrl(value?: string | null): string | null {
+  if (value == null || !String(value).trim()) {
+    return null;
+  }
+  return normalizeHttpUrl(String(value));
 }
 
 function normalizeFieldLabelSnapshot(value?: string | null): string | null {
@@ -32,6 +40,7 @@ function mapRow(row: StampRow): Stamp {
     extra1: normalizeOptionalText(row.extra1),
     extra2: normalizeOptionalText(row.extra2),
     extra3: normalizeOptionalText(row.extra3),
+    sourceUrl: normalizeSourceUrl(row.source_url),
     titleFieldLabel: normalizeFieldLabelSnapshot(row.title_field_label),
     placeFieldLabel: normalizeFieldLabelSnapshot(row.place_field_label),
     memoFieldLabel: normalizeFieldLabelSnapshot(row.memo_field_label),
@@ -64,8 +73,8 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     extra3FieldLabel: stamp.extra3FieldLabel ?? undefined,
   });
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -81,6 +90,7 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     normalizeOptionalText(stamp.extra1),
     normalizeOptionalText(stamp.extra2),
     normalizeOptionalText(stamp.extra3),
+    normalizeSourceUrl(stamp.sourceUrl),
     labels[0],
     labels[1],
     labels[2],
@@ -176,11 +186,12 @@ export async function updateStampMetadata(
   extra2?: string | null,
   extra3?: string | null,
   fieldLabels?: Partial<FieldLabels> | null,
+  sourceUrl?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   const labels = labelParams(fieldLabels);
   await db.runAsync(
-    `UPDATE stamps SET title = ?, memo = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?,
+    `UPDATE stamps SET title = ?, memo = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?, source_url = ?,
       title_field_label = ?, place_field_label = ?, memo_field_label = ?, extra1_field_label = ?, extra2_field_label = ?, extra3_field_label = ?,
       updated_at = ? WHERE id = ?`,
     title,
@@ -190,6 +201,7 @@ export async function updateStampMetadata(
     normalizeOptionalText(extra1),
     normalizeOptionalText(extra2),
     normalizeOptionalText(extra3),
+    normalizeSourceUrl(sourceUrl),
     labels[0],
     labels[1],
     labels[2],
@@ -230,12 +242,13 @@ export async function updateStampRecord(
   extra2?: string | null,
   extra3?: string | null,
   fieldLabels?: Partial<FieldLabels> | null,
+  sourceUrl?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   const labels = labelParams(fieldLabels);
   await db.runAsync(
     `UPDATE stamps
-     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?,
+     SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?, source_url = ?,
          title_field_label = ?, place_field_label = ?, memo_field_label = ?, extra1_field_label = ?, extra2_field_label = ?, extra3_field_label = ?,
          updated_at = ?
      WHERE id = ?`,
@@ -248,6 +261,7 @@ export async function updateStampRecord(
     normalizeOptionalText(extra1),
     normalizeOptionalText(extra2),
     normalizeOptionalText(extra3),
+    normalizeSourceUrl(sourceUrl),
     labels[0],
     labels[1],
     labels[2],

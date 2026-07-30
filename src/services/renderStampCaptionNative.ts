@@ -19,6 +19,8 @@ import { resolveImageUri } from './fileService';
 import type { TextAlign } from './settingsService';
 import { stampTextSizeScale } from './settingsService';
 import type { Stamp } from '../types/stamp';
+import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
+import { normalizeHttpUrl } from './qrUrlExtractService';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
 const CAPTION_REFERENCE_PHOTO_WIDTH = 1032;
@@ -162,6 +164,23 @@ export async function renderStampCaptionNative(
       position: { X: padding, Y: padding },
     },
   ];
+
+  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
+  if (safeSourceUrl) {
+    const qrTarget = qrPixelSizeForPhoto(Math.min(imgWidth, imgHeight));
+    const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
+    if (qr) {
+      const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));
+      overlayImages.push({
+        src: qr.uri,
+        scale: 1,
+        position: {
+          X: padding + imgWidth - qr.size - qrMargin,
+          Y: padding + imgHeight - qr.size - qrMargin,
+        },
+      });
+    }
+  }
 
   let cursorY = padding + imgHeight + 16 + orgHeight;
 

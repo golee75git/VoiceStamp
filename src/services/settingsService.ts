@@ -81,6 +81,7 @@ const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
 const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
+const QR_CAPTION_ENABLED_KEY = 'qr_caption_enabled';
 const MLKIT_SCENE_LABEL_ENABLED_KEY = 'mlkit_scene_label_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
@@ -117,6 +118,8 @@ export const DEFAULT_SHUTTER_SOUND = true;
 /** Android on-device face/number mosaic blur. Default off (opt-in). */
 export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
 export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
+/** Caption JPEG QR from confirmed http(s) URL. Default off (opt-in). Embed = caption only. */
+export const DEFAULT_QR_CAPTION_ENABLED = false;
 /** Android on-device Image Labeling → memo keywords. Default off (opt-in). */
 export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;
 export {
@@ -472,6 +475,7 @@ export type SettingsScreenSnapshot = {
   shutterSound: boolean;
   privacyBlurEnabled: boolean;
   ocrTitleMemoEnabled: boolean;
+  qrCaptionEnabled: boolean;
   mlkitSceneLabelEnabled: boolean;
   cameraHand: CameraHand;
   cameraHomeBg: CameraHomeBg;
@@ -585,6 +589,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       pickSetting(map, OCR_TITLE_MEMO_ENABLED_KEY),
       DEFAULT_OCR_TITLE_MEMO_ENABLED,
     ),
+    qrCaptionEnabled: parseBooleanSetting(
+      pickSetting(map, QR_CAPTION_ENABLED_KEY),
+      DEFAULT_QR_CAPTION_ENABLED,
+    ),
     mlkitSceneLabelEnabled: parseBooleanSetting(
       pickSetting(map, MLKIT_SCENE_LABEL_ENABLED_KEY),
       DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
@@ -692,6 +700,7 @@ export function sanitizeSettingsScreenSnapshot(
     shutterSound: draft.shutterSound,
     privacyBlurEnabled: draft.privacyBlurEnabled,
     ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
+    qrCaptionEnabled: draft.qrCaptionEnabled,
     mlkitSceneLabelEnabled: draft.mlkitSceneLabelEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
     cameraHomeBg: sanitizeCameraHomeBg(draft.cameraHomeBg),
@@ -734,6 +743,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
     [PRIVACY_BLUR_ENABLED_KEY, snapshot.privacyBlurEnabled ? 'true' : 'false'],
     [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
+    [QR_CAPTION_ENABLED_KEY, snapshot.qrCaptionEnabled ? 'true' : 'false'],
     [MLKIT_SCENE_LABEL_ENABLED_KEY, snapshot.mlkitSceneLabelEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
     [CAMERA_HOME_BG_KEY, snapshot.cameraHomeBg],
@@ -1135,6 +1145,20 @@ export async function getOcrTitleMemoEnabled(): Promise<boolean> {
 
 export async function setOcrTitleMemoEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(OCR_TITLE_MEMO_ENABLED_KEY, enabled ? 'true' : 'false');
+  return enabled;
+}
+
+export function qrCaptionEnabledLabel(enabled: boolean): string {
+  return enabled ? '사용' : '사용 안 함';
+}
+
+export async function getQrCaptionEnabled(): Promise<boolean> {
+  const value = await readSetting(QR_CAPTION_ENABLED_KEY);
+  return parseBooleanSetting(value, DEFAULT_QR_CAPTION_ENABLED);
+}
+
+export async function setQrCaptionEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(QR_CAPTION_ENABLED_KEY, enabled ? 'true' : 'false');
   return enabled;
 }
 

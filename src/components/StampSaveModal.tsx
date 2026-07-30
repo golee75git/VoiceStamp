@@ -66,6 +66,7 @@ import {
   getLastFloor,
   getPrivacyBlurEnabled,
   getOcrTitleMemoEnabled,
+  getQrCaptionEnabled,
   getMlkitSceneLabelEnabled,
   inputFontSizeForStampText,
   isGpsPlaceEnabled,
@@ -83,6 +84,12 @@ import {
   isOcrTitleMemoSupported,
   recognizeTitleMemoFromImage,
 } from '../services/ocrTitleMemoService';
+import {
+  extractHttpUrlsFromImage,
+  isQrUrlExtractSupported,
+  normalizeHttpUrl,
+  SOURCE_URL_MAX_LEN,
+} from '../services/qrUrlExtractService';
 import {
   isSceneLabelSupported,
   suggestSceneMemo,
@@ -238,6 +245,7 @@ export function StampSaveModal({
   const [extra1, setExtra1] = useState('');
   const [extra2, setExtra2] = useState('');
   const [extra3, setExtra3] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -292,7 +300,9 @@ export function StampSaveModal({
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
   const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabled] = useState(false);
+  const [qrCaptionEnabled, setQrCaptionEnabled] = useState(false);
   const [ocrBusy, setOcrBusy] = useState(false);
+  const [qrBusy, setQrBusy] = useState(false);
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabled] = useState(false);
   const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
@@ -497,6 +507,7 @@ export function StampSaveModal({
     setExtra1('');
     setExtra2('');
     setExtra3('');
+    setSourceUrl('');
     setSaving(false);
     setLocationLoading(false);
     setError(null);
@@ -545,6 +556,7 @@ export function StampSaveModal({
     setExtra1(stamp.extra1 ?? '');
     setExtra2(stamp.extra2 ?? '');
     setExtra3(stamp.extra3 ?? '');
+    setSourceUrl(stamp.sourceUrl ?? '');
     setFloor(stamp.floor ?? null);
     setPlaceLabel(stamp.placeLabel ?? null);
     setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
@@ -579,11 +591,13 @@ export function StampSaveModal({
     void Promise.all([
       getPrivacyBlurEnabled(),
       getOcrTitleMemoEnabled(),
+      getQrCaptionEnabled(),
       getMlkitSceneLabelEnabled(),
-    ]).then(([blurEnabled, ocrEnabled, sceneEnabled]) => {
+    ]).then(([blurEnabled, ocrEnabled, qrEnabled, sceneEnabled]) => {
       if (!cancelled) {
         setPrivacyBlurEnabled(blurEnabled);
         setOcrTitleMemoEnabled(ocrEnabled);
+        setQrCaptionEnabled(qrEnabled);
         setMlkitSceneLabelEnabled(sceneEnabled);
       }
     });
@@ -1116,6 +1130,39 @@ export function StampSaveModal({
     }
   }, [workingImageUri, imageUri, ocrBusy, saving]);
 
+  const handleQrUrlExtract = useCallback(async () => {
+    const uri = workingImageUri || imageUri;
+    if (!uri || qrBusy || saving) {
+      return;
+    }
+    if (!isQrUrlExtractSupported()) {
+      Alert.alert('URL 찾아 QR', '이 기기에서는 자동 찾기를 지원하지 않습니다. URL을 직접 입력하세요.');
+      return;
+    }
+    setQrBusy(true);
+    try {
+      const urls = await extractHttpUrlsFromImage(uri);
+      if (urls.length === 0) {
+        Alert.alert('URL 찾아 QR', '사진에서 http(s) 주소를 찾지 못했습니다. 직접 입력하세요.');
+        return;
+      }
+      if (urls.length === 1) {
+        setSourceUrl(urls[0]);
+        Alert.alert('URL 찾아 QR', '주소를 넣었습니다. 확인 후 저장하세요. (별도 영역 이미지에 QR)');
+        return;
+      }
+      Alert.alert(
+        'URL 선택',
+        '여러 주소가 있습니다. 첫 번째를 넣었습니다. 필요하면 수정하세요.',
+        [{ text: '확인', onPress: () => setSourceUrl(urls[0]) }],
+      );
+    } catch {
+      Alert.alert('URL 찾아 QR', '찾는 중 오류가 발생했습니다.');
+    } finally {
+      setQrBusy(false);
+    }
+  }, [workingImageUri, imageUri, qrBusy, saving]);
+
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
     if (!photoUri || saving) {
@@ -1126,6 +1173,13 @@ export function StampSaveModal({
     setError(null);
 
     try {
+      const trimmedSource = sourceUrl.trim();
+      const resolvedSourceUrl = trimmedSource ? normalizeHttpUrl(trimmedSource) : null;
+      if (trimmedSource && !resolvedSourceUrl) {
+        setError('QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.');
+        setSaving(false);
+        return;
+      }
       const folderLabel = isEdit ? groupName : siteName;
       const effectiveFloor = resolveStampFloor(
         floorPickerMode,
@@ -1142,6 +1196,7 @@ export function StampSaveModal({
           extra1,
           extra2,
           extra3,
+          sourceUrl: resolvedSourceUrl,
           groupName,
           floor: effectiveFloor,
           placeLabel,
@@ -1173,6 +1228,7 @@ export function StampSaveModal({
           extra1,
           extra2,
           extra3,
+          sourceUrl: resolvedSourceUrl,
           groupName: siteName,
           latitude: captureCoordsRef.current?.latitude ?? null,
           longitude: captureCoordsRef.current?.longitude ?? null,
@@ -1322,7 +1378,8 @@ export function StampSaveModal({
 
             {photoUri &&
             ((privacyBlurEnabled && isPrivacyBlurSupported()) ||
-              (ocrTitleMemoEnabled && isOcrTitleMemoSupported())) ? (
+              (ocrTitleMemoEnabled && isOcrTitleMemoSupported()) ||
+              qrCaptionEnabled) ? (
               <View style={styles.photoActionRow}>
                 {privacyBlurEnabled && isPrivacyBlurSupported() ? (
                   <Pressable
@@ -1350,6 +1407,42 @@ export function StampSaveModal({
                     )}
                   </Pressable>
                 ) : null}
+                {qrCaptionEnabled ? (
+                  <Pressable
+                    style={[styles.ocrFillBtn, saving || qrBusy ? { opacity: 0.5 } : null]}
+                    onPress={() => void handleQrUrlExtract()}
+                    disabled={saving || qrBusy}
+                    accessibilityRole="button"
+                    accessibilityLabel="URL 찾아 QR"
+                  >
+                    {qrBusy ? (
+                      <ActivityIndicator color="#0f766e" />
+                    ) : (
+                      <Text style={styles.ocrFillBtnText}>URL 찾아 QR</Text>
+                    )}
+                  </Pressable>
+                ) : null}
+              </View>
+            ) : null}
+
+            {qrCaptionEnabled ? (
+              <View style={styles.siteField}>
+                <Text style={styles.siteLabel}>QR URL (별도 영역)</Text>
+                <TextInput
+                  style={styles.folderInput}
+                  value={sourceUrl}
+                  onChangeText={setSourceUrl}
+                  placeholder="https://… (확인 후 저장)"
+                  onFocus={scrollFieldIntoView}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="url"
+                  maxLength={SOURCE_URL_MAX_LEN}
+                  editable={!saving}
+                />
+                <Text style={styles.locationHint}>
+                  저장 시 「사진 아래(별도 영역)」JPEG 우하단에 QR이 들어갑니다. http(s)만 허용.
+                </Text>
               </View>
             ) : null}
 
