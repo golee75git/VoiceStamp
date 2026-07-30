@@ -1,6 +1,6 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-25**
+문서 작성일: **2026-07-30**
 최신 기능 커밋 기준: `94950ff` — 개인정보 가리기 수동 영역 · APK `VoiceStamp_20260725_101238`
 
 ---
@@ -424,10 +424,18 @@ VoiceStamp/
 | 324 | GitHub APK `releases/20260728_113356` · 랜딩·`/info` · 도움말 | `00090a2` | `restore-apk-download-20260728_113356.bat` |
 | 325 | **카메라 홈 기본값** mainint1 · 검정 배경 유지 | `a9783a5` | `restore-camera-home-default-mainint1.bat` §197 |
 | 326 | GitHub APK `releases/20260728_132816` · 랜딩·`/info` · 도움말 | `a9783a5` | `restore-apk-download-20260728_132816.bat` |
-| 327 | **카메라 홈** 기본=mainint(검정)·스타일2=mainint1(흰색) | (이번) | `restore-camera-home-bg-colors.bat` §198 |
-| 328 | GitHub APK `releases/20260728_135843` · 랜딩·`/info` · 도움말 | (이번) | `restore-apk-download-20260728_135843.bat` |
+| 327 | **카메라 홈** 기본=mainint(검정)·스타일2=mainint1(흰색) | `a67c68c` | `restore-camera-home-bg-colors.bat` §198 |
+| 328 | GitHub APK `releases/20260728_135843` · 랜딩·`/info` · 도움말 | `a67c68c` | `restore-apk-download-20260728_135843.bat` |
+| 329 | **AI-ML-03** OCR→제목·메모 초안 (설정 opt-in) | `8b74ccf` | `restore-ocr-title-memo.bat` |
+| 330 | GitHub APK `releases/20260725_104328` | `0897335` | — |
+| 331 | **AI-ML-01** 장면 키워드 재도입 | `06ae8e2` | `restore-mlkit-scene.bat` |
+| 332 | GitHub APK `releases/20260725_114802` | `3ebb51f` | — |
+| 333 | OCR **긴 메모 칸·시트 스크롤** | `1413de9` | `restore-ocr-memo-scroll.bat` |
+| 334 | 웹 한도·저장 액션 버튼 나란히 | `22597f6` | `restore-web-limit-ocr-row.bat` |
+| 335 | **F-QR-01** caption QR MVP (`source_url`, MIT `qrcode`) | `9b9175c` | `restore-qr-caption.bat` |
+| 336 | GitHub APK `releases/20260730_114713` · 랜딩·`/info` · Vercel | `49e9c70` | `restore-apk-download-20260730_114713.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260728_135843.apk`
+> **권장 APK:** `releases/VoiceStamp_20260730_114713.apk`
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -493,7 +501,11 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260725_101238.apk`** | `94950ff` | **설치·GitHub 권장** — 가리기 **수동 영역** + 하단 여백 + 07-25 누적 |
+| **`releases/VoiceStamp_20260730_114713.apk`** | `49e9c70` | **설치·GitHub 권장** — **F-QR-01** caption QR MVP + 07-28~07-25 누적 |
+| **`releases/VoiceStamp_20260728_135843.apk`** | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
+| **`releases/VoiceStamp_20260725_114802.apk`** | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |
+| **`releases/VoiceStamp_20260725_104328.apk`** | `0897335` | **이전** — **AI-ML-03** OCR 제목·메모 |
+| **`releases/VoiceStamp_20260725_101238.apk`** | `94950ff` | **이전** — 가리기 **수동 영역** + 하단 여백 + 07-25 누적 |
 | **`releases/VoiceStamp_20260725_095546.apk`** | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** |
 | **`releases/VoiceStamp_20260724_182721.apk`** | `35f6d9b` | **이전** — 가리기 **EXIF 정렬** |
 | **`releases/VoiceStamp_20260724_114341.apk`** | `f6403fe` | **이전** — **하단 촬영 일시** + 개인정보 가리기(해상도 비례) |
@@ -595,11 +607,29 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-30
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **권장** — **F-QR-01** caption QR (`source_url`, MIT `qrcode`) · `restore-qr-caption.bat` | **GitHub `releases/`** |
+
+#### 2026-07-28
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint(검정)·스타일2=mainint1(흰색) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260728_113356.apk` | `00090a2` | **이전** — 카메라 홈 배경 설정 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260728_111800.apk` | `2124da6` | **이전** — 카메라 홈 mainint · 시작 배너 복구 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260728_105823.apk` | `7e6fa63` | **이전** — 시작 배너 mainint | **GitHub `releases/`** |
+
 #### 2026-07-25
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **권장** — 개인정보 가리기 **탭 수동 영역** + 하단 버튼 여백 · `restore-privacy-manual-region.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260725_114802.apk` | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260725_104328.apk` | `0897335` | **이전** — **AI-ML-03** OCR 제목·메모 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **이전** — 개인정보 가리기 **탭 수동 영역** + 하단 버튼 여백 · `restore-privacy-manual-region.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260725_095546.apk` | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** · `restore-active-template-status.bat` | **GitHub `releases/`** |
 
 #### 2026-07-24
@@ -1067,17 +1097,50 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-30
+
+| 커밋 | 내용 |
+|------|------|
+| `49e9c70` | **caption QR APK** — `releases/VoiceStamp_20260730_114713` · 랜딩·`/info` · Vercel |
+| `9b9175c` | **F-QR-01** — `source_url` · OCR URL 추출·확인 · caption JPEG QR · MIT `qrcode` · `restore-qr-caption.bat` |
+| (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`49e9c70`) — **소스 변경 없음** |
+
+> **권장 APK:** `releases/VoiceStamp_20260730_114713.apk` (`49e9c70`).
+
+### 2026-07-28
+
+| 커밋 | 내용 |
+|------|------|
+| `a67c68c` | **카메라 홈** 기본=mainint(검정)·스타일2=mainint1 · APK `135843` |
+| `a9783a5` | 홈 기본 mainint1 시도 · APK `132816` |
+| `00090a2` | 카메라 홈 배경 설정 · APK `113356` |
+| `2124da6` | 카메라 홈 mainint · 시작 배너 복구 · APK `111800` |
+| `7e6fa63` | 시작 배너 mainint · APK `105823` |
+
+> **당시 권장 APK (07-28 말):** `releases/VoiceStamp_20260728_135843.apk` (`a67c68c`). (이후 **`114713`** — §12 2026-07-30)
+
+### 2026-07-27
+
+| 커밋 | 내용 |
+|------|------|
+| `22597f6` | 웹 한도 게이트 · 저장 액션 버튼 나란히 |
+| `1413de9` | OCR 긴 메모 칸·시트 스크롤 · 도움말 |
+
 ### 2026-07-25
 
 | 커밋 | 내용 |
 |------|------|
+| `3ebb51f` | **AI-ML-01** 장면 키워드 APK — `releases/VoiceStamp_20260725_114802` |
+| `06ae8e2` | **AI-ML-01** 온디바이스 장면 키워드 → 메모 초안 · `restore-mlkit-scene.bat` |
+| `0897335` | **AI-ML-03** OCR 제목·메모 APK — `releases/VoiceStamp_20260725_104328` |
+| `8b74ccf` | **AI-ML-03** 온디바이스 OCR → 제목·메모 초안 · 설정 opt-in · `restore-ocr-title-memo.bat` |
 | `94950ff` | **개인정보 가리기 수동 영역 APK** — `releases/VoiceStamp_20260725_101238` · 랜딩·`/info` · Vercel |
 | `29b86a1` | **가리기 푸터 여백 + 탭 수동 모자이크 영역** · 도움말·PRIVACY · `restore-privacy-manual-region.bat` |
 | `658af2b` | **저장 템플릿 적용 상태 APK** — `releases/VoiceStamp_20260725_095546` |
 | `a084982` | **저장 템플릿 적용 중/사용자수정** · `restore-active-template-status.bat` |
-| (본 문서) | PRD·PROJECT·PLAN·README·**AI-ML-03** 설계 동기화 (`94950ff`) — **소스 변경 없음** |
+| `a5545b2` | PRD·PROJECT·PLAN·README 동기화 (`94950ff`) — **소스 변경 없음** |
 
-> **권장 APK:** `releases/VoiceStamp_20260725_101238.apk` (`94950ff`). 랜딩·`/info` 다운로드 링크 동기화됨.
+> **당시 권장 APK (07-25 가리기):** `releases/VoiceStamp_20260725_101238.apk` (`94950ff`). (이후 OCR·장면·홈·QR 누적 → **`114713`**)
 
 ### 2026-07-24
 
@@ -1637,16 +1700,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ## 13. 커밋 로그 (최근)
 
 ```
-217b6d5 Sync PRD, PROJECT, PLAN, and README to 8bad078 / APK 185321 (docs only).
+49e9c70 Publish VoiceStamp_20260730_114713.apk with caption QR MVP.
+9b9175c Add caption QR from confirmed http(s) URL (MVP).
+a67c68c Map camera home default to mainint (black) and style2 to mainint1 (white); publish VoiceStamp_20260728_135843.apk.
+3ebb51f Publish VoiceStamp_20260725_114802.apk with ML Kit scene keywords (AI-ML-01).
+0897335 Publish VoiceStamp_20260725_104328.apk with OCR title/memo draft.
+94950ff Publish VoiceStamp_20260725_101238.apk with privacy manual regions.
 8bad078 Fix washed-out caption image export via opaque native JPEG; publish VoiceStamp_20260723_185321.apk.
-f4be621 Add stamp list display mode setting (title+date or full); publish VoiceStamp_20260723_170552.apk.
-1109346 Show PDF-style caption table in separate-area image export; publish VoiceStamp_20260723_153816.apk.
-d13caf8 Fix caption image export green border by using opaque white canvas; publish VoiceStamp_20260723_151910.apk.
-aabf4d5 Add user-defined save field templates with create/edit/delete; publish VoiceStamp_20260723_144416.apk.
-3af94ec Add stamp text size setting for inputs and exports; publish VoiceStamp_20260722_182753.apk.
-ca16ea2 Disable stamp zoom Apply crop while keeping view-only preview; publish VoiceStamp_20260722_170650.apk.
-6060a48 Archive PDF into stamp site folders and publish VoiceStamp_20260720_225635.apk.
-afb5e88 Publish VoiceStamp_20260713_231004.apk and update site download links.
 … (이전 커밋은 `git log` 참고)
 ```
 

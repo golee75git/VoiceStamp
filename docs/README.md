@@ -12,9 +12,9 @@
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, **§7.4 APK 빌드별 상세**, **§12 날짜별 커밋** |
 | [PLAN.md](./PLAN.md) | 기획·개발 | 단계·완료 기능, **§10 날짜별** · **§11 APK별** |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | 기획·UI | LEG-04 정책 페이지 설계·구현 (`a4a55d2`) |
-| [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | 기획·AI | **AI-ML-01** ML Kit 설계 (구현 `43d1f13` → **`0869e93` 되돌림**) |
+| [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) | 기획·AI | **AI-ML-01** ML Kit 장면 키워드 (재도입 `06ae8e2` / `114802`) |
 | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) | 기획·AI | **AI-ML-02** 온디바이스 얼굴·숫자 **블러** MVP 설계·구현 기준 |
-| [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) | 기획·AI | **AI-ML-03** OCR→제목·메모 초안 **설계만**(미구현) |
+| [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) | 기획·AI | **AI-ML-03** OCR→제목·메모 초안 (**MVP** `8b74ccf` / `104328`) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
@@ -34,21 +34,21 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-25)
+## 현재 상태 스냅샷 (2026-07-30)
 
-- **문서 갱신일:** 2026-07-25 — **날짜별·APK별** 이력 + **AI-ML-03** 설계 (`94950ff` / `101238`) · **소스 변경 없음**
-- **이전 문서 갱신일:** 2026-07-24 — AI-ML-02·해상도 비례·하단 촬영 일시
-- **최신 기능 커밋:** `94950ff` — 개인정보 가리기 **수동 영역** + 템플릿 적용 상태 누적
+- **문서 갱신일:** 2026-07-30 — **날짜별·APK별** 이력 + **F-QR-01** caption QR · **소스 변경 없음**
+- **이전 문서 갱신일:** 2026-07-25 — AI-ML-03 설계·가리기 수동 영역
+- **최신 기능 커밋:** `49e9c70` — **F-QR-01** caption QR MVP (`source_url`)
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260725_101238.apk` — **가리기 수동 영역**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260725_101238.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260725_095546.apk` (템플릿 적용 상태)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260730_114713.apk` — **caption QR MVP**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260730_114713.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260728_135843.apk` (카메라 홈 mainint/mainint1)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
-- **개선 후보(미구현):** **F-QR-01** · **AI-ML-01** 장면 라벨(되돌림) · **AI-ML-03** OCR→제목·메모(설계) · **GS-UPLOAD-01** 설계만 · **AI-ML-02** ✅ MVP+
+- **개선 후보(미구현·확장):** F-QR-01 **워터마크/PDF** 확장 · **GS-UPLOAD-01** 설계만 · LEG-05 Play 스토어 · **AI-ML-02/03/01** ✅ MVP+
 
 ### 날짜별 요약
 
@@ -89,15 +89,22 @@
 | 07-22 | **필드 표시명**·**추가1·2**·표 · **자르기 적용 비활성** `170650` · **글자 크기** `182753` · Vercel |
 | 07-23 | **저장 템플릿**·목록 표시 · 표·초록 테두리·**별도영역 이미지 흐림 수정** `185321` · Vercel · 문서 이력 보강 |
 | 07-24 | **AI-ML-02** 블러 MVP `105355` · 해상도 비례 `111410` · **하단 촬영 일시** `114341` · **EXIF** `182721` · **전후면** · 문서 동기화 |
-| 07-25 | 템플릿 **적용 중/사용자수정** `095546` · 가리기 **수동 영역** `101238` · **AI-ML-03** OCR 설계 · 문서 동기화(소스 없음) |
+| 07-25 | 템플릿 **적용 중/사용자수정** `095546` · 가리기 **수동 영역** `101238` · **AI-ML-03** OCR `104328` · **AI-ML-01** 장면 `114802` |
+| 07-27 | OCR **긴 메모 스크롤** · 웹 한도·저장 액션 나란히 |
+| 07-28 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
+| 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
 
 ### APK별 (권장·주요)
 
-> **2026-07-25:** 권장 파일은 **`VoiceStamp_20260725_101238.apk`**.
+> **2026-07-30:** 권장 파일은 **`VoiceStamp_20260730_114713.apk`**.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **설치·GitHub 권장** — 가리기 **수동 영역** |
+| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **설치·GitHub 권장** — **F-QR-01** caption QR MVP |
+| `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint · 스타일2=mainint1 |
+| `releases/VoiceStamp_20260725_114802.apk` | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |
+| `releases/VoiceStamp_20260725_104328.apk` | `0897335` | **이전** — **AI-ML-03** OCR 제목·메모 |
+| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **이전** — 가리기 **수동 영역** |
 | `releases/VoiceStamp_20260725_095546.apk` | `658af2b` | **이전** — 템플릿 **적용 중/사용자수정** |
 | `releases/VoiceStamp_20260724_182721.apk` | `35f6d9b` | **이전** — 가리기 **EXIF 정렬** |
 | `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **이전** — **하단 촬영 일시** |

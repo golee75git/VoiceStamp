@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-25 |
-| 최신 반영 커밋 | `94950ff` — **개인정보 가리기 수동 영역** · 저장 템플릿 적용 상태 · APK `VoiceStamp_20260725_101238` |
+| 문서 작성일 | 2026-07-30 |
+| 최신 반영 커밋 | `49e9c70` — **F-QR-01 caption QR MVP** · APK `VoiceStamp_20260730_114713` |
 
 ---
 
@@ -377,6 +377,10 @@
 | F-SET-27 | **하단 촬영 일시** (`export_footer_datetime`) — PDF·캡션 이미지 **하단** `createdAt` 표시/숨김 (제목 접두어·워터마크와 분리, 기본 표시) | ✅ `f6403fe` |
 | F-BLUR-01 | **개인정보 가리기**(AI-ML-02) — 설정 opt-in · 온디바이스 얼굴·숫자 모자이크 · 저장 모달 · **탭 수동 영역** · 하단 버튼 여백 | ✅ `449da4d`~`94950ff` |
 | F-BLUR-02 | 모자이크 **약·중·강** = 사진 해상도·영역 크기 비례 | ✅ `239883c` |
+| F-OCR-01 | **사진 글자로 제목·메모**(AI-ML-03) — 설정 opt-in · Android 온디바이스 한글 OCR · 「글자 읽어 채우기」 · 긴 메모 스크롤 | ✅ `8b74ccf`~`1413de9` |
+| F-SCENE-01 | **장면 키워드 자동 입력**(AI-ML-01) — 설정 opt-in · Android Image Labeling → 메모 초안 | ✅ `06ae8e2`~`3ebb51f` |
+| F-QR-01 | **사진 URL → QR**(caption) — 설정 opt-in · `source_url` · URL 확인 · 별도 영역 JPEG 우하단 QR · MIT `qrcode` | ✅ `9b9175c`~`49e9c70` |
+| F-CAM-26 | **카메라 홈 배경** (mainint / mainint1) · 기본=mainint(검정)·스타일2=mainint1(흰색) | ✅ `00090a2`~`a67c68c` |
 
 ### 3.8 배포·빌드 (P1)
 
@@ -450,6 +454,7 @@
 | deletedAt | number \| null | 휴지통 이동 시각 (null = 목록 표시) |
 | galleryAssetId | string \| null | (APK) MediaLibrary Asset ID — 갤러리 앨범 이동용 |
 | floor | `1`~`5` \| null | 선택 층 (제목 접미사·표시용) |
+| sourceUrl / `source_url` | string \| null | 확인된 http(s) URL — caption JPEG QR용 (extra와 분리) |
 
 ### 5.2 app_settings
 
@@ -610,7 +615,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260725_101238.apk`** |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260730_114713.apk`** |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -620,10 +625,10 @@
 | UX-C | 구·동 먼저 표시, 건물명은 나중에 추가 | `kakaoLocal.ts` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
-| **F-QR-01** | 저장 화면 **관련 URL QR 오버레이** — 선택 시 미리보기·갤러리 합성·내보내기 JPEG에 QR 포함 | 미구현 · MIT QR 라이브러리 후보 |
-| **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | 구현(`43d1f13`) 후 **`0869e93` 되돌림** — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) · **미재도입** |
+| **F-QR-01** | ~~미구현~~ → ✅ caption MVP (`114713`) — 워터마크 코너·PDF/XLSX/HWPX QR는 이후 | 확장 후보 |
+| **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | ✅ 재도입 `06ae8e2`/`114802` — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) · 과거 `0869e93` 되돌림 이력 |
 | **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP+ — 수동 탭 영역·푸터 여백(`101238`) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
-| **AI-ML-03** | **ML Kit** 한글 OCR → **제목·메모 초안** (규칙 채움, 생성형 없음) | 📋 설계만 — [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) · **소스 미구현** |
+| **AI-ML-03** | **ML Kit** 한글 OCR → **제목·메모 초안** (규칙 채움, 생성형 없음) | ✅ MVP `8b74ccf`/`104328` · 긴 메모 스크롤 `1413de9` — [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
@@ -682,7 +687,10 @@
 | **2026-07-22** | **필드 표시명**·**추가1·추가2**·별도영역 **2열 표**·표시명 스냅샷·목록 빈 메모 숨김 · cover 크롭 시도·롤백 후 **확대 자르기(적용) 비활성**(`170650`) · **스탬프 글자 크기**(`182753`) · Vercel | `30aed21`~`3af94ec` |
 | **2026-07-23** | **저장 템플릿·추가3**·목록 표시 모드 · 별도영역 표·초록 테두리·**이미지 흐림 수정**(ViewShot→네이티브 불투명 JPEG) · 도움말 · `restore-caption-export-wash.bat` §185 · APK `185321` · Vercel · 문서 이력 보강(소스 없음) | `4d56901`~`8bad078` |
 | **2026-07-24** | **AI-ML-02** 블러 MVP(`105355`) · 해상도 비례(`111410`) · **하단 촬영 일시**(`114341`) · **EXIF 정렬**(`182721`) · 앱 내 **전후면 전환**(`39b3447`) · 도움말·PRIVACY · restore §186–188 · Vercel | `449da4d`~`39b3447` |
-| **2026-07-25** | **저장 템플릿** 적용 중/사용자수정(`095546`) · 개인정보 가리기 **탭 수동 영역**+하단 여백(`101238`) · **AI-ML-03** OCR→제목·메모 **설계만** · 문서 동기화(**소스 변경 없음**) | `a084982`~`94950ff` |
+| **2026-07-25** | **저장 템플릿** 적용 중/사용자수정(`095546`) · 가리기 **탭 수동 영역**(`101238`) · **AI-ML-03** OCR 제목·메모(`104328`) · **AI-ML-01** 장면 키워드 재도입(`114802`) · 문서·설계 동기화 | `a084982`~`3ebb51f` |
+| **2026-07-27** | OCR **긴 메모 칸·시트 스크롤** · 웹 한도·저장 액션 버튼 나란히 · 도움말 | `1413de9`·`22597f6` |
+| **2026-07-28** | **시작/카메라 홈** mainint·mainint1 키비주얼 · 홈 배경 설정 · 기본=mainint(검정)·스타일2=mainint1(흰색) · APK `105823`~`135843` | `7e6fa63`~`a67c68c` |
+| **2026-07-30** | **F-QR-01** caption QR MVP — `source_url`·OCR URL 추출·확인·별도 영역 JPEG QR · MIT `qrcode` · APK `114713` · Vercel · 문서 동기화(**소스 변경 없음**, 본 커밋) | `9b9175c`~`49e9c70` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -690,11 +698,19 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-25:** 권장 파일은 **`VoiceStamp_20260725_101238.apk`**.
+> **2026-07-30:** 권장 파일은 **`VoiceStamp_20260730_114713.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **설치·GitHub 권장** — 개인정보 가리기 **수동 영역** + 하단 버튼 여백 |
+| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **설치·GitHub 권장** — **F-QR-01** caption QR MVP (`source_url`) |
+| `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
+| `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 |
+| `releases/VoiceStamp_20260728_113356.apk` | `00090a2` | **이전** — 카메라 홈 배경 설정 |
+| `releases/VoiceStamp_20260728_111800.apk` | `2124da6` | **이전** — 카메라 홈 mainint · 시작 배너 복구 |
+| `releases/VoiceStamp_20260728_105823.apk` | `7e6fa63` | **이전** — 시작 배너 mainint |
+| `releases/VoiceStamp_20260725_114802.apk` | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |
+| `releases/VoiceStamp_20260725_104328.apk` | `0897335` | **이전** — **AI-ML-03** OCR 제목·메모 |
+| `releases/VoiceStamp_20260725_101238.apk` | `94950ff` | **이전** — 가리기 **수동 영역** |
 | `releases/VoiceStamp_20260725_095546.apk` | `658af2b` | **이전** — 저장 템플릿 **적용 중/사용자수정** |
 | `releases/VoiceStamp_20260724_182721.apk` | `35f6d9b` | **이전** — 개인정보 가리기 **EXIF 정렬** |
 | `releases/VoiceStamp_20260724_114341.apk` | `f6403fe` | **이전** — **하단 촬영 일시** 설정 + 개인정보 가리기(해상도 비례) |
