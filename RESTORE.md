@@ -3146,3 +3146,15 @@ restore-landing-web-test-link.bat
 `
 
 public.pre-landing-web-test-link/ 스냅샷으로 landing.html·help.html을 되돌립니다.
+
+---
+
+## 201. QR URL 마이크·https:// 기본값 되돌리기 (선택)
+
+QR URL(별도 영역)에 마이크와 기본 https:// 를 넣은 뒤 문제가 생기면:
+
+`at
+restore-qr-url-mic.bat
+`
+
+src.pre-qr-url-mic/·public.pre-qr-url-mic/ 스냅샷으로 저장 모달·도움말을 되돌립니다.

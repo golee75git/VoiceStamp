@@ -88,6 +88,7 @@ import {
   extractHttpUrlsFromImage,
   isQrUrlExtractSupported,
   normalizeHttpUrl,
+  SOURCE_URL_MAX_LEN,
 } from '../services/qrUrlExtractService';
 import {
   isSceneLabelSupported,
@@ -98,24 +99,11 @@ import { PrivacyBlurModal } from './PrivacyBlurModal';
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
 const zoomEditIcon = require('../../assets/zoom.png');
 
-type SpeechTarget = 'title' | 'memo' | 'place' | 'extra1' | 'extra2' | 'extra3' | 'sourceUrl' | null;
+type SpeechTarget = 'title' | 'memo' | 'place' | 'extra1' | 'extra2' | 'extra3' | null;
 
 type SpeechInsertSlice = { prefix: string; suffix: string };
 
 type TextSelection = { start: number; end: number };
-
-/** Empty draft for QR URL field so the user can continue typing after the scheme. */
-const SOURCE_URL_PREFIX = 'https://';
-
-function isBareSourceUrlPrefix(value: string): boolean {
-  const trimmed = value.trim();
-  return trimmed === '' || trimmed === SOURCE_URL_PREFIX || trimmed === 'http://';
-}
-
-function defaultSourceUrlDraft(existing?: string | null): string {
-  const value = (existing ?? '').trim();
-  return value || SOURCE_URL_PREFIX;
-}
 
 function textWithTrailingGap(text: string): { text: string; selection: TextSelection } {
   if (!text) {
@@ -257,7 +245,7 @@ export function StampSaveModal({
   const [extra1, setExtra1] = useState('');
   const [extra2, setExtra2] = useState('');
   const [extra3, setExtra3] = useState('');
-  const [sourceUrl, setSourceUrl] = useState(SOURCE_URL_PREFIX);
+  const [sourceUrl, setSourceUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -268,10 +256,6 @@ export function StampSaveModal({
   const [extra1Selection, setExtra1Selection] = useState<TextSelection>({ start: 0, end: 0 });
   const [extra2Selection, setExtra2Selection] = useState<TextSelection>({ start: 0, end: 0 });
   const [extra3Selection, setExtra3Selection] = useState<TextSelection>({ start: 0, end: 0 });
-  const [sourceUrlSelection, setSourceUrlSelection] = useState<TextSelection>({
-    start: SOURCE_URL_PREFIX.length,
-    end: SOURCE_URL_PREFIX.length,
-  });
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [stampTextLayout, setStampTextLayout] = useState<StampTextLayout>('caption');
@@ -330,7 +314,6 @@ export function StampSaveModal({
     extra1: SpeechInsertSlice;
     extra2: SpeechInsertSlice;
     extra3: SpeechInsertSlice;
-    sourceUrl: SpeechInsertSlice;
   }>({
     title: { prefix: '', suffix: '' },
     memo: { prefix: '', suffix: '' },
@@ -338,7 +321,6 @@ export function StampSaveModal({
     extra1: { prefix: '', suffix: '' },
     extra2: { prefix: '', suffix: '' },
     extra3: { prefix: '', suffix: '' },
-    sourceUrl: { prefix: SOURCE_URL_PREFIX, suffix: '' },
   });
   const titleSelectionRef = useRef({ start: 0, end: 0 });
   const memoSelectionRef = useRef({ start: 0, end: 0 });
@@ -346,10 +328,6 @@ export function StampSaveModal({
   const extra1SelectionRef = useRef({ start: 0, end: 0 });
   const extra2SelectionRef = useRef({ start: 0, end: 0 });
   const extra3SelectionRef = useRef({ start: 0, end: 0 });
-  const sourceUrlSelectionRef = useRef({
-    start: SOURCE_URL_PREFIX.length,
-    end: SOURCE_URL_PREFIX.length,
-  });
   const titleTouchedRef = useRef(false);
   const memoTouchedRef = useRef(false);
   const placeTouchedRef = useRef(false);
@@ -438,16 +416,6 @@ export function StampSaveModal({
           applyTextSelection(selection, extra3SelectionRef, setExtra3Selection);
         } else {
           setExtra3(merged);
-        }
-      } else if (target === 'sourceUrl') {
-        const { prefix, suffix } = speechInsertRef.current.sourceUrl;
-        const merged = insertSpeechAtCursor(prefix, suffix, text);
-        // No trailing gap — URL must stay contiguous.
-        const next = isFinal ? merged.trim() : merged;
-        setSourceUrl(next);
-        if (isFinal) {
-          const pos = next.length;
-          applyTextSelection({ start: pos, end: pos }, sourceUrlSelectionRef, setSourceUrlSelection);
         }
       }
       if (isFinal) {
@@ -539,7 +507,7 @@ export function StampSaveModal({
     setExtra1('');
     setExtra2('');
     setExtra3('');
-    setSourceUrl(SOURCE_URL_PREFIX);
+    setSourceUrl('');
     setSaving(false);
     setLocationLoading(false);
     setError(null);
@@ -550,17 +518,12 @@ export function StampSaveModal({
     setExtra1Selection({ start: 0, end: 0 });
     setExtra2Selection({ start: 0, end: 0 });
     setExtra3Selection({ start: 0, end: 0 });
-    setSourceUrlSelection({ start: SOURCE_URL_PREFIX.length, end: SOURCE_URL_PREFIX.length });
     titleSelectionRef.current = { start: 0, end: 0 };
     placeSelectionRef.current = { start: 0, end: 0 };
     memoSelectionRef.current = { start: 0, end: 0 };
     extra1SelectionRef.current = { start: 0, end: 0 };
     extra2SelectionRef.current = { start: 0, end: 0 };
     extra3SelectionRef.current = { start: 0, end: 0 };
-    sourceUrlSelectionRef.current = {
-      start: SOURCE_URL_PREFIX.length,
-      end: SOURCE_URL_PREFIX.length,
-    };
     setImageViewerVisible(false);
     setFolderPickerVisible(false);
     setFolderOptions([]);
@@ -593,10 +556,7 @@ export function StampSaveModal({
     setExtra1(stamp.extra1 ?? '');
     setExtra2(stamp.extra2 ?? '');
     setExtra3(stamp.extra3 ?? '');
-    setSourceUrl(defaultSourceUrlDraft(stamp.sourceUrl));
-    const draftPos = defaultSourceUrlDraft(stamp.sourceUrl).length;
-    setSourceUrlSelection({ start: draftPos, end: draftPos });
-    sourceUrlSelectionRef.current = { start: draftPos, end: draftPos };
+    setSourceUrl(stamp.sourceUrl ?? '');
     setFloor(stamp.floor ?? null);
     setPlaceLabel(stamp.placeLabel ?? null);
     setGroupName(extractStampGroupFromImagePath(stamp.imagePath) ?? '');
@@ -1002,18 +962,6 @@ export function StampSaveModal({
         selection.start,
         selection.end,
       );
-    } else if (target === 'sourceUrl') {
-      const { text: prepared, selection } = prepareSpeechTarget(
-        sourceUrl,
-        sourceUrlSelectionRef.current,
-      );
-      setSourceUrl(prepared);
-      applyTextSelection(selection, sourceUrlSelectionRef, setSourceUrlSelection);
-      speechInsertRef.current.sourceUrl = speechSliceAtSelection(
-        prepared,
-        selection.start,
-        selection.end,
-      );
     }
 
     setSpeechTarget(target);
@@ -1226,9 +1174,8 @@ export function StampSaveModal({
 
     try {
       const trimmedSource = sourceUrl.trim();
-      const bareSource = isBareSourceUrlPrefix(trimmedSource);
-      const resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
-      if (!bareSource && !resolvedSourceUrl) {
+      const resolvedSourceUrl = trimmedSource ? normalizeHttpUrl(trimmedSource) : null;
+      if (trimmedSource && !resolvedSourceUrl) {
         setError('QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.');
         setSaving(false);
         return;
@@ -1479,29 +1426,22 @@ export function StampSaveModal({
             ) : null}
 
             {qrCaptionEnabled ? (
-              <View>
-                <VoiceInputField
-                  label="QR URL (별도 영역)"
+              <View style={styles.siteField}>
+                <Text style={styles.siteLabel}>QR URL (별도 영역)</Text>
+                <TextInput
+                  style={styles.folderInput}
                   value={sourceUrl}
                   onChangeText={setSourceUrl}
-                  onMicPress={() => handleMicPress('sourceUrl')}
-                  listening={listening && speechTarget === 'sourceUrl'}
-                  speechAvailable={available}
+                  placeholder="https://… (확인 후 저장)"
                   onFocus={scrollFieldIntoView}
-                  selection={sourceUrlSelection}
-                  onSelectionChange={(selection) => {
-                    sourceUrlSelectionRef.current = selection;
-                    setSourceUrlSelection(selection);
-                  }}
-                  textAlign="left"
-                  cameraHand={cameraHand}
-                  fontSize={inputFontSizeForStampText(stampTextSize)}
-                  placeholderHint="https://… (확인 후 저장)"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="url"
+                  maxLength={SOURCE_URL_MAX_LEN}
+                  editable={!saving}
                 />
                 <Text style={styles.locationHint}>
                   저장 시 「사진 아래(별도 영역)」JPEG 우하단에 QR이 들어갑니다. http(s)만 허용.
-                  칸에는 https:// 가 기본으로 들어 있으며, 마이크 또는 키보드로 이어서 입력할 수
-                  있습니다. https:// 만 두면 QR 없이 저장됩니다.
                 </Text>
               </View>
             ) : null}
