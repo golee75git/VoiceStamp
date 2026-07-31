@@ -6,6 +6,9 @@ if not exist "src.pre-qr-url-mic\components\StampSaveModal.tsx" (
   exit /b 1
 )
 copy /Y "src.pre-qr-url-mic\components\StampSaveModal.tsx" "src\components\StampSaveModal.tsx"
+if exist "src.pre-qr-url-mic\components\SettingsScreen.tsx" (
+  copy /Y "src.pre-qr-url-mic\components\SettingsScreen.tsx" "src\components\SettingsScreen.tsx"
+)
 if exist "public.pre-qr-url-mic\help.html" (
   copy /Y "public.pre-qr-url-mic\help.html" "public\help.html"
 )

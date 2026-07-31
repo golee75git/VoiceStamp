@@ -41,8 +41,9 @@
 - **최신 기능:** **F-CAM-27** 왼손=밝은 홈 테마 고정 · 오른손=`camera_home_bg` · `restore-camera-hand-theme.bat`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260731_094832.apk` — **왼손 홈 테마 (F-CAM-27)**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260731_094832.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260731_102403.apk` — **QR URL 마이크·https:// 기본**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260731_102403.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260731_094832.apk` — 왼손 홈 테마 (F-CAM-27)
 - **이전 권장 APK:** `releases/VoiceStamp_20260730_114713.apk` — caption QR MVP
 - **이전 권장 APK:** `releases/VoiceStamp_20260728_135843.apk` (카메라 홈 mainint/mainint1)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
@@ -98,11 +99,12 @@
 
 ### APK별 (권장·주요)
 
-> **2026-07-31:** 권장 파일은 **`VoiceStamp_20260731_094832.apk`**.
+> **2026-07-31:** 권장 파일은 **`VoiceStamp_20260731_102403.apk`**.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 |
+| `releases/VoiceStamp_20260731_102403.apk` | (본 배포) | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 |
+| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **이전** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint · 스타일2=mainint1 |
 | `releases/VoiceStamp_20260725_114802.apk` | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |

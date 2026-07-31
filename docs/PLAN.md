@@ -723,11 +723,12 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-31:** 권장 = `releases/VoiceStamp_20260731_094832.apk`.
+> **2026-07-31:** 권장 = `releases/VoiceStamp_20260731_102403.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 |
+| `releases/VoiceStamp_20260731_102403.apk` | (본 배포) | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 |
+| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **이전** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint(검정)·스타일2=mainint1 |
 | `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 |

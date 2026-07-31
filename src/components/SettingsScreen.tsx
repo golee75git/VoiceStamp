@@ -1135,9 +1135,10 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>사진 URL → QR (별도 영역)</Text>
           <Text style={styles.hint}>
-            사용: 저장 화면에서 URL을 확인·수정한 뒤, 「사진 아래(별도 영역)」이미지에 QR을
-            넣습니다. 자동 찾기는 Android에서 사진 글자(OCR)로만 하며 서버로 보내지 않습니다.
-            http(s)만 허용합니다. 워터마크 모드에는 아직 적용되지 않습니다. 기본은 끔입니다.
+            사용: 저장 화면 QR URL 칸에 https:// 가 기본으로 들어가며 마이크·키보드로 이어서
+            입력할 수 있습니다. 「사진 아래(별도 영역)」이미지에 QR을 넣습니다. 자동 찾기는
+            Android에서 사진 글자(OCR)로만 하며 서버로 보내지 않습니다. http(s)만 허용합니다.
+            워터마크 모드에는 아직 적용되지 않습니다. 기본은 끔입니다.
           </Text>
           <View style={styles.optionRow}>
             <Pressable
