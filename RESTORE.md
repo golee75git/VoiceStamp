@@ -3134,3 +3134,15 @@ restore-camera-hand-theme.bat
 `
 
 src.pre-camera-hand-theme/·public.pre-camera-hand-theme/ 스냅샷으로 카메라·설정·도움말을 되돌립니다.
+
+---
+
+## 200. 랜딩 웹테스트 링크 되돌리기 (선택)
+
+홈(/) APK 파일명 아래 큰 「웹테스트」 링크를 넣은 뒤 문제가 생기면:
+
+`at
+restore-landing-web-test-link.bat
+`
+
+public.pre-landing-web-test-link/ 스냅샷으로 landing.html·help.html을 되돌립니다.
