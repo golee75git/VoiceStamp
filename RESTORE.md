@@ -3117,8 +3117,20 @@ restore-camera-home-default-mainint1.bat
 
 기본=mainint(검정)·스타일2=mainint1(흰색) 매핑 후 문제가 생기면:
 
-```bat
+`at
 restore-camera-home-bg-colors.bat
-```
+`
 
-`src.pre-camera-home-bg-colors/`·`public.pre-camera-home-bg-colors/`·`assets.pre-camera-home-bg-colors/` 스냅샷으로 되돌립니다.
+src.pre-camera-home-bg-colors/·public.pre-camera-home-bg-colors/·ssets.pre-camera-home-bg-colors/ 스냅샷으로 되돌립니다.
+
+---
+
+## 199. 왼손 카메라 홈 테마 되돌리기 (선택)
+
+왼손 손잡이일 때 홈 배경·목록/설정 아이콘을 고정 테마로 덮어쓴 뒤 문제가 생기면:
+
+`at
+restore-camera-hand-theme.bat
+`
+
+src.pre-camera-hand-theme/·public.pre-camera-hand-theme/ 스냅샷으로 카메라·설정·도움말을 되돌립니다.

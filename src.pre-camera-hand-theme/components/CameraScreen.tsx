@@ -35,19 +35,13 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const listIcon = require('../../assets/list-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const listIconLeft = require('../../assets/list-icon-white-left.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const settingsIcon = require('../../assets/settings-icon.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const settingsIconBlack = require('../../assets/settings-icon-black.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const templateIcon = require('../../assets/template-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeMainint = require('../../assets/camera-home.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeMainint1 = require('../../assets/camera-home-mainint1.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const cameraHomeLeftHand = require('../../assets/mainint1.png');
 
 const CAMERA_HOME_IMAGES: Record<CameraHomeBg, number> = {
   mainint: cameraHomeMainint,
@@ -747,20 +741,12 @@ export function CameraScreen({
     );
   }
 
-  // Left-hand theme: fixed light key visual + contrasting nav icons (overrides home-bg setting).
-  const isLeftHand = cameraHand === 'left';
-  const homeImage = isLeftHand ? cameraHomeLeftHand : CAMERA_HOME_IMAGES[cameraHomeBg];
-  const homeFill = isLeftHand ? '#ffffff' : cameraHomeBgFill(cameraHomeBg);
-  const homeOnLight = isLeftHand || cameraHomeBg === 'mainint1';
-  const activeListIcon = isLeftHand ? listIconLeft : listIcon;
-  const activeSettingsIcon = isLeftHand ? settingsIconBlack : settingsIcon;
-
   return (
-    <View style={[styles.container, { backgroundColor: homeFill }]}>
-      <View style={[styles.launcher, { backgroundColor: homeFill }]}>
+    <View style={[styles.container, { backgroundColor: cameraHomeBgFill(cameraHomeBg) }]}>
+      <View style={[styles.launcher, { backgroundColor: cameraHomeBgFill(cameraHomeBg) }]}>
         <View style={styles.launcherSplash}>
           <Image
-            source={homeImage}
+            source={CAMERA_HOME_IMAGES[cameraHomeBg]}
             style={styles.launcherImage}
             resizeMode="contain"
             accessibilityIgnoresInvertColors
@@ -769,7 +755,7 @@ export function CameraScreen({
         <Pressable
           style={[
             styles.launchCaptureButton,
-            homeOnLight && styles.launchCaptureButtonOnLight,
+            cameraHomeBg === 'mainint1' && styles.launchCaptureButtonOnLight,
           ]}
           onPress={() => void openPrimaryCapture()}
           disabled={cameraBusy || actionSheetVisible}
@@ -779,7 +765,7 @@ export function CameraScreen({
           <View
             style={[
               styles.launchCaptureInner,
-              homeOnLight && styles.launchCaptureInnerOnLight,
+              cameraHomeBg === 'mainint1' && styles.launchCaptureInnerOnLight,
             ]}
           />
         </Pressable>
@@ -796,7 +782,7 @@ export function CameraScreen({
       <View
         style={[
           styles.sideNav,
-          isLeftHand ? styles.sideNavLeft : styles.sideNavRight,
+          cameraHand === 'left' ? styles.sideNavLeft : styles.sideNavRight,
         ]}
       >
         <Pressable
@@ -813,7 +799,7 @@ export function CameraScreen({
           disabled={cameraBusy || actionSheetVisible}
           accessibilityLabel="목록"
         >
-          <Image source={activeListIcon} style={styles.navIcon} resizeMode="contain" />
+          <Image source={listIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
         <Pressable
           style={[styles.navButton, styles.navIconButton]}
@@ -821,7 +807,7 @@ export function CameraScreen({
           disabled={cameraBusy || actionSheetVisible}
           accessibilityLabel="설정"
         >
-          <Image source={activeSettingsIcon} style={styles.navIcon} resizeMode="contain" />
+          <Image source={settingsIcon} style={styles.navIcon} resizeMode="contain" />
         </Pressable>
       </View>
 

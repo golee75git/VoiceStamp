@@ -34,15 +34,15 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-07-30)
+## 현재 상태 스냅샷 (2026-07-31)
 
-- **문서 갱신일:** 2026-07-30 — **날짜별·APK별** 이력 + **F-QR-01** caption QR · **소스 변경 없음**
-- **이전 문서 갱신일:** 2026-07-25 — AI-ML-03 설계·가리기 수동 영역
-- **최신 기능 커밋:** `49e9c70` — **F-QR-01** caption QR MVP (`source_url`)
+- **문서 갱신일:** 2026-07-31 — **F-CAM-27** 왼손 카메라 홈 테마 · [SECURITY-camera-hand-theme-20260731.md](./SECURITY-camera-hand-theme-20260731.md)
+- **이전 문서 갱신일:** 2026-07-30 — **F-QR-01** caption QR
+- **최신 기능:** **F-CAM-27** 왼손=밝은 홈 테마 고정 · 오른손=`camera_home_bg` · `restore-camera-hand-theme.bat`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260730_114713.apk` — **caption QR MVP**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260730_114713.apk
+- **권장 APK (설치·GitHub):** (빌드 후 `releases/VoiceStamp_YYYYMMDD_HHmmss.apk`로 갱신) — **왼손 홈 테마**
+- **이전 권장 APK:** `releases/VoiceStamp_20260730_114713.apk` — caption QR MVP
 - **이전 권장 APK:** `releases/VoiceStamp_20260728_135843.apk` (카메라 홈 mainint/mainint1)
 - **비권장 APK:** `VoiceStamp_20260625_161125.apk` (`143a140`, 갤러리 경로 이슈)
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
@@ -93,6 +93,7 @@
 | 07-27 | OCR **긴 메모 스크롤** · 웹 한도·저장 액션 나란히 |
 | 07-28 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
 | 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
+| 07-31 | **F-CAM-27** 왼손 카메라 홈 테마 · 도움말 · `restore-camera-hand-theme.bat` |
 
 ### APK별 (권장·주요)
 

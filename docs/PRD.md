@@ -381,6 +381,7 @@
 | F-SCENE-01 | **장면 키워드 자동 입력**(AI-ML-01) — 설정 opt-in · Android Image Labeling → 메모 초안 | ✅ `06ae8e2`~`3ebb51f` |
 | F-QR-01 | **사진 URL → QR**(caption) — 설정 opt-in · `source_url` · URL 확인 · 별도 영역 JPEG 우하단 QR · MIT `qrcode` | ✅ `9b9175c`~`49e9c70` |
 | F-CAM-26 | **카메라 홈 배경** (mainint / mainint1) · 기본=mainint(검정)·스타일2=mainint1(흰색) | ✅ `00090a2`~`a67c68c` |
+| F-CAM-27 | **왼손 홈 테마** — 손잡이=왼손 시 `mainint1` 배경·검정 설정/좌측 목록 아이콘으로 덮어쓰기(오른손만 F-CAM-26 적용) | ✅ |
 
 ### 3.8 배포·빌드 (P1)
 

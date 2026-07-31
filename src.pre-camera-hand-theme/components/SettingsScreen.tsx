@@ -477,22 +477,17 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>카메라 홈 배경</Text>
           <Text style={styles.hint}>
-            촬영 전 화면 키비주얼입니다. 「기본」은 검정 뒤 배경, 「스타일 2」는 흰색 뒤 배경입니다. 앱에
-            포함된 이미지만 선택할 수 있습니다.
-            {cameraHand === 'left'
-              ? ' 왼손에서는 밝은 테마(배경·아이콘)가 고정되며, 이 설정은 오른손일 때만 화면에 적용됩니다.'
-              : ''}
+            촬영 전 화면 키비주얼입니다. 「기본」은 검정 뒤 배경, 「스타일 2」는 흰색 뒤 배경입니다. 앱에 포함된 이미지만 선택할 수 있습니다.
           </Text>
           <View style={styles.optionRow}>
             {CAMERA_HOME_BG_OPTIONS.map((option) => {
               const selected = cameraHomeBg === option;
-              const bgDisabled = saving || cameraHand === 'left';
               return (
                 <Pressable
                   key={option}
                   style={[styles.optionButton, selected && styles.optionButtonSelected]}
                   onPress={() => setCameraHomeBgState(option)}
-                  disabled={bgDisabled}
+                  disabled={saving}
                 >
                   <Text
                     style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
