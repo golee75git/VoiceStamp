@@ -311,14 +311,6 @@
       }
     }
 
-    /** Basename-only image names (blocks zip-slip style paths). */
-    function safeImageFileName(name) {
-      const base = String(name || '').replace(/^.*[\\/]/, '');
-      if (!base || base === '.' || base === '..') return null;
-      if (!/^[A-Za-z0-9._-]+$/.test(base)) return null;
-      return base;
-    }
-
     function deleteStampRow(index) {
       if (!manifest || exportBusy) return;
       const synced = readManifestFromEditor();
@@ -417,16 +409,10 @@
       }
 
       for (const stamp of manifest.stamps) {
-        const safeName = safeImageFileName(stamp.imageFile);
-        if (!safeName) {
-          stamp.imageFile = '';
-          continue;
-        }
-        stamp.imageFile = safeName;
-        const imageEntry = zip.file(`stamps/${safeName}`);
+        const imageEntry = zip.file(`stamps/${stamp.imageFile}`);
         if (!imageEntry) continue;
         const blob = await imageEntry.async('blob');
-        imageUrls.set(safeName, URL.createObjectURL(blob));
+        imageUrls.set(stamp.imageFile, URL.createObjectURL(blob));
       }
 
       loadedZip = zip;
@@ -460,14 +446,11 @@
         zip.file('manifest.json', JSON.stringify(next, null, 2));
         const stampsFolder = zip.folder('stamps');
         for (const stamp of next.stamps) {
-          const safeName = safeImageFileName(stamp.imageFile);
-          if (!safeName) continue;
-          const url = imageUrls.get(safeName) || imageUrls.get(stamp.imageFile);
+          const url = imageUrls.get(stamp.imageFile);
           if (!url) continue;
           const response = await fetch(url);
           const blob = await response.blob();
-          stampsFolder.file(safeName, blob);
-          stamp.imageFile = safeName;
+          stampsFolder.file(stamp.imageFile, blob);
         }
         if (!structureDirty) {
           const pdfFile = loadedZip.file('report.pdf');

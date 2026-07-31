@@ -3158,3 +3158,15 @@ restore-qr-url-mic.bat
 `
 
 src.pre-qr-url-mic/·public.pre-qr-url-mic/ 스냅샷으로 저장 모달·도움말을 되돌립니다.
+
+---
+
+## 202. 웹 보안 헤더·visitor·report 되돌리기 (선택)
+
+랜딩 보안 헤더·방문 API 제한·보고서 imageFile 검증 후 문제가 생기면:
+
+`at
+restore-web-security-harden.bat
+`
+
+public.pre-web-security-harden/·pi.pre-web-security-harden/ 스냅샷으로 되돌립니다.
