@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-30 |
-| 최신 반영 커밋 | `49e9c70` — **F-QR-01 caption QR MVP** · APK `VoiceStamp_20260730_114713` |
+| 최신 반영 커밋 | `348130e` — **F-CAM-27 왼손 홈 테마** · APK `VoiceStamp_20260731_094832` |
 
 ---
 
@@ -616,7 +616,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260730_114713.apk`** |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260731_094832.apk`** |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -699,11 +699,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-30:** 권장 파일은 **`VoiceStamp_20260730_114713.apk`**.
+> **2026-07-31:** 권장 파일은 **`VoiceStamp_20260731_094832.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **설치·GitHub 권장** — **F-QR-01** caption QR MVP (`source_url`) |
+| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 |
+| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP (`source_url`) |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
 | `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 |
 | `releases/VoiceStamp_20260728_113356.apk` | `00090a2` | **이전** — 카메라 홈 배경 설정 |

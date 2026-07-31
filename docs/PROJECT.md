@@ -435,7 +435,7 @@ VoiceStamp/
 | 335 | **F-QR-01** caption QR MVP (`source_url`, MIT `qrcode`) | `9b9175c` | `restore-qr-caption.bat` |
 | 336 | GitHub APK `releases/20260730_114713` · 랜딩·`/info` · Vercel | `49e9c70` | `restore-apk-download-20260730_114713.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260730_114713.apk`
+> **권장 APK:** `releases/VoiceStamp_20260731_094832.apk`
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -501,7 +501,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260730_114713.apk`** | `49e9c70` | **설치·GitHub 권장** — **F-QR-01** caption QR MVP + 07-28~07-25 누적 |
+| **`releases/VoiceStamp_20260731_094832.apk`** | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 + 07-30 caption QR 누적 |
+| **`releases/VoiceStamp_20260730_114713.apk`** | `49e9c70` | **이전** — **F-QR-01** caption QR MVP + 07-28~07-25 누적 |
 | **`releases/VoiceStamp_20260728_135843.apk`** | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
 | **`releases/VoiceStamp_20260725_114802.apk`** | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |
 | **`releases/VoiceStamp_20260725_104328.apk`** | `0897335` | **이전** — **AI-ML-03** OCR 제목·메모 |
@@ -607,11 +608,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-07-31
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **권장** — **F-CAM-27** 왼손 홈 테마 · `restore-camera-hand-theme.bat` | **GitHub `releases/`** |
+
 #### 2026-07-30
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **권장** — **F-QR-01** caption QR (`source_url`, MIT `qrcode`) · `restore-qr-caption.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR (`source_url`, MIT `qrcode`) · `restore-qr-caption.bat` | **GitHub `releases/`** |
 
 #### 2026-07-28
 
@@ -1105,7 +1112,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `9b9175c` | **F-QR-01** — `source_url` · OCR URL 추출·확인 · caption JPEG QR · MIT `qrcode` · `restore-qr-caption.bat` |
 | (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`49e9c70`) — **소스 변경 없음** |
 
-> **권장 APK:** `releases/VoiceStamp_20260730_114713.apk` (`49e9c70`).
+> **권장 APK:** `releases/VoiceStamp_20260731_094832.apk` (`49e9c70`).
 
 ### 2026-07-28
 

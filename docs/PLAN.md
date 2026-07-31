@@ -717,16 +717,17 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-27 | 2AG·3 | OCR **긴 메모 스크롤** · 웹 한도·저장 액션 나란히 (`1413de9`·`22597f6`) |
 | 2026-07-28 | 2AH·3 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
 | 2026-07-30 | 2AI·3·4 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(**소스 없음**, 본 커밋) |
-| 2026-07-31 | 2AJ·3 | **F-CAM-27** 왼손 홈 테마(배경·아이콘 덮어쓰기) · 도움말·보안 점검 · `restore-camera-hand-theme.bat` |
+| 2026-07-31 | 2AJ·3 | **F-CAM-27** 왼손 홈 테마(배경·아이콘 덮어쓰기) · 도움말·보안 점검 · APK `094832` · `restore-camera-hand-theme.bat` |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-07-31:** 권장 APK는 빌드·`releases/` 반영 후 갱신. 이전 권장 = `releases/VoiceStamp_20260730_114713.apk`.
+> **2026-07-31:** 권장 = `releases/VoiceStamp_20260731_094832.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
+| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint(검정)·스타일2=mainint1 |
 | `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 |
