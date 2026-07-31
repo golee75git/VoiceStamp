@@ -29,18 +29,18 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~185) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~202) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
 ## 현재 상태 스냅샷 (2026-07-31)
 
-- **문서 갱신일:** 2026-07-31 — **F-CAM-27** 왼손 카메라 홈 테마 · [SECURITY-camera-hand-theme-20260731.md](./SECURITY-camera-hand-theme-20260731.md)
+- **문서 갱신일:** 2026-07-31 — 날짜별·APK별 동기화 (`a9509b9` / `626c1a4`) · **소스 변경 없음**
 - **이전 문서 갱신일:** 2026-07-30 — **F-QR-01** caption QR
-- **최신 기능:** **F-CAM-27** 왼손=밝은 홈 테마 고정 · 오른손=`camera_home_bg` · `restore-camera-hand-theme.bat`
-- **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내 랜딩 · **`/app`** 웹 테스트 앱 · **`/`** 하단 **오늘·누적 방문** 집계 · **QR·링크 공유** (개인정보 패널 위)
-- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
+- **최신 기능 커밋:** `a9509b9` — **QR URL 마이크·https:// 기본** · APK `102403` · 웹 hardening `626c1a4`
+- **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
+- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-web-harden-20260731.md](./SECURITY-web-harden-20260731.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260731_102403.apk` — **QR URL 마이크·https:// 기본**
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260731_102403.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260731_094832.apk` — 왼손 홈 테마 (F-CAM-27)
@@ -95,7 +95,7 @@
 | 07-27 | OCR **긴 메모 스크롤** · 웹 한도·저장 액션 나란히 |
 | 07-28 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
 | 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
-| 07-31 | **F-CAM-27** 왼손 카메라 홈 테마 · 도움말 · APK `094832` |
+| 07-31 | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화 |
 
 ### APK별 (권장·주요)
 
@@ -103,8 +103,8 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260731_102403.apk` | (본 배포) | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 |
-| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **이전** — **F-CAM-27** 왼손 홈 테마 |
+| `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 |
+| `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 홈 기본=mainint · 스타일2=mainint1 |
 | `releases/VoiceStamp_20260725_114802.apk` | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |

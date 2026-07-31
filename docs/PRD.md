@@ -7,8 +7,8 @@
 | 플랫폼 | Android APK (주), Web (Vercel 보조) |
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
-| 문서 작성일 | 2026-07-30 |
-| 최신 반영 커밋 | `348130e` — **F-CAM-27 왼손 홈 테마** · APK `VoiceStamp_20260731_094832` |
+| 문서 작성일 | 2026-07-31 |
+| 최신 반영 커밋 | `a9509b9` — **QR URL 마이크·https://** · APK `VoiceStamp_20260731_102403` · 웹 hardening `626c1a4` |
 
 ---
 
@@ -379,9 +379,9 @@
 | F-BLUR-02 | 모자이크 **약·중·강** = 사진 해상도·영역 크기 비례 | ✅ `239883c` |
 | F-OCR-01 | **사진 글자로 제목·메모**(AI-ML-03) — 설정 opt-in · Android 온디바이스 한글 OCR · 「글자 읽어 채우기」 · 긴 메모 스크롤 | ✅ `8b74ccf`~`1413de9` |
 | F-SCENE-01 | **장면 키워드 자동 입력**(AI-ML-01) — 설정 opt-in · Android Image Labeling → 메모 초안 | ✅ `06ae8e2`~`3ebb51f` |
-| F-QR-01 | **사진 URL → QR**(caption) — 설정 opt-in · `source_url` · URL 확인 · 별도 영역 JPEG 우하단 QR · MIT `qrcode` | ✅ `9b9175c`~`49e9c70` |
+| F-QR-01 | **사진 URL → QR**(caption) — 설정 opt-in · `source_url` · URL 확인·**마이크**·기본 `https://` · 별도 영역 JPEG 우하단 QR · MIT `qrcode` | ✅ `9b9175c`~`a9509b9` |
 | F-CAM-26 | **카메라 홈 배경** (mainint / mainint1) · 기본=mainint(검정)·스타일2=mainint1(흰색) | ✅ `00090a2`~`a67c68c` |
-| F-CAM-27 | **왼손 홈 테마** — 손잡이=왼손 시 `mainint1` 배경·검정 설정/좌측 목록 아이콘으로 덮어쓰기(오른손만 F-CAM-26 적용) | ✅ |
+| F-CAM-27 | **왼손 홈 테마** — 손잡이=왼손 시 `mainint1` 배경·검정 설정/좌측 목록 아이콘으로 덮어쓰기(오른손만 F-CAM-26 적용) | ✅ `348130e`~`3be0a07` |
 
 ### 3.8 배포·빌드 (P1)
 
@@ -402,6 +402,8 @@
 | F-DEP-12 | 랜딩(`/`) 하단 **방문자 집계** — `localStorage` 당일 1회 + `/api/visitor` + CountAPI 프록시 | ✅ `608357d` |
 | F-DEP-13 | 랜딩 푸터 저작권 **Lee Hyung Woo** (영문) | ✅ `f50a2fb` |
 | F-DEP-14 | 랜딩 **QR 코드·Web Share**(qrcodejs MIT 자체 호스팅, 개인정보 패널 위) | ✅ `800971a` |
+| F-DEP-15 | 랜딩 APK 파일명 아래 큰 **웹테스트** 링크(`/app`) | ✅ `98aeb25` |
+| F-DEP-16 | 웹 **보안 헤더**(CSP 호환)·visitor POST Origin/rate limit·`/report` imageFile 화이트리스트 | ✅ `626c1a4` |
 
 **아이콘 에셋** (`565e4b3`, `591666e`): `assets/icon.png`, `favicon.png`, `android-icon-foreground.png`, `android-icon-background.png`, `android-icon-monochrome.png`. 되돌리기: `restore-icon.bat` + `assets.pre-icon` (`RESTORE.md` §8). 로컬 `--` 백업 파일은 git 미포함.
 
@@ -616,7 +618,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260731_094832.apk`** |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260731_102403.apk`** |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -626,7 +628,7 @@
 | UX-C | 구·동 먼저 표시, 건물명은 나중에 추가 | `kakaoLocal.ts` |
 | UX-D2 | 위치 실패 시 짧은 안내 문구 (예: 「위치를 가져오지 못했습니다」) | 선택 |
 | UX-PURPOSE | 사진 목적별 제목·메모 라벨 (여행→이야기, 점검→결과) | 기획 메모 |
-| **F-QR-01** | ~~미구현~~ → ✅ caption MVP (`114713`) — 워터마크 코너·PDF/XLSX/HWPX QR는 이후 | 확장 후보 |
+| **F-QR-01** | ~~미구현~~ → ✅ caption MVP+마이크·`https://` 기본(`102403`) — 워터마크 코너·PDF/XLSX/HWPX QR는 이후 | 확장 후보 |
 | **AI-ML-01** | **ML Kit** 온디바이스 장면 키워드 → 메모 초안 | ✅ 재도입 `06ae8e2`/`114802` — [DESIGN-ML-KIT-SCENE-LABEL.md](./DESIGN-ML-KIT-SCENE-LABEL.md) · 과거 `0869e93` 되돌림 이력 |
 | **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP+ — 수동 탭 영역·푸터 여백(`101238`) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
 | **AI-ML-03** | **ML Kit** 한글 OCR → **제목·메모 초안** (규칙 채움, 생성형 없음) | ✅ MVP `8b74ccf`/`104328` · 긴 메모 스크롤 `1413de9` — [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
@@ -691,7 +693,8 @@
 | **2026-07-25** | **저장 템플릿** 적용 중/사용자수정(`095546`) · 가리기 **탭 수동 영역**(`101238`) · **AI-ML-03** OCR 제목·메모(`104328`) · **AI-ML-01** 장면 키워드 재도입(`114802`) · 문서·설계 동기화 | `a084982`~`3ebb51f` |
 | **2026-07-27** | OCR **긴 메모 칸·시트 스크롤** · 웹 한도·저장 액션 버튼 나란히 · 도움말 | `1413de9`·`22597f6` |
 | **2026-07-28** | **시작/카메라 홈** mainint·mainint1 키비주얼 · 홈 배경 설정 · 기본=mainint(검정)·스타일2=mainint1(흰색) · APK `105823`~`135843` | `7e6fa63`~`a67c68c` |
-| **2026-07-30** | **F-QR-01** caption QR MVP — `source_url`·OCR URL 추출·확인·별도 영역 JPEG QR · MIT `qrcode` · APK `114713` · Vercel · 문서 동기화(**소스 변경 없음**, 본 커밋) | `9b9175c`~`49e9c70` |
+| **2026-07-30** | **F-QR-01** caption QR MVP — `source_url`·OCR URL 추출·확인·별도 영역 JPEG QR · MIT `qrcode` · APK `114713` · Vercel · 문서 동기화(**소스 변경 없음**) | `9b9175c`~`49e9c70`·`735c0d7` |
+| **2026-07-31** | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https:// 기본**(`102403`) · 웹 보안 hardening(`626c1a4`) · 도움말·SECURITY 노트 · 본 문서 동기화(**소스 변경 없음**) | `348130e`~`626c1a4` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -699,11 +702,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-07-31:** 권장 파일은 **`VoiceStamp_20260731_094832.apk`**.
+> **2026-07-31:** 권장 파일은 **`VoiceStamp_20260731_102403.apk`**.
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 |
+| `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 (`4a9e287`) |
+| `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 (`348130e`) |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP (`source_url`) |
 | `releases/VoiceStamp_20260728_135843.apk` | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
 | `releases/VoiceStamp_20260728_132816.apk` | `a9783a5` | **이전** — 홈 기본 mainint1 시도 |

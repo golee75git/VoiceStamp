@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
-문서 작성일: **2026-07-30**
-최신 기능 커밋 기준: `94950ff` — 개인정보 가리기 수동 영역 · APK `VoiceStamp_20260725_101238`
+문서 작성일: **2026-07-31**
+최신 기능 커밋 기준: `a9509b9` — QR URL 마이크·https:// 기본 · APK `VoiceStamp_20260731_102403` · 웹 hardening `626c1a4`
 
 ---
 
@@ -434,8 +434,14 @@ VoiceStamp/
 | 334 | 웹 한도·저장 액션 버튼 나란히 | `22597f6` | `restore-web-limit-ocr-row.bat` |
 | 335 | **F-QR-01** caption QR MVP (`source_url`, MIT `qrcode`) | `9b9175c` | `restore-qr-caption.bat` |
 | 336 | GitHub APK `releases/20260730_114713` · 랜딩·`/info` · Vercel | `49e9c70` | `restore-apk-download-20260730_114713.bat` |
+| 337 | **F-CAM-27** 왼손 카메라 홈 테마 | `348130e` | `restore-camera-hand-theme.bat` §199 |
+| 338 | GitHub APK `releases/20260731_094832` · 랜딩·`/info` | `3be0a07` | `restore-apk-download-20260731_094832.bat` |
+| 339 | 랜딩 APK명 아래 큰 **웹테스트** 링크 | `98aeb25` | `restore-landing-web-test-link.bat` §200 |
+| 340 | **QR URL** 마이크·기본 `https://` | `4a9e287` | `restore-qr-url-mic.bat` §201 |
+| 341 | GitHub APK `releases/20260731_102403` · 랜딩·`/info` | `a9509b9` | `restore-apk-download-20260731_102403.bat` |
+| 342 | 웹 보안 헤더·visitor POST·report imageFile | `626c1a4` | `restore-web-security-harden.bat` §202 |
 
-> **권장 APK:** `releases/VoiceStamp_20260731_094832.apk`
+> **권장 APK:** `releases/VoiceStamp_20260731_102403.apk`
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -501,7 +507,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260731_094832.apk`** | `348130e` | **설치·GitHub 권장** — **F-CAM-27** 왼손 홈 테마 + 07-30 caption QR 누적 |
+| **`releases/VoiceStamp_20260731_102403.apk`** | `a9509b9` | **설치·GitHub 권장** — QR URL 마이크·https:// 기본 + F-CAM-27·caption QR 누적 |
+| **`releases/VoiceStamp_20260731_094832.apk`** | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 + 07-30 caption QR 누적 |
 | **`releases/VoiceStamp_20260730_114713.apk`** | `49e9c70` | **이전** — **F-QR-01** caption QR MVP + 07-28~07-25 누적 |
 | **`releases/VoiceStamp_20260728_135843.apk`** | `a67c68c` | **이전** — 카메라 홈 기본=mainint(검정)·스타일2=mainint1 |
 | **`releases/VoiceStamp_20260725_114802.apk`** | `3ebb51f` | **이전** — **AI-ML-01** 장면 키워드 |
@@ -612,7 +619,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260731_094832.apk` | `348130e` | **권장** — **F-CAM-27** 왼손 홈 테마 · `restore-camera-hand-theme.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **권장** — QR URL 마이크·https:// 기본 · `restore-qr-url-mic.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 · `restore-camera-hand-theme.bat` | **GitHub `releases/`** |
 
 #### 2026-07-30
 
@@ -1104,15 +1112,29 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-07-31
+
+| 커밋 | 내용 |
+|------|------|
+| `626c1a4` | 웹 보안 헤더·visitor POST 제한·`/report` imageFile 화이트리스트 · `restore-web-security-harden.bat` · Vercel |
+| `a9509b9` | **QR URL mic APK** — `releases/VoiceStamp_20260731_102403` · 랜딩·`/info` · 설정 힌트 |
+| `4a9e287` | QR URL(별도 영역) **마이크**·기본 `https://` · `restore-qr-url-mic.bat` |
+| `98aeb25` | 랜딩 APK 파일명 아래 큰 **웹테스트** · `restore-landing-web-test-link.bat` |
+| `3be0a07` | **왼손 홈 테마 APK** — `releases/VoiceStamp_20260731_094832` · 랜딩·`/info` |
+| `348130e` | **F-CAM-27** 왼손=`mainint1`+아이콘 덮어쓰기 · `restore-camera-hand-theme.bat` |
+| (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`a9509b9`/`626c1a4`) — **소스 변경 없음** |
+
+> **권장 APK:** `releases/VoiceStamp_20260731_102403.apk` (`a9509b9`).
+
 ### 2026-07-30
 
 | 커밋 | 내용 |
 |------|------|
+| `735c0d7` | PRD·PROJECT·PLAN·README 동기화 (`49e9c70`) — **소스 변경 없음** |
 | `49e9c70` | **caption QR APK** — `releases/VoiceStamp_20260730_114713` · 랜딩·`/info` · Vercel |
 | `9b9175c` | **F-QR-01** — `source_url` · OCR URL 추출·확인 · caption JPEG QR · MIT `qrcode` · `restore-qr-caption.bat` |
-| (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`49e9c70`) — **소스 변경 없음** |
 
-> **권장 APK:** `releases/VoiceStamp_20260731_094832.apk` (`49e9c70`).
+> **당시 권장 APK (07-30 말):** `releases/VoiceStamp_20260730_114713.apk` (`49e9c70`). (이후 **`102403`** — §12 2026-07-31)
 
 ### 2026-07-28
 
