@@ -89,6 +89,7 @@ import {
   isQrUrlExtractSupported,
   normalizeHttpUrl,
 } from '../services/qrUrlExtractService';
+import { checkQrUrlConnection } from '../services/qrUrlConnectCheckService';
 import {
   isSceneLabelSupported,
   suggestSceneMemo,
@@ -319,6 +320,7 @@ export function StampSaveModal({
   const [qrCaptionEnabled, setQrCaptionEnabled] = useState(false);
   const [ocrBusy, setOcrBusy] = useState(false);
   const [qrBusy, setQrBusy] = useState(false);
+  const [urlCheckBusy, setUrlCheckBusy] = useState(false);
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabled] = useState(false);
   const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
@@ -1215,6 +1217,23 @@ export function StampSaveModal({
     }
   }, [workingImageUri, imageUri, qrBusy, saving]);
 
+  const handleQrUrlConnectCheck = useCallback(async () => {
+    if (urlCheckBusy || saving) {
+      return;
+    }
+    if (isBareSourceUrlPrefix(sourceUrl)) {
+      Alert.alert('연결확인', '확인할 URL을 입력하세요.');
+      return;
+    }
+    setUrlCheckBusy(true);
+    try {
+      const result = await checkQrUrlConnection(sourceUrl);
+      Alert.alert('연결확인', result.message);
+    } finally {
+      setUrlCheckBusy(false);
+    }
+  }, [sourceUrl, urlCheckBusy, saving]);
+
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
     if (!photoUri || saving) {
@@ -1498,10 +1517,29 @@ export function StampSaveModal({
                   fontSize={inputFontSizeForStampText(stampTextSize)}
                   placeholderHint="https://… (확인 후 저장)"
                 />
+                <View style={styles.photoActionRow}>
+                  <Pressable
+                    style={[
+                      styles.ocrFillBtn,
+                      saving || urlCheckBusy ? { opacity: 0.5 } : null,
+                    ]}
+                    onPress={() => void handleQrUrlConnectCheck()}
+                    disabled={saving || urlCheckBusy}
+                    accessibilityRole="button"
+                    accessibilityLabel="연결확인"
+                  >
+                    {urlCheckBusy ? (
+                      <ActivityIndicator color="#0f766e" />
+                    ) : (
+                      <Text style={styles.ocrFillBtnText}>연결확인</Text>
+                    )}
+                  </Pressable>
+                </View>
                 <Text style={styles.locationHint}>
                   저장 시 「사진 아래(별도 영역)」JPEG 우하단에 QR이 들어갑니다. http(s)만 허용.
                   칸에는 https:// 가 기본으로 들어 있으며, 마이크 또는 키보드로 이어서 입력할 수
-                  있습니다. https:// 만 두면 QR 없이 저장됩니다.
+                  있습니다. 「연결확인」으로 접속 여부를 미리 볼 수 있습니다. https:// 만 두면 QR
+                  없이 저장됩니다.
                 </Text>
               </View>
             ) : null}

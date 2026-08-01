@@ -3170,3 +3170,15 @@ restore-web-security-harden.bat
 `
 
 public.pre-web-security-harden/·pi.pre-web-security-harden/ 스냅샷으로 되돌립니다.
+
+---
+
+## 203. QR URL 연결확인 되돌리기 (선택)
+
+저장 화면 QR URL 「연결확인」 추가 후 문제가 생기면:
+
+```bat
+restore-qr-url-check.bat
+```
+
+src.pre-qr-url-check/·public.pre-qr-url-check/ 스냅샷으로 되돌리고 `qrUrlConnectCheckService.ts`를 삭제합니다.
