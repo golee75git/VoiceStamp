@@ -8,7 +8,7 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 최신 반영 커밋 | (본 커밋) — **성능 번들 C** · APK `VoiceStamp_20260801_193317` |
+| 최신 반영 커밋 | `073c8bf` — **성능 번들 C** · APK `VoiceStamp_20260801_193317` |
 
 ---
 
@@ -695,7 +695,7 @@
 | **2026-07-28** | **시작/카메라 홈** mainint·mainint1 키비주얼 · 홈 배경 설정 · 기본=mainint(검정)·스타일2=mainint1(흰색) · APK `105823`~`135843` | `7e6fa63`~`a67c68c` |
 | **2026-07-30** | **F-QR-01** caption QR MVP — `source_url`·OCR URL 추출·확인·별도 영역 JPEG QR · MIT `qrcode` · APK `114713` · Vercel · 문서 동기화(**소스 변경 없음**) | `9b9175c`~`49e9c70`·`735c0d7` |
 | **2026-07-31** | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https:// 기본**(`102403`) · 웹 보안 hardening(`626c1a4`) · 도움말·SECURITY 노트 · 본 문서 동기화(**소스 변경 없음**) | `348130e`~`626c1a4` |
-| **2026-08-01** | **QR URL 연결확인** (`172149`) · **성능 번들 A** (`185512`) · **성능 번들 B** (`191117`) · **성능 번들 C** (내보내기 동적 import, `193317`) · 도움말·SECURITY · Vercel | `d363b00`~(본 커밋) |
+| **2026-08-01** | **QR URL 연결확인** (`172149`) · **성능 번들 A** (`185512`) · **성능 번들 B** (`191117`) · **성능 번들 C** (내보내기 동적 import, `193317`) · 도움말·SECURITY · Vercel | `d363b00`~`073c8bf` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4.
 
@@ -707,7 +707,7 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260801_193317.apk` | (본 커밋) | **설치·GitHub 권장** — **성능 번들 C** |
+| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **설치·GitHub 권장** — **성능 번들 C** |
 | `releases/VoiceStamp_20260801_191117.apk` | `9d8ccfa` | **이전** — **성능 번들 B** |
 | `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |

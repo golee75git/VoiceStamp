@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.8 |
 | 작성일 | 2026-08-01 |
-| 기준 커밋 | (본 커밋) — **성능 번들 C** · APK `193317` · 이전 `9d8ccfa` |
+| 기준 커밋 | `073c8bf` — **성능 번들 C** · APK `193317` · 이전 `9d8ccfa` |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -731,7 +731,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260801_193317.apk` | (본 커밋) | **설치·GitHub 권장** — **성능 번들 C** |
+| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **설치·GitHub 권장** — **성능 번들 C** |
 | `releases/VoiceStamp_20260801_191117.apk` | `9d8ccfa` | **이전** — **성능 번들 B** |
 | `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |
