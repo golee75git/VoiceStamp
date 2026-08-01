@@ -38,7 +38,7 @@
 
 - **문서 갱신일:** 2026-08-01 — **성능 번들 A** · APK `185512`
 - **이전 문서 갱신일:** 2026-08-01 — **QR URL 연결확인** · APK `172149`
-- **최신 기능 커밋:** (본 커밋) — **성능 번들 A** · APK `185512`
+- **최신 기능 커밋:** `e45026b` — **성능 번들 A** · APK `185512`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-perf-bundle-a-20260801.md](./SECURITY-perf-bundle-a-20260801.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_185512.apk` — **성능 번들 A**
@@ -106,7 +106,7 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260801_185512.apk` | (본 커밋) | **설치·GitHub 권장** — **성능 번들 A** |
+| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **설치·GitHub 권장** — **성능 번들 A** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 |
