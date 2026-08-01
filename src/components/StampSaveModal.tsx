@@ -648,34 +648,40 @@ export function StampSaveModal({
     };
   }, [visible]);
 
-  useEffect(() => {
-    if (!visible || isEdit || !mlkitSceneLabelEnabled || !isSceneLabelSupported()) {
+  const handleSceneKeywordFill = useCallback(async () => {
+    const uri = workingImageUri || imageUri;
+    if (!uri || sceneAnalyzing || saving) {
       return;
     }
-    const uri = workingImageUri ?? imageUri;
-    if (!uri) {
+    if (!isSceneLabelSupported()) {
+      Alert.alert('장면 키워드', '이 기기에서는 장면 분석을 지원하지 않습니다.');
       return;
     }
-    let cancelled = false;
     setSceneAnalyzing(true);
-    void (async () => {
-      try {
-        const draft = await suggestSceneMemo(uri);
-        if (cancelled || memoTouchedRef.current || !draft) {
-          return;
-        }
-        setMemo((prev) => (prev.trim() ? prev : draft));
-      } finally {
-        if (!cancelled) {
-          setSceneAnalyzing(false);
-        }
+    try {
+      const draft = await suggestSceneMemo(uri);
+      if (!draft) {
+        Alert.alert('장면 키워드', '장면 키워드를 찾지 못했습니다.');
+        return;
       }
-    })();
-    return () => {
-      cancelled = true;
+      memoTouchedRef.current = true;
+      setMemo((prev) => {
+        const trimmed = prev.trim();
+        if (!trimmed) {
+          return draft;
+        }
+        if (trimmed.includes(draft)) {
+          return prev;
+        }
+        return `${trimmed}\n${draft}`;
+      });
+      Alert.alert('장면 키워드', '메모에 초안을 넣었습니다. 필요하면 수정하세요.');
+    } catch {
+      Alert.alert('장면 키워드', '분석 중 오류가 발생했습니다.');
+    } finally {
       setSceneAnalyzing(false);
-    };
-  }, [visible, isEdit, mlkitSceneLabelEnabled, imageUri, workingImageUri]);
+    }
+  }, [workingImageUri, imageUri, sceneAnalyzing, saving]);
 
   useEffect(() => {
     if (!visible) {
@@ -1451,7 +1457,8 @@ export function StampSaveModal({
             {photoUri &&
             ((privacyBlurEnabled && isPrivacyBlurSupported()) ||
               (ocrTitleMemoEnabled && isOcrTitleMemoSupported()) ||
-              qrCaptionEnabled) ? (
+              qrCaptionEnabled ||
+              (mlkitSceneLabelEnabled && isSceneLabelSupported())) ? (
               <View style={styles.photoActionRow}>
                 {privacyBlurEnabled && isPrivacyBlurSupported() ? (
                   <Pressable
@@ -1491,6 +1498,21 @@ export function StampSaveModal({
                       <ActivityIndicator color="#0f766e" />
                     ) : (
                       <Text style={styles.ocrFillBtnText}>URL 찾아 QR</Text>
+                    )}
+                  </Pressable>
+                ) : null}
+                {mlkitSceneLabelEnabled && isSceneLabelSupported() ? (
+                  <Pressable
+                    style={[styles.ocrFillBtn, saving || sceneAnalyzing ? { opacity: 0.5 } : null]}
+                    onPress={() => void handleSceneKeywordFill()}
+                    disabled={saving || sceneAnalyzing}
+                    accessibilityRole="button"
+                    accessibilityLabel="장면 키워드"
+                  >
+                    {sceneAnalyzing ? (
+                      <ActivityIndicator color="#0f766e" />
+                    ) : (
+                      <Text style={styles.ocrFillBtnText}>장면 키워드</Text>
                     )}
                   </Pressable>
                 ) : null}

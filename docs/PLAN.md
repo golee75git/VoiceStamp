@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.8 |
 | 작성일 | 2026-08-01 |
-| 기준 커밋 | `e45026b` — **성능 번들 A** · APK `185512` · 이전 `d363b00` |
+| 기준 커밋 | (본 커밋) — **성능 번들 B** · APK `191117` · 이전 `e45026b` |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -720,16 +720,18 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-07-31 | 2AJ·3 | **F-CAM-27**(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화(**소스 없음**) |
 | 2026-08-01 | 2AK·3 | **QR URL 연결확인** · APK `172149` · 도움말·SECURITY · Vercel |
 | 2026-08-01 | 2AL·3 | **성능 번들 A** (촬영 JPEG 상한·갤러리 유휴 직렬·기본 앱만) · APK `185512` |
+| 2026-08-01 | 2AM·3 | **성능 번들 B** (Kakao POI 3종·장면 키워드 버튼) · APK `191117` |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-01:** 권장 = `releases/VoiceStamp_20260801_185512.apk`.
+> **2026-08-01:** 권장 = `releases/VoiceStamp_20260801_191117.apk`.
 
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **설치·GitHub 권장** — **성능 번들 A** |
+| `releases/VoiceStamp_20260801_191117.apk` | (본 커밋) | **설치·GitHub 권장** — **성능 번들 B** |
+| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 |

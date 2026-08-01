@@ -44,20 +44,8 @@ type KakaoCategorySearchResponse = {
 const SCHOOL_NEAR_RADIUS_M = 200;
 const POI_SEARCH_RADIUS_M = 150;
 const POI_MAX_DISTANCE_M = 100;
-const POI_CATEGORY_CODES = [
-  'CS2',
-  'CE7',
-  'FD6',
-  'MT1',
-  'HP8',
-  'PM9',
-  'BK9',
-  'OL7',
-  'SW8',
-  'PK6',
-  'CT1',
-  'PO3',
-] as const;
+/** Few nearby categories only — avoids a large parallel Kakao fan-out. */
+const POI_CATEGORY_CODES = ['CS2', 'CE7', 'FD6'] as const;
 
 type CoordAddress = {
   buildingName: string | null;

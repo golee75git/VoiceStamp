@@ -1173,9 +1173,10 @@ export function SettingsScreen({
             </Pressable>
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>촬영 후 장면 키워드 자동 입력</Text>
+          <Text style={[styles.label, styles.sectionGap]}>장면 키워드 (저장 화면 버튼)</Text>
           <Text style={styles.hint}>
-            사용: 저장 화면이 열리면 사진을 폰 안에서만 분석해 메모에 장면 키워드 초안을 넣습니다.
+            사용: 저장 화면에 「장면 키워드」 버튼이 나옵니다. 탭하면 사진을 폰 안에서만 분석해
+            메모에 장면 키워드 초안을 넣습니다. 저장 화면이 열릴 때 자동으로 돌리지 않습니다.
             서버로 보내지 않으며, 긴 문장 설명이 아닙니다. (Android) 기본은 끔입니다.
           </Text>
           <View style={styles.optionRow}>

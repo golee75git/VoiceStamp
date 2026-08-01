@@ -3194,3 +3194,15 @@ restore-perf-bundle-a.bat
 ```
 
 src.pre-perf-bundle-a/·public.pre-perf-bundle-a/ 스냅샷으로 되돌리고 `captureImageBudget.ts`·`gallerySaveIdleQueue.ts`를 삭제합니다.
+
+---
+
+## 205. 성능 번들 B 되돌리기 (선택)
+
+Kakao POI 축소·장면 키워드 버튼화 후 문제가 생기면:
+
+```bat
+restore-perf-bundle-b.bat
+```
+
+src.pre-perf-bundle-b/·public.pre-perf-bundle-b/ 스냅샷으로 되돌립니다.

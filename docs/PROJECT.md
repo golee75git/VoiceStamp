@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-최신 기능 커밋 기준: `e45026b` — **성능 번들 A** · APK `VoiceStamp_20260801_185512` · 이전 `d363b00`
+최신 기능 커밋 기준: (본 커밋) — **성능 번들 B** · APK `VoiceStamp_20260801_191117` · 이전 `e45026b`
 
 ---
 
@@ -444,8 +444,10 @@ VoiceStamp/
 | 344 | GitHub APK `releases/20260801_172149` · 랜딩·`/info` | `d363b00` | `restore-apk-download-20260801_172149.bat` |
 | 345 | **성능 번들 A** — 촬영 JPEG 상한·갤러리 유휴 직렬·기본 앱만 | `e45026b` | `restore-perf-bundle-a.bat` §204 |
 | 346 | GitHub APK `releases/20260801_185512` · 랜딩·`/info` | `e45026b` | `restore-apk-download-20260801_185512.bat` |
+| 347 | **성능 번들 B** — Kakao POI 3종·장면 키워드 버튼 | (본 커밋) | `restore-perf-bundle-b.bat` §205 |
+| 348 | GitHub APK `releases/20260801_191117` · 랜딩·`/info` | (본 커밋) | `restore-apk-download-20260801_191117.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260801_185512.apk`
+> **권장 APK:** `releases/VoiceStamp_20260801_191117.apk`
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -511,7 +513,8 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260801_185512.apk`** | `e45026b` | **설치·GitHub 권장** — **성능 번들 A** + QR 연결확인 누적 |
+| **`releases/VoiceStamp_20260801_191117.apk`** | (본 커밋) | **설치·GitHub 권장** — **성능 번들 B** + A 누적 |
+| **`releases/VoiceStamp_20260801_185512.apk`** | `e45026b` | **이전** — **성능 번들 A** + QR 연결확인 누적 |
 | **`releases/VoiceStamp_20260801_172149.apk`** | `d363b00` | **이전** — QR URL **연결확인** + 07-31 누적 |
 | **`releases/VoiceStamp_20260731_102403.apk`** | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 + F-CAM-27·caption QR 누적 |
 | **`releases/VoiceStamp_20260730_114713.apk`** | `49e9c70` | **이전** — **F-QR-01** caption QR MVP + 07-28~07-25 누적 |
@@ -624,7 +627,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **권장** — **성능 번들 A** · `restore-perf-bundle-a.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_191117.apk` | (본 커밋) | **권장** — **성능 번들 B** · `restore-perf-bundle-b.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** · `restore-perf-bundle-a.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** · `restore-qr-url-check.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 · `restore-qr-url-mic.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 · `restore-camera-hand-theme.bat` | **GitHub `releases/`** |
@@ -1131,7 +1135,9 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `348130e` | **F-CAM-27** 왼손=`mainint1`+아이콘 덮어쓰기 · `restore-camera-hand-theme.bat` |
 | (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`a9509b9`/`626c1a4`) — **소스 변경 없음** |
 
-> **권장 APK:** `releases/VoiceStamp_20260801_185512.apk` `e45026b`.
+> **권장 APK:** `releases/VoiceStamp_20260801_191117.apk` (본 커밋).
+
+> **당시 권장 APK (08-01 저녁 A):** `releases/VoiceStamp_20260801_185512.apk` `e45026b`.
 
 > **당시 권장 APK (08-01 낮):** `releases/VoiceStamp_20260801_172149.apk` `d363b00`.
 
