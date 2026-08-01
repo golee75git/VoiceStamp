@@ -239,6 +239,9 @@ export function StampListScreen({
   }, [selectedIds, stamps, selecting, pdfFilenameIncludeDatetime]);
 
   const exitSelection = () => {
+    if (searchListening) {
+      stopSearchSpeech();
+    }
     setSelecting(false);
     setSelectedIds(new Set());
     setPdfUri(null);
@@ -248,6 +251,9 @@ export function StampListScreen({
   };
 
   const openExportNameModal = () => {
+    if (searchListening) {
+      stopSearchSpeech();
+    }
     setDraftFileName(pdfFileName);
     setDraftReportTitle(pdfReportTitle);
     setExportNameModalVisible(true);
@@ -289,6 +295,9 @@ export function StampListScreen({
 
   const handleCardLongPress = (item: Stamp) => {
     if (!selecting) {
+      if (searchListening) {
+        stopSearchSpeech();
+      }
       setSelecting(true);
       setPdfUri(null);
       setSelectedIds(new Set([item.id]));
@@ -584,7 +593,14 @@ export function StampListScreen({
               </Pressable>
             ) : (
               stamps.length > 0 && (
-                <Pressable onPress={() => setSelecting(true)}>
+                <Pressable
+                  onPress={() => {
+                    if (searchListening) {
+                      stopSearchSpeech();
+                    }
+                    setSelecting(true);
+                  }}
+                >
                   <Text style={styles.actionText}>선택</Text>
                 </Pressable>
               )

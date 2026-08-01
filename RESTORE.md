@@ -3218,3 +3218,15 @@ restore-perf-bundle-c.bat
 ```
 
 src.pre-perf-bundle-c/·public.pre-perf-bundle-c/ 스냅샷으로 되돌리고 `exportOnDemand.ts`를 삭제합니다.
+
+---
+
+## 207. 음성 타깃 가드 되돌리기 (선택)
+
+목록 내보내기 마이크와 검색 마이크 혼입 방지 후 문제가 생기면:
+
+```bat
+restore-speech-target-guard.bat
+```
+
+src.pre-speech-target-guard/·public.pre-speech-target-guard/ 스냅샷으로 되돌립니다.

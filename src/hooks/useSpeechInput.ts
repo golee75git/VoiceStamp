@@ -24,6 +24,10 @@ export function useSpeechInput({ onResult, onListeningEnd }: UseSpeechInputOptio
   }, [onListeningEnd]);
 
   useSpeechRecognitionEvent('result', (event) => {
+    // 전역 인식 이벤트 — 이 훅이 start한 세션일 때만 반영 (다른 화면 마이크와 섞이지 않음)
+    if (!listeningRef.current) {
+      return;
+    }
     const text = event.results[0]?.transcript ?? '';
     if (text) {
       onResult(text, event.isFinal);
