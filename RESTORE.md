@@ -3206,3 +3206,15 @@ restore-perf-bundle-b.bat
 ```
 
 src.pre-perf-bundle-b/·public.pre-perf-bundle-b/ 스냅샷으로 되돌립니다.
+
+---
+
+## 206. 성능 번들 C 되돌리기 (선택)
+
+목록 내보내기 동적 import 분리 후 문제가 생기면:
+
+```bat
+restore-perf-bundle-c.bat
+```
+
+src.pre-perf-bundle-c/·public.pre-perf-bundle-c/ 스냅샷으로 되돌리고 `exportOnDemand.ts`를 삭제합니다.

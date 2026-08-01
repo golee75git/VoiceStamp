@@ -27,11 +27,13 @@ const galleryButton = require('../../assets/gallery.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const captureButton = require('../../assets/capture.png');
 import { saveStampsAsJpegToGallery } from '../services/exportStampImage';
-import { createStampsPdf, savePdf, sharePdf } from '../services/exportPdf';
+import {
+  loadStampHwpxExport,
+  loadStampPdfExport,
+  loadStampProjectExport,
+  loadStampXlsxExport,
+} from '../services/exportOnDemand';
 import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabels';
-import { createStampsProjectZip, shareProjectZip } from '../services/exportProject';
-import { createStampsHwpx, shareStampsHwpx } from '../services/exportHwpx';
-import { createStampsXlsx, shareStampsXlsx } from '../services/exportXlsx';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
@@ -301,6 +303,7 @@ export function StampListScreen({
 
     setPdfBusy(true);
     try {
+      const { createStampsPdf } = await loadStampPdfExport();
       const uri = await createStampsPdf(selected, pdfFileName, pdfReportTitle);
       setPdfUri(uri);
       Alert.alert('PDF 생성 완료', '저장 또는 공유 버튼을 눌러주세요.');
@@ -319,6 +322,7 @@ export function StampListScreen({
 
     setPdfBusy(true);
     try {
+      const { savePdf } = await loadStampPdfExport();
       await savePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
@@ -335,6 +339,7 @@ export function StampListScreen({
 
     setPdfBusy(true);
     try {
+      const { sharePdf } = await loadStampPdfExport();
       await sharePdf(pdfUri, pdfFileName);
     } catch (e) {
       Alert.alert(
@@ -414,6 +419,7 @@ export function StampListScreen({
     setProjectBusy(true);
     try {
       // PDF는 넣지 않음 — 생성 비용이 커서 ZIP은 이미지·manifest만 포함. PDF는 목록 「PDF」로 별도 저장.
+      const { createStampsProjectZip, shareProjectZip } = await loadStampProjectExport();
       const result = await createStampsProjectZip(
         selected,
         pdfFileName,
@@ -445,6 +451,7 @@ export function StampListScreen({
 
     setXlsxBusy(true);
     try {
+      const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
       const result = await createStampsXlsx(selected, pdfFileName);
       await shareStampsXlsx(result);
       Alert.alert(
@@ -471,6 +478,7 @@ export function StampListScreen({
 
     setHwpxBusy(true);
     try {
+      const { createStampsHwpx, shareStampsHwpx } = await loadStampHwpxExport();
       const result = await createStampsHwpx(selected, pdfFileName, pdfReportTitle);
       await shareStampsHwpx(result);
       Alert.alert(
