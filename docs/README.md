@@ -1,4 +1,4 @@
-# VoiceStamp 문서
+﻿# VoiceStamp 문서
 
 프로젝트 문서 모음입니다. **소스 코드는 `src/`**, 되돌리기·빌드는 루트의 MD·BAT를 참고하세요.
 
@@ -38,7 +38,7 @@
 
 - **문서 갱신일:** 2026-08-01 — **QR URL 연결확인** · APK `172149`
 - **이전 문서 갱신일:** 2026-07-31 — 날짜별·APK별 동기화 (`a9509b9` / `626c1a4`)
-- **최신 기능 커밋:** (본 커밋) — **QR URL 연결확인** · APK `172149`
+- **최신 기능 커밋:** `d363b00` — **QR URL 연결확인** · APK `172149`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-qr-url-check-20260801.md](./SECURITY-qr-url-check-20260801.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_172149.apk` — **QR URL 연결확인**
@@ -105,7 +105,7 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260801_172149.apk` | (본 커밋) | **설치·GitHub 권장** — QR URL **연결확인** |
+| `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **설치·GitHub 권장** — QR URL **연결확인** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
