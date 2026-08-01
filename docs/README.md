@@ -8,6 +8,7 @@
 
 | 문서 | 대상 | 설명 |
 |------|------|------|
+| [HEALTHCHECK.md](./HEALTHCHECK.md) | 개발·QA | **성능·헬스체크 고정 기준** (번들 A/B/C 적용됨 · 다음 후보) |
 | [PRD.md](./PRD.md) | 기획·QA | 요구사항, 기능 ID, **§12 날짜별** · **§13 APK별** 요약 |
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, **§7.4 APK 빌드별 상세**, **§12 날짜별 커밋** |
 | [PLAN.md](./PLAN.md) | 기획·개발 | 단계·완료 기능, **§10 날짜별** · **§11 APK별** |
@@ -29,19 +30,20 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~203) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~206) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---
 
 ## 현재 상태 스냅샷 (2026-08-01)
 
-- **문서 갱신일:** 2026-08-01 — **성능 번들 C** · APK `193317`
-- **이전 문서 갱신일:** 2026-08-01 — **성능 번들 B** · APK `191117`
+- **문서 갱신일:** 2026-08-01 — **헬스체크 기준 고정** (`HEALTHCHECK.md`) · 성능 번들 A/B/C 문서 동기화 (**소스 변경 없음**)
+- **이전 문서 갱신일:** 2026-08-01 — **성능 번들 C** · APK `193317`
 - **최신 기능 커밋:** `073c8bf` — **성능 번들 C** · APK `193317`
+- **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **적용됨**, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-perf-bundle-c-20260801.md](./SECURITY-perf-bundle-c-20260801.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_193317.apk` — **성능 번들 C**
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_193317.apk` — **성능 번들 C** (+B/A)
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260801_193317.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260801_191117.apk` — **성능 번들 B**
 - **이전 권장 APK:** `releases/VoiceStamp_20260801_185512.apk` — **성능 번들 A**
@@ -100,7 +102,7 @@
 | 07-28 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
 | 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
 | 07-31 | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화 |
-| 08-01 | **QR URL 연결확인**(`172149`) · **성능 번들 A**(`185512`) · **성능 번들 B**(`191117`) · **성능 번들 C**(`193317`) · 도움말·SECURITY · Vercel |
+| 08-01 | **QR URL 연결확인**(`172149`) · **성능 번들 A/B/C**(`185512`→`191117`→`193317`) · **헬스체크 기준 고정**(`HEALTHCHECK.md`) · 도움말·SECURITY · Vercel |
 
 ### APK별 (권장·주요)
 

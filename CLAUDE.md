@@ -82,6 +82,10 @@ All user preferences are stored in the `app_settings` SQLite table (key-value). 
 
 Every feature change creates a `restore-<feature>.bat` script and a matching `src.pre-<feature>/` snapshot directory. Running the bat file copies the snapshot back over `src/`. This is the project's undo mechanism. See `RESTORE.md` for the full index.
 
+### Performance / health check
+
+For performance or health-check requests, read **`docs/HEALTHCHECK.md` first**. Bundles A/B/C are already applied — verify regression only; pick next work from §2.
+
 ### Metro config
 
 `metro.config.js` adds `wasm`, `hwpx`, `sqlite` to asset extensions and sets COEP/COOP headers for web SharedArrayBuffer support.

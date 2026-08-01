@@ -1,7 +1,9 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
+문서 동기화: **2026-08-01** — 헬스체크 기준 고정 · 성능 번들 A/B/C (**소스 변경 없음**)
 최신 기능 커밋 기준: `073c8bf` — **성능 번들 C** · APK `VoiceStamp_20260801_193317` · 이전 `9d8ccfa`
+성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md)
 
 ---
 
@@ -450,6 +452,8 @@ VoiceStamp/
 | 350 | GitHub APK `releases/20260801_193317` · 랜딩·`/info` | `073c8bf` | `restore-apk-download-20260801_193317.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260801_193317.apk`
+
+> **성능:** 번들 A/B/C 적용됨. 회귀·다음 후보 → [HEALTHCHECK.md](./HEALTHCHECK.md)
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
