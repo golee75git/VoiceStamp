@@ -3182,3 +3182,15 @@ restore-qr-url-check.bat
 ```
 
 src.pre-qr-url-check/·public.pre-qr-url-check/ 스냅샷으로 되돌리고 `qrUrlConnectCheckService.ts`를 삭제합니다.
+
+---
+
+## 204. 성능 번들 A 되돌리기 (선택)
+
+촬영 JPEG 상한·갤러리 유휴 직렬 큐·기본 갤러리「앱만」 적용 후 문제가 생기면:
+
+```bat
+restore-perf-bundle-a.bat
+```
+
+src.pre-perf-bundle-a/·public.pre-perf-bundle-a/ 스냅샷으로 되돌리고 `captureImageBudget.ts`·`gallerySaveIdleQueue.ts`를 삭제합니다.

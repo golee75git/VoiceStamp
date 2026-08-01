@@ -2,6 +2,7 @@
 
 import { embedCaptionExif } from './embedCaptionExif';
 import { renderStampJpegUri, type StampImageExportOptions } from './exportStampImage';
+import { enqueueGallerySaveIdle } from './gallerySaveIdleQueue';
 import {
   buildGalleryOriginalFileName,
   buildGalleryStampFileName,
@@ -200,7 +201,7 @@ function scheduleNewStampGallerySave(
   galleryOriginalUri: string,
   captureForExport?: SaveStampInput['captureForExport'],
 ): void {
-  void (async () => {
+  enqueueGallerySaveIdle(async () => {
     try {
       const mode = await getGallerySaveMode();
       if (mode === 'app_only') {
@@ -227,7 +228,7 @@ function scheduleNewStampGallerySave(
     } catch {
       // App stamp is already saved; gallery failure is non-fatal.
     }
-  })();
+  });
 }
 
 async function saveEditStampCaptionToGallery(
@@ -264,7 +265,7 @@ function scheduleEditStampCaptionGallerySave(
   groupName: string,
   captureForExport?: SaveStampInput['captureForExport'],
 ): void {
-  void (async () => {
+  enqueueGallerySaveIdle(async () => {
     try {
       const galleryAssetId = await saveEditStampCaptionToGallery(stamp, groupName, captureForExport);
       if (galleryAssetId) {
@@ -273,7 +274,7 @@ function scheduleEditStampCaptionGallerySave(
     } catch {
       // App stamp is already updated; gallery failure is non-fatal.
     }
-  })();
+  });
 }
 
 export async function saveStamp(input: SaveStampInput): Promise<Stamp> {

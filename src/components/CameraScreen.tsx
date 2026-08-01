@@ -22,7 +22,8 @@ import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnaps
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
 import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, cameraHomeBgFill, type CameraHand, type CameraHomeBg } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
-import { pickLargestPictureSize } from '../utils/cameraPictureSize';
+import { STAMP_CAPTURE_JPEG_QUALITY } from '../constants/captureImageBudget';
+import { pickPreferredStampPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
 import { StampSaveModal } from './StampSaveModal';
 import {
@@ -360,9 +361,9 @@ export function CameraScreen({
     setInAppCameraReady(true);
     try {
       const sizes = await cameraRef.current?.getAvailablePictureSizesAsync();
-      const largest = sizes?.length ? pickLargestPictureSize(sizes) : undefined;
-      if (largest) {
-        setInAppPictureSize(largest);
+      const preferred = sizes?.length ? pickPreferredStampPictureSize(sizes) : undefined;
+      if (preferred) {
+        setInAppPictureSize(preferred);
       }
     } catch {
       // Keep default picture size when sizes are unavailable.
@@ -391,7 +392,7 @@ export function CameraScreen({
     try {
       const shutterSound = await getShutterSoundEnabled();
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 1,
+        quality: STAMP_CAPTURE_JPEG_QUALITY,
         skipProcessing: false,
         shutterSound,
       });

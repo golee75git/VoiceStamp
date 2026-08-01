@@ -1035,8 +1035,9 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
           <Text style={styles.hint}>
-            스탬프는 항상 앱 목록에 저장됩니다. 앱만: 갤러리에 넣지 않습니다 (연속 촬영에 가장 빠름). 그 외는
-            갤러리 앨범에 저장하며, 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
+            스탬프는 항상 앱 목록에 저장됩니다. 기본 「앱만」은 갤러리에 넣지 않아 연속 촬영이 가장
+            빠릅니다. 원본·캡션을 고르면 앱 저장 직후 화면이 한가할 때 갤러리로 이어서 넣으며,
+            캡션 합성은 한 장씩 처리합니다. 캡션·워터마크는 위 「제목·메모 표시 방식」을 따릅니다.
           </Text>
           <View style={styles.optionRow}>
             {(['app_only', 'original_only', 'caption_only', 'original_and_caption'] as GallerySaveMode[]).map(

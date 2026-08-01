@@ -1,9 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
 
+import { STAMP_CAPTURE_JPEG_QUALITY } from '../constants/captureImageBudget';
+
 const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
   allowsEditing: false,
-  quality: 1,
+  quality: STAMP_CAPTURE_JPEG_QUALITY,
 };
 
 export async function pickImageFromLibrary(): Promise<string | null> {

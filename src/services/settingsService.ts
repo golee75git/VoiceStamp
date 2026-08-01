@@ -110,7 +110,8 @@ export const DEFAULT_STAMP_LIST_DISPLAY_MODE = 'title_date' as const;
 export const DEFAULT_WATERMARK_STYLE = 'solid_dark' as const;
 export const DEFAULT_COORDS_LABEL_MODE = 'off' as const;
 export const DEFAULT_LOCATION_MODE = 'auto' as const;
-export const DEFAULT_GALLERY_SAVE_MODE = 'original_only' as const;
+/** Fastest continuous-capture path: app list only (gallery optional). */
+export const DEFAULT_GALLERY_SAVE_MODE = 'app_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;

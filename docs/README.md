@@ -36,13 +36,14 @@
 
 ## 현재 상태 스냅샷 (2026-08-01)
 
-- **문서 갱신일:** 2026-08-01 — **QR URL 연결확인** · APK `172149`
-- **이전 문서 갱신일:** 2026-07-31 — 날짜별·APK별 동기화 (`a9509b9` / `626c1a4`)
-- **최신 기능 커밋:** `d363b00` — **QR URL 연결확인** · APK `172149`
+- **문서 갱신일:** 2026-08-01 — **성능 번들 A** · APK `185512`
+- **이전 문서 갱신일:** 2026-08-01 — **QR URL 연결확인** · APK `172149`
+- **최신 기능 커밋:** (본 커밋) — **성능 번들 A** · APK `185512`
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
-- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-qr-url-check-20260801.md](./SECURITY-qr-url-check-20260801.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_172149.apk` — **QR URL 연결확인**
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260801_172149.apk
+- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-perf-bundle-a-20260801.md](./SECURITY-perf-bundle-a-20260801.md)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260801_185512.apk` — **성능 번들 A**
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260801_185512.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260801_172149.apk` — QR URL 연결확인
 - **이전 권장 APK:** `releases/VoiceStamp_20260731_102403.apk` — QR URL 마이크·https:// 기본
 - **이전 권장 APK:** `releases/VoiceStamp_20260731_094832.apk` — 왼손 홈 테마 (F-CAM-27)
 - **이전 권장 APK:** `releases/VoiceStamp_20260730_114713.apk` — caption QR MVP
@@ -97,15 +98,16 @@
 | 07-28 | 카메라 홈·시작 **mainint/mainint1** · 배경 설정 · APK `105823`~`135843` |
 | 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
 | 07-31 | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화 |
-| 08-01 | **QR URL 연결확인** · APK `172149` · 도움말·SECURITY · Vercel |
+| 08-01 | **QR URL 연결확인**(`172149`) · **성능 번들 A**(`185512`) · 도움말·SECURITY · Vercel |
 
 ### APK별 (권장·주요)
 
-> **2026-08-01:** 권장 파일은 **`VoiceStamp_20260801_172149.apk`**.
+> **2026-08-01:** 권장 파일은 **`VoiceStamp_20260801_185512.apk`**.
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **설치·GitHub 권장** — QR URL **연결확인** |
+| `releases/VoiceStamp_20260801_185512.apk` | (본 커밋) | **설치·GitHub 권장** — **성능 번들 A** |
+| `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 |
 | `releases/VoiceStamp_20260730_114713.apk` | `49e9c70` | **이전** — **F-QR-01** caption QR MVP |
