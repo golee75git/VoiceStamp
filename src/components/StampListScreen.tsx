@@ -1425,9 +1425,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   thumbnail: {
-    width: 88,
-    height: 88,
-    marginVertical: 8,
+    width: 76,
+    height: 76,
+    marginVertical: 4,
     marginLeft: 8,
     marginRight: 10,
     borderRadius: 8,
@@ -1442,10 +1442,10 @@ const styles = StyleSheet.create({
   },
   meta: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingRight: 12,
     paddingLeft: 0,
-    gap: 4,
+    gap: 3,
     justifyContent: 'center',
   },
   cardTitle: {

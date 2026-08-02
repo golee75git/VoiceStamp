@@ -3242,3 +3242,15 @@ restore-list-row-compact.bat
 ```
 
 src.pre-list-row-compact/·public.pre-list-row-compact/ 스냅샷으로 되돌립니다.
+
+---
+
+## 209. 저장 목록 행 높이 추가 축소 되돌리기 (선택)
+
+썸네일·행 패딩 추가 축소 후 문제가 생기면:
+
+```bat
+restore-list-row-tighter.bat
+```
+
+src.pre-list-row-tighter/·public.pre-list-row-tighter/ 스냅샷으로 되돌립니다.
