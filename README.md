@@ -30,14 +30,16 @@ build-apk.bat
 | [docs/PRIVACY.md](./docs/PRIVACY.md) | 개인정보 처리 안내 |
 | [docs/KAKAO-KEY-SECURITY.md](./docs/KAKAO-KEY-SECURITY.md) | 카카오 API 키 보안 체크리스트 |
 | [docs/README.md](./docs/README.md) | 문서 목록·날짜별 요약 |
+| [docs/CHANGELOG.md](./docs/CHANGELOG.md) | 날짜별·APK별 최근 변경 |
+| [docs/HEALTHCHECK.md](./docs/HEALTHCHECK.md) | 성능·헬스체크 기준 |
 | [docs/DESIGN-INFO-PAGES.md](./docs/DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 |
 | [LICENSE](./LICENSE) | MIT 라이선스 |
 | [RESTORE.md](./RESTORE.md) | 기능별 되돌리기 |
 
 ## 되돌리기
 
-기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md) (§8~146)
+기능 단위 복구: `restore-*.bat` 또는 [RESTORE.md](./RESTORE.md)
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260728_135843.apk` — **카메라 홈 기본(검정)/스타일2(흰색)** — 상세는 [docs/README.md](./docs/README.md)
+권장: `releases/VoiceStamp_20260802_124143.apk` — 선택 취소 썸네일·목록 UX · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

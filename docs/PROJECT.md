@@ -1,9 +1,10 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-01** — 헬스체크 기준 고정 · 성능 번들 A/B/C (**소스 변경 없음**)
-최신 기능 커밋 기준: `073c8bf` — **성능 번들 C** · APK `VoiceStamp_20260801_193317` · 이전 `9d8ccfa`
-성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md)
+문서 동기화: **2026-08-02** — 날짜별·APK별 정리 · 권장 APK `124143` (**소스 변경 없음**)
+최신 기능 커밋 기준: `2a00578` — 목록 선택 취소 썸네일 · APK `VoiceStamp_20260802_124143` · 이전 `869a0bb`
+변경 이력: [CHANGELOG.md](./CHANGELOG.md)
+성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
 ---
 
@@ -450,10 +451,20 @@ VoiceStamp/
 | 348 | GitHub APK `releases/20260801_191117` · 랜딩·`/info` | `9d8ccfa` | `restore-apk-download-20260801_191117.bat` |
 | 349 | **성능 번들 C** — 내보내기 동적 import | `073c8bf` | `restore-perf-bundle-c.bat` §206 |
 | 350 | GitHub APK `releases/20260801_193317` · 랜딩·`/info` | `073c8bf` | `restore-apk-download-20260801_193317.bat` |
+| 351 | 내보내기 마이크 ↔ 목록 검색 음성 혼입 방지 | `f005041` | `restore-speech-target-guard.bat` §207 |
+| 352 | GitHub APK `releases/20260801_232652` · 랜딩·`/info` | `f005041` | `restore-apk-download-20260801_232652.bat` |
+| 353 | 저장 목록 플랫 행 (hairline·선택 악센트) | `037b0af` | `restore-list-row-compact.bat` §208 |
+| 354 | GitHub APK `releases/20260802_105935` · 랜딩·`/info` | `037b0af` | `restore-apk-download-20260802_105935.bat` |
+| 355 | 목록 행 높이 추가 축소 | `2dcf74b` | `restore-list-row-tighter.bat` §209 |
+| 356 | GitHub APK `releases/20260802_111920` · 랜딩·`/info` | `2dcf74b` | `restore-apk-download-20260802_111920.bat` |
+| 357 | 설정 필드 표시명 UI 제거 | `869a0bb` | `restore-hide-settings-field-labels.bat` §210 |
+| 358 | GitHub APK `releases/20260802_115453` · 랜딩·`/info` | `869a0bb` | `restore-apk-download-20260802_115453.bat` |
+| 359 | 선택 취소 후 목록 흰 썸네일 수정 | `2a00578` | `restore-list-thumb-selection-fix.bat` §211 |
+| 360 | GitHub APK `releases/20260802_124143` · 랜딩·`/info` | `2a00578` | `restore-apk-download-20260802_124143.bat` |
 
-> **권장 APK:** `releases/VoiceStamp_20260801_193317.apk`
+> **권장 APK:** `releases/VoiceStamp_20260802_124143.apk`
 
-> **성능:** 번들 A/B/C 적용됨. 회귀·다음 후보 → [HEALTHCHECK.md](./HEALTHCHECK.md)
+> **성능:** 번들 A/B/C 누적 적용. 회귀·다음 후보 → [HEALTHCHECK.md](./HEALTHCHECK.md)
 
 > **참고:** `b46c9d3`(설정 연속 촬영 토글)는 `ec4930e`에서 3버튼 UI로 **대체**됨. 되돌리기: `restore-continuous-capture.bat` §109.
 
@@ -519,7 +530,12 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260801_193317.apk`** | `073c8bf` | **설치·GitHub 권장** — **성능 번들 C** + B/A 누적 |
+| **`releases/VoiceStamp_20260802_124143.apk`** | `2a00578` | **설치·GitHub 권장** — 선택 취소 썸네일 유지 + 08-02 누적 |
+| **`releases/VoiceStamp_20260802_115453.apk`** | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 |
+| **`releases/VoiceStamp_20260802_111920.apk`** | `2dcf74b` | **이전** — 목록 행 높이 추가 축소 |
+| **`releases/VoiceStamp_20260802_105935.apk`** | `037b0af` | **이전** — 목록 플랫 행 |
+| **`releases/VoiceStamp_20260801_232652.apk`** | `f005041` | **이전** — 음성 타깃 가드 |
+| **`releases/VoiceStamp_20260801_193317.apk`** | `073c8bf` | **이전** — **성능 번들 C** + B/A (헬스체크 기준선) |
 | **`releases/VoiceStamp_20260801_191117.apk`** | `9d8ccfa` | **이전** — **성능 번들 B** + A 누적 |
 | **`releases/VoiceStamp_20260801_185512.apk`** | `e45026b` | **이전** — **성능 번들 A** + QR 연결확인 누적 |
 | **`releases/VoiceStamp_20260801_172149.apk`** | `d363b00` | **이전** — QR URL **연결확인** + 07-31 누적 |
@@ -630,14 +646,29 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-08-02
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **권장** — 선택 취소 썸네일 · `restore-list-thumb-selection-fix.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260802_115453.apk` | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 · `restore-hide-settings-field-labels.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260802_111920.apk` | `2dcf74b` | **이전** — 행 높이 축소 · `restore-list-row-tighter.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260802_105935.apk` | `037b0af` | **이전** — 플랫 목록 행 · `restore-list-row-compact.bat` | **GitHub `releases/`** |
+
+#### 2026-08-01
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260801_232652.apk` | `f005041` | **이전** — 음성 타깃 가드 · `restore-speech-target-guard.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **이전** — **성능 번들 C** · `restore-perf-bundle-c.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_191117.apk` | `9d8ccfa` | **이전** — **성능 번들 B** · `restore-perf-bundle-b.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** · `restore-perf-bundle-a.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** · `restore-qr-url-check.bat` | **GitHub `releases/`** |
+
 #### 2026-07-31
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **권장** — **성능 번들 C** · `restore-perf-bundle-c.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260801_191117.apk` | `9d8ccfa` | **이전** — **성능 번들 B** · `restore-perf-bundle-b.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** · `restore-perf-bundle-a.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** · `restore-qr-url-check.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260731_102403.apk` | `a9509b9` | **이전** — QR URL 마이크·https:// 기본 · `restore-qr-url-mic.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260731_094832.apk` | `3be0a07` | **이전** — **F-CAM-27** 왼손 홈 테마 · `restore-camera-hand-theme.bat` | **GitHub `releases/`** |
 
@@ -1131,6 +1162,33 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-08-02
+
+| 커밋 | 내용 |
+|------|------|
+| `2a00578` | 선택 취소 후 목록 흰 썸네일 · APK `124143` · `restore-list-thumb-selection-fix.bat` |
+| `869a0bb` | 설정 필드 표시명 UI 제거 · APK `115453` · `restore-hide-settings-field-labels.bat` |
+| `2dcf74b` | 목록 행 높이 추가 축소 · APK `111920` · `restore-list-row-tighter.bat` |
+| `037b0af` | 목록 플랫 행 · APK `105935` · `restore-list-row-compact.bat` |
+| (본 문서) | PRD·PROJECT·PLAN·README·CHANGELOG 날짜별·APK별 동기화 (`2a00578`) — **소스 변경 없음** |
+
+> **권장 APK:** `releases/VoiceStamp_20260802_124143.apk` `2a00578`.
+
+### 2026-08-01
+
+| 커밋 | 내용 |
+|------|------|
+| `f005041` | 내보내기/검색 음성 혼입 방지 · APK `232652` · `restore-speech-target-guard.bat` |
+| `45bf293` | 헬스체크 기준 고정 문서 · **소스 변경 없음** |
+| `073c8bf` | **성능 번들 C** · APK `193317` |
+| `9d8ccfa` | **성능 번들 B** · APK `191117` |
+| `e45026b` | **성능 번들 A** · APK `185512` |
+| `d363b00` | QR URL 연결확인 · APK `172149` |
+
+> **당시 권장 APK (08-01 말 음성 가드):** `releases/VoiceStamp_20260801_232652.apk` `f005041`.
+
+> **당시 권장 APK (08-01 번들 C):** `releases/VoiceStamp_20260801_193317.apk` `073c8bf`.
+
 ### 2026-07-31
 
 | 커밋 | 내용 |
@@ -1142,14 +1200,6 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | `3be0a07` | **왼손 홈 테마 APK** — `releases/VoiceStamp_20260731_094832` · 랜딩·`/info` |
 | `348130e` | **F-CAM-27** 왼손=`mainint1`+아이콘 덮어쓰기 · `restore-camera-hand-theme.bat` |
 | (본 문서) | PRD·PROJECT·PLAN·README 날짜별·APK별 동기화 (`a9509b9`/`626c1a4`) — **소스 변경 없음** |
-
-> **권장 APK:** `releases/VoiceStamp_20260801_193317.apk` `073c8bf`.
-
-> **당시 권장 APK (08-01 B):** `releases/VoiceStamp_20260801_191117.apk` `9d8ccfa`.
-
-> **당시 권장 APK (08-01 저녁 A):** `releases/VoiceStamp_20260801_185512.apk` `e45026b`.
-
-> **당시 권장 APK (08-01 낮):** `releases/VoiceStamp_20260801_172149.apk` `d363b00`.
 
 > **당시 권장 APK (07-31):** `releases/VoiceStamp_20260731_102403.apk` (`a9509b9`).
 

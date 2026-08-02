@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.9 |
-| 작성일 | 2026-08-01 |
-| 기준 커밋 | `073c8bf` — **성능 번들 C** · APK `193317` · 이전 `9d8ccfa` |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
+| 문서 버전 | 3.10 |
+| 작성일 | 2026-08-02 |
+| 기준 커밋 | `2a00578` — 목록 선택 취소 썸네일 · APK `124143` · 이전 `869a0bb` |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -723,15 +723,26 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-01 | 2AM·3 | **성능 번들 B** (Kakao POI 3종·장면 키워드 버튼) · APK `191117` |
 | 2026-08-01 | 2AN·3 | **성능 번들 C** (내보내기 동적 import) · APK `193317` |
 | 2026-08-01 | 문서 | **헬스체크 기준 고정** (`HEALTHCHECK.md` · `.cursor/rules/healthcheck.mdc`) · PRD/PLAN/PROJECT/README 동기화 (**소스 없음**) |
+| 2026-08-01 | 2AO·3 | 내보내기 마이크 ↔ 목록 검색 음성 **혼입 방지** · APK `232652` |
+| 2026-08-02 | 2AP·3 | 저장 목록 **플랫 행** · APK `105935` |
+| 2026-08-02 | 2AQ·3 | 목록 **행 높이 추가 축소** · APK `111920` |
+| 2026-08-02 | 2AR·3 | 설정 **필드 표시명 UI 제거** · APK `115453` |
+| 2026-08-02 | 2AS·3 | 선택 취소 후 **흰 썸네일 수정** · APK `124143` |
+| 2026-08-02 | 문서 | 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) · PRD/PLAN/PROJECT/README 동기화 (**소스 없음**) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-01:** 권장 = `releases/VoiceStamp_20260801_193317.apk`. 다음 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-02:** 권장 = `releases/VoiceStamp_20260802_124143.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **설치·GitHub 권장** — **성능 번들 C** |
+| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **설치·GitHub 권장** — 선택 취소 썸네일 유지 |
+| `releases/VoiceStamp_20260802_115453.apk` | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 |
+| `releases/VoiceStamp_20260802_111920.apk` | `2dcf74b` | **이전** — 목록 행 높이 추가 축소 |
+| `releases/VoiceStamp_20260802_105935.apk` | `037b0af` | **이전** — 목록 플랫 행 |
+| `releases/VoiceStamp_20260801_232652.apk` | `f005041` | **이전** — 음성 타깃 가드 |
+| `releases/VoiceStamp_20260801_193317.apk` | `073c8bf` | **이전** — **성능 번들 C** (헬스체크 기준선) |
 | `releases/VoiceStamp_20260801_191117.apk` | `9d8ccfa` | **이전** — **성능 번들 B** |
 | `releases/VoiceStamp_20260801_185512.apk` | `e45026b` | **이전** — **성능 번들 A** |
 | `releases/VoiceStamp_20260801_172149.apk` | `d363b00` | **이전** — QR URL **연결확인** |
