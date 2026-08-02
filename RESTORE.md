@@ -3230,3 +3230,15 @@ restore-speech-target-guard.bat
 ```
 
 src.pre-speech-target-guard/·public.pre-speech-target-guard/ 스냅샷으로 되돌립니다.
+
+---
+
+## 208. 저장 목록 행 간격·테두리 되돌리기 (선택)
+
+목록 카드 테두리·그림자 축소 후 문제가 생기면:
+
+```bat
+restore-list-row-compact.bat
+```
+
+src.pre-list-row-compact/·public.pre-list-row-compact/ 스냅샷으로 되돌립니다.
