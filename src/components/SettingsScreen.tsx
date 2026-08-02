@@ -67,7 +67,6 @@ import {
   DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
-  FIELD_LABEL_MAX_LENGTH,
   gallerySaveModeLabel,
   continuousCaptureCameraLabel,
   primaryCaptureCameraLabel,
@@ -641,65 +640,6 @@ export function SettingsScreen({
               </Text>
             </Pressable>
           </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>필드 표시명</Text>
-          <Text style={styles.hint}>
-            저장 화면 라벨과 PDF·워터마크에 「표시명: 내용」으로 붙습니다. 저장 화면에서 칸 이름을 탭해도 여기와 같이 저장됩니다. 비우면 기본값(제목·장소·메모·추가1·추가2·추가3)으로 돌아갑니다. DB 저장 구조는 바뀌지 않습니다.
-          </Text>
-          <Text style={styles.label}>제목 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={titleFieldLabel}
-            onChangeText={setTitleFieldLabelState}
-            placeholder={DEFAULT_FIELD_TITLE_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
-          <Text style={styles.label}>장소 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={placeFieldLabel}
-            onChangeText={setPlaceFieldLabelState}
-            placeholder={DEFAULT_FIELD_PLACE_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
-          <Text style={styles.label}>메모 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={memoFieldLabel}
-            onChangeText={setMemoFieldLabelState}
-            placeholder={DEFAULT_FIELD_MEMO_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
-          <Text style={styles.label}>추가1 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={extra1FieldLabel}
-            onChangeText={setExtra1FieldLabelState}
-            placeholder={DEFAULT_FIELD_EXTRA1_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
-          <Text style={styles.label}>추가2 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={extra2FieldLabel}
-            onChangeText={setExtra2FieldLabelState}
-            placeholder={DEFAULT_FIELD_EXTRA2_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
-          <Text style={styles.label}>추가3 칸 이름</Text>
-          <TextInput
-            style={styles.input}
-            value={extra3FieldLabel}
-            onChangeText={setExtra3FieldLabelState}
-            placeholder={DEFAULT_FIELD_EXTRA3_LABEL}
-            maxLength={FIELD_LABEL_MAX_LENGTH}
-            editable={!saving}
-          />
 
           <Text style={[styles.label, styles.sectionGap]}>사진 오버레이 문구</Text>
           <Text style={styles.hint}>

@@ -3254,3 +3254,15 @@ restore-list-row-tighter.bat
 ```
 
 src.pre-list-row-tighter/·public.pre-list-row-tighter/ 스냅샷으로 되돌립니다.
+
+---
+
+## 210. 설정 필드 표시명 UI 제거 되돌리기 (선택)
+
+설정 「필드 표시명」입력 칸 제거 후 문제가 생기면:
+
+```bat
+restore-hide-settings-field-labels.bat
+```
+
+src.pre-hide-settings-field-labels/·public.pre-hide-settings-field-labels/ 스냅샷으로 되돌립니다.
