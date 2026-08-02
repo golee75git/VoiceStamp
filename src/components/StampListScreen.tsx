@@ -248,6 +248,7 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
+    scheduleStampThumbs(stamps, resolveImageUri);
   };
 
   const openExportNameModal = () => {
@@ -732,11 +733,13 @@ export function StampListScreen({
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
+            extraData={`${selecting}:${selectedIds.size}:${[...selectedIds].join(',')}`}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
             initialNumToRender={8}
             maxToRenderPerBatch={6}
             windowSize={5}
-            removeClippedSubviews={Platform.OS === 'android'}
+            // 선택 UI·하단바 토글 후 Android clipped 뷰가 흰 썸네일로 남는 경우 방지
+            removeClippedSubviews={false}
             onScroll={(event) => {
               scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
             }}

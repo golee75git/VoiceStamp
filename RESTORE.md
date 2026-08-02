@@ -3266,3 +3266,15 @@ restore-hide-settings-field-labels.bat
 ```
 
 src.pre-hide-settings-field-labels/·public.pre-hide-settings-field-labels/ 스냅샷으로 되돌립니다.
+
+---
+
+## 211. 목록 선택 취소 흰 썸네일 되돌리기 (선택)
+
+선택 취소 후 썸네일 공백 수정 후 문제가 생기면:
+
+```bat
+restore-list-thumb-selection-fix.bat
+```
+
+src.pre-list-thumb-selection-fix/·public.pre-list-thumb-selection-fix/ 스냅샷으로 되돌립니다.
