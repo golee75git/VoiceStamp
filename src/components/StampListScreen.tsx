@@ -6,6 +6,7 @@ import {
   Image,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -49,6 +50,9 @@ import {
 } from '../services/settingsService';
 import { stampDisplayTitle } from '../services/stampFloor';
 import { stampDisplayPlace } from '../services/stampPlace';
+import {
+  listStampFieldTemplatesForFilter,
+} from '../services/stampFieldTemplates';
 import { listStamps } from '../services/stampRepository';
 import { scheduleStampThumbs } from '../services/stampThumb';
 import { moveStampsToTrash } from '../services/stampTrash';
@@ -65,6 +69,8 @@ type StampListScreenProps = {
   onChanged: () => void;
   captureStampForExport: CaptureStampForExport;
 };
+
+type TemplateListFilter = 'all' | 'unclassified' | string;
 
 export function StampListScreen({
   onBack,
@@ -116,6 +122,8 @@ export function StampListScreen({
   const [albumBusy, setAlbumBusy] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [templateFilter, setTemplateFilter] = useState<TemplateListFilter>('all');
+  const [templateOptions, setTemplateOptions] = useState<Array<{ id: string; name: string }>>([]);
   const [exportNameModalVisible, setExportNameModalVisible] = useState(false);
   const [draftFileName, setDraftFileName] = useState('');
   const [draftReportTitle, setDraftReportTitle] = useState('');
@@ -176,6 +184,11 @@ export function StampListScreen({
       const rows = await listStamps();
       setStamps(rows);
       scheduleStampThumbs(rows, resolveImageUri);
+      try {
+        setTemplateOptions(await listStampFieldTemplatesForFilter());
+      } catch {
+        // 칩 목록 실패 시에도 스탬프 목록은 표시
+      }
     } finally {
       setLoading(false);
     }
@@ -215,14 +228,40 @@ export function StampListScreen({
     load({ silent: refreshKey > 0 });
   }, [load, refreshKey]);
 
-  const filteredStamps = useMemo(
-    () => filterStampsByQuery(stamps, searchQuery),
-    [stamps, searchQuery],
-  );
+  const templateNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const item of templateOptions) {
+      map.set(item.id, item.name);
+    }
+    return map;
+  }, [templateOptions]);
+
+  const templateChipItems = useMemo(() => {
+    const known = new Set(templateOptions.map((item) => item.id));
+    const orphans: Array<{ id: string; name: string }> = [];
+    for (const stamp of stamps) {
+      const id = stamp.templateId;
+      if (!id || known.has(id) || orphans.some((item) => item.id === id)) {
+        continue;
+      }
+      orphans.push({ id, name: '삭제된 유형' });
+    }
+    return [...templateOptions, ...orphans];
+  }, [templateOptions, stamps]);
+
+  const filteredStamps = useMemo(() => {
+    let rows = filterStampsByQuery(stamps, searchQuery);
+    if (templateFilter === 'unclassified') {
+      rows = rows.filter((stamp) => !stamp.templateId);
+    } else if (templateFilter !== 'all') {
+      rows = rows.filter((stamp) => stamp.templateId === templateFilter);
+    }
+    return rows;
+  }, [stamps, searchQuery, templateFilter]);
 
   useEffect(() => {
     listRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [searchQuery]);
+  }, [searchQuery, templateFilter]);
 
   useEffect(() => {
     if (!selecting || selectedIds.size === 0) {
@@ -568,6 +607,7 @@ export function StampListScreen({
 
   const selectedCount = selectedIds.size;
   const hasSearchQuery = searchQuery.trim().length > 0;
+  const hasTemplateFilter = templateFilter !== 'all';
   const selectionCompact = selecting && selectedCount > 0;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
@@ -652,6 +692,71 @@ export function StampListScreen({
             ) : null}
           </View>
         ) : null}
+        {!selecting ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.templateChipScroll}
+            contentContainerStyle={styles.templateChipRow}
+            accessibilityLabel="저장 유형 필터"
+          >
+            <Pressable
+              style={[styles.templateChip, templateFilter === 'all' && styles.templateChipActive]}
+              onPress={() => setTemplateFilter('all')}
+              accessibilityRole="button"
+              accessibilityState={{ selected: templateFilter === 'all' }}
+              accessibilityLabel="전체 유형"
+            >
+              <Text
+                style={[
+                  styles.templateChipText,
+                  templateFilter === 'all' && styles.templateChipTextActive,
+                ]}
+              >
+                전체
+              </Text>
+            </Pressable>
+            {templateChipItems.map((item) => {
+              const selected = templateFilter === item.id;
+              return (
+                <Pressable
+                  key={item.id}
+                  style={[styles.templateChip, selected && styles.templateChipActive]}
+                  onPress={() => setTemplateFilter(item.id)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`${item.name} 유형만 보기`}
+                >
+                  <Text
+                    style={[styles.templateChipText, selected && styles.templateChipTextActive]}
+                    numberOfLines={1}
+                  >
+                    {item.name}
+                  </Text>
+                </Pressable>
+              );
+            })}
+            <Pressable
+              style={[
+                styles.templateChip,
+                templateFilter === 'unclassified' && styles.templateChipActive,
+              ]}
+              onPress={() => setTemplateFilter('unclassified')}
+              accessibilityRole="button"
+              accessibilityState={{ selected: templateFilter === 'unclassified' }}
+              accessibilityLabel="미분류만 보기"
+            >
+              <Text
+                style={[
+                  styles.templateChipText,
+                  templateFilter === 'unclassified' && styles.templateChipTextActive,
+                ]}
+              >
+                미분류
+              </Text>
+            </Pressable>
+          </ScrollView>
+        ) : null}
         {menuVisible && !selectionCompact ? (
           <View style={styles.menuCard}>
             <Pressable
@@ -686,9 +791,9 @@ export function StampListScreen({
         {!selecting ? (
           <>
             <Text style={styles.countLine}>
-              {hasSearchQuery ? (
+              {hasSearchQuery || hasTemplateFilter ? (
                 <>
-                  검색 결과 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
+                  표시 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
                   <Text style={styles.countNumber}>{stamps.length}</Text>개
                 </>
               ) : (
@@ -722,7 +827,13 @@ export function StampListScreen({
           </View>
         ) : filteredStamps.length === 0 ? (
           <View style={styles.centered}>
-            <Text style={styles.empty}>검색 결과가 없습니다.</Text>
+            <Text style={styles.empty}>
+              {hasSearchQuery
+                ? '검색 결과가 없습니다.'
+                : hasTemplateFilter
+                  ? '이 유형으로 저장된 항목이 없습니다.'
+                  : '표시할 항목이 없습니다.'}
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -733,7 +844,7 @@ export function StampListScreen({
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
-            extraData={`${selecting}:${selectedIds.size}:${[...selectedIds].join(',')}`}
+            extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${[...selectedIds].join(',')}`}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
             initialNumToRender={8}
             maxToRenderPerBatch={6}
@@ -747,6 +858,9 @@ export function StampListScreen({
             renderItem={({ item }) => {
               const isSelected = selectedIds.has(item.id);
               const labels = fieldLabelsFromStamp(item);
+              const typeLabel = item.templateId
+                ? templateNameById.get(item.templateId) ?? '삭제된 유형'
+                : '미분류';
               const displayTitle =
                 formatLabeledValue(
                   labels.titleFieldLabel,
@@ -799,6 +913,9 @@ export function StampListScreen({
                   <View style={styles.meta}>
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
                       {displayTitle}
+                    </Text>
+                    <Text style={styles.cardTypeLabel} numberOfLines={1}>
+                      {typeLabel}
                     </Text>
                     {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
@@ -1097,6 +1214,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     gap: 8,
+  },
+  templateChipScroll: {
+    marginTop: 10,
+    maxHeight: 40,
+  },
+  templateChipRow: {
+    alignItems: 'center',
+    gap: 8,
+    paddingRight: 4,
+  },
+  templateChip: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    backgroundColor: '#fff',
+  },
+  templateChipActive: {
+    borderColor: '#2563eb',
+    backgroundColor: '#eff6ff',
+  },
+  templateChipText: {
+    fontSize: 13,
+    color: '#4b5563',
+    fontWeight: '500',
+  },
+  templateChipTextActive: {
+    color: '#1d4ed8',
+    fontWeight: '700',
   },
   searchMicButton: {
     width: 40,
@@ -1455,6 +1602,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111',
+  },
+  cardTypeLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    lineHeight: 16,
   },
   cardPlace: {
     fontSize: 13,

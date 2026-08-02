@@ -44,6 +44,7 @@ import {
   type GallerySaveMode,
 } from './settingsService';
 import { resolveFieldLabels, type FieldLabels } from './fieldLabels';
+import { resolveStampTemplateIdForSave } from './stampFieldTemplates';
 import {
   getStampById,
   insertStamp,
@@ -286,6 +287,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       ? normalizeStampGroupName(input.groupName)
       : formatStampGroupName(now, await getCurrentSiteName());
   const fieldLabels = resolveFieldLabels(input.fieldLabels);
+  const templateId = await resolveStampTemplateIdForSave(null);
 
   const copyOriginal =
     input.originalTempUri && input.originalTempUri !== input.tempImageUri
@@ -313,6 +315,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     extra2: input.extra2?.trim() || null,
     extra3: input.extra3?.trim() || null,
     sourceUrl: input.sourceUrl?.trim() || null,
+    templateId,
     titleFieldLabel: fieldLabels.titleFieldLabel,
     placeFieldLabel: fieldLabels.placeFieldLabel,
     memoFieldLabel: fieldLabels.memoFieldLabel,
@@ -362,6 +365,7 @@ export async function updateStamp(input: {
   const extra2 = input.extra2?.trim() || null;
   const extra3 = input.extra3?.trim() || null;
   const sourceUrl = input.sourceUrl?.trim() || null;
+  const templateId = await resolveStampTemplateIdForSave(stamp.templateId);
   const fieldLabels = resolveFieldLabels(
     input.fieldLabels ?? {
       titleFieldLabel: stamp.titleFieldLabel,
@@ -439,6 +443,7 @@ export async function updateStamp(input: {
     extra2 !== (stamp.extra2?.trim() || null) ||
     extra3 !== (stamp.extra3?.trim() || null) ||
     sourceUrl !== (stamp.sourceUrl?.trim() || null) ||
+    templateId !== (stamp.templateId ?? null) ||
     labelsChanged;
 
   if (metadataChanged) {
@@ -455,6 +460,7 @@ export async function updateStamp(input: {
       extra3,
       fieldLabels,
       sourceUrl,
+      templateId,
     );
   } else {
     await updateStampMetadata(
@@ -468,6 +474,7 @@ export async function updateStamp(input: {
       extra3,
       fieldLabels,
       sourceUrl,
+      templateId,
     );
   }
 
@@ -485,6 +492,7 @@ export async function updateStamp(input: {
       extra2,
       extra3,
       sourceUrl,
+      templateId,
       titleFieldLabel: fieldLabels.titleFieldLabel,
       placeFieldLabel: fieldLabels.placeFieldLabel,
       memoFieldLabel: fieldLabels.memoFieldLabel,

@@ -3278,3 +3278,15 @@ restore-list-thumb-selection-fix.bat
 ```
 
 src.pre-list-thumb-selection-fix/·public.pre-list-thumb-selection-fix/ 스냅샷으로 되돌립니다.
+
+---
+
+## 212. 목록 저장 유형 필터 (선택)
+
+저장 유형(`template_id`)·칩 필터·행 배지 추가 후 문제가 생기면:
+
+```bat
+restore-template-list-filter.bat
+```
+
+src.pre-template-list-filter/·public.pre-template-list-filter/ 스냅샷으로 되돌립니다.

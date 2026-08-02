@@ -81,6 +81,10 @@ export const ALTER_STAMPS_ADD_SOURCE_URL = `
   ALTER TABLE stamps ADD COLUMN source_url TEXT;
 `;
 
+export const ALTER_STAMPS_ADD_TEMPLATE_ID = `
+  ALTER TABLE stamps ADD COLUMN template_id TEXT;
+`;
+
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,

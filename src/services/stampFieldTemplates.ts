@@ -505,6 +505,31 @@ export async function deleteCustomStampFieldTemplate(templateId: string): Promis
   await writeCustomTemplates(next);
 }
 
+/**
+ * Template id to store on a stamp row.
+ * Prefers the current active/matched template; otherwise keeps an existing id (edit).
+ */
+export async function resolveStampTemplateIdForSave(
+  existingId?: string | null,
+): Promise<string | null> {
+  const status = await getActiveStampFieldTemplateStatus();
+  if (status.templateId) {
+    return sanitizeActiveTemplateId(status.templateId);
+  }
+  return sanitizeActiveTemplateId(existingId ?? null);
+}
+
+/** Built-in then custom templates for list filter chips (id + display name). */
+export async function listStampFieldTemplatesForFilter(): Promise<
+  Array<{ id: string; name: string }>
+> {
+  const customs = await listCustomStampFieldTemplates();
+  return [
+    ...STAMP_FIELD_TEMPLATES.map((item) => ({ id: item.id, name: item.name })),
+    ...customs.map((item) => ({ id: item.id, name: item.name })),
+  ];
+}
+
 /** Apply template labels to app settings; placeholders are session hints for save inputs. */
 export async function applyStampFieldTemplate(templateId: string): Promise<StampFieldTemplate> {
   const template = await findStampFieldTemplate(templateId);

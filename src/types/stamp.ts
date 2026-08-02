@@ -18,6 +18,8 @@ export type Stamp = {
   extra3?: string | null;
   /** Confirmed http(s) URL for caption QR overlay (null = no QR). */
   sourceUrl?: string | null;
+  /** Active save-template id at write time (null = unclassified / legacy). */
+  templateId?: string | null;
   /** Snapshot of UI field labels at save/edit time (null = use app defaults). */
   titleFieldLabel?: string | null;
   placeFieldLabel?: string | null;
@@ -44,6 +46,7 @@ export type StampRow = {
   extra2?: string | null;
   extra3?: string | null;
   source_url?: string | null;
+  template_id?: string | null;
   title_field_label?: string | null;
   place_field_label?: string | null;
   memo_field_label?: string | null;
