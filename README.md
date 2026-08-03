@@ -42,4 +42,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260803_151943.apk` — 칸 말하기 유형·예 · 08-03 누적 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260803_161016.apk` — 항목 말하기 표시명 · 08-03 누적 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

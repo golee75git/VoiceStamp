@@ -1082,10 +1082,10 @@ export function SettingsScreen({
             </Pressable>
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>저장 직후 칸 말하기</Text>
+          <Text style={[styles.label, styles.sectionGap]}>저장 직후 음성으로 항목 채우기</Text>
           <Text style={styles.hint}>
-            사용: 새 스탬프 저장 화면이 열리면 제목→장소→메모 순으로 마이크 안내가 뜹니다. 시트에서
-            저장 유형을 바꾸고 칸별 말하기 예를 볼 수 있습니다. 필드별 마이크는 그대로 쓸 수 있습니다.
+            사용: 새 스탬프 저장 화면이 열리면 제목→장소→메모 순으로 「항목 말하기」 안내가 뜹니다. 시트에서
+            저장 유형을 바꾸고 항목별 말하기 예를 볼 수 있습니다. 필드별 마이크는 그대로 쓸 수 있습니다.
             수정 화면·웹에서는 뜨지 않습니다. OS 음성 인식만 쓰며 서버로 보내지 않습니다. 기본은 끔입니다.
           </Text>
           <View style={styles.optionRow}>

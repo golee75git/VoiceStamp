@@ -231,7 +231,7 @@ export function SaveSlotSpeechSheet({
     <Modal visible={visible} animationType="fade" transparent onRequestClose={handleDismiss}>
       <View style={styles.backdrop}>
         <View style={styles.card} accessibilityViewIsModal>
-          <Text style={styles.heading}>칸 말하기</Text>
+          <Text style={styles.heading}>항목 말하기</Text>
 
           <Text style={styles.typeCaption}>저장 유형</Text>
           <Pressable
@@ -329,7 +329,7 @@ export function SaveSlotSpeechSheet({
                   style={[styles.btn, styles.btnPrimary]}
                   onPress={() => void handleSkipOrNext()}
                   accessibilityRole="button"
-                  accessibilityLabel={isLast ? '넣고 닫기' : '다음 칸'}
+                  accessibilityLabel={isLast ? '넣고 닫기' : '다음 항목'}
                 >
                   <Text style={styles.btnPrimaryText}>{isLast ? '넣고 닫기' : '다음'}</Text>
                 </Pressable>

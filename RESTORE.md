@@ -3362,3 +3362,16 @@ restore-slot-speech-type-hint.bat
 `
 
 src.pre-slot-speech-type-hint/·public.pre-slot-speech-type-hint/ 스냅샷으로 되돌립니다.
+
+---
+
+## 219. 항목 말하기 표시명 되돌리기 (선택)
+
+UI 문구(항목 말하기 / 저장 직후 음성으로 항목 채우기) 변경 후 문제가 생기면:
+
+```bat
+restore-item-speak-label.bat
+```
+
+src.pre-item-speak-label/·public.pre-item-speak-label/ 스냅샷으로 되돌립니다.
+
