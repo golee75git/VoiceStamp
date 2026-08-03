@@ -1,7 +1,7 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-03** — 장소 칩·저장 모달 유형 선택 · 웹 저장 알림 · 권장 APK는 본 커밋 빌드
+문서 동기화: **2026-08-03** — 칸 말하기(유형·예) · 장소 칩 · 앨범 EXIF · 권장 APK `151943` (`114b3dc`)
 최신 기능 커밋 기준: 장소 칩 · 저장 유형 선택(다음 기본값)
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
@@ -461,8 +461,16 @@ VoiceStamp/
 | 358 | GitHub APK `releases/20260802_115453` · 랜딩·`/info` | `869a0bb` | `restore-apk-download-20260802_115453.bat` |
 | 359 | 선택 취소 후 목록 흰 썸네일 수정 | `2a00578` | `restore-list-thumb-selection-fix.bat` §211 |
 | 360 | GitHub APK `releases/20260802_124143` · 랜딩·`/info` | `2a00578` | `restore-apk-download-20260802_124143.bat` |
+| 361 | 목록 **저장 유형 필터** | `acb9a43` | `restore-template-list-filter.bat` §212 |
+| 362 | GitHub APK `releases/20260802_214047` · 랜딩·`/info` | `acb9a43` | — |
+| 363 | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 | `5850f1c`·`190a5e6` | `restore-web-save-alert.bat` · `restore-place-chip-save-template.bat` |
+| 364 | 앨범 **EXIF GPS → 장소** | `6f1dcc2`~`8825a72` | `restore-gallery-exif-place.bat` §215 |
+| 365 | **F-Voice-10** 저장 직후 칸 말하기 | `8856461` | `restore-save-slot-speech.bat` §217 |
+| 366 | GitHub APK `releases/20260803_145506` · 랜딩·`/info` | `7fbd20b` | — |
+| 367 | **F-Voice-11** 칸 말하기 유형·말하기 예 | `09f9c87` | `restore-slot-speech-type-hint.bat` §218 |
+| 368 | GitHub APK `releases/20260803_151943` · 랜딩·`/info` | `114b3dc` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260802_124143.apk`
+> **권장 APK:** `releases/VoiceStamp_20260803_151943.apk`
 
 > **성능:** 번들 A/B/C 누적 적용. 회귀·다음 후보 → [HEALTHCHECK.md](./HEALTHCHECK.md)
 
@@ -530,7 +538,10 @@ build-apk.bat
 
 | 파일 | 커밋 | 비고 |
 |------|------|------|
-| **`releases/VoiceStamp_20260802_124143.apk`** | `2a00578` | **설치·GitHub 권장** — 선택 취소 썸네일 유지 + 08-02 누적 |
+| **`releases/VoiceStamp_20260803_151943.apk`** | `114b3dc` | **설치·GitHub 권장** — 칸 말하기 유형·말하기 예 + 08-03 누적 |
+| **`releases/VoiceStamp_20260803_145506.apk`** | `7fbd20b` | **이전** — 저장 직후 칸 말하기 |
+| **`releases/VoiceStamp_20260802_214047.apk`** | `acb9a43` | **이전** — 목록 저장 유형 필터 |
+| **`releases/VoiceStamp_20260802_124143.apk`** | `2a00578` | **이전** — 선택 취소 썸네일 유지 + 08-02 누적 |
 | **`releases/VoiceStamp_20260802_115453.apk`** | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 |
 | **`releases/VoiceStamp_20260802_111920.apk`** | `2dcf74b` | **이전** — 목록 행 높이 추가 축소 |
 | **`releases/VoiceStamp_20260802_105935.apk`** | `037b0af` | **이전** — 목록 플랫 행 |
@@ -650,12 +661,16 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260803_101849.apk` | (본 커밋) | **권장** — 장소 칩 · 저장 모달 유형 선택(다음 기본값) · 웹 저장 알림 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **권장** — 칸 말하기 **유형·말하기 예** (+08-03 누적) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기(제목→장소→메모) | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 모달 유형 선택 · 웹 저장 알림 | **GitHub `releases/`** |
 
 | 항목 | 내용 |
 |------|------|
 | 분류 | 목록 **장소 칩** · 저장 모달 **유형 선택**(다음 기본값) · `restore-place-chip-save-template.bat` |
 | 웹 | 설정/`showAlert` · canvas JPEG persist · `restore-web-save-alert.bat` |
+| 앨범 | EXIF GPS → 장소 · `restore-gallery-exif-place.bat` |
+| 음성 | **F-Voice-10/11** 칸 말하기 · `restore-save-slot-speech.bat` · `restore-slot-speech-type-hint.bat` |
 
 #### 2026-08-02
 
@@ -1180,7 +1195,11 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 |------|------|
 | 분류 | 목록 장소 칩 · 저장 모달 유형 선택(다음 기본값) · [DESIGN-place-chip-save-template-20260803.md](./DESIGN-place-chip-save-template-20260803.md) · `restore-place-chip-save-template.bat` |
 | 웹 저장 | `showAlert` · canvas persist · [DESIGN-web-save-alert-20260803.md](./DESIGN-web-save-alert-20260803.md) · `restore-web-save-alert.bat` |
-| APK | **권장** `releases/VoiceStamp_20260803_101849.apk` |
+| 앨범 | EXIF GPS → 장소 · `restore-gallery-exif-place.bat` |
+| 음성 | **F-Voice-10** 칸 말하기 · **F-Voice-11** 유형·말하기 예 · [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md) · `restore-save-slot-speech.bat` · `restore-slot-speech-type-hint.bat` |
+| 커밋 | `5850f1c` · `acb9a43` · `190a5e6` · `6f1dcc2`~`8825a72` · `8856461` · `7fbd20b` · `09f9c87` · `114b3dc` |
+| APK | **권장** `releases/VoiceStamp_20260803_151943.apk` |
+| 문서 | PRD·PLAN·PROJECT·README·CHANGELOG 동기화 (**소스 변경 없음**, 본 커밋) |
 
 ### 2026-08-02
 

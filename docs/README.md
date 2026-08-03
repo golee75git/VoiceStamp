@@ -36,19 +36,18 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-08-02)
+## 현재 상태 스냅샷 (2026-08-03)
 
-- **문서 갱신일:** 2026-08-02 — 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) (**소스 변경 없음**)
-- **이전 문서 갱신일:** 2026-08-01 — 헬스체크 기준 고정 · 성능 번들 A/B/C
-- **최신 기능 커밋:** `2a00578` — 선택 취소 썸네일 · APK `124143`
+- **문서 갱신일:** 2026-08-03 — 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) (**소스 변경 없음**)
+- **최신 기능 커밋:** `114b3dc` — 칸 말하기 유형·말하기 예 · APK `151943`
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
-- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-list-thumb-selection-fix-20260802.md](./SECURITY-list-thumb-selection-fix-20260802.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260802_124143.apk` — 선택 취소 썸네일 + 08-02 목록/설정 UX
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260802_124143.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260802_115453.apk` — 설정 필드 표시명 UI 제거
-- **이전 권장 APK:** `releases/VoiceStamp_20260802_111920.apk` — 목록 행 높이 축소
-- **이전 권장 APK:** `releases/VoiceStamp_20260802_105935.apk` — 목록 플랫 행
+- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-slot-speech-type-hint-20260803.md](./SECURITY-slot-speech-type-hint-20260803.md)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260803_151943.apk` — 칸 말하기 유형·예 + 08-03 누적
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260803_151943.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260803_145506.apk` — 저장 직후 칸 말하기
+- **이전 권장 APK:** `releases/VoiceStamp_20260802_214047.apk` — 목록 저장 유형 필터
+- **이전 권장 APK:** `releases/VoiceStamp_20260802_124143.apk` — 선택 취소 썸네일 + 08-02 목록/설정 UX
 - **이전 권장 APK:** `releases/VoiceStamp_20260801_232652.apk` — 음성 타깃 가드
 - **이전 권장 APK:** `releases/VoiceStamp_20260801_193317.apk` — **성능 번들 C** (헬스체크 기준선)
 - **이전 권장 APK:** `releases/VoiceStamp_20260801_172149.apk` — QR URL 연결확인

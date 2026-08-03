@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.10 |
-| 작성일 | 2026-08-02 |
-| 기준 커밋 | `2a00578` — 목록 선택 취소 썸네일 · APK `124143` · 이전 `869a0bb` |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
+| 문서 버전 | 3.11 |
+| 작성일 | 2026-08-03 |
+| 기준 커밋 | `114b3dc` — 칸 말하기 유형·예 · APK `151943` |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -729,15 +729,24 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-02 | 2AR·3 | 설정 **필드 표시명 UI 제거** · APK `115453` |
 | 2026-08-02 | 2AS·3 | 선택 취소 후 **흰 썸네일 수정** · APK `124143` |
 | 2026-08-02 | 문서 | 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) · PRD/PLAN/PROJECT/README 동기화 (**소스 없음**) |
+| 2026-08-02 | 2AT·3 | 목록 **저장 유형 필터** · APK `214047` |
+| 2026-08-03 | 2AU·3 | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS** · APK `101849` 계열 |
+| 2026-08-03 | 2AV·3 | **F-Voice-10** 저장 직후 칸 말하기 · APK `145506` · `restore-save-slot-speech.bat` |
+| 2026-08-03 | 2AW·3 | **F-Voice-11** 칸 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
+| 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
 
 ---
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-02:** 권장 = `releases/VoiceStamp_20260802_124143.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-03:** 권장 = `releases/VoiceStamp_20260803_151943.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **설치·GitHub 권장** — 선택 취소 썸네일 유지 |
+| `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **설치·GitHub 권장** — 칸 말하기 유형·말하기 예 |
+| `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기 |
+| `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 유형 선택 · 웹 저장 |
+| `releases/VoiceStamp_20260802_214047.apk` | `acb9a43` | **이전** — 목록 저장 유형 필터 |
+| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **이전** — 선택 취소 썸네일 유지 |
 | `releases/VoiceStamp_20260802_115453.apk` | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 |
 | `releases/VoiceStamp_20260802_111920.apk` | `2dcf74b` | **이전** — 목록 행 높이 추가 축소 |
 | `releases/VoiceStamp_20260802_105935.apk` | `037b0af` | **이전** — 목록 플랫 행 |
