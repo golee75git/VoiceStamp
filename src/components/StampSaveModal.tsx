@@ -76,6 +76,7 @@ import {
   getOcrTitleMemoEnabled,
   getQrCaptionEnabled,
   getMlkitSceneLabelEnabled,
+  getSaveSlotSpeechEnabled,
   inputFontSizeForStampText,
   isGpsPlaceEnabled,
   setLastFloor,
@@ -103,6 +104,10 @@ import {
   suggestSceneMemo,
 } from '../services/sceneLabelService';
 import { PrivacyBlurModal } from './PrivacyBlurModal';
+import {
+  SaveSlotSpeechSheet,
+  type SaveSlotSpeechDraft,
+} from './SaveSlotSpeechSheet';
 
 /* STAMP_PREVIEW_ZOOM_BADGE: 스탬프 저장·수정 미리보기 확대/수정 안내. 되돌리: require·wrapper·styles·aria 문구 삭제 */
 const zoomEditIcon = require('../../assets/zoom.png');
@@ -337,6 +342,8 @@ export function StampSaveModal({
   const [urlCheckBusy, setUrlCheckBusy] = useState(false);
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabled] = useState(false);
   const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
+  const [saveSlotSpeechEnabled, setSaveSlotSpeechEnabled] = useState(false);
+  const [slotSpeechOpen, setSlotSpeechOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [selectedTemplateName, setSelectedTemplateName] = useState('유형 선택');
@@ -382,6 +389,7 @@ export function StampSaveModal({
   const captureCoordsRef = useRef<{ latitude: number; longitude: number } | null>(null);
   const originalCameraUriRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const slotSpeechOpenedRef = useRef(false);
 
   const scrollFieldIntoView = () => {
     requestAnimationFrame(() => {
@@ -567,6 +575,8 @@ export function StampSaveModal({
     setLocationLoading(false);
     setError(null);
     setSpeechTarget(null);
+    setSlotSpeechOpen(false);
+    slotSpeechOpenedRef.current = false;
     setTitleSelection({ start: 0, end: 0 });
     setPlaceSelection({ start: 0, end: 0 });
     setMemoSelection({ start: 0, end: 0 });
@@ -661,18 +671,68 @@ export function StampSaveModal({
       getOcrTitleMemoEnabled(),
       getQrCaptionEnabled(),
       getMlkitSceneLabelEnabled(),
-    ]).then(([blurEnabled, ocrEnabled, qrEnabled, sceneEnabled]) => {
+      getSaveSlotSpeechEnabled(),
+    ]).then(([blurEnabled, ocrEnabled, qrEnabled, sceneEnabled, slotSpeech]) => {
       if (!cancelled) {
         setPrivacyBlurEnabled(blurEnabled);
         setOcrTitleMemoEnabled(ocrEnabled);
         setQrCaptionEnabled(qrEnabled);
         setMlkitSceneLabelEnabled(sceneEnabled);
+        setSaveSlotSpeechEnabled(slotSpeech);
       }
     });
     return () => {
       cancelled = true;
     };
   }, [visible]);
+
+  useEffect(() => {
+    if (!visible) {
+      slotSpeechOpenedRef.current = false;
+      setSlotSpeechOpen(false);
+      return;
+    }
+    if (isEdit || Platform.OS === 'web' || !saveSlotSpeechEnabled || !available) {
+      return;
+    }
+    if (slotSpeechOpenedRef.current) {
+      return;
+    }
+    slotSpeechOpenedRef.current = true;
+    const timer = setTimeout(() => {
+      stop();
+      setSpeechTarget(null);
+      setSlotSpeechOpen(true);
+    }, 450);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [visible, isEdit, saveSlotSpeechEnabled, available, stop]);
+
+  const handleSlotSpeechCommit = useCallback((parts: SaveSlotSpeechDraft) => {
+    const titleText = parts.title.trim();
+    if (titleText) {
+      titleTouchedRef.current = true;
+      const { text: withGap, selection } = textWithTrailingGap(titleText);
+      setTitle(withGap);
+      applyTextSelection(selection, titleSelectionRef, setTitleSelection);
+    }
+    const placeText = parts.place.trim();
+    if (placeText) {
+      placeTouchedRef.current = true;
+      const { text: withGap, selection } = textWithTrailingGap(placeText);
+      setPlaceLabel(withGap.trim() ? withGap : null);
+      applyTextSelection(selection, placeSelectionRef, setPlaceSelection);
+    }
+    const memoText = parts.memo.trim();
+    if (memoText) {
+      memoTouchedRef.current = true;
+      const { text: withGap, selection } = textWithTrailingGap(memoText);
+      setMemo(withGap);
+      applyTextSelection(selection, memoSelectionRef, setMemoSelection);
+    }
+    setSlotSpeechOpen(false);
+  }, []);
 
   useEffect(() => {
     if (!visible) {
@@ -2117,7 +2177,16 @@ export function StampSaveModal({
         setPrivacyModalOpen(false);
       }}
     />
-    </>
+
+    <SaveSlotSpeechSheet
+      visible={slotSpeechOpen}
+      titleLabel={titleFieldLabel}
+      placeLabel={placeFieldLabel}
+      memoLabel={memoFieldLabel}
+      onCommit={handleSlotSpeechCommit}
+      onDismiss={() => setSlotSpeechOpen(false)}
+    />
+  </>
   );
 }
 

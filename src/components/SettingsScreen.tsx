@@ -65,6 +65,7 @@ import {
   DEFAULT_OCR_TITLE_MEMO_ENABLED,
   DEFAULT_QR_CAPTION_ENABLED,
   DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
+  DEFAULT_SAVE_SLOT_SPEECH_ENABLED,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
   gallerySaveModeLabel,
@@ -76,6 +77,7 @@ import {
   ocrTitleMemoEnabledLabel,
   qrCaptionEnabledLabel,
   mlkitSceneLabelEnabledLabel,
+  saveSlotSpeechEnabledLabel,
   floorPickerModeLabel,
   floorDisplayModeLabel,
   titleDatetimeModeLabel,
@@ -195,6 +197,9 @@ export function SettingsScreen({
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabledState] = useState(
     DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
   );
+  const [saveSlotSpeechEnabled, setSaveSlotSpeechEnabledState] = useState(
+    DEFAULT_SAVE_SLOT_SPEECH_ENABLED,
+  );
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [cameraHomeBg, setCameraHomeBgState] = useState<CameraHomeBg>(DEFAULT_CAMERA_HOME_BG);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
@@ -252,6 +257,7 @@ export function SettingsScreen({
       setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
       setQrCaptionEnabledState(snapshot.qrCaptionEnabled);
       setMlkitSceneLabelEnabledState(snapshot.mlkitSceneLabelEnabled);
+      setSaveSlotSpeechEnabledState(snapshot.saveSlotSpeechEnabled);
       setCameraHandState(snapshot.cameraHand);
       setCameraHomeBgState(snapshot.cameraHomeBg);
       setFloorPickerModeState(snapshot.floorPickerMode);
@@ -300,6 +306,7 @@ export function SettingsScreen({
         ocrTitleMemoEnabled,
         qrCaptionEnabled,
         mlkitSceneLabelEnabled,
+        saveSlotSpeechEnabled,
         cameraHand,
         cameraHomeBg,
         floorPickerMode,
@@ -339,6 +346,7 @@ export function SettingsScreen({
       setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
       setQrCaptionEnabledState(saved.qrCaptionEnabled);
       setMlkitSceneLabelEnabledState(saved.mlkitSceneLabelEnabled);
+      setSaveSlotSpeechEnabledState(saved.saveSlotSpeechEnabled);
       setCameraHandState(saved.cameraHand);
       setCameraHomeBgState(saved.cameraHomeBg);
       setFloorPickerModeState(saved.floorPickerMode);
@@ -1070,6 +1078,43 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel(ocrTitleMemoEnabledLabel(true), DEFAULT_OCR_TITLE_MEMO_ENABLED)}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>저장 직후 칸 말하기</Text>
+          <Text style={styles.hint}>
+            사용: 새 스탬프 저장 화면이 열리면 제목→장소→메모 순으로 마이크 안내가 뜹니다. 칸마다
+            말하면 해당 칸에 들어갑니다. 필드별 마이크는 그대로 쓸 수 있습니다. 수정 화면·웹에서는
+            뜨지 않습니다. OS 음성 인식만 쓰며 서버로 보내지 않습니다. 기본은 끔입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !saveSlotSpeechEnabled && styles.optionButtonSelected]}
+              onPress={() => setSaveSlotSpeechEnabledState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !saveSlotSpeechEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(saveSlotSpeechEnabledLabel(false), !DEFAULT_SAVE_SLOT_SPEECH_ENABLED)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, saveSlotSpeechEnabled && styles.optionButtonSelected]}
+              onPress={() => setSaveSlotSpeechEnabledState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  saveSlotSpeechEnabled && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(saveSlotSpeechEnabledLabel(true), DEFAULT_SAVE_SLOT_SPEECH_ENABLED)}
               </Text>
             </Pressable>
           </View>

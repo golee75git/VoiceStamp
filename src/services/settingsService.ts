@@ -83,6 +83,8 @@ const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
 const QR_CAPTION_ENABLED_KEY = 'qr_caption_enabled';
 const MLKIT_SCENE_LABEL_ENABLED_KEY = 'mlkit_scene_label_enabled';
+/** New-stamp save: walk title→place→memo with one mic session each. Opt-in. */
+const SAVE_SLOT_SPEECH_ENABLED_KEY = 'save_slot_speech_enabled';
 
 /** Reuse nearby previous place label when still within this distance (m). */
 export const PLACE_CACHE_NEARBY_METERS = 300;
@@ -123,6 +125,8 @@ export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
 export const DEFAULT_QR_CAPTION_ENABLED = false;
 /** Android on-device Image Labeling → memo keywords. Default off (opt-in). */
 export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;
+/** After new stamp save opens, prompt mic per field (title→place→memo). Default off. */
+export const DEFAULT_SAVE_SLOT_SPEECH_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
@@ -478,6 +482,7 @@ export type SettingsScreenSnapshot = {
   ocrTitleMemoEnabled: boolean;
   qrCaptionEnabled: boolean;
   mlkitSceneLabelEnabled: boolean;
+  saveSlotSpeechEnabled: boolean;
   cameraHand: CameraHand;
   cameraHomeBg: CameraHomeBg;
   floorPickerMode: FloorPickerMode;
@@ -598,6 +603,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       pickSetting(map, MLKIT_SCENE_LABEL_ENABLED_KEY),
       DEFAULT_MLKIT_SCENE_LABEL_ENABLED,
     ),
+    saveSlotSpeechEnabled: parseBooleanSetting(
+      pickSetting(map, SAVE_SLOT_SPEECH_ENABLED_KEY),
+      DEFAULT_SAVE_SLOT_SPEECH_ENABLED,
+    ),
     cameraHand: (() => {
       const raw = pickSetting(map, CAMERA_HAND_KEY);
       return raw ? sanitizeCameraHand(raw) : DEFAULT_CAMERA_HAND;
@@ -703,6 +712,7 @@ export function sanitizeSettingsScreenSnapshot(
     ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
     qrCaptionEnabled: draft.qrCaptionEnabled,
     mlkitSceneLabelEnabled: draft.mlkitSceneLabelEnabled,
+    saveSlotSpeechEnabled: draft.saveSlotSpeechEnabled,
     cameraHand: sanitizeCameraHand(draft.cameraHand),
     cameraHomeBg: sanitizeCameraHomeBg(draft.cameraHomeBg),
     floorPickerMode: sanitizeFloorPickerMode(draft.floorPickerMode),
@@ -746,6 +756,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
     [QR_CAPTION_ENABLED_KEY, snapshot.qrCaptionEnabled ? 'true' : 'false'],
     [MLKIT_SCENE_LABEL_ENABLED_KEY, snapshot.mlkitSceneLabelEnabled ? 'true' : 'false'],
+    [SAVE_SLOT_SPEECH_ENABLED_KEY, snapshot.saveSlotSpeechEnabled ? 'true' : 'false'],
     [CAMERA_HAND_KEY, snapshot.cameraHand],
     [CAMERA_HOME_BG_KEY, snapshot.cameraHomeBg],
     [FLOOR_PICKER_MODE_KEY, snapshot.floorPickerMode],
@@ -1174,6 +1185,20 @@ export async function getMlkitSceneLabelEnabled(): Promise<boolean> {
 
 export async function setMlkitSceneLabelEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(MLKIT_SCENE_LABEL_ENABLED_KEY, enabled ? 'true' : 'false');
+  return enabled;
+}
+
+export function saveSlotSpeechEnabledLabel(enabled: boolean): string {
+  return enabled ? '사용' : '사용 안 함';
+}
+
+export async function getSaveSlotSpeechEnabled(): Promise<boolean> {
+  const value = await readSetting(SAVE_SLOT_SPEECH_ENABLED_KEY);
+  return parseBooleanSetting(value, DEFAULT_SAVE_SLOT_SPEECH_ENABLED);
+}
+
+export async function setSaveSlotSpeechEnabled(enabled: boolean): Promise<boolean> {
+  await writeSetting(SAVE_SLOT_SPEECH_ENABLED_KEY, enabled ? 'true' : 'false');
   return enabled;
 }
 

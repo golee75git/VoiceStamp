@@ -3338,3 +3338,15 @@ restore-web-save-alert.bat
 ```
 
 src.pre-web-save-alert/·public.pre-web-save-alert/ 스냅샷으로 되돌립니다.
+
+---
+
+## 217. 저장 직후 칸 말하기 되돌리기 (선택)
+
+새 저장 화면 제목→장소→메모 순차 마이크 안내 후 문제가 생기면:
+
+`at
+restore-save-slot-speech.bat
+`
+
+src.pre-save-slot-speech/·public.pre-save-slot-speech/ 스냅샷으로 되돌리고 SaveSlotSpeechSheet.tsx를 삭제합니다.
