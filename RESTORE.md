@@ -3317,6 +3317,18 @@ src.pre-gallery-exif-place/·public.pre-gallery-exif-place/ 스냅샷으로 되�
 
 ---
 
+## 216. 앨범 EXIF 파서·비가압 되돌리기 (선택)
+
+앨범 quality 생략·유리수 파싱 보강 후 문제가 생기면:
+
+```bat
+restore-gallery-exif-parser.bat
+```
+
+src.pre-gallery-exif-parser/·public.pre-gallery-exif-parser/ 스냅샷으로 되돌립니다.
+
+---
+
 ## 213. 웹 저장 알림·사진 persist 되돌리기 (선택)
 
 웹테스트 설정/스탬프 저장 안내·브라우저 사진 저장 수정 후 문제가 생기면:
