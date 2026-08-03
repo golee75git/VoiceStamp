@@ -133,6 +133,29 @@ export async function getCurrentLocationSnapshot(): Promise<LocationSnapshot | n
   };
 }
 
+/** 이미 알고 있는 좌표로 장소명만 채웁니다. 현재 GPS는 쓰지 않습니다. */
+export async function getLocationSnapshotFromCoords(
+  latitude: number,
+  longitude: number,
+): Promise<LocationSnapshot | null> {
+  if (!(await isGpsPlaceEnabled())) {
+    return null;
+  }
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return null;
+  }
+  if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
+    return null;
+  }
+
+  const placeLabel = await resolvePlaceLabel(longitude, latitude);
+  return {
+    latitude,
+    longitude,
+    placeLabel,
+  };
+}
+
 export async function getCurrentPlaceLabel(): Promise<string | null> {
   const snapshot = await getFastLocationSnapshot();
   if (snapshot?.placeLabel) {

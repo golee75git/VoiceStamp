@@ -38,6 +38,10 @@ import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabel
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
+  getLocationSnapshotFromCoords,
+  type LocationSnapshot,
+} from '../services/locationService';
+import {
   DEFAULT_STAMP_LIST_DISPLAY_MODE,
   loadSettingsForScreen,
   type CoordsLabelMode,
@@ -122,6 +126,9 @@ export function StampListScreen({
   const [extra3FieldLabel, setExtra3FieldLabel] = useState('추가3');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [importUri, setImportUri] = useState<string | null>(null);
+  const [importLocationSnapshot, setImportLocationSnapshot] = useState<LocationSnapshot | null>(
+    null,
+  );
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [albumBusy, setAlbumBusy] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -583,11 +590,26 @@ export function StampListScreen({
 
     setAlbumBusy(true);
     try {
-      const uri = await pickImageFromLibrary();
-      if (uri) {
-        setImportUri(uri);
-        setImportModalVisible(true);
+      const picked = await pickImageFromLibrary();
+      if (!picked) {
+        return;
       }
+
+      let snapshot: LocationSnapshot | null = null;
+      if (picked.latitude != null && picked.longitude != null) {
+        snapshot = await getLocationSnapshotFromCoords(picked.latitude, picked.longitude);
+        if (!snapshot) {
+          snapshot = {
+            latitude: picked.latitude,
+            longitude: picked.longitude,
+            placeLabel: null,
+          };
+        }
+      }
+
+      setImportLocationSnapshot(snapshot);
+      setImportUri(picked.uri);
+      setImportModalVisible(true);
     } catch (e) {
       Alert.alert(
         '앨범',
@@ -1220,9 +1242,13 @@ export function StampListScreen({
         visible={importModalVisible}
         imageUri={importUri}
         captureStampForExport={captureStampForExport}
+        prefetchedLocationSnapshot={importLocationSnapshot}
+        locationPrefetchFinished
+        allowLiveLocationFallback={false}
         onClose={() => {
           setImportModalVisible(false);
           setImportUri(null);
+          setImportLocationSnapshot(null);
         }}
         onSaved={() => {
           onChanged();

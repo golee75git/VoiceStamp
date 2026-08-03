@@ -25,7 +25,12 @@ import {
   formatStampGroupName,
   refreshStampGroupDate,
 } from '../services/fileService';
-import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
+import {
+  getCurrentLocationSnapshot,
+  getFastLocationSnapshot,
+  getLocationSnapshotFromCoords,
+  type LocationSnapshot,
+} from '../services/locationService';
 import {
   getCurrentSiteName,
   setCurrentSiteName,
@@ -236,6 +241,11 @@ type StampSaveModalProps = {
   locationPrefetchLoading?: boolean;
   /** 촬영 직후 prefetch가 끝났으면 모달에서 GPS·카카오 전체 조회를 반복하지 않습니다. */
   locationPrefetchFinished?: boolean;
+  /**
+   * false면 현재 기기 GPS·최근 캐시로 장소를 채우지 않습니다.
+   * 앨범 사진 EXIF 좌표만 쓸 때 사용합니다. 기본 true.
+   */
+  allowLiveLocationFallback?: boolean;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -249,6 +259,7 @@ export function StampSaveModal({
   prefetchedLocationSnapshot = null,
   locationPrefetchLoading = false,
   locationPrefetchFinished = false,
+  allowLiveLocationFallback = true,
   onClose,
   onSaved,
   onTrashed,
@@ -946,13 +957,16 @@ export function StampSaveModal({
         setLocationLoading(true);
         void (async () => {
           try {
-            const refined = await getCurrentLocationSnapshot();
+            const refined = await getLocationSnapshotFromCoords(
+              prefetchedLocationSnapshot.latitude,
+              prefetchedLocationSnapshot.longitude,
+            );
             if (cancelled) {
               return;
             }
             if (refined) {
               applySnapshot(refined);
-            } else {
+            } else if (allowLiveLocationFallback) {
               await applyQuickLocationCache();
             }
           } catch {
@@ -963,6 +977,11 @@ export function StampSaveModal({
             }
           }
         })();
+        return;
+      }
+
+      if (!allowLiveLocationFallback) {
+        setLocationLoading(false);
         return;
       }
 
@@ -991,6 +1010,7 @@ export function StampSaveModal({
     prefetchedLocationSnapshot,
     locationPrefetchLoading,
     locationPrefetchFinished,
+    allowLiveLocationFallback,
   ]);
 
   useEffect(() => {
