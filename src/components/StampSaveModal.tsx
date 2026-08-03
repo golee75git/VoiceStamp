@@ -709,6 +709,17 @@ export function StampSaveModal({
     };
   }, [visible, isEdit, saveSlotSpeechEnabled, available, stop]);
 
+  useEffect(() => {
+    if (!slotSpeechOpen) {
+      return;
+    }
+    setTemplatePickerLoading(true);
+    void listStampFieldTemplatesForFilter()
+      .then((list) => setTemplatePickerOptions(list))
+      .catch(() => setTemplatePickerOptions([]))
+      .finally(() => setTemplatePickerLoading(false));
+  }, [slotSpeechOpen]);
+
   const handleSlotSpeechCommit = useCallback((parts: SaveSlotSpeechDraft) => {
     const titleText = parts.title.trim();
     if (titleText) {
@@ -2183,6 +2194,21 @@ export function StampSaveModal({
       titleLabel={titleFieldLabel}
       placeLabel={placeFieldLabel}
       memoLabel={memoFieldLabel}
+      titleHint={fieldPlaceholders.title}
+      placeHint={fieldPlaceholders.place}
+      memoHint={fieldPlaceholders.memo}
+      templateName={selectedTemplateName}
+      templateId={selectedTemplateId}
+      templateOptions={templatePickerOptions}
+      templateOptionsLoading={templatePickerLoading}
+      onSelectTemplate={handleSelectSaveTemplate}
+      onRequestTemplateList={() => {
+        setTemplatePickerLoading(true);
+        void listStampFieldTemplatesForFilter()
+          .then((list) => setTemplatePickerOptions(list))
+          .catch(() => setTemplatePickerOptions([]))
+          .finally(() => setTemplatePickerLoading(false));
+      }}
       onCommit={handleSlotSpeechCommit}
       onDismiss={() => setSlotSpeechOpen(false)}
     />

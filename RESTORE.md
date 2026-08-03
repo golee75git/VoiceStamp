@@ -3350,3 +3350,15 @@ restore-save-slot-speech.bat
 `
 
 src.pre-save-slot-speech/·public.pre-save-slot-speech/ 스냅샷으로 되돌리고 SaveSlotSpeechSheet.tsx를 삭제합니다.
+
+---
+
+## 218. 칸 말하기 유형·예시 되돌리기 (선택)
+
+시트 상단 저장 유형·칸별 말하기 예 보강 후 문제가 생기면:
+
+`at
+restore-slot-speech-type-hint.bat
+`
+
+src.pre-slot-speech-type-hint/·public.pre-slot-speech-type-hint/ 스냅샷으로 되돌립니다.
