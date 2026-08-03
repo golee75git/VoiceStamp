@@ -1,8 +1,8 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-02** — 날짜별·APK별 정리 · 권장 APK `124143` (**소스 변경 없음**)
-최신 기능 커밋 기준: `2a00578` — 목록 선택 취소 썸네일 · APK `VoiceStamp_20260802_124143` · 이전 `869a0bb`
+문서 동기화: **2026-08-03** — 웹테스트 저장 알림·사진 persist (`restore-web-save-alert.bat`) · 권장 APK `124143` (APK 재빌드 없음)
+최신 기능 커밋 기준: 웹 저장 수정 · APK는 `2a00578` / `VoiceStamp_20260802_124143` 유지
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -646,6 +646,12 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-08-03
+
+| 항목 | 내용 |
+|------|------|
+| 웹 only | 설정/`showAlert` · 스탬프 웹 canvas persist · 도움말 · `restore-web-save-alert.bat` · APK 변경 없음 |
+
 #### 2026-08-02
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
@@ -1161,6 +1167,13 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-08-03
+
+| 항목 | 내용 |
+|------|------|
+| 웹 저장 | 설정·스탬프 저장 안내(`showAlert`) · 웹 사진 canvas persist · 도움말 · [DESIGN-web-save-alert-20260803.md](./DESIGN-web-save-alert-20260803.md) · [SECURITY-web-save-alert-20260803.md](./SECURITY-web-save-alert-20260803.md) · `restore-web-save-alert.bat` |
+| APK | 재빌드 없음 — 권장 `VoiceStamp_20260802_214047` / `124143` 유지 |
 
 ### 2026-08-02
 

@@ -18,7 +18,7 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useSpeechInput } from '../hooks/useSpeechInput';
-import { confirmAlert, showAlert } from '../utils/confirmAlert';
+import { confirmAlert } from '../utils/confirmAlert';
 import {
   extractStampGroupFromImagePath,
   formatDefaultStampTitle,
@@ -1243,11 +1243,6 @@ export function StampSaveModal({
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
     if (!photoUri || saving) {
-      if (!photoUri && !saving) {
-        const msg = '저장할 사진이 없습니다. 다시 촬영하거나 앨범에서 선택해 주세요.';
-        setError(msg);
-        showAlert('저장', msg);
-      }
       return;
     }
 
@@ -1259,9 +1254,7 @@ export function StampSaveModal({
       const bareSource = isBareSourceUrlPrefix(trimmedSource);
       const resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
       if (!bareSource && !resolvedSourceUrl) {
-        const msg = 'QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.';
-        setError(msg);
-        showAlert('저장', msg);
+        setError('QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.');
         setSaving(false);
         return;
       }
@@ -1344,14 +1337,13 @@ export function StampSaveModal({
       onSaved();
       onClose();
     } catch (err) {
-      const msg =
+      setError(
         err instanceof Error
           ? err.message
           : isEdit
             ? '수정에 실패했습니다.'
-            : '저장에 실패했습니다.';
-      setError(msg);
-      showAlert(isEdit ? '수정' : '저장', msg);
+            : '저장에 실패했습니다.',
+      );
     } finally {
       setSaving(false);
     }

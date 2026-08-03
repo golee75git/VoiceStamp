@@ -1,10 +1,6 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 
-import {
-  STAMP_CAPTURE_JPEG_QUALITY,
-  STAMP_PICTURE_LONG_EDGE_MAX,
-} from '../constants/captureImageBudget';
 import { getStampsFolderName } from './settingsService';
 import { getTitleDatetimeModeSync } from './titleDatetimeMode';
 
@@ -135,58 +131,22 @@ function stampRelativeDir(imagePath: string): string {
   return imagePath.substring(0, lastSlash + 1);
 }
 
-/**
- * Browser stamp persist: paint into canvas (long-edge cap) then JPEG data URL.
- * Avoids fetch(blob:) failures after the picker releases the temporary URI.
- * Uses the same canvas approach already used for web PDF image prep in this repo.
- */
-function encodeWebStampImage(uri: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    if (typeof document === 'undefined' || typeof Image === 'undefined') {
-      reject(new Error('웹에서 사진을 저장할 수 없습니다.'));
-      return;
-    }
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const rawW = img.naturalWidth || img.width || 0;
-        const rawH = img.naturalHeight || img.height || 0;
-        if (rawW < 1 || rawH < 1) {
-          reject(new Error('사진 크기를 확인할 수 없습니다.'));
-          return;
-        }
-        const longEdge = Math.max(rawW, rawH);
-        const scale =
-          longEdge > STAMP_PICTURE_LONG_EDGE_MAX ? STAMP_PICTURE_LONG_EDGE_MAX / longEdge : 1;
-        const width = Math.max(1, Math.round(rawW * scale));
-        const height = Math.max(1, Math.round(rawH * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('사진을 브라우저에 담지 못했습니다.'));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', STAMP_CAPTURE_JPEG_QUALITY));
-      } catch {
-        reject(new Error('사진을 읽지 못했습니다.'));
+async function persistImageWeb(tempUri: string): Promise<string> {
+  const response = await fetch(tempUri);
+  const blob = await response.blob();
+
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Failed to read image'));
       }
     };
-    img.onerror = () => {
-      reject(new Error('사진을 불러오지 못했습니다. 다시 선택해 주세요.'));
-    };
-    img.src = uri;
+    reader.onerror = () => reject(reader.error ?? new Error('Failed to read image'));
+    reader.readAsDataURL(blob);
   });
-}
-
-async function persistImageWeb(tempUri: string): Promise<string> {
-  const source = tempUri.trim();
-  if (!source) {
-    throw new Error('저장할 사진이 없습니다.');
-  }
-  return encodeWebStampImage(source);
 }
 
 export async function ensureStampsDir(): Promise<string> {

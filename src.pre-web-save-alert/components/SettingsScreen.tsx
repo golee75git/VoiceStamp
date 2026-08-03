@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Constants from 'expo-constants';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Platform,
   Pressable,
@@ -23,7 +24,6 @@ import { openInfoPage } from '../constants/infoUrls';
 import { APK_BUILD_FILENAME } from '../constants/apkBuildLabel';
 import { invalidateStampSaveModalLayoutCache } from '../services/stampSaveModalLayoutCache';
 import { WATERMARK_CHIP_COLORS } from '../services/watermarkStyle';
-import { showAlert } from '../utils/confirmAlert';
 
 import {
   DEFAULT_CAMERA_HAND,
@@ -358,9 +358,9 @@ export function SettingsScreen({
       setExtra3FieldLabelState(saved.extra3FieldLabel);
       invalidateStampSaveModalLayoutCache();
       // 저장 직후 refreshKey bump 생략 — 설정 화면 재로드를 피함. 카메라/목록은 복귀 시 remount로 반영.
-      showAlert('저장 완료', '설정을 저장했습니다.');
+      Alert.alert('저장 완료', '설정을 저장했습니다.');
     } catch (e) {
-      showAlert(
+      Alert.alert(
         '저장 실패',
         e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
       );

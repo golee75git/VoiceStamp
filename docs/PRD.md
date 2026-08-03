@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-02 — 날짜별·APK별 정리 · 권장 APK `124143` (**소스 변경 없음**) |
-| 최신 반영 커밋 | `2a00578` — 목록 선택 취소 썸네일 · APK `VoiceStamp_20260802_124143` |
+| 문서 동기화 | 2026-08-03 — 웹테스트 저장 알림·사진 persist · 권장 APK `124143` (APK 재빌드 없음) |
+| 최신 반영 커밋 | 웹 저장 수정 · APK는 `2a00578` / `VoiceStamp_20260802_124143` 유지 |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
