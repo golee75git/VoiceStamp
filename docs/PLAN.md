@@ -1,10 +1,10 @@
-﻿# VoiceStamp 개발 계획 (Plan)
+# VoiceStamp 개발 계획 (Plan)
 
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.11 |
 | 작성일 | 2026-08-03 |
-| 기준 커밋 | (본 커밋) — 항목 말하기 표시명 · APK `161016` |
+| 기준 커밋 | `6cd1dc4` — 항목 말하기 표시명 · APK `161016` |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -740,10 +740,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-03:** 권장 = `releases/VoiceStamp_20260803_151943.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-03:** 권장 = `releases/VoiceStamp_20260803_161016.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260803_161016.apk` | (본 커밋) | **설치·GitHub 권장** — 「항목 말하기」표시명 |
+| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **설치·GitHub 권장** — 「항목 말하기」표시명 |
 | `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **이전** — 칸 말하기 유형·말하기 예 |
 | `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기 |
 | `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 유형 선택 · 웹 저장 |

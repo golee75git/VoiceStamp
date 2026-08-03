@@ -1,4 +1,4 @@
-﻿# VoiceStamp 문서
+# VoiceStamp 문서
 
 프로젝트 문서 모음입니다. **소스 코드는 `src/`**, 되돌리기·빌드는 루트의 MD·BAT를 참고하세요.
 
@@ -38,8 +38,8 @@
 
 ## 현재 상태 스냅샷 (2026-08-03)
 
-- **문서 갱신일:** 2026-08-03 — 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md)
-- **최신 기능 커밋:** (본 커밋) — 「항목 말하기」표시명 · APK `161016`
+- **문서 갱신일:** 2026-08-03 — 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) (**소스 변경 없음**)
+- **최신 기능 커밋:** `6cd1dc4` — 「항목 말하기」표시명 · APK `161016`
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-item-speak-label-20260803.md](./SECURITY-item-speak-label-20260803.md)
@@ -106,15 +106,21 @@
 | 07-30 | **F-QR-01** caption QR MVP · APK `114713` · 문서 동기화(소스 없음) |
 | 07-31 | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화 |
 | 08-01 | **QR URL 연결확인**(`172149`) · **성능 번들 A/B/C**(`185512`→`191117`→`193317`) · **헬스체크 기준 고정** · 음성 타깃 가드(`232652`) · Vercel |
-| 08-02 | 목록 플랫·행 높이 · 설정 필드 표시명 UI 제거 · 선택 취소 썸네일 · APK `105935`→`124143` · 본 문서·[CHANGELOG.md](./CHANGELOG.md) |
+| 08-02 | 목록 플랫·행 높이 · 설정 필드 표시명 UI 제거 · 선택 취소 썸네일 · **저장 유형 필터** · APK `105935`→`214047` · [CHANGELOG.md](./CHANGELOG.md) |
+| 08-03 | 웹 저장·**장소 칩**·앨범 EXIF 장소 · **항목 말하기**(opt-in·유형·예·표시명) · APK `101849`→`145506`→`151943`→`161016` · 본 문서 동기화(**소스 없음**) |
 
 ### APK별 (권장·주요)
 
-> **2026-08-02:** 권장 파일은 **`VoiceStamp_20260802_124143.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-03:** 권장 파일은 **`VoiceStamp_20260803_161016.apk`** (`6cd1dc4`). 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **설치·GitHub 권장** — 선택 취소 썸네일 유지 |
+| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **설치·GitHub 권장** — 「항목 말하기」표시명 + 08-03 누적 |
+| `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **이전** — 칸 말하기 유형·말하기 예 |
+| `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기 |
+| `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 모달 유형 선택 |
+| `releases/VoiceStamp_20260802_214047.apk` | `acb9a43` | **이전** — 목록 저장 유형 필터 |
+| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **이전** — 선택 취소 썸네일 유지 |
 | `releases/VoiceStamp_20260802_115453.apk` | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 |
 | `releases/VoiceStamp_20260802_111920.apk` | `2dcf74b` | **이전** — 목록 행 높이 추가 축소 |
 | `releases/VoiceStamp_20260802_105935.apk` | `037b0af` | **이전** — 목록 플랫 행 |

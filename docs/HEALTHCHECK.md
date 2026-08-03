@@ -5,7 +5,7 @@
 | 문서 버전 | 1.0 |
 | 고정일 | 2026-08-01 |
 | 기준 APK (성능 번들) | `VoiceStamp_20260801_193317.apk` (`073c8bf`) |
-| 제품 권장 APK | `VoiceStamp_20260802_214047.apk` — A/B/C **누적** · 상세 [CHANGELOG.md](./CHANGELOG.md) |
+| 제품 권장 APK | `VoiceStamp_20260803_161016.apk` (`6cd1dc4`) — A/B/C **누적** · 상세 [CHANGELOG.md](./CHANGELOG.md) |
 | 관련 | [SECURITY-perf-bundle-a-20260801.md](./SECURITY-perf-bundle-a-20260801.md) · [SECURITY-perf-bundle-b-20260801.md](./SECURITY-perf-bundle-b-20260801.md) · [SECURITY-perf-bundle-c-20260801.md](./SECURITY-perf-bundle-c-20260801.md) |
 | 롤백 | `restore-perf-bundle-a.bat` · `restore-perf-bundle-b.bat` · `restore-perf-bundle-c.bat` |
 
@@ -91,7 +91,8 @@
 | `VoiceStamp_20260801_185512.apk` | `e45026b` | 번들 A |
 | `VoiceStamp_20260801_191117.apk` | `9d8ccfa` | 번들 B (+A) |
 | `VoiceStamp_20260801_193317.apk` | `073c8bf` | **성능 기준선** 번들 C (+B/A) |
-| `VoiceStamp_20260802_214047.apk` | (본 커밋) | **제품 권장** (번들 C 누적 + 목록 유형 필터) |
+| `VoiceStamp_20260802_214047.apk` | `acb9a43` | 목록 유형 필터 (+번들 C 누적) |
+| `VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **제품 권장** (항목 말하기 표시명 + 08-03 누적) |
 | `VoiceStamp_20260802_124143.apk` | `2a00578` | 선택 취소 썸네일 (+08-02 UX) |
 
 상세 날짜·APK 이력: [CHANGELOG.md](./CHANGELOG.md) · [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12
