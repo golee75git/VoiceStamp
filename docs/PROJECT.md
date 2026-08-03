@@ -1,8 +1,8 @@
 ﻿# VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-03** — 웹테스트 저장 알림·사진 persist (`restore-web-save-alert.bat`) · 권장 APK `124143` (APK 재빌드 없음)
-최신 기능 커밋 기준: 웹 저장 수정 · APK는 `2a00578` / `VoiceStamp_20260802_124143` 유지
+문서 동기화: **2026-08-03** — 장소 칩·저장 모달 유형 선택 · 웹 저장 알림 · 권장 APK는 본 커밋 빌드
+최신 기능 커밋 기준: 장소 칩 · 저장 유형 선택(다음 기본값)
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -648,15 +648,21 @@ build-apk.bat
 
 #### 2026-08-03
 
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260803_101849.apk` | (본 커밋) | **권장** — 장소 칩 · 저장 모달 유형 선택(다음 기본값) · 웹 저장 알림 | **GitHub `releases/`** |
+
 | 항목 | 내용 |
 |------|------|
-| 웹 only | 설정/`showAlert` · 스탬프 웹 canvas persist · 도움말 · `restore-web-save-alert.bat` · APK 변경 없음 |
+| 분류 | 목록 **장소 칩** · 저장 모달 **유형 선택**(다음 기본값) · `restore-place-chip-save-template.bat` |
+| 웹 | 설정/`showAlert` · canvas JPEG persist · `restore-web-save-alert.bat` |
 
 #### 2026-08-02
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **권장** — 선택 취소 썸네일 · `restore-list-thumb-selection-fix.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260802_214047.apk` | `acb9a43` | **이전** — 목록 저장 유형 필터 | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260802_124143.apk` | `2a00578` | **이전** — 선택 취소 썸네일 · `restore-list-thumb-selection-fix.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260802_115453.apk` | `869a0bb` | **이전** — 설정 필드 표시명 UI 제거 · `restore-hide-settings-field-labels.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260802_111920.apk` | `2dcf74b` | **이전** — 행 높이 축소 · `restore-list-row-tighter.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260802_105935.apk` | `037b0af` | **이전** — 플랫 목록 행 · `restore-list-row-compact.bat` | **GitHub `releases/`** |
@@ -1172,8 +1178,9 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 항목 | 내용 |
 |------|------|
-| 웹 저장 | 설정·스탬프 저장 안내(`showAlert`) · 웹 사진 canvas persist · 도움말 · [DESIGN-web-save-alert-20260803.md](./DESIGN-web-save-alert-20260803.md) · [SECURITY-web-save-alert-20260803.md](./SECURITY-web-save-alert-20260803.md) · `restore-web-save-alert.bat` |
-| APK | 재빌드 없음 — 권장 `VoiceStamp_20260802_214047` / `124143` 유지 |
+| 분류 | 목록 장소 칩 · 저장 모달 유형 선택(다음 기본값) · [DESIGN-place-chip-save-template-20260803.md](./DESIGN-place-chip-save-template-20260803.md) · `restore-place-chip-save-template.bat` |
+| 웹 저장 | `showAlert` · canvas persist · [DESIGN-web-save-alert-20260803.md](./DESIGN-web-save-alert-20260803.md) · `restore-web-save-alert.bat` |
+| APK | **권장** `releases/VoiceStamp_20260803_101849.apk` |
 
 ### 2026-08-02
 

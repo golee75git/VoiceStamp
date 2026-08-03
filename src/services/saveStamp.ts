@@ -73,6 +73,8 @@ type SaveStampInput = {
   sourceUrl?: string | null;
   /** Save-time field display names (avoids settings race; stored on stamp). */
   fieldLabels?: Partial<FieldLabels> | null;
+  /** When set, stored on the stamp (and preferred over the global active template). */
+  templateId?: string | null;
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -287,7 +289,10 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       ? normalizeStampGroupName(input.groupName)
       : formatStampGroupName(now, await getCurrentSiteName());
   const fieldLabels = resolveFieldLabels(input.fieldLabels);
-  const templateId = await resolveStampTemplateIdForSave(null);
+  const templateId =
+    input.templateId !== undefined
+      ? input.templateId?.trim() || null
+      : await resolveStampTemplateIdForSave(null);
 
   const copyOriginal =
     input.originalTempUri && input.originalTempUri !== input.tempImageUri
@@ -351,6 +356,7 @@ export async function updateStamp(input: {
   sourceUrl?: string | null;
   fieldLabels?: Partial<FieldLabels> | null;
   croppedImageUri?: string;
+  templateId?: string | null;
   captureForExport?: SaveStampInput['captureForExport'];
 }): Promise<void> {
   const stamp = await getStampById(input.id);
@@ -365,7 +371,10 @@ export async function updateStamp(input: {
   const extra2 = input.extra2?.trim() || null;
   const extra3 = input.extra3?.trim() || null;
   const sourceUrl = input.sourceUrl?.trim() || null;
-  const templateId = await resolveStampTemplateIdForSave(stamp.templateId);
+  const templateId =
+    input.templateId !== undefined
+      ? input.templateId?.trim() || null
+      : await resolveStampTemplateIdForSave(stamp.templateId);
   const fieldLabels = resolveFieldLabels(
     input.fieldLabels ?? {
       titleFieldLabel: stamp.titleFieldLabel,

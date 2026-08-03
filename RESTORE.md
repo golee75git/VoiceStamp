@@ -3293,6 +3293,18 @@ src.pre-template-list-filter/·public.pre-template-list-filter/ 스냅샷으로 
 
 ---
 
+## 214. 장소 칩 · 저장 모달 유형 선택 되돌리기 (선택)
+
+목록 장소 칩·저장 화면 유형 선택(다음 기본값) 추가 후 문제가 생기면:
+
+```bat
+restore-place-chip-save-template.bat
+```
+
+src.pre-place-chip-save-template/·public.pre-place-chip-save-template/ 스냅샷으로 되돌립니다.
+
+---
+
 ## 213. 웹 저장 알림·사진 persist 되돌리기 (선택)
 
 웹테스트 설정/스탬프 저장 안내·브라우저 사진 저장 수정 후 문제가 생기면:

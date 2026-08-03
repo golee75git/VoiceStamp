@@ -46,7 +46,10 @@ import {
   type StampSaveModalLayoutSettings,
 } from '../services/stampSaveModalLayoutCache';
 import {
+  applyStampFieldTemplate,
   getActiveFieldPlaceholders,
+  getActiveStampFieldTemplateStatus,
+  listStampFieldTemplatesForFilter,
   type FieldPlaceholders,
 } from '../services/stampFieldTemplates';
 import { fieldLabelsFromStamp } from '../services/fieldLabels';
@@ -324,6 +327,13 @@ export function StampSaveModal({
   const [mlkitSceneLabelEnabled, setMlkitSceneLabelEnabled] = useState(false);
   const [sceneAnalyzing, setSceneAnalyzing] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedTemplateName, setSelectedTemplateName] = useState('유형 선택');
+  const [templatePickerVisible, setTemplatePickerVisible] = useState(false);
+  const [templatePickerOptions, setTemplatePickerOptions] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [templatePickerLoading, setTemplatePickerLoading] = useState(false);
   const speechTargetRef = useRef<SpeechTarget>(null);
   const speechInsertRef = useRef<{
     title: SpeechInsertSlice;
@@ -579,6 +589,11 @@ export function StampSaveModal({
     setWorkingImageUri(null);
     setPreviewThumbUri(null);
     setPrivacyModalOpen(false);
+    setSelectedTemplateId(null);
+    setSelectedTemplateName('유형 선택');
+    setTemplatePickerVisible(false);
+    setTemplatePickerOptions([]);
+    setTemplatePickerLoading(false);
     setSceneAnalyzing(false);
     setCaptureCoords(null);
     setFloor(null);
@@ -647,6 +662,89 @@ export function StampSaveModal({
       cancelled = true;
     };
   }, [visible]);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const [list, status] = await Promise.all([
+          listStampFieldTemplatesForFilter(),
+          getActiveStampFieldTemplateStatus(),
+        ]);
+        if (cancelled) {
+          return;
+        }
+        setTemplatePickerOptions(list);
+        const stampTypeId = stamp?.templateId?.trim() || null;
+        if (stampTypeId) {
+          const named = list.find((item) => item.id === stampTypeId)?.name;
+          setSelectedTemplateId(stampTypeId);
+          setSelectedTemplateName(named ?? '저장 유형');
+          return;
+        }
+        if (status.kind !== 'none' && status.templateId) {
+          setSelectedTemplateId(status.templateId);
+          setSelectedTemplateName(
+            (status.name ?? '').trim() ||
+              list.find((item) => item.id === status.templateId)?.name ||
+              '저장 유형',
+          );
+          return;
+        }
+        setSelectedTemplateId(null);
+        setSelectedTemplateName('유형 선택');
+      } catch {
+        if (!cancelled) {
+          setTemplatePickerOptions([]);
+          setSelectedTemplateId(null);
+          setSelectedTemplateName('유형 선택');
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, stamp?.id, stamp?.templateId]);
+
+  const openTemplatePicker = useCallback(() => {
+    if (saving) {
+      return;
+    }
+    setTemplatePickerVisible(true);
+    setTemplatePickerLoading(true);
+    void listStampFieldTemplatesForFilter()
+      .then((list) => setTemplatePickerOptions(list))
+      .catch(() => setTemplatePickerOptions([]))
+      .finally(() => setTemplatePickerLoading(false));
+  }, [saving]);
+
+  const handleSelectSaveTemplate = useCallback(
+    async (templateId: string) => {
+      if (saving) {
+        return;
+      }
+      try {
+        const applied = await applyStampFieldTemplate(templateId);
+        setSelectedTemplateId(applied.id);
+        setSelectedTemplateName(applied.name);
+        setTitleFieldLabel(applied.labels.titleFieldLabel);
+        setPlaceFieldLabel(applied.labels.placeFieldLabel);
+        setMemoFieldLabel(applied.labels.memoFieldLabel);
+        setExtra1FieldLabel(applied.labels.extra1FieldLabel);
+        setExtra2FieldLabel(applied.labels.extra2FieldLabel);
+        setExtra3FieldLabel(applied.labels.extra3FieldLabel);
+        setFieldPlaceholders({ ...applied.placeholders });
+        setTemplatePickerVisible(false);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : '저장 유형을 적용하지 못했습니다.';
+        showAlert('저장 유형', msg);
+      }
+    },
+    [saving],
+  );
 
   const handleSceneKeywordFill = useCallback(async () => {
     const uri = workingImageUri || imageUri;
@@ -1287,6 +1385,7 @@ export function StampSaveModal({
           placeLabel,
           croppedImageUri,
           captureForExport: captureStampForExport,
+          templateId: selectedTemplateId,
           fieldLabels: {
             titleFieldLabel,
             placeFieldLabel,
@@ -1320,6 +1419,7 @@ export function StampSaveModal({
           floor: effectiveFloor,
           placeLabel,
           captureForExport: captureStampForExport,
+          templateId: selectedTemplateId,
           fieldLabels: {
             titleFieldLabel,
             placeFieldLabel,
@@ -1405,6 +1505,22 @@ export function StampSaveModal({
           >
             <View style={styles.card}>
             <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
+
+            <View style={styles.templatePickRow}>
+              <Text style={styles.siteLabel}>저장 유형</Text>
+              <Pressable
+                style={[styles.templatePickButton, saving ? { opacity: 0.5 } : null]}
+                onPress={openTemplatePicker}
+                disabled={saving}
+                accessibilityRole="button"
+                accessibilityLabel={`저장 유형, ${selectedTemplateName}`}
+              >
+                <Text style={styles.templatePickButtonText} numberOfLines={1}>
+                  {selectedTemplateName}
+                </Text>
+                <Text style={styles.templatePickHint}>선택 · 다음 촬영 기본</Text>
+              </Pressable>
+            </View>
 
             {photoUri ? (
               <Pressable
@@ -1915,6 +2031,63 @@ export function StampSaveModal({
       </Pressable>
     </Modal>
 
+    <Modal
+      visible={templatePickerVisible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setTemplatePickerVisible(false)}
+    >
+      <Pressable style={styles.folderPickerOverlay} onPress={() => setTemplatePickerVisible(false)}>
+        <Pressable style={styles.folderPickerCard} onPress={() => {}}>
+          <Text style={styles.folderPickerTitle}>저장 유형 선택</Text>
+          <Text style={styles.templatePickerSubHint}>
+            고른 유형이 이번 스탬프와 다음 촬영 기본값에 적용됩니다.
+          </Text>
+          {templatePickerLoading ? (
+            <ActivityIndicator style={styles.folderPickerLoading} color="#2563eb" />
+          ) : (
+            <FlatList
+              data={templatePickerOptions}
+              keyExtractor={(item) => item.id}
+              style={styles.folderPickerList}
+              keyboardShouldPersistTaps="handled"
+              ListEmptyComponent={
+                <Text style={styles.folderPickerEmpty}>선택 가능한 유형이 없습니다.</Text>
+              }
+              renderItem={({ item }) => {
+                const selected = item.id === selectedTemplateId;
+                return (
+                  <Pressable
+                    style={styles.folderPickerItem}
+                    onPress={() => void handleSelectSaveTemplate(item.id)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={item.name}
+                  >
+                    <Text
+                      style={[
+                        styles.folderPickerItemText,
+                        selected ? styles.templatePickerItemSelected : null,
+                      ]}
+                    >
+                      {item.name}
+                      {selected ? ' · 선택됨' : ''}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            />
+          )}
+          <Pressable
+            style={styles.folderPickerClose}
+            onPress={() => setTemplatePickerVisible(false)}
+          >
+            <Text style={styles.folderPickerCloseText}>닫기</Text>
+          </Pressable>
+        </Pressable>
+      </Pressable>
+    </Modal>
+
     <PrivacyBlurModal
       visible={privacyModalOpen}
       imageUri={photoUri}
@@ -1960,6 +2133,36 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#111',
+  },
+  templatePickRow: {
+    gap: 8,
+  },
+  templatePickButton: {
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#eff6ff',
+    gap: 2,
+  },
+  templatePickButtonText: {
+    color: '#1d4ed8',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  templatePickHint: {
+    color: '#64748b',
+    fontSize: 12,
+  },
+  templatePickerSubHint: {
+    color: '#6b7280',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  templatePickerItemSelected: {
+    color: '#2563eb',
+    fontWeight: '700',
   },
   /* STAMP_PREVIEW_ZOOM_BADGE — 손잡이 쪽 상단(왼손=좌, 오른손=우) */
   previewWrap: {

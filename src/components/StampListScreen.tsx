@@ -71,6 +71,10 @@ type StampListScreenProps = {
 };
 
 type TemplateListFilter = 'all' | 'unclassified' | string;
+const PLACE_FILTER_NONE = '__unplaced__';
+/** 'all' | unplaced sentinel | exact placeLabel */
+type PlaceListFilter = 'all' | typeof PLACE_FILTER_NONE | string;
+const MAX_PLACE_FILTER_CHIPS = 24;
 
 export function StampListScreen({
   onBack,
@@ -123,6 +127,7 @@ export function StampListScreen({
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [templateFilter, setTemplateFilter] = useState<TemplateListFilter>('all');
+  const [placeFilter, setPlaceFilter] = useState<PlaceListFilter>('all');
   const [templateOptions, setTemplateOptions] = useState<Array<{ id: string; name: string }>>([]);
   const [exportNameModalVisible, setExportNameModalVisible] = useState(false);
   const [draftFileName, setDraftFileName] = useState('');
@@ -249,6 +254,26 @@ export function StampListScreen({
     return [...templateOptions, ...orphans];
   }, [templateOptions, stamps]);
 
+  const placeChipItems = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const stamp of stamps) {
+      const label = stamp.placeLabel?.trim();
+      if (!label) {
+        continue;
+      }
+      counts.set(label, (counts.get(label) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'))
+      .slice(0, MAX_PLACE_FILTER_CHIPS)
+      .map(([name]) => name);
+  }, [stamps]);
+
+  const hasUnplacedStamps = useMemo(
+    () => stamps.some((stamp) => !stamp.placeLabel?.trim()),
+    [stamps],
+  );
+
   const filteredStamps = useMemo(() => {
     let rows = filterStampsByQuery(stamps, searchQuery);
     if (templateFilter === 'unclassified') {
@@ -256,12 +281,17 @@ export function StampListScreen({
     } else if (templateFilter !== 'all') {
       rows = rows.filter((stamp) => stamp.templateId === templateFilter);
     }
+    if (placeFilter === PLACE_FILTER_NONE) {
+      rows = rows.filter((stamp) => !stamp.placeLabel?.trim());
+    } else if (placeFilter !== 'all') {
+      rows = rows.filter((stamp) => (stamp.placeLabel?.trim() || '') === placeFilter);
+    }
     return rows;
-  }, [stamps, searchQuery, templateFilter]);
+  }, [stamps, searchQuery, templateFilter, placeFilter]);
 
   useEffect(() => {
     listRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [searchQuery, templateFilter]);
+  }, [searchQuery, templateFilter, placeFilter]);
 
   useEffect(() => {
     if (!selecting || selectedIds.size === 0) {
@@ -608,6 +638,8 @@ export function StampListScreen({
   const selectedCount = selectedIds.size;
   const hasSearchQuery = searchQuery.trim().length > 0;
   const hasTemplateFilter = templateFilter !== 'all';
+  const hasPlaceFilter = placeFilter !== 'all';
+  const hasListFilters = hasTemplateFilter || hasPlaceFilter;
   const selectionCompact = selecting && selectedCount > 0;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
@@ -757,6 +789,73 @@ export function StampListScreen({
             </Pressable>
           </ScrollView>
         ) : null}
+        {!selecting && (placeChipItems.length > 0 || hasUnplacedStamps) ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.templateChipScroll}
+            contentContainerStyle={styles.templateChipRow}
+            accessibilityLabel="장소 필터"
+          >
+            <Pressable
+              style={[styles.templateChip, placeFilter === 'all' && styles.templateChipActive]}
+              onPress={() => setPlaceFilter('all')}
+              accessibilityRole="button"
+              accessibilityState={{ selected: placeFilter === 'all' }}
+              accessibilityLabel="전체 장소"
+            >
+              <Text
+                style={[
+                  styles.templateChipText,
+                  placeFilter === 'all' && styles.templateChipTextActive,
+                ]}
+              >
+                장소 전체
+              </Text>
+            </Pressable>
+            {placeChipItems.map((name) => {
+              const selected = placeFilter === name;
+              return (
+                <Pressable
+                  key={name}
+                  style={[styles.templateChip, selected && styles.templateChipActive]}
+                  onPress={() => setPlaceFilter(name)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  accessibilityLabel={`${name} 장소만 보기`}
+                >
+                  <Text
+                    style={[styles.templateChipText, selected && styles.templateChipTextActive]}
+                    numberOfLines={1}
+                  >
+                    {name}
+                  </Text>
+                </Pressable>
+              );
+            })}
+            {hasUnplacedStamps ? (
+              <Pressable
+                style={[
+                  styles.templateChip,
+                  placeFilter === PLACE_FILTER_NONE && styles.templateChipActive,
+                ]}
+                onPress={() => setPlaceFilter(PLACE_FILTER_NONE)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: placeFilter === PLACE_FILTER_NONE }}
+                accessibilityLabel="장소 없는 항목만 보기"
+              >
+                <Text
+                  style={[
+                    styles.templateChipText,
+                    placeFilter === PLACE_FILTER_NONE && styles.templateChipTextActive,
+                  ]}
+                >
+                  장소 없음
+                </Text>
+              </Pressable>
+            ) : null}
+          </ScrollView>
+        ) : null}
         {menuVisible && !selectionCompact ? (
           <View style={styles.menuCard}>
             <Pressable
@@ -791,7 +890,7 @@ export function StampListScreen({
         {!selecting ? (
           <>
             <Text style={styles.countLine}>
-              {hasSearchQuery || hasTemplateFilter ? (
+              {hasSearchQuery || hasListFilters ? (
                 <>
                   표시 <Text style={styles.countNumber}>{filteredStamps.length}</Text>개 · 전체{' '}
                   <Text style={styles.countNumber}>{stamps.length}</Text>개
@@ -832,7 +931,9 @@ export function StampListScreen({
                 ? '검색 결과가 없습니다.'
                 : hasTemplateFilter
                   ? '이 유형으로 저장된 항목이 없습니다.'
-                  : '표시할 항목이 없습니다.'}
+                  : hasPlaceFilter
+                    ? '이 장소로 저장된 항목이 없습니다.'
+                    : '표시할 항목이 없습니다.'}
             </Text>
           </View>
         ) : (
@@ -844,7 +945,7 @@ export function StampListScreen({
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
-            extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${[...selectedIds].join(',')}`}
+            extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${placeFilter}:${[...selectedIds].join(',')}`}
             maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
             initialNumToRender={8}
             maxToRenderPerBatch={6}
