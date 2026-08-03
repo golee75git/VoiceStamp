@@ -3375,3 +3375,16 @@ restore-item-speak-label.bat
 
 src.pre-item-speak-label/·public.pre-item-speak-label/ 스냅샷으로 되돌립니다.
 
+
+---
+
+## 220. 목록 하단 갤러리·촬영 버튼 맞춤 되돌리기 (선택)
+
+contain + 높이 56 변경 후 문제가 생기면:
+
+```bat
+restore-list-bottom-btn-fit.bat
+```
+
+src.pre-list-bottom-btn-fit/·public.pre-list-bottom-btn-fit/ 스냅샷으로 되돌립니다.
+

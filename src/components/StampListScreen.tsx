@@ -1087,7 +1087,7 @@ export function StampListScreen({
             disabled={albumBusy}
             accessibilityLabel="갤러리에서 사진 선택"
           >
-            <Image source={galleryButton} style={styles.bottomGalleryButtonImage} resizeMode="cover" />
+            <Image source={galleryButton} style={styles.bottomGalleryButtonImage} resizeMode="contain" />
             {albumBusy ? (
               <View style={styles.bottomGalleryButtonBusy}>
                 <ActivityIndicator size="small" color="#fff" />
@@ -1099,7 +1099,7 @@ export function StampListScreen({
             onPress={onBack}
             accessibilityLabel="사진 촬영"
           >
-            <Image source={captureButton} style={styles.bottomCapturePillButtonImage} resizeMode="cover" />
+            <Image source={captureButton} style={styles.bottomCapturePillButtonImage} resizeMode="contain" />
           </Pressable>
         </View>
       ) : selectionCompact ? (
@@ -1530,7 +1530,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listAreaWithBottomBar: {
-    paddingBottom: 111,
+    paddingBottom: 115,
   },
   centered: {
     flex: 1,
@@ -1547,7 +1547,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   listWithBottomBar: {
-    paddingBottom: 127,
+    paddingBottom: 131,
   },
   bottomBar: {
     position: 'absolute',
@@ -1565,13 +1565,13 @@ const styles = StyleSheet.create({
   },
   bottomGalleryButton: {
     flex: 1,
-    minHeight: 52,
+    minHeight: 56,
     borderRadius: 14,
     overflow: 'hidden',
   },
   bottomGalleryButtonImage: {
     width: '100%',
-    height: 52,
+    height: 56,
   },
   bottomGalleryButtonBusy: {
     ...StyleSheet.absoluteFillObject,
@@ -1581,13 +1581,13 @@ const styles = StyleSheet.create({
   },
   bottomCapturePillButton: {
     flex: 1,
-    minHeight: 52,
+    minHeight: 56,
     borderRadius: 14,
     overflow: 'hidden',
   },
   bottomCapturePillButtonImage: {
     width: '100%',
-    height: 52,
+    height: 56,
   },
   bottomAttachButton: {
     flex: 1,
