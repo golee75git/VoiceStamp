@@ -3388,3 +3388,15 @@ restore-list-bottom-btn-fit.bat
 
 src.pre-list-bottom-btn-fit/·public.pre-list-bottom-btn-fit/ 스냅샷으로 되돌립니다.
 
+---
+
+## 221. 랜딩 히어로 배너 되돌리기 (선택)
+
+홈(/) 히어로 배너·섹션 카피 변경 후 문제가 생기면:
+
+```bat
+restore-landing-hero.bat
+```
+
+public.pre-landing-hero/ 스냅샷으로 landing.html·help.html을 되돌립니다. (hero PNG는 수동 삭제)
+
