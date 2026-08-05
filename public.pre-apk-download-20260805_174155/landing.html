@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceStamp — 찍고, 말하고, 스탬프로 끝</title>
+  <meta name="description" content="현장 사진에 음성 메모·위치·층을 남기고 PDF·이미지로 공유하는 Android 앱" />
+  <meta property="og:title" content="VoiceStamp — 찍고, 말하고, 스탬프로 끝" />
+  <meta property="og:description" content="현장 사진에 음성 메모·위치·층을 남기고 PDF·이미지로 공유하는 Android 앱" />
+  <meta property="og:image" content="https://voicestamp-gilt.vercel.app/hero-banner-wide.png" />
+  <meta property="og:url" content="https://voicestamp-gilt.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <script src="/vendor/qrcode.min.js"></script>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --panel: #f8fafc;
+      --accent: #0f766e;
+      --accent-press: #0d9488;
+      --hero-veil: rgba(15, 23, 42, 0.52);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      margin: 0;
+      color: var(--ink);
+      line-height: 1.6;
+      background: #fff;
+    }
+    a { color: var(--accent); }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+
+    .hero {
+      position: relative;
+      min-height: min(78vh, 36rem);
+      display: flex;
+      align-items: flex-end;
+      color: #fff;
+      overflow: hidden;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.28) 0%,
+        var(--hero-veil) 55%,
+        rgba(15, 23, 42, 0.78) 100%
+      );
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 2rem;
+    }
+    .hero-brand {
+      font-size: clamp(2rem, 5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.45rem;
+      line-height: 1.15;
+    }
+    .hero-title {
+      font-size: clamp(1.2rem, 3.2vw, 1.45rem);
+      font-weight: 650;
+      margin: 0 0 0.4rem;
+      line-height: 1.35;
+    }
+    .hero-lead {
+      margin: 0 0 1.15rem;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 1rem;
+      max-width: 28rem;
+    }
+    .cta {
+      display: inline-block;
+      margin: 0 0 0.4rem;
+      padding: 0.8rem 1.35rem;
+      background: var(--accent);
+      color: #fff !important;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .cta:active { background: var(--accent-press); }
+    .hero .apk-name { color: rgba(255, 255, 255, 0.72); margin: 0 0 0.85rem; }
+    .hero-share {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-top: 0.35rem;
+    }
+    .hero-share #site-qr { display: inline-block; line-height: 0; padding: 6px; background: #fff; border-radius: 8px; }
+    .hero-share #site-qr img { display: block; border-radius: 4px; }
+    .share-btn {
+      display: inline-block;
+      padding: 0.55rem 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .share-btn:active { background: rgba(255, 255, 255, 0.2); }
+    .hero .share-hint { margin: 0.3rem 0 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); }
+
+    .wrap {
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 2rem;
+    }
+    .section { margin: 0 0 1.75rem; }
+    .section h2 {
+      font-size: 1.05rem;
+      margin: 0 0 0.45rem;
+      letter-spacing: -0.01em;
+    }
+    .section p { margin: 0 0 0.5rem; }
+    .steps {
+      list-style: none;
+      padding: 0;
+      margin: 0.35rem 0 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+    .steps li {
+      padding: 0.7rem 0.85rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+    .steps strong { display: block; margin-bottom: 0.15rem; }
+    .product-shot {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      display: block;
+      margin: 0.75rem 0 0;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 0 0 1.5rem;
+    }
+    .panel h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+    .web-test-link {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .web-test-link:hover { text-decoration: underline; }
+    ul.links { padding-left: 1.25rem; margin: 0.5rem 0 0; }
+    footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header class="hero" aria-label="VoiceStamp 소개">
+    <div class="hero-media" aria-hidden="true">
+      <picture>
+        <source media="(max-width: 640px)" srcset="/hero-banner-tall.png" />
+        <img src="/hero-banner-wide.png" alt="" width="1920" height="1080" decoding="async" fetchpriority="high" />
+      </picture>
+    </div>
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="hero-brand">VoiceStamp</p>
+      <h1 class="hero-title">찍고, 말하고, 스탬프로 끝</h1>
+      <p class="hero-lead">위치·층·음성 메모까지 한 장에.</p>
+      <a class="cta" href="https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260805_164947.apk">Android에 설치</a>
+      <p class="muted apk-name">VoiceStamp_20260805_164947.apk</p>
+      <p class="muted" style="color:rgba(255,255,255,0.75);margin:0 0 0.85rem;">설치 후 카메라·마이크·위치 권한을 허용해 주세요.</p>
+      <div class="hero-share" aria-label="홈페이지 공유">
+        <div>
+          <div id="site-qr" role="img" aria-label="https://voicestamp-gilt.vercel.app/ QR 코드"></div>
+          <p class="share-hint">QR 스캔 → 홈</p>
+        </div>
+        <div>
+          <button type="button" id="share-site" class="share-btn">링크 공유</button>
+          <p class="share-hint">휴대폰에서는 카카오톡 등으로 보낼 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section">
+      <h2>현장·시설 기록이 많을 때</h2>
+      <p class="muted">학교·시설·공사 현장에서 사진과 메모를 바로 남길 때 맞춥니다.</p>
+      <img class="product-shot" src="/hero-product.png" alt="VoiceStamp 사용 예시 화면" width="1200" height="900" loading="lazy" decoding="async" />
+    </section>
+
+    <section class="section">
+      <h2>이렇게 씁니다</h2>
+      <ol class="steps">
+        <li><strong>찍기</strong> 카메라로 현장을 촬영합니다.</li>
+        <li><strong>말하기</strong> 제목·메모를 음성으로 입력합니다.</li>
+        <li><strong>보내기</strong> PDF·이미지·HWPX로 공유합니다.</li>
+      </ol>
+    </section>
+
+    <section class="panel">
+      <h2>사진·위치는 휴대폰 안에만</h2>
+      <p class="muted" style="margin:0 0 0.75rem;">
+        VoiceStamp <strong>운영 서버에는 사진·위치·제목·메모 등 개인정보를 저장하지 않습니다.</strong>
+        데이터는 사용자 <strong>휴대폰(또는 웹 테스트 시 브라우저)</strong> 안에만 보관됩니다.
+        자세한 내용은 <a href="/privacy">개인정보 처리 안내</a>를 참고해 주세요.
+      </p>
+      <p class="muted" style="margin:0;">
+        이 웹 사이트의 앱 화면은 <strong>단순 테스트용</strong>입니다. 실제 사용·평가는
+        <strong>Android APK를 다운로드해 설치</strong>한 뒤 이용해 주세요.
+      </p>
+      <p class="muted" style="margin:0.75rem 0 0;">
+        촬영한 사진은 관련 법령과 타인의 초상권·개인정보·저작권을 준수하여 이용해야 합니다.
+        불법 촬영, 무단 공유 등 사용자의 부적절한 이용으로 발생한 책임은 사용자에게 있습니다.
+      </p>
+    </section>
+
+    <section class="section">
+      <a class="cta" href="https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260805_164947.apk">Android에 설치</a>
+      <p class="muted">VoiceStamp_20260805_164947.apk</p>
+      <p><a class="web-test-link" href="/app">웹에서 미리 보기</a></p>
+    </section>
+
+    <ul class="links">
+      <li><a href="/report">PC 보고서 편집</a> (프로젝트 ZIP · 행 삭제)</li>
+      <li><a href="/privacy">개인정보 처리 안내</a></li>
+      <li><a href="/license">라이선스·저작권</a></li>
+      <li><a href="/help">도움말</a></li>
+    </ul>
+
+    <p class="muted" style="margin-top:1.25rem;">버전 1.0.0 · 빌드 2026-08-01</p>
+    <p>© 2026 Lee Hyung Woo</p>
+    <footer>
+      <p id="visitor-stats" class="muted" aria-live="polite"></p>
+      문의: <a href="https://github.com/golee75git/VoiceStamp/issues">GitHub Issues</a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var SITE_URL = 'https://voicestamp-gilt.vercel.app/';
+
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(document.getElementById('site-qr'), {
+          text: SITE_URL,
+          width: 120,
+          height: 120,
+          colorDark: '#111827',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+      }
+
+      var shareBtn = document.getElementById('share-site');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          var payload = {
+            title: 'VoiceStamp',
+            text: 'VoiceStamp — 찍고, 말하고, 스탬프로 끝',
+            url: SITE_URL,
+          };
+
+          if (navigator.share) {
+            navigator.share(payload).catch(function (err) {
+              if (err && err.name === 'AbortError') return;
+              fallbackCopy(SITE_URL);
+            });
+            return;
+          }
+          fallbackCopy(SITE_URL);
+        });
+      }
+
+      function fallbackCopy(url) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () {
+            alert('링크를 복사했습니다.');
+          }).catch(function () {
+            window.prompt('아래 링크를 복사하세요.', url);
+          });
+          return;
+        }
+        window.prompt('아래 링크를 복사하세요.', url);
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      var el = document.getElementById('visitor-stats');
+      if (!el) return;
+
+      var today = new Date().toISOString().slice(0, 10);
+      var seenKey = 'vs_landing_seen_' + today;
+
+      function showStats(data) {
+        if (!data || typeof data.daily !== 'number' || typeof data.total !== 'number') return;
+        el.textContent = '오늘 방문 ' + data.daily.toLocaleString('ko-KR')
+          + ' · 누적 ' + data.total.toLocaleString('ko-KR');
+      }
+
+      function loadStats() {
+        fetch('/api/visitor')
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(showStats)
+          .catch(function () {});
+      }
+
+      if (localStorage.getItem(seenKey)) {
+        loadStats();
+        return;
+      }
+
+      localStorage.setItem(seenKey, '1');
+      fetch('/api/visitor', { method: 'POST', keepalive: true })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data) showStats(data);
+          else loadStats();
+        })
+        .catch(loadStats);
+    })();
+  </script>
+</body>
+</html>

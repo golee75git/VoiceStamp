@@ -3434,3 +3434,11 @@ restore-watermark-qr.bat
 ```
 
 src.pre-watermark-qr/·public.pre-watermark-qr/ 스냅샷으로 되돌립니다.
+
+---
+
+## 225. APK download 20260805_174155 rollback
+
+```bat
+restore-apk-download-20260805_174155.bat
+```r
