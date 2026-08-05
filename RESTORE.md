@@ -3400,3 +3400,15 @@ restore-landing-hero.bat
 
 public.pre-landing-hero/ 스냅샷으로 landing.html·help.html을 되돌립니다. (hero PNG는 수동 삭제)
 
+---
+
+## 222. 항목 말하기 보조 버튼 테두리 되돌리기 (선택)
+
+「지금까지 넣기」「적용 없이 닫기」테두리 스타일 변경 후 문제가 생기면:
+
+```bat
+restore-slot-speech-link-border.bat
+```
+
+src.pre-slot-speech-link-border/ 스냅샷으로 SaveSlotSpeechSheet.tsx를 되돌립니다.
+

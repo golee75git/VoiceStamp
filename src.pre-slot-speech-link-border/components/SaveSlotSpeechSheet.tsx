@@ -337,7 +337,7 @@ export function SaveSlotSpeechSheet({
 
               {!isLast ? (
                 <Pressable
-                  style={[styles.linkBtn, styles.linkBtnAccent]}
+                  style={styles.linkBtn}
                   onPress={handleCommit}
                   accessibilityRole="button"
                   accessibilityLabel="지금까지 말한 내용 넣기"
@@ -515,17 +515,8 @@ const styles = StyleSheet.create({
   },
   linkBtn: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    marginTop: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#fff',
-  },
-  linkBtnAccent: {
-    borderColor: '#93c5fd',
-    backgroundColor: '#eff6ff',
+    paddingVertical: 10,
+    marginTop: 4,
   },
   linkText: {
     fontSize: 14,
@@ -534,7 +525,6 @@ const styles = StyleSheet.create({
   },
   linkMuted: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#4b5563',
+    color: '#6b7280',
   },
 });
