@@ -3412,3 +3412,13 @@ restore-slot-speech-link-border.bat
 
 src.pre-slot-speech-link-border/ ìŠ¤ëƒ…ìƒ·ìœ¼ë¡œ SaveSlotSpeechSheet.tsxë¥¼ ë˜ëŒë¦½ë‹ˆë‹¤.
 
+
+---
+
+## 223. APK ´Ù¿î·Îµå ¸µÅ© 20260805_164947 µÇµ¹¸®±â (¼±ÅÃ)
+
+`at
+restore-apk-download-20260805_164947.bat
+`
+
+public.pre-apk-download-20260805_164947/ ½º³À¼¦À¸·Î landing¡¤info¡¤apkBuildLabelÀ» µÇµ¹¸³´Ï´Ù.
