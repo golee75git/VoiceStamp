@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 
 import {
-  CUSTOM_TEMPLATE_NAME_MAX,
   STAMP_FIELD_TEMPLATES,
   applyStampFieldTemplate,
   deleteCustomStampFieldTemplate,
@@ -82,19 +81,6 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
     setEditorVisible(true);
   };
 
-  /** Open create editor seeded from a template (builtin or custom). Never edit-in-place. */
-  const openCopyFrom = (template: StampFieldTemplate) => {
-    const copyName = `${template.name} 복사`.slice(0, CUSTOM_TEMPLATE_NAME_MAX);
-    setEditing({
-      id: template.id,
-      name: copyName,
-      labels: { ...template.labels },
-      placeholders: { ...template.placeholders },
-      custom: false,
-    });
-    setEditorVisible(true);
-  };
-
   const confirmDelete = (template: StampFieldTemplate) => {
     Alert.alert('내 템플릿 삭제', `"${template.name}" 템플릿을 삭제할까요?`, [
       { text: '취소', style: 'cancel' },
@@ -142,69 +128,53 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
   const renderItem = (template: StampFieldTemplate, custom: boolean) => {
     const badge = itemBadge(template.id);
     return (
-      <View
+      <Pressable
         key={template.id}
-        style={[
-          styles.itemRow,
-          custom && styles.itemRowCustom,
-          badge === 'applied' && styles.itemRowApplied,
-          badge === 'userModified' && styles.itemRowUserModified,
+        style={({ pressed }) => [
+          styles.item,
+          custom && styles.itemCustom,
+          badge === 'applied' && styles.itemApplied,
+          badge === 'userModified' && styles.itemUserModified,
+          pressed && (custom ? styles.itemCustomPressed : styles.itemPressed),
         ]}
+        onPress={() => void handleSelect(template.id)}
+        onLongPress={custom ? () => handleCustomLongPress(template) : undefined}
+        delayLongPress={400}
+        accessibilityLabel={
+          badge === 'applied'
+            ? `${template.name}, 적용 중`
+            : badge === 'userModified'
+              ? `${template.name}, 사용자수정`
+              : custom
+                ? `${template.name}, 길게 누르면 수정·삭제`
+                : template.name
+        }
+        accessibilityState={{ selected: badge === 'applied' }}
       >
-        <Pressable
-          style={({ pressed }) => [
-            styles.itemMain,
-            pressed && (custom ? styles.itemCustomPressed : styles.itemPressed),
-            badge === 'applied' && pressed && styles.itemAppliedPressed,
-          ]}
-          onPress={() => void handleSelect(template.id)}
-          onLongPress={custom ? () => handleCustomLongPress(template) : undefined}
-          delayLongPress={400}
-          accessibilityLabel={
-            badge === 'applied'
-              ? `${template.name}, 적용 중`
-              : badge === 'userModified'
-                ? `${template.name}, 사용자수정`
-                : custom
-                  ? `${template.name}, 길게 누르면 수정·삭제`
-                  : template.name
-          }
-          accessibilityState={{ selected: badge === 'applied' }}
-          accessibilityHint="탭하면 이 템플릿을 적용합니다"
-        >
-          <View style={styles.itemHeader}>
-            <Text
-              style={[
-                styles.itemTitle,
-                custom && styles.itemTitleCustom,
-                badge === 'applied' && styles.itemTitleApplied,
-                badge === 'userModified' && styles.itemTitleUserModified,
-              ]}
-            >
-              {template.name}
-            </Text>
-            {badge === 'applied' ? (
-              <Text style={styles.badgeApplied}>적용 중</Text>
-            ) : badge === 'userModified' ? (
-              <Text style={styles.badgeUserModified}>사용자수정</Text>
-            ) : null}
-          </View>
-          <Text style={styles.itemMeta} numberOfLines={2}>
-            {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
-            {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
-            {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
+        <View style={styles.itemHeader}>
+          <Text
+            style={[
+              styles.itemTitle,
+              custom && styles.itemTitleCustom,
+              badge === 'applied' && styles.itemTitleApplied,
+              badge === 'userModified' && styles.itemTitleUserModified,
+            ]}
+          >
+            {template.name}
           </Text>
-          {custom ? <Text style={styles.longPressHint}>길게 눌러 수정·삭제</Text> : null}
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [styles.copyBtn, pressed && styles.copyBtnPressed]}
-          onPress={() => openCopyFrom(template)}
-          accessibilityRole="button"
-          accessibilityLabel={`${template.name}으로 내 템플릿 만들기`}
-        >
-          <Text style={styles.copyBtnText}>복사</Text>
-        </Pressable>
-      </View>
+          {badge === 'applied' ? (
+            <Text style={styles.badgeApplied}>적용 중</Text>
+          ) : badge === 'userModified' ? (
+            <Text style={styles.badgeUserModified}>사용자수정</Text>
+          ) : null}
+        </View>
+        <Text style={styles.itemMeta} numberOfLines={2}>
+          {template.labels.titleFieldLabel} · {template.labels.placeFieldLabel} ·{' '}
+          {template.labels.memoFieldLabel} · {template.labels.extra1FieldLabel} ·{' '}
+          {template.labels.extra2FieldLabel} · {template.labels.extra3FieldLabel}
+        </Text>
+        {custom ? <Text style={styles.longPressHint}>길게 눌러 수정·삭제</Text> : null}
+      </Pressable>
     );
   };
 
@@ -222,8 +192,8 @@ export function FieldTemplateSheet({ visible, onClose, onApplied }: FieldTemplat
               저장 템플릿
             </Text>
             <Text style={styles.hint}>
-              행을 탭하면 바로 적용됩니다. 옆 「복사」로 그 템플릿을 바탕으로 내 템플릿을 만듭니다. 적용
-              중인 행은 파란 배경, 표시명을 직접 바꾼 경우는 「사용자수정」으로 표시됩니다.
+              필드 표시명을 바꿉니다. 입력칸에는 예시가 흐리게 보이고, 촬영일시는 촬영 시각이 사용됩니다. 적용
+              중인 템플릿은 「적용 중」, 표시명을 직접 바꾼 경우 「사용자수정」으로 표시됩니다.
             </Text>
             {orphanUserModified ? (
               <View style={styles.statusBanner} accessibilityLabel="사용자수정">
@@ -357,60 +327,34 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#15803d',
   },
-  itemRow: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
+  item: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#ffffff',
+    borderColor: '#dbeafe',
+    backgroundColor: '#eff6ff',
     borderRadius: 10,
-    overflow: 'hidden',
-  },
-  itemRowCustom: {
-    borderColor: '#bbf7d0',
-    backgroundColor: '#f0fdf4',
-  },
-  itemRowApplied: {
-    borderColor: '#1d4ed8',
-    borderWidth: 2,
-    backgroundColor: '#93c5fd',
-  },
-  itemRowUserModified: {
-    borderColor: '#d97706',
-    borderWidth: 2,
-    backgroundColor: '#fde68a',
-  },
-  itemMain: {
-    flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 14,
     gap: 4,
   },
+  itemCustom: {
+    borderColor: '#bbf7d0',
+    backgroundColor: '#f0fdf4',
+  },
+  itemApplied: {
+    borderColor: '#2563eb',
+    borderWidth: 2,
+    backgroundColor: '#dbeafe',
+  },
+  itemUserModified: {
+    borderColor: '#f59e0b',
+    borderWidth: 2,
+    backgroundColor: '#fffbeb',
+  },
   itemPressed: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#dbeafe',
   },
   itemCustomPressed: {
     backgroundColor: '#dcfce7',
-  },
-  itemAppliedPressed: {
-    backgroundColor: '#60a5fa',
-  },
-  copyBtn: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    minWidth: 56,
-    borderLeftWidth: 1,
-    borderLeftColor: 'rgba(0,0,0,0.08)',
-    backgroundColor: 'rgba(255,255,255,0.55)',
-  },
-  copyBtnPressed: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
-  },
-  copyBtnText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1d4ed8',
   },
   itemHeader: {
     flexDirection: 'row',
@@ -422,22 +366,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '700',
-    color: '#111827',
+    color: '#1d4ed8',
   },
   itemTitleCustom: {
     color: '#15803d',
   },
   itemTitleApplied: {
-    color: '#1e3a8a',
+    color: '#1e40af',
   },
   itemTitleUserModified: {
-    color: '#78350f',
+    color: '#92400e',
   },
   badgeApplied: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#1e3a8a',
-    backgroundColor: '#dbeafe',
+    color: '#1d4ed8',
+    backgroundColor: '#bfdbfe',
     overflow: 'hidden',
     paddingHorizontal: 8,
     paddingVertical: 3,
@@ -446,8 +390,8 @@ const styles = StyleSheet.create({
   badgeUserModified: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#78350f',
-    backgroundColor: '#fef3c7',
+    color: '#92400e',
+    backgroundColor: '#fde68a',
     overflow: 'hidden',
     paddingHorizontal: 8,
     paddingVertical: 3,

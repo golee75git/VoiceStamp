@@ -3442,3 +3442,15 @@ src.pre-watermark-qr/·public.pre-watermark-qr/ 스냅샷으로 되돌립니다.
 ```bat
 restore-apk-download-20260805_174155.bat
 ```r
+
+---
+
+## 226. 템플릿 행 복사·적용 배경 되돌리기 (선택)
+
+행 옆 「복사」·적용 중 파란 배경 변경 후 문제가 생기면:
+
+```bat
+restore-template-row-copy.bat
+```
+
+src.pre-template-row-copy/·public.pre-template-row-copy/ 스냅샷으로 되돌립니다.
