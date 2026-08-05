@@ -1397,7 +1397,7 @@ export function StampSaveModal({
       }
       if (urls.length === 1) {
         setSourceUrl(urls[0]);
-        Alert.alert('URL 찾아 QR', '주소를 넣었습니다. 확인 후 저장하세요. (저장 JPEG에 QR)');
+        Alert.alert('URL 찾아 QR', '주소를 넣었습니다. 확인 후 저장하세요. (별도 영역 이미지에 QR)');
         return;
       }
       Alert.alert(
@@ -1737,7 +1737,7 @@ export function StampSaveModal({
             {qrCaptionEnabled ? (
               <View>
                 <VoiceInputField
-                  label="QR URL"
+                  label="QR URL (별도 영역)"
                   value={sourceUrl}
                   onChangeText={setSourceUrl}
                   onMicPress={() => handleMicPress('sourceUrl')}
@@ -1773,10 +1773,10 @@ export function StampSaveModal({
                   </Pressable>
                 </View>
                 <Text style={styles.locationHint}>
-                  저장 JPEG 우하단에 QR이 들어갑니다. 「별도 영역」은 사진 안, 「워터마크」는
-                  글자 바 위에 붙습니다. http(s)만 허용. 칸에는 https:// 가 기본으로 들어 있으며,
-                  마이크 또는 키보드로 이어서 입력할 수 있습니다. 「연결확인」으로 접속 여부를
-                  미리 볼 수 있습니다. https:// 만 두면 QR 없이 저장됩니다.
+                  저장 시 「사진 아래(별도 영역)」JPEG 우하단에 QR이 들어갑니다. http(s)만 허용.
+                  칸에는 https:// 가 기본으로 들어 있으며, 마이크 또는 키보드로 이어서 입력할 수
+                  있습니다. 「연결확인」으로 접속 여부를 미리 볼 수 있습니다. https:// 만 두면 QR
+                  없이 저장됩니다.
                 </Text>
               </View>
             ) : null}

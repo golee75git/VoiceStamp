@@ -1,5 +1,5 @@
 /**
- * QR PNG for stamp JPEG overlay (caption photo area or watermark above bar).
+ * QR PNG for caption overlay.
  * Uses MIT `qrcode` (create matrix only; no canvas). QR patents expired.
  * Only http(s) payloads; never opens or fetches the URL.
  */

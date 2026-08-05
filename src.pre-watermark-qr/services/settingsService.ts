@@ -121,7 +121,7 @@ export const DEFAULT_SHUTTER_SOUND = true;
 /** Android on-device face/number mosaic blur. Default off (opt-in). */
 export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
 export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
-/** Caption/watermark JPEG QR from confirmed http(s) URL. Default off (opt-in). */
+/** Caption JPEG QR from confirmed http(s) URL. Default off (opt-in). Embed = caption only. */
 export const DEFAULT_QR_CAPTION_ENABLED = false;
 /** Android on-device Image Labeling → memo keywords. Default off (opt-in). */
 export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;

@@ -438,23 +438,6 @@ async function renderStampJpegWatermarkOnWeb(
     );
   }
 
-  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
-  if (safeSourceUrl && Platform.OS === 'web') {
-    try {
-      const qrTarget = qrPixelSizeForPhoto(Math.min(imgWidth, imgHeight));
-      const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
-      if (qr) {
-        const qrImg = await loadWebImage(qr.uri);
-        const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));
-        const qrX = imgWidth - qr.size - qrMargin;
-        const qrY = Math.max(qrMargin, imgHeight - barHeight - qr.size - qrMargin);
-        ctx.drawImage(qrImg, qrX, qrY, qr.size, qr.size);
-      }
-    } catch {
-      // QR overlay is optional on web watermark export.
-    }
-  }
-
   return canvas.toDataURL('image/jpeg', STAMP_JPEG_COMPRESS);
 }
 

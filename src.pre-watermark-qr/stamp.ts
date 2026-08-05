@@ -16,7 +16,7 @@ export type Stamp = {
   extra1?: string | null;
   extra2?: string | null;
   extra3?: string | null;
-  /** Confirmed http(s) URL for JPEG QR overlay (null = no QR). */
+  /** Confirmed http(s) URL for caption QR overlay (null = no QR). */
   sourceUrl?: string | null;
   /** Active save-template id at write time (null = unclassified / legacy). */
   templateId?: string | null;

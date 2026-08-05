@@ -3415,10 +3415,22 @@ src.pre-slot-speech-link-border/ Л┼╓К┐┘Л┐╥Л°╪К║° SaveSlotSpeechSheet.tsxК╔╪ К░≤К
 
 ---
 
-## 223. APK ╢ы©Н╥н╣Е ╦╣е╘ 20260805_164947 ╣г╣╧╦╝╠Б (╪╠ец)
+## 223. APK О©╫ы©О©╫н╣О©╫ О©╫О©╫е╘ 20260805_164947 О©╫г╣О©╫О©╫О©╫О©╫О©╫ (О©╫О©╫О©╫О©╫)
 
 `at
 restore-apk-download-20260805_164947.bat
 `
 
-public.pre-apk-download-20260805_164947/ ╫╨Ёю╪╕ю╦╥н landing║╓info║╓apkBuildLabelю╩ ╣г╣╧╦Ё╢о╢ы.
+public.pre-apk-download-20260805_164947/ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ landingО©╫О©╫infoО©╫О©╫apkBuildLabelО©╫О©╫ О©╫г╣О©╫О©╫О©╫О©╫о╢О©╫.
+
+---
+
+## 224. Л⌡▄М└╟К╖┬М│╛ JPEG QR К░≤К▐▄К╕╛Й╦╟ (Л└═М┐²)
+
+Л⌡▄М└╟К╖┬М│╛Л≈░К▐└ QR М∙╘Л└╠ Л╤■Й╟─ М⌡└ К╛╦Л═°Й╟─ Л┐²Й╦╟К╘╢:
+
+```bat
+restore-watermark-qr.bat
+```
+
+src.pre-watermark-qr/б╥public.pre-watermark-qr/ Л┼╓К┐┘Л┐╥Л°╪К║° К░≤К▐▄К╕╫К▀┬К▀╓.
