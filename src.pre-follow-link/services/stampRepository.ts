@@ -5,7 +5,7 @@ import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label';
 
 function normalizeOptionalText(value?: string | null): string | null {
   return value?.trim() || null;
@@ -16,14 +16,6 @@ function normalizeTemplateId(value?: string | null): string | null {
   if (!trimmed) return null;
   if (!/^[a-z0-9][a-z0-9-]{0,63}$/i.test(trimmed)) return null;
   return trimmed.slice(0, 64);
-}
-
-/** Stamp id used as follow-up parent (same charset as generateId). */
-function normalizeParentId(value?: string | null): string | null {
-  const trimmed = value?.trim();
-  if (!trimmed) return null;
-  if (!/^[a-z0-9][a-z0-9-]{0,79}$/i.test(trimmed)) return null;
-  return trimmed.slice(0, 80);
 }
 
 function normalizeSourceUrl(value?: string | null): string | null {
@@ -63,7 +55,6 @@ function mapRow(row: StampRow): Stamp {
     extra1FieldLabel: normalizeFieldLabelSnapshot(row.extra1_field_label),
     extra2FieldLabel: normalizeFieldLabelSnapshot(row.extra2_field_label),
     extra3FieldLabel: normalizeFieldLabelSnapshot(row.extra3_field_label),
-    parentId: normalizeParentId(row.parent_id),
   };
 }
 
@@ -79,11 +70,6 @@ function labelParams(labels?: Partial<FieldLabels> | null) {
   ] as const;
 }
 
-/** Root id for a follow-up chain (self when standalone). */
-export function resolveFollowRootId(stamp: Pick<Stamp, 'id' | 'parentId'>): string {
-  return normalizeParentId(stamp.parentId) ?? stamp.id;
-}
-
 export async function insertStamp(stamp: Stamp): Promise<void> {
   const db = await getDatabase();
   const labels = labelParams({
@@ -95,8 +81,8 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     extra3FieldLabel: stamp.extra3FieldLabel ?? undefined,
   });
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -120,7 +106,6 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     labels[3],
     labels[4],
     labels[5],
-    normalizeParentId(stamp.parentId),
   );
 }
 
@@ -142,10 +127,10 @@ export async function listTrashedStamps(): Promise<Stamp[]> {
 
 export async function countTrashedStamps(): Promise<number> {
   const db = await getDatabase();
-  const row = await db.getFirstAsync<{ c: number }>(
-    'SELECT COUNT(*) as c FROM stamps WHERE deleted_at IS NOT NULL',
+  const row = await db.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) AS count FROM stamps WHERE deleted_at IS NOT NULL',
   );
-  return row?.c ?? 0;
+  return row?.count ?? 0;
 }
 
 export async function getStampById(id: string): Promise<Stamp | null> {
@@ -155,24 +140,6 @@ export async function getStampById(id: string): Promise<Stamp | null> {
     id,
   );
   return row ? mapRow(row) : null;
-}
-
-/** Root + follow-ups for compare UI (oldest first). One query for children. */
-export async function listFollowLinkChain(anchor: Stamp): Promise<Stamp[]> {
-  const rootId = resolveFollowRootId(anchor);
-  const db = await getDatabase();
-  const rootRow = await db.getFirstAsync<StampRow>(
-    `SELECT ${STAMP_COLUMNS} FROM stamps WHERE id = ? AND deleted_at IS NULL`,
-    rootId,
-  );
-  if (!rootRow) {
-    return [anchor];
-  }
-  const childRows = await db.getAllAsync<StampRow>(
-    `SELECT ${STAMP_COLUMNS} FROM stamps WHERE parent_id = ? AND deleted_at IS NULL ORDER BY created_at ASC`,
-    rootId,
-  );
-  return [mapRow(rootRow), ...childRows.map(mapRow)];
 }
 
 export async function softDeleteStamps(ids: string[]): Promise<number> {

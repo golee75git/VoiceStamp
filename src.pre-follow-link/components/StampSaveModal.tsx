@@ -241,8 +241,6 @@ type StampSaveModalProps = {
   visible: boolean;
   imageUri: string | null;
   stamp?: Stamp | null;
-  /** When creating a follow-up stamp, seed fields from this parent (root preferred). */
-  followUpParent?: Stamp | null;
   captureStampForExport?: CaptureStampForExport;
   prefetchedLocationSnapshot?: LocationSnapshot | null;
   locationPrefetchLoading?: boolean;
@@ -256,23 +254,12 @@ type StampSaveModalProps = {
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
-  onRequestFollowUp?: (mode: 'camera' | 'album') => void;
-  onRequestCompare?: () => void;
 };
-
-function followUpTitleFromParent(parentTitle: string): string {
-  const base = parentTitle.trim() || '스탬프';
-  if (/\(후속\)\s*$/.test(base)) {
-    return base;
-  }
-  return `${base} (후속)`;
-}
 
 export function StampSaveModal({
   visible,
   imageUri,
   stamp = null,
-  followUpParent = null,
   captureStampForExport,
   prefetchedLocationSnapshot = null,
   locationPrefetchLoading = false,
@@ -281,11 +268,8 @@ export function StampSaveModal({
   onClose,
   onSaved,
   onTrashed,
-  onRequestFollowUp,
-  onRequestCompare,
 }: StampSaveModalProps) {
   const isEdit = stamp != null;
-  const isFollowUpCreate = !isEdit && followUpParent != null;
   const [siteName, setSiteName] = useState('');
   const [groupName, setGroupName] = useState('');
   const [title, setTitle] = useState('');
@@ -708,7 +692,7 @@ export function StampSaveModal({
       setSlotSpeechOpen(false);
       return;
     }
-    if (isEdit || isFollowUpCreate || Platform.OS === 'web' || !saveSlotSpeechEnabled || !available) {
+    if (isEdit || Platform.OS === 'web' || !saveSlotSpeechEnabled || !available) {
       return;
     }
     if (slotSpeechOpenedRef.current) {
@@ -723,34 +707,7 @@ export function StampSaveModal({
     return () => {
       clearTimeout(timer);
     };
-  }, [visible, isEdit, isFollowUpCreate, saveSlotSpeechEnabled, available, stop]);
-
-  useEffect(() => {
-    if (!visible || !followUpParent || isEdit) {
-      return;
-    }
-    titleTouchedRef.current = true;
-    placeTouchedRef.current = true;
-    floorTouchedRef.current = Boolean(followUpParent.floor);
-    setTitle(followUpTitleFromParent(followUpParent.title));
-    setMemo('');
-    setExtra1(followUpParent.extra1 ?? '');
-    setExtra2(followUpParent.extra2 ?? '');
-    setExtra3(followUpParent.extra3 ?? '');
-    setSourceUrl(defaultSourceUrlDraft(followUpParent.sourceUrl));
-    const draftPos = defaultSourceUrlDraft(followUpParent.sourceUrl).length;
-    setSourceUrlSelection({ start: draftPos, end: draftPos });
-    sourceUrlSelectionRef.current = { start: draftPos, end: draftPos };
-    setFloor(followUpParent.floor ?? null);
-    setPlaceLabel(followUpParent.placeLabel ?? null);
-    const labels = fieldLabelsFromStamp(followUpParent);
-    setTitleFieldLabel(labels.titleFieldLabel);
-    setPlaceFieldLabel(labels.placeFieldLabel);
-    setMemoFieldLabel(labels.memoFieldLabel);
-    setExtra1FieldLabel(labels.extra1FieldLabel);
-    setExtra2FieldLabel(labels.extra2FieldLabel);
-    setExtra3FieldLabel(labels.extra3FieldLabel);
-  }, [visible, isEdit, followUpParent?.id]);
+  }, [visible, isEdit, saveSlotSpeechEnabled, available, stop]);
 
   useEffect(() => {
     if (!slotSpeechOpen) {
@@ -803,16 +760,11 @@ export function StampSaveModal({
           return;
         }
         setTemplatePickerOptions(list);
-        const stampTypeId = stamp?.templateId?.trim() || followUpParent?.templateId?.trim() || null;
+        const stampTypeId = stamp?.templateId?.trim() || null;
         if (stampTypeId) {
           const named = list.find((item) => item.id === stampTypeId)?.name;
           setSelectedTemplateId(stampTypeId);
           setSelectedTemplateName(named ?? '저장 유형');
-          return;
-        }
-        if (followUpParent) {
-          setSelectedTemplateId(null);
-          setSelectedTemplateName('유형 선택');
           return;
         }
         if (status.kind !== 'none' && status.templateId) {
@@ -837,7 +789,7 @@ export function StampSaveModal({
     return () => {
       cancelled = true;
     };
-  }, [visible, stamp?.id, stamp?.templateId, followUpParent?.id, followUpParent?.templateId]);
+  }, [visible, stamp?.id, stamp?.templateId]);
 
   const openTemplatePicker = useCallback(() => {
     if (saving) {
@@ -968,7 +920,7 @@ export function StampSaveModal({
     let cancelled = false;
     const capturedAt = Date.now();
 
-    if (!titleTouchedRef.current && !isFollowUpCreate) {
+    if (!titleTouchedRef.current) {
       setTitle(formatDefaultStampTitle(capturedAt));
     }
 
@@ -1126,7 +1078,6 @@ export function StampSaveModal({
     visible,
     imageUri,
     isEdit,
-    isFollowUpCreate,
     prefetchedLocationSnapshot,
     locationPrefetchLoading,
     locationPrefetchFinished,
@@ -1560,7 +1511,6 @@ export function StampSaveModal({
           placeLabel,
           captureForExport: captureStampForExport,
           templateId: selectedTemplateId,
-          parentId: followUpParent ? followUpParent.id : null,
           fieldLabels: {
             titleFieldLabel,
             placeFieldLabel,
@@ -1645,51 +1595,7 @@ export function StampSaveModal({
             bounces={false}
           >
             <View style={styles.card}>
-            <Text style={styles.heading}>
-              {isEdit ? '스탬프 수정' : isFollowUpCreate ? '후속 스탬프 저장' : '스탬프 저장'}
-            </Text>
-
-            {isEdit && (onRequestFollowUp || onRequestCompare) ? (
-              <View style={styles.followLinkRow}>
-                {onRequestFollowUp ? (
-                  <>
-                    <Pressable
-                      style={[styles.followLinkButton, saving ? { opacity: 0.5 } : null]}
-                      onPress={() => onRequestFollowUp('camera')}
-                      disabled={saving}
-                      accessibilityRole="button"
-                      accessibilityLabel="후속 촬영"
-                    >
-                      <Text style={styles.followLinkButtonText}>후속 촬영</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.followLinkButton, saving ? { opacity: 0.5 } : null]}
-                      onPress={() => onRequestFollowUp('album')}
-                      disabled={saving}
-                      accessibilityRole="button"
-                      accessibilityLabel="앨범 후속"
-                    >
-                      <Text style={styles.followLinkButtonText}>앨범 후속</Text>
-                    </Pressable>
-                  </>
-                ) : null}
-                {onRequestCompare ? (
-                  <Pressable
-                    style={[styles.followLinkButton, saving ? { opacity: 0.5 } : null]}
-                    onPress={onRequestCompare}
-                    disabled={saving}
-                    accessibilityRole="button"
-                    accessibilityLabel="연결 비교"
-                  >
-                    <Text style={styles.followLinkButtonText}>연결 비교</Text>
-                  </Pressable>
-                ) : null}
-              </View>
-            ) : null}
-
-            {isFollowUpCreate ? (
-              <Text style={styles.followLinkHint}>원본과 연결되는 새 스탬프로 저장합니다.</Text>
-            ) : null}
+            <Text style={styles.heading}>{isEdit ? '스탬프 수정' : '스탬프 저장'}</Text>
 
             <View style={styles.templatePickRow}>
               <Text style={styles.siteLabel}>저장 유형</Text>
@@ -2345,29 +2251,6 @@ const styles = StyleSheet.create({
   },
   templatePickRow: {
     gap: 8,
-  },
-  followLinkRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  followLinkButton: {
-    borderWidth: 1,
-    borderColor: '#94a3b8',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    backgroundColor: '#fff',
-  },
-  followLinkButtonText: {
-    color: '#334155',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  followLinkHint: {
-    fontSize: 13,
-    color: '#64748b',
-    lineHeight: 18,
   },
   templatePickButton: {
     borderWidth: 1,

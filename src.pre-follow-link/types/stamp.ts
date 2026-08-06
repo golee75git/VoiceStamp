@@ -27,8 +27,6 @@ export type Stamp = {
   extra1FieldLabel?: string | null;
   extra2FieldLabel?: string | null;
   extra3FieldLabel?: string | null;
-  /** Root stamp id when this row is a follow-up (null = root / standalone). */
-  parentId?: string | null;
 };
 
 export type StampRow = {
@@ -55,5 +53,4 @@ export type StampRow = {
   extra1_field_label?: string | null;
   extra2_field_label?: string | null;
   extra3_field_label?: string | null;
-  parent_id?: string | null;
 };

@@ -19,7 +19,6 @@ import { useSpeechInput } from '../hooks/useSpeechInput';
 import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { StampSaveModal } from './StampSaveModal';
-import { FollowLinkCompareSheet } from './FollowLinkCompareSheet';
 import { ExportNameModal } from './ExportNameModal';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -37,7 +36,7 @@ import {
 } from '../services/exportOnDemand';
 import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabels';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
-import { pickImageFromLibrary, takePhotoWithSystemCamera } from '../services/pickStampImage';
+import { pickImageFromLibrary } from '../services/pickStampImage';
 import {
   getLocationSnapshotFromCoords,
   type LocationSnapshot,
@@ -58,7 +57,7 @@ import { stampDisplayPlace } from '../services/stampPlace';
 import {
   listStampFieldTemplatesForFilter,
 } from '../services/stampFieldTemplates';
-import { listStamps, resolveFollowRootId } from '../services/stampRepository';
+import { listStamps } from '../services/stampRepository';
 import { scheduleStampThumbs } from '../services/stampThumb';
 import { moveStampsToTrash } from '../services/stampTrash';
 import { resolveImageUri } from '../services/fileService';
@@ -131,8 +130,6 @@ export function StampListScreen({
     null,
   );
   const [importModalVisible, setImportModalVisible] = useState(false);
-  const [followUpParent, setFollowUpParent] = useState<Stamp | null>(null);
-  const [compareAnchor, setCompareAnchor] = useState<Stamp | null>(null);
   const [albumBusy, setAlbumBusy] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -610,7 +607,6 @@ export function StampListScreen({
         }
       }
 
-      setFollowUpParent(null);
       setImportLocationSnapshot(snapshot);
       setImportUri(picked.uri);
       setImportModalVisible(true);
@@ -623,58 +619,6 @@ export function StampListScreen({
       setAlbumBusy(false);
     }
   };
-
-  const openFollowUpCreate = useCallback(
-    async (parent: Stamp, mode: 'camera' | 'album') => {
-      if (albumBusy) {
-        return;
-      }
-      const rootParent = stamps.find((s) => s.id === resolveFollowRootId(parent)) ?? parent;
-      setEditingStamp(null);
-      setAlbumBusy(true);
-      try {
-        if (mode === 'camera') {
-          const uri = await takePhotoWithSystemCamera();
-          if (!uri) {
-            return;
-          }
-          setFollowUpParent(rootParent);
-          setImportLocationSnapshot(null);
-          setImportUri(uri);
-          setImportModalVisible(true);
-          return;
-        }
-
-        const picked = await pickImageFromLibrary();
-        if (!picked) {
-          return;
-        }
-        let snapshot: LocationSnapshot | null = null;
-        if (picked.latitude != null && picked.longitude != null) {
-          snapshot = await getLocationSnapshotFromCoords(picked.latitude, picked.longitude);
-          if (!snapshot) {
-            snapshot = {
-              latitude: picked.latitude,
-              longitude: picked.longitude,
-              placeLabel: null,
-            };
-          }
-        }
-        setFollowUpParent(rootParent);
-        setImportLocationSnapshot(snapshot);
-        setImportUri(picked.uri);
-        setImportModalVisible(true);
-      } catch (e) {
-        Alert.alert(
-          mode === 'camera' ? '후속 촬영' : '앨범 후속',
-          e instanceof Error ? e.message : '후속 사진을 준비하지 못했습니다.',
-        );
-      } finally {
-        setAlbumBusy(false);
-      }
-    },
-    [albumBusy, stamps],
-  );
 
   const handleDeleteSelected = () => {
     void (async () => {
@@ -1094,7 +1038,7 @@ export function StampListScreen({
                       {displayTitle}
                     </Text>
                     <Text style={styles.cardTypeLabel} numberOfLines={1}>
-                      {item.parentId ? `후속 · ${typeLabel}` : typeLabel}
+                      {typeLabel}
                     </Text>
                     {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
@@ -1292,45 +1236,24 @@ export function StampListScreen({
         onClose={() => setEditingStamp(null)}
         onSaved={load}
         onTrashed={(id) => removeStampsKeepScroll([id])}
-        onRequestFollowUp={(mode) => {
-          if (!editingStamp) {
-            return;
-          }
-          void openFollowUpCreate(editingStamp, mode);
-        }}
-        onRequestCompare={() => {
-          if (!editingStamp) {
-            return;
-          }
-          setCompareAnchor(editingStamp);
-        }}
       />
 
       <StampSaveModal
         visible={importModalVisible}
         imageUri={importUri}
-        followUpParent={followUpParent}
         captureStampForExport={captureStampForExport}
         prefetchedLocationSnapshot={importLocationSnapshot}
         locationPrefetchFinished
-        allowLiveLocationFallback={followUpParent != null && importLocationSnapshot == null}
+        allowLiveLocationFallback={false}
         onClose={() => {
           setImportModalVisible(false);
           setImportUri(null);
           setImportLocationSnapshot(null);
-          setFollowUpParent(null);
         }}
         onSaved={() => {
-          setFollowUpParent(null);
           onChanged();
           load();
         }}
-      />
-
-      <FollowLinkCompareSheet
-        visible={compareAnchor != null}
-        anchor={compareAnchor}
-        onClose={() => setCompareAnchor(null)}
       />
     </View>
   );

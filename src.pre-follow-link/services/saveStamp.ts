@@ -48,7 +48,6 @@ import { resolveStampTemplateIdForSave } from './stampFieldTemplates';
 import {
   getStampById,
   insertStamp,
-  resolveFollowRootId,
   updateStampGalleryAssetId,
   updateStampMetadata,
   updateStampRecord,
@@ -76,8 +75,6 @@ type SaveStampInput = {
   fieldLabels?: Partial<FieldLabels> | null;
   /** When set, stored on the stamp (and preferred over the global active template). */
   templateId?: string | null;
-  /** Follow-up root stamp id (null = standalone). */
-  parentId?: string | null;
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -297,12 +294,6 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       ? input.templateId?.trim() || null
       : await resolveStampTemplateIdForSave(null);
 
-  let parentId: string | null = input.parentId?.trim() || null;
-  if (parentId) {
-    const parentStamp = await getStampById(parentId);
-    parentId = parentStamp ? resolveFollowRootId(parentStamp) : null;
-  }
-
   const copyOriginal =
     input.originalTempUri && input.originalTempUri !== input.tempImageUri
       ? persistOriginalImageCopy(input.originalTempUri, title, id, groupName).catch(() => {})
@@ -336,7 +327,6 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     extra1FieldLabel: fieldLabels.extra1FieldLabel,
     extra2FieldLabel: fieldLabels.extra2FieldLabel,
     extra3FieldLabel: fieldLabels.extra3FieldLabel,
-    parentId,
   };
 
   await insertStamp(stamp);

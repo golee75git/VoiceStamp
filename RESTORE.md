@@ -3490,3 +3490,15 @@ restore-inquiry-travel-templates.bat
 ```
 
 src.pre-inquiry-travel-templates/·public.pre-inquiry-travel-templates/ 스냅샷으로 되돌립니다.
+
+---
+
+## 230. 후속 스탬프 연결 되돌리기 (선택)
+
+후속 스탬프 연결 후 문제가 생기면:
+
+```bat
+restore-follow-link.bat
+```
+
+src.pre-follow-link/·public.pre-follow-link/ 스냅샷으로 되돌리고 FollowLinkCompareSheet.tsx를 제거합니다.

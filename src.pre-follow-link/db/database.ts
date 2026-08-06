@@ -16,10 +16,8 @@ import {
   ALTER_STAMPS_ADD_EXTRA3_FIELD_LABEL,
   ALTER_STAMPS_ADD_SOURCE_URL,
   ALTER_STAMPS_ADD_TEMPLATE_ID,
-  ALTER_STAMPS_ADD_PARENT_ID,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
-  CREATE_STAMPS_PARENT_INDEX,
   CREATE_SETTINGS_TABLE,
   CREATE_STAMPS_INDEX,
   CREATE_STAMPS_TABLE,
@@ -98,12 +96,7 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   if (!hasTemplateId) {
     await db.execAsync(ALTER_STAMPS_ADD_TEMPLATE_ID);
   }
-  const hasParentId = columns.some((column) => column.name === 'parent_id');
-  if (!hasParentId) {
-    await db.execAsync(ALTER_STAMPS_ADD_PARENT_ID);
-  }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
-  await db.execAsync(CREATE_STAMPS_PARENT_INDEX);
 }
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {

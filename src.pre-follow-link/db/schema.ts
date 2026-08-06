@@ -85,15 +85,6 @@ export const ALTER_STAMPS_ADD_TEMPLATE_ID = `
   ALTER TABLE stamps ADD COLUMN template_id TEXT;
 `;
 
-/** Follow-up stamp points at root stamp id (null = standalone / root). */
-export const ALTER_STAMPS_ADD_PARENT_ID = `
-  ALTER TABLE stamps ADD COLUMN parent_id TEXT;
-`;
-
-export const CREATE_STAMPS_PARENT_INDEX = `
-  CREATE INDEX IF NOT EXISTS idx_stamps_parent_id ON stamps(parent_id);
-`;
-
 export const CREATE_SETTINGS_TABLE = `
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY NOT NULL,
