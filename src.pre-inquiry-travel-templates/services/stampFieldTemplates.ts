@@ -145,46 +145,6 @@ export const STAMP_FIELD_TEMPLATES: StampFieldTemplate[] = [
     },
   },
   {
-    id: 'inquiry-log',
-    name: '탐구기록',
-    labels: {
-      titleFieldLabel: '탐구주제',
-      placeFieldLabel: '탐구장소',
-      memoFieldLabel: '탐구내용',
-      extra1FieldLabel: '가설·질문',
-      extra2FieldLabel: '관찰·결과',
-      extra3FieldLabel: '단계',
-    },
-    placeholders: {
-      title: '공원 나무의 잎 모양 비교',
-      place: '○○근린공원',
-      memo: '잎 가장자리·잎맥을 사진으로 기록',
-      extra1: '햇빛이 많은 쪽이 잎이 더 두꺼울까',
-      extra2: '양지 쪽 잎이 더 두껍고 진함',
-      extra3: '관찰',
-    },
-  },
-  {
-    id: 'travel-log',
-    name: '여행기록',
-    labels: {
-      titleFieldLabel: '여행지',
-      placeFieldLabel: '장소',
-      memoFieldLabel: '여행내용',
-      extra1FieldLabel: '동행',
-      extra2FieldLabel: '비고',
-      extra3FieldLabel: '일정',
-    },
-    placeholders: {
-      title: '경주 불국사',
-      place: '경주시 진현동',
-      memo: '대웅전·다보탑 관람, 느낀 점',
-      extra1: '가족',
-      extra2: '주차 혼잡, 입장 30분 대기',
-      extra3: '체류',
-    },
-  },
-  {
     id: 'safety-site',
     name: '안전현장기록',
     labels: {

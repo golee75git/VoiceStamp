@@ -3478,3 +3478,15 @@ restore-event-accident-templates.bat
 ```
 
 src.pre-event-accident-templates/·public.pre-event-accident-templates/ 스냅샷으로 되돌립니다.
+
+---
+
+## 229. 탐구·여행 기본 템플릿 되돌리기 (선택)
+
+탐구기록·여행기록 추가 후 문제가 생기면:
+
+```bat
+restore-inquiry-travel-templates.bat
+```
+
+src.pre-inquiry-travel-templates/·public.pre-inquiry-travel-templates/ 스냅샷으로 되돌립니다.
