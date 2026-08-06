@@ -262,10 +262,10 @@ type StampSaveModalProps = {
 
 function followUpTitleFromParent(parentTitle: string): string {
   const base = parentTitle.trim() || '스탬프';
-  if (/\((이음|후속)\)\s*$/.test(base)) {
-    return base.replace(/\((이음|후속)\)\s*$/, '(이음)');
+  if (/\(후속\)\s*$/.test(base)) {
+    return base;
   }
-  return `${base} (이음)`;
+  return `${base} (후속)`;
 }
 
 export function StampSaveModal({
@@ -1646,7 +1646,7 @@ export function StampSaveModal({
           >
             <View style={styles.card}>
             <Text style={styles.heading}>
-              {isEdit ? '스탬프 수정' : isFollowUpCreate ? '이음 스탬프 저장' : '스탬프 저장'}
+              {isEdit ? '스탬프 수정' : isFollowUpCreate ? '후속 스탬프 저장' : '스탬프 저장'}
             </Text>
 
             {isEdit && (onRequestFollowUp || onRequestCompare) ? (
@@ -1658,18 +1658,18 @@ export function StampSaveModal({
                       onPress={() => onRequestFollowUp('camera')}
                       disabled={saving}
                       accessibilityRole="button"
-                      accessibilityLabel="이음 촬영"
+                      accessibilityLabel="후속 촬영"
                     >
-                      <Text style={styles.followLinkButtonText}>이음 촬영</Text>
+                      <Text style={styles.followLinkButtonText}>후속 촬영</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.followLinkButton, saving ? { opacity: 0.5 } : null]}
                       onPress={() => onRequestFollowUp('album')}
                       disabled={saving}
                       accessibilityRole="button"
-                      accessibilityLabel="앨범 이음"
+                      accessibilityLabel="앨범 후속"
                     >
-                      <Text style={styles.followLinkButtonText}>앨범 이음</Text>
+                      <Text style={styles.followLinkButtonText}>앨범 후속</Text>
                     </Pressable>
                   </>
                 ) : null}
@@ -1688,7 +1688,7 @@ export function StampSaveModal({
             ) : null}
 
             {isFollowUpCreate ? (
-              <Text style={styles.followLinkHint}>처음과 연결되는 새 스탬프로 저장합니다.</Text>
+              <Text style={styles.followLinkHint}>원본과 연결되는 새 스탬프로 저장합니다.</Text>
             ) : null}
 
             <View style={styles.templatePickRow}>

@@ -3514,3 +3514,15 @@ restore-follow-root-label.bat
 ```
 
 src.pre-follow-root-label/·public.pre-follow-root-label/ 스냅샷으로 되돌립니다.
+
+---
+
+## 232. 처음/이음·연결 비교 PDF 되돌리기 (선택)
+
+용어 통일·연결 비교 PDF/삭제 후 문제가 생기면:
+
+```bat
+restore-follow-ieum-compare.bat
+```
+
+src.pre-follow-ieum-compare/·public.pre-follow-ieum-compare/ 스냅샷으로 되돌립니다.

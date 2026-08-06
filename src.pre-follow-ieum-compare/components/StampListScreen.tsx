@@ -678,8 +678,8 @@ export function StampListScreen({
         setImportModalVisible(true);
       } catch (e) {
         Alert.alert(
-          mode === 'camera' ? '이음 촬영' : '앨범 이음',
-          e instanceof Error ? e.message : '이음 사진을 준비하지 못했습니다.',
+          mode === 'camera' ? '후속 촬영' : '앨범 후속',
+          e instanceof Error ? e.message : '후속 사진을 준비하지 못했습니다.',
         );
       } finally {
         setAlbumBusy(false);
@@ -1054,19 +1054,17 @@ export function StampListScreen({
                 : '미분류';
               const baseTitle = stampDisplayTitle(item, pdfShowDatetime);
               const isFollowRoot = !item.parentId && rootIdsWithFollowUps.has(item.id);
-              let titleForList = baseTitle.trim();
-              // Display-only: older "(후속)" suffix reads as "(이음)" without rewriting DB.
-              titleForList = titleForList.replace(/\(후속\)\s*$/, '(이음)');
-              if (isFollowRoot && !/\((처음|원본)\)\s*$/.test(titleForList)) {
-                titleForList = `${titleForList} (처음)`;
-              }
+              const titleForList =
+                isFollowRoot && !/\(원본\)\s*$/.test(baseTitle.trim())
+                  ? `${baseTitle.trim()} (원본)`
+                  : baseTitle;
               const displayTitle =
                 formatLabeledValue(labels.titleFieldLabel, titleForList) ||
                 `(${labels.titleFieldLabel} 없음)`;
               const linkTypePrefix = item.parentId
-                ? '이음 · '
+                ? '후속 · '
                 : isFollowRoot
-                  ? '처음 · '
+                  ? '원본 · '
                   : '';
               const showFullMeta = stampListDisplayMode === 'full';
               const displayPlace = showFullMeta
@@ -1354,10 +1352,6 @@ export function StampListScreen({
         visible={compareAnchor != null}
         anchor={compareAnchor}
         onClose={() => setCompareAnchor(null)}
-        onChanged={() => {
-          onChanged();
-          load();
-        }}
       />
     </View>
   );
