@@ -3454,3 +3454,15 @@ restore-template-row-copy.bat
 ```
 
 src.pre-template-row-copy/·public.pre-template-row-copy/ 스냅샷으로 되돌립니다.
+
+---
+
+## 227. 작업내용기록 기본 템플릿 되돌리기 (선택)
+
+작업내용기록 기본 템플릿 추가 후 문제가 생기면:
+
+```bat
+restore-work-content-template.bat
+```
+
+src.pre-work-content-template/·public.pre-work-content-template/ 스냅샷으로 되돌립니다.
