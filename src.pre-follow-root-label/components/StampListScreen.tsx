@@ -284,18 +284,6 @@ export function StampListScreen({
     [stamps],
   );
 
-  /** Roots that have at least one follow-up in the loaded list (no extra DB query). */
-  const rootIdsWithFollowUps = useMemo(() => {
-    const ids = new Set<string>();
-    for (const stamp of stamps) {
-      const parentId = stamp.parentId?.trim();
-      if (parentId) {
-        ids.add(parentId);
-      }
-    }
-    return ids;
-  }, [stamps]);
-
   const filteredStamps = useMemo(() => {
     let rows = filterStampsByQuery(stamps, searchQuery);
     if (templateFilter === 'unclassified') {
@@ -1052,20 +1040,11 @@ export function StampListScreen({
               const typeLabel = item.templateId
                 ? templateNameById.get(item.templateId) ?? '삭제된 유형'
                 : '미분류';
-              const baseTitle = stampDisplayTitle(item, pdfShowDatetime);
-              const isFollowRoot = !item.parentId && rootIdsWithFollowUps.has(item.id);
-              const titleForList =
-                isFollowRoot && !/\(원본\)\s*$/.test(baseTitle.trim())
-                  ? `${baseTitle.trim()} (원본)`
-                  : baseTitle;
               const displayTitle =
-                formatLabeledValue(labels.titleFieldLabel, titleForList) ||
-                `(${labels.titleFieldLabel} 없음)`;
-              const linkTypePrefix = item.parentId
-                ? '후속 · '
-                : isFollowRoot
-                  ? '원본 · '
-                  : '';
+                formatLabeledValue(
+                  labels.titleFieldLabel,
+                  stampDisplayTitle(item, pdfShowDatetime),
+                ) || `(${labels.titleFieldLabel} 없음)`;
               const showFullMeta = stampListDisplayMode === 'full';
               const displayPlace = showFullMeta
                 ? formatLabeledValue(labels.placeFieldLabel, stampDisplayPlace(item) ?? '')
@@ -1115,7 +1094,7 @@ export function StampListScreen({
                       {displayTitle}
                     </Text>
                     <Text style={styles.cardTypeLabel} numberOfLines={1}>
-                      {`${linkTypePrefix}${typeLabel}`}
+                      {item.parentId ? `후속 · ${typeLabel}` : typeLabel}
                     </Text>
                     {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>

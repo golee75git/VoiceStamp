@@ -3502,3 +3502,15 @@ restore-follow-link.bat
 ```
 
 src.pre-follow-link/·public.pre-follow-link/ 스냅샷으로 되돌리고 FollowLinkCompareSheet.tsx를 제거합니다.
+
+---
+
+## 231. 목록 원본 표시 되돌리기 (선택)
+
+후속 있는 원본 `(원본)` 표시 후 문제가 생기면:
+
+```bat
+restore-follow-root-label.bat
+```
+
+src.pre-follow-root-label/·public.pre-follow-root-label/ 스냅샷으로 되돌립니다.
