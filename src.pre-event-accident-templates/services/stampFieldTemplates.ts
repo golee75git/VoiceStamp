@@ -105,46 +105,6 @@ export const STAMP_FIELD_TEMPLATES: StampFieldTemplate[] = [
     },
   },
   {
-    id: 'event-record',
-    name: '행사기록',
-    labels: {
-      titleFieldLabel: '행사명',
-      placeFieldLabel: '장소',
-      memoFieldLabel: '행사내용',
-      extra1FieldLabel: '주관',
-      extra2FieldLabel: '비고',
-      extra3FieldLabel: '단계',
-    },
-    placeholders: {
-      title: '마을 가을 축제',
-      place: '○○공원 야외무대',
-      memo: '개막식·체험부스·공연 진행',
-      extra1: '○○주민자치회',
-      extra2: '음향 점검 완료, 우천 시 실내 전환',
-      extra3: '진행',
-    },
-  },
-  {
-    id: 'accident-probe',
-    name: '사고조사기록',
-    labels: {
-      titleFieldLabel: '사고유형',
-      placeFieldLabel: '발생장소',
-      memoFieldLabel: '발생경위',
-      extra1FieldLabel: '피해정도',
-      extra2FieldLabel: '원인·추정',
-      extra3FieldLabel: '조치상태',
-    },
-    placeholders: {
-      title: '미끄러짐',
-      place: '본관 1층 현관 계단',
-      memo: '빗물로 바닥이 젖은 상태에서 보행 중 미끄러짐',
-      extra1: '경상',
-      extra2: '바닥 물기, 미끄럼 방지 미흡',
-      extra3: '조사 중',
-    },
-  },
-  {
     id: 'safety-site',
     name: '안전현장기록',
     labels: {

@@ -3466,3 +3466,15 @@ restore-work-content-template.bat
 ```
 
 src.pre-work-content-template/·public.pre-work-content-template/ 스냅샷으로 되돌립니다.
+
+---
+
+## 228. 행사·사고조사 기본 템플릿 되돌리기 (선택)
+
+행사기록·사고조사기록 추가 후 문제가 생기면:
+
+```bat
+restore-event-accident-templates.bat
+```
+
+src.pre-event-accident-templates/·public.pre-event-accident-templates/ 스냅샷으로 되돌립니다.
