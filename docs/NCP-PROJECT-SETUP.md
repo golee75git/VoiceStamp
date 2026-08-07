@@ -22,7 +22,7 @@
 | 증상 | 확인 |
 |------|------|
 | `ncp_not_configured` | 세 env 모두 Production에 있는지, 배포 후인지 |
-| `server_error` + `detail: s3_put_403` + AccessDenied | Sub Account·암호화 확인 후 `ncpProbe`. CLI는 `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED`로 Put 성공할 수 있음. API Put은 **path-style + 본문 SHA-256**(UNSIGNED-PAYLOAD Put 사용 안 함) |
+| `server_error` + `detail: s3_put_403` + AccessDenied | `ncpProbe`로 list·Put 변이 확인. 키가 SDK/콘솔에서 OK인데 API만 실패하면 서명 시각 형식(`x-amz-date`가 `…ZZ`면 버그)부터 볼 것. CLI는 `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED` 권장 |
 | SignatureDoesNotMatch | Access/Secret 짝 오타 |
 | `hint` Resource가 `/버킷/voicestamp/projects/...` | 정상 경로(접두 `voicestamp/projects/`). 버킷 이름만 `NCP_BUCKET`에 넣고 경로를 넣지 말 것 |
 | env 변경 후 | Vercel Redeploy 필수 |

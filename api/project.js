@@ -92,8 +92,10 @@ function sha256Hex(data) {
 }
 
 function amzDate(date = new Date()) {
+  // Strip to YYYYMMDDTHHmmssZ (16 chars including trailing Z). Do not append another Z.
   const iso = date.toISOString().replace(/[:-]|\.\d{3}/g, '');
-  return { amz: iso.slice(0, 16) + 'Z', short: iso.slice(0, 8) };
+  const amz = iso.endsWith('Z') ? iso : iso + 'Z';
+  return { amz: amz, short: amz.slice(0, 8) };
 }
 
 function signingKey(secretKey, shortDate) {
