@@ -9,7 +9,7 @@
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
 | 문서 동기화 | 2026-08-07 — FEAT-NCP-PROJECT-01 UI·구현 계획·보안 점검 (소스 없음) |
-| 최신 반영 커밋 | (문서 커밋 후 갱신) — **소스·APK 변경 없음** |
+| 최신 반영 커밋 | `143e4ac` — **소스·APK 변경 없음** (FEAT-NCP-PROJECT-01 문서) |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
