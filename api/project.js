@@ -103,7 +103,7 @@ function signingKey(secretKey, shortDate) {
   return hmac(kService, 'aws4_request');
 }
 
-/** Encode each path segment; leave `/` separators intact. */
+/** Encode path segments; leave / separators intact. */
 function encodeKeyPath(key) {
   return String(key)
     .split('/')
@@ -113,41 +113,48 @@ function encodeKeyPath(key) {
     .join('/');
 }
 
-/** Path-style URI used by NCP endpoint + AWS CLI `--endpoint-url`. */
-function canonicalObjectUri(bucket, key) {
-  return '/' + bucket + '/' + encodeKeyPath(key);
-}
-
 /**
- * SigV4 Put/Delete aligned with AWS CLI `--endpoint-url` (path-style + hashed payload).
- * UNSIGNED-PAYLOAD was rejected by NCP as AccessDenied while CLI Put succeeded.
+ * SigV4 PUT/DELETE for NCP Object Storage.
+ * style: path|virtual, payloadMode: hash|unsigned, signContentType: boolean
  */
-function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
+function buildSignedRequest({
+  method,
+  key,
+  contentType,
+  bodyBuf,
+  accessKey,
+  secretKey,
+  bucket,
+  style,
+  payloadMode,
+  signContentType,
+}) {
   const { amz, short } = amzDate();
   const body = Buffer.isBuffer(bodyBuf) ? bodyBuf : Buffer.alloc(0);
-  const payloadHash = sha256Hex(body);
-  const canonicalUri = canonicalObjectUri(bucket, key);
+  const payloadHash = payloadMode === 'unsigned' ? 'UNSIGNED-PAYLOAD' : sha256Hex(body);
+  const host = style === 'virtual' ? bucket + '.' + HOST : HOST;
+  const canonicalUri =
+    style === 'virtual' ? '/' + encodeKeyPath(key) : '/' + bucket + '/' + encodeKeyPath(key);
   const headerMap = {
-    host: HOST,
+    host: host,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
   };
-  if (contentType) {
+  if (signContentType && contentType) {
     headerMap['content-type'] = contentType;
   }
   const signedHeaderNames = Object.keys(headerMap).sort();
-  const canonicalHeaders = signedHeaderNames.map((n) => n + ':' + String(headerMap[n]).trim() + '\n').join('');
+  const canonicalHeaders = signedHeaderNames
+    .map((n) => n + ':' + String(headerMap[n]).trim() + '\n')
+    .join('');
   const signedHeaders = signedHeaderNames.join(';');
   const canonicalRequest = [method, canonicalUri, '', canonicalHeaders, signedHeaders, payloadHash].join(
     '\n',
   );
   const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
-  const stringToSign = [
-    'AWS4-HMAC-SHA256',
-    amz,
-    credentialScope,
-    sha256Hex(canonicalRequest),
-  ].join('\n');
+  const stringToSign = ['AWS4-HMAC-SHA256', amz, credentialScope, sha256Hex(canonicalRequest)].join(
+    '\n',
+  );
   const sig = crypto
     .createHmac('sha256', signingKey(secretKey, short))
     .update(stringToSign, 'utf8')
@@ -162,7 +169,7 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     ', Signature=' +
     sig;
   const headers = {
-    Host: HOST,
+    Host: host,
     'Content-Length': String(body.length),
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
@@ -172,11 +179,12 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     headers['Content-Type'] = contentType;
   }
   return {
-    hostname: HOST,
+    hostname: host,
     path: canonicalUri,
-    method,
-    headers,
-    body,
+    method: method,
+    headers: headers,
+    body: body,
+    label: style + '-' + payloadMode + (signContentType ? '-ct' : '-noct'),
   };
 }
 
@@ -184,7 +192,7 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
   const { amz, short } = amzDate();
   const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
   const credential = accessKey + '/' + credentialScope;
-  const canonicalUri = canonicalObjectUri(bucket, key);
+  const canonicalUri = '/' + bucket + '/' + encodeKeyPath(key);
   const queryPairs = [
     ['X-Amz-Algorithm', 'AWS4-HMAC-SHA256'],
     ['X-Amz-Credential', credential],
@@ -203,12 +211,9 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
     'host',
     'UNSIGNED-PAYLOAD',
   ].join('\n');
-  const stringToSign = [
-    'AWS4-HMAC-SHA256',
-    amz,
-    credentialScope,
-    sha256Hex(canonicalRequest),
-  ].join('\n');
+  const stringToSign = ['AWS4-HMAC-SHA256', amz, credentialScope, sha256Hex(canonicalRequest)].join(
+    '\n',
+  );
   const sig = crypto
     .createHmac('sha256', signingKey(secretKey, short))
     .update(stringToSign, 'utf8')
@@ -244,28 +249,67 @@ function httpsRequest(opts) {
   });
 }
 
-async function s3Put(creds, key, contentType, bodyBuf) {
+let cachedPutMode = null;
+
+function putModeList(preferred) {
+  const all = [
+    { style: 'path', payloadMode: 'hash', signContentType: false },
+    { style: 'path', payloadMode: 'unsigned', signContentType: false },
+    { style: 'virtual', payloadMode: 'hash', signContentType: false },
+    { style: 'virtual', payloadMode: 'unsigned', signContentType: false },
+    { style: 'path', payloadMode: 'hash', signContentType: true },
+    { style: 'virtual', payloadMode: 'hash', signContentType: true },
+  ];
+  if (!preferred) {
+    return all;
+  }
+  const key = preferred.style + preferred.payloadMode + String(preferred.signContentType);
+  const rest = all.filter((m) => m.style + m.payloadMode + String(m.signContentType) !== key);
+  return [preferred].concat(rest);
+}
+
+async function s3PutOnce(creds, key, contentType, bodyBuf, mode) {
   const signed = buildSignedRequest({
     method: 'PUT',
-    key,
-    contentType,
-    bodyBuf,
-    ...creds,
+    key: key,
+    contentType: contentType,
+    bodyBuf: bodyBuf,
+    accessKey: creds.accessKey,
+    secretKey: creds.secretKey,
+    bucket: creds.bucket,
+    style: mode.style,
+    payloadMode: mode.payloadMode,
+    signContentType: mode.signContentType,
   });
   const res = await httpsRequest(signed);
   if (res.statusCode >= 200 && res.statusCode < 300) {
-    return { style: 'path' };
+    return { style: signed.label, mode: mode };
   }
   const text = res.body.toString('utf8');
   const err = new Error('s3_put_' + res.statusCode);
   err.code = 's3_put_' + res.statusCode;
   err.detail = text.slice(0, 240);
-  err.style = 'path';
+  err.style = signed.label;
   throw err;
 }
 
+async function s3Put(creds, key, contentType, bodyBuf) {
+  const modes = putModeList(cachedPutMode);
+  let lastErr = null;
+  for (let i = 0; i < modes.length; i += 1) {
+    try {
+      const ok = await s3PutOnce(creds, key, contentType, bodyBuf, modes[i]);
+      cachedPutMode = modes[i];
+      return ok;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error('s3_put_failed');
+}
+
 async function s3Get(creds, key) {
-  const url = presignGet({ key, ...creds });
+  const url = presignGet({ key: key, accessKey: creds.accessKey, secretKey: creds.secretKey, bucket: creds.bucket });
   const res = await fetch(url);
   if (res.status === 404) {
     return null;
@@ -279,12 +323,18 @@ async function s3Get(creds, key) {
 }
 
 async function s3Delete(creds, key) {
+  const mode = cachedPutMode || { style: 'path', payloadMode: 'hash', signContentType: false };
   const signed = buildSignedRequest({
     method: 'DELETE',
-    key,
+    key: key,
     contentType: '',
     bodyBuf: Buffer.alloc(0),
-    ...creds,
+    accessKey: creds.accessKey,
+    secretKey: creds.secretKey,
+    bucket: creds.bucket,
+    style: mode.style,
+    payloadMode: mode.payloadMode,
+    signContentType: false,
   });
   const res = await httpsRequest(signed);
   if (res.statusCode === 404 || (res.statusCode >= 200 && res.statusCode < 300)) {
@@ -293,8 +343,42 @@ async function s3Delete(creds, key) {
   const err = new Error('s3_delete_' + res.statusCode);
   err.code = 's3_delete_' + res.statusCode;
   err.detail = res.body.toString('utf8').slice(0, 240);
-  err.style = 'path';
+  err.style = signed.label;
   throw err;
+}
+
+async function ncpProbePutVariants(creds) {
+  const bodyBuf = Buffer.from('ok', 'utf8');
+  const modes = putModeList(null);
+  const results = [];
+  for (let i = 0; i < modes.length; i += 1) {
+    const mode = modes[i];
+    const probeKey = 'voicestamp/_probe/' + randomToken(6) + '.txt';
+    try {
+      const put = await s3PutOnce(creds, probeKey, 'text/plain', bodyBuf, mode);
+      try {
+        cachedPutMode = mode;
+        await s3Delete(creds, probeKey);
+      } catch (_e) {
+        /* best-effort */
+      }
+      results.push({ label: put.style, ok: true });
+      cachedPutMode = mode;
+    } catch (e) {
+      let ncpCode;
+      if (e && e.detail) {
+        const m = String(e.detail).match(/<Code>([^<]+)<\/Code>/);
+        if (m) ncpCode = m[1];
+      }
+      results.push({
+        label: e && e.style ? e.style : mode.style + '-' + mode.payloadMode,
+        ok: false,
+        detail: e && e.code ? e.code : 'fail',
+        ncp: ncpCode,
+      });
+    }
+  }
+  return results;
 }
 
 function projectKey(projectId, suffix) {
@@ -577,26 +661,20 @@ module.exports = async function handler(req, res) {
     }
 
     if (action === 'ncpProbe') {
-      const probeKey = 'voicestamp/_probe/' + randomToken(6) + '.txt';
-      try {
-        const put = await s3Put(creds, probeKey, 'text/plain', Buffer.from('ok', 'utf8'));
-        await s3Delete(creds, probeKey);
-        json(res, 200, {
-          ok: true,
-          bucket: creds.bucket,
-          accessKeyPrefix: creds.accessKey.slice(0, 6),
-          style: put && put.style ? put.style : 'path',
-        });
-      } catch (probeErr) {
-        json(res, 200, {
-          ok: false,
-          bucket: creds.bucket,
-          accessKeyPrefix: creds.accessKey.slice(0, 6),
-          detail: probeErr && probeErr.code ? probeErr.code : 'probe_failed',
-          hint: probeErr && probeErr.detail ? String(probeErr.detail).slice(0, 200) : undefined,
-          style: probeErr && probeErr.style ? probeErr.style : undefined,
-        });
-      }
+      const variants = await ncpProbePutVariants(creds);
+      const winner = variants.find((v) => v.ok);
+      json(res, 200, {
+        ok: Boolean(winner),
+        bucket: creds.bucket,
+        accessKeyPrefix: creds.accessKey.slice(0, 6),
+        style: winner ? winner.label : undefined,
+        variants: variants.map((v) => ({
+          label: v.label,
+          ok: v.ok,
+          detail: v.detail,
+          ncp: v.ncp,
+        })),
+      });
       return;
     }
 
