@@ -119,32 +119,16 @@ function canonicalObjectUri(bucket, key) {
 }
 
 /**
- * SigV4 for NCP Object Storage.
- * NCP samples use UNSIGNED-PAYLOAD and sign every header that is sent.
- * style: 'path' | 'virtual'
+ * SigV4 Put/Delete aligned with AWS CLI `--endpoint-url` (path-style + hashed payload).
+ * UNSIGNED-PAYLOAD was rejected by NCP as AccessDenied while CLI Put succeeded.
  */
-function buildSignedRequest({
-  method,
-  key,
-  contentType,
-  bodyBuf,
-  accessKey,
-  secretKey,
-  bucket,
-  style = 'path',
-}) {
+function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
   const { amz, short } = amzDate();
-  const body = bodyBuf && bodyBuf.length ? bodyBuf : Buffer.alloc(0);
-  const payloadHash = 'UNSIGNED-PAYLOAD';
-  const useVirtual = style === 'virtual';
-  const requestHost = useVirtual ? bucket + '.' + HOST : HOST;
-  const canonicalUri = useVirtual
-    ? '/' + encodeKeyPath(key)
-    : canonicalObjectUri(bucket, key);
-  const contentLength = String(body.length);
+  const body = Buffer.isBuffer(bodyBuf) ? bodyBuf : Buffer.alloc(0);
+  const payloadHash = sha256Hex(body);
+  const canonicalUri = canonicalObjectUri(bucket, key);
   const headerMap = {
-    'content-length': contentLength,
-    host: requestHost,
+    host: HOST,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
   };
@@ -178,8 +162,8 @@ function buildSignedRequest({
     ', Signature=' +
     sig;
   const headers = {
-    Host: requestHost,
-    'Content-Length': contentLength,
+    Host: HOST,
+    'Content-Length': String(body.length),
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
     Authorization: authorization,
@@ -188,7 +172,7 @@ function buildSignedRequest({
     headers['Content-Type'] = contentType;
   }
   return {
-    hostname: requestHost,
+    hostname: HOST,
     path: canonicalUri,
     method,
     headers,
@@ -261,32 +245,23 @@ function httpsRequest(opts) {
 }
 
 async function s3Put(creds, key, contentType, bodyBuf) {
-  const styles = ['path', 'virtual'];
-  let lastErr = null;
-  for (const style of styles) {
-    const signed = buildSignedRequest({
-      method: 'PUT',
-      key,
-      contentType,
-      bodyBuf,
-      style,
-      ...creds,
-    });
-    const res = await httpsRequest(signed);
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      return { style };
-    }
-    const text = res.body.toString('utf8');
-    const err = new Error('s3_put_' + res.statusCode);
-    err.code = 's3_put_' + res.statusCode;
-    err.detail = text.slice(0, 240);
-    err.style = style;
-    lastErr = err;
-    if (res.statusCode !== 403) {
-      throw err;
-    }
+  const signed = buildSignedRequest({
+    method: 'PUT',
+    key,
+    contentType,
+    bodyBuf,
+    ...creds,
+  });
+  const res = await httpsRequest(signed);
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    return { style: 'path' };
   }
-  throw lastErr;
+  const text = res.body.toString('utf8');
+  const err = new Error('s3_put_' + res.statusCode);
+  err.code = 's3_put_' + res.statusCode;
+  err.detail = text.slice(0, 240);
+  err.style = 'path';
+  throw err;
 }
 
 async function s3Get(creds, key) {
@@ -304,30 +279,22 @@ async function s3Get(creds, key) {
 }
 
 async function s3Delete(creds, key) {
-  const styles = ['path', 'virtual'];
-  let lastErr = null;
-  for (const style of styles) {
-    const signed = buildSignedRequest({
-      method: 'DELETE',
-      key,
-      contentType: '',
-      bodyBuf: Buffer.alloc(0),
-      style,
-      ...creds,
-    });
-    const res = await httpsRequest(signed);
-    if (res.statusCode === 404 || (res.statusCode >= 200 && res.statusCode < 300)) {
-      return;
-    }
-    const err = new Error('s3_delete_' + res.statusCode);
-    err.code = 's3_delete_' + res.statusCode;
-    err.detail = res.body.toString('utf8').slice(0, 240);
-    lastErr = err;
-    if (res.statusCode !== 403) {
-      throw err;
-    }
+  const signed = buildSignedRequest({
+    method: 'DELETE',
+    key,
+    contentType: '',
+    bodyBuf: Buffer.alloc(0),
+    ...creds,
+  });
+  const res = await httpsRequest(signed);
+  if (res.statusCode === 404 || (res.statusCode >= 200 && res.statusCode < 300)) {
+    return;
   }
-  throw lastErr;
+  const err = new Error('s3_delete_' + res.statusCode);
+  err.code = 's3_delete_' + res.statusCode;
+  err.detail = res.body.toString('utf8').slice(0, 240);
+  err.style = 'path';
+  throw err;
 }
 
 function projectKey(projectId, suffix) {

@@ -12,9 +12,9 @@
 - 500 응답에 S3 본문 `hint`(짧게)를 넣어 운영 진단만 돕고, 비밀키는 노출하지 않음.
 
 ### 2026-08-07 Put AccessDenied 수정 (콘솔 업로드 OK / API만 거부)
-- Put/Delete는 NCP 샘플과 같이 `UNSIGNED-PAYLOAD`, 전송 헤더(`content-length`·`content-type` 포함)를 모두 서명.
+- CLI Put 성공·API만 실패 확인 후, Put/Delete를 **path-style + 본문 SHA-256** 서명으로 맞춤(AWS CLI `--endpoint-url`과 동일 계열).
+- `UNSIGNED-PAYLOAD` Put은 NCP에서 AccessDenied로 거절되는 사례가 있어 사용하지 않음. GET presign만 UNSIGNED-PAYLOAD 유지.
 - Put/Delete는 Node `https.request` 사용.
-- **암호화(KMS) 버킷**은 메인 계정 API 키로 Put 시 AccessDenied가 날 수 있음 → **Sub Account Access Key**만 Vercel에 넣을 것.
 - 롤백: `restore-ncp-put-fix.bat` → `api.pre-ncp-put-fix/`.
 - 특허 비침해 보장하지 않음. SigV4·S3 호환 Put은 일반 관용 패턴.
 

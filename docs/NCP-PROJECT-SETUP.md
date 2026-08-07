@@ -22,7 +22,7 @@
 | 증상 | 확인 |
 |------|------|
 | `ncp_not_configured` | 세 env 모두 Production에 있는지, 배포 후인지 |
-| `server_error` + `detail: s3_put_403` + AccessDenied | Sub Account 키인지, 버킷 **암호화** 여부(암호화 시 메인 키 불가), 콘솔 Sub Account 업로드 OK인데 API만 실패면 **Vercel 키 앞자리**가 콘솔 Access Key와 같은지(`ncpProbe`) |
+| `server_error` + `detail: s3_put_403` + AccessDenied | Sub Account·암호화 확인 후 `ncpProbe`. CLI는 `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED`로 Put 성공할 수 있음. API Put은 **path-style + 본문 SHA-256**(UNSIGNED-PAYLOAD Put 사용 안 함) |
 | SignatureDoesNotMatch | Access/Secret 짝 오타 |
 | `hint` Resource가 `/버킷/voicestamp/projects/...` | 정상 경로(접두 `voicestamp/projects/`). 버킷 이름만 `NCP_BUCKET`에 넣고 경로를 넣지 말 것 |
 | env 변경 후 | Vercel Redeploy 필수 |
