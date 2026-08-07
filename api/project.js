@@ -553,7 +553,7 @@ module.exports = async function handler(req, res) {
         uploadCode,
         expiresAt: project.expiresAt,
         ttlDays,
-        qrPayload: `voicestamp://join?p=${encodeURIComponent(projectId)}&c=${encodeURIComponent(uploadCode)}`,
+        qrPayload: `https://voicestamp-gilt.vercel.app/join?p=${encodeURIComponent(projectId)}&c=${encodeURIComponent(uploadCode)}`,
       });
       return;
     }
@@ -709,7 +709,7 @@ module.exports = async function handler(req, res) {
       await saveProject(creds, project);
       json(res, 200, {
         uploadCode,
-        qrPayload: `voicestamp://join?p=${encodeURIComponent(projectId)}&c=${encodeURIComponent(uploadCode)}`,
+        qrPayload: `https://voicestamp-gilt.vercel.app/join?p=${encodeURIComponent(projectId)}&c=${encodeURIComponent(uploadCode)}`,
       });
       return;
     }

@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Platform,
   Pressable,
   ScrollView,
   Share,
@@ -12,6 +13,8 @@ import {
   View,
 } from 'react-native';
 import QRCode from 'qrcode';
+
+import { INFO_BASE_URL } from '../constants/infoUrls';
 
 import {
   apiCloseProject,
@@ -132,7 +135,7 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
       setQrFailed(false);
       return;
     }
-    const payload = `voicestamp://join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`;
+    const payload = `${INFO_BASE_URL}/join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`;
     const grid = buildQrGrid(payload);
     setQrGrid(grid);
     setQrFailed(!grid);
@@ -463,7 +466,7 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
           style={styles.secondary}
           onPress={() =>
             void Share.share({
-              message: `VoiceStamp 사업 참여: ${active.name}\nhttps://voicestamp-gilt.vercel.app/join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`,
+              message: `VoiceStamp 사업 참여: ${active.name}\n${INFO_BASE_URL}/join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`,
             })
           }
         >
@@ -534,7 +537,7 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
         style={[styles.input, styles.inputMulti]}
         value={joinCodeText}
         onChangeText={setJoinCodeText}
-        placeholder="voicestamp://join?p=…&c=…"
+        placeholder="https://voicestamp-gilt.vercel.app/join?p=…&c=…"
         autoCapitalize="characters"
         multiline
       />
@@ -763,7 +766,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
     backgroundColor: '#fff',
-    paddingBottom: 20,
+    // Clear Android system navigation so 전체/내 폰으로/엑셀 stay tappable.
+    paddingBottom: Platform.OS === 'android' ? 56 : 28,
   },
   barBtn: { flex: 1, paddingVertical: 14, alignItems: 'center' },
   barBtnText: { fontWeight: '700', color: '#111' },

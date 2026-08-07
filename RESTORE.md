@@ -3550,3 +3550,14 @@ restore-project-qr-matrix.bat
 
 `src.pre-project-qr-matrix/` 스냅샷으로 `ProjectCollectScreen.tsx`를 되돌립니다.
 
+
+## 236. 수신 하단 바·QR https 되돌리기 (선택)
+
+수신 목록 하단 여백·QR https 페이로드 변경 후 문제가 생기면:
+
+`at
+restore-project-inbox-qr-https.bat
+`
+
+src.pre-project-inbox-qr-https/ · pi.pre-project-inbox-qr-https/ 스냅샷으로 되돌린 뒤 API 변경분은 Vercel 재배포합니다.
+
