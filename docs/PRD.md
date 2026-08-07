@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-03 — 항목 말하기(표시명) · 장소 칩 · 앨범 EXIF 장소 · 웹 저장 |
-| 최신 반영 커밋 | `6cd1dc4` — APK `161016` · 본 문서 동기화(소스 없음) |
+| 문서 동기화 | 2026-08-07 — FEAT-NCP-PROJECT-01 UI·구현 계획·보안 점검 (소스 없음) |
+| 최신 반영 커밋 | (문서 커밋 후 갱신) — **소스·APK 변경 없음** |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -640,6 +640,7 @@
 | **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP+ — 수동 탭 영역·푸터 여백(`101238`) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
 | **AI-ML-03** | **ML Kit** 한글 OCR → **제목·메모 초안** (규칙 채움, 생성형 없음) | ✅ MVP `8b74ccf`/`104328` · 긴 메모 스크롤 `1413de9` — [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
+| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신→사업 폴더·취합 엑셀 | **UI·구현 계획만** (2026-08-07) — [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) · 앱 미연동 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 (재설치 복구) | 로드맵 |
@@ -705,6 +706,7 @@
 | **2026-08-01** | **QR URL 연결확인** (`172149`) · **성능 번들 A/B/C** (`185512`→`191117`→`193317`) · **헬스체크 기준 고정** · 내보내기 마이크→검색 **혼입 수정** (`232652`) · 도움말·SECURITY · Vercel | `d363b00`~`f005041` |
 | **2026-08-02** | 저장 목록 **플랫·촘촘 행** (`105935`) · **행 높이 추가 축소** (`111920`) · 설정 **필드 표시명 UI 제거** (`115453`) · 선택 취소 **흰 썸네일 수정** (`124143`) · 목록 **저장 유형 필터** (`214047`) · 도움말·SECURITY · Vercel · 본 문서 동기화 | `037b0af`~`acb9a43` |
 | **2026-08-03** | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS 장소** · **저장 직후 음성으로 항목 채우기**(opt-in) · 시트 **유형·말하기 예** · **표시명** 「항목 말하기」 · APK `145506`→`151943`→`161016` · Vercel · 본 문서 동기화(**소스 변경 없음**) | `5850f1c`~`6cd1dc4` |
+| **2026-08-07** | **FEAT-NCP-PROJECT-01** 사업 QR·NCP 일시 취합 **UI 스펙·구현 계획·SECURITY** · PRD·PLAN·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `161016`) | (본 문서 커밋) |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 

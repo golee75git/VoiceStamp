@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-03** — 항목 말하기(표시명) · 장소 칩 · 앨범 EXIF · 권장 APK `161016` (`6cd1dc4`) · 본 문서 동기화(소스 없음)
+문서 동기화: **2026-08-07** — FEAT-NCP-PROJECT-01 UI·구현 계획·SECURITY · **소스·APK 변경 없음** (권장 APK `161016`)
 최신 기능 커밋 기준: 장소 칩 · 저장 유형 선택(다음 기본값)
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
@@ -1192,6 +1192,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-08-07
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | **FEAT-NCP-PROJECT-01** 설계 문서만 |
+| 문서 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) |
+| APK | **변경 없음** — 권장 `releases/VoiceStamp_20260803_161016.apk` 유지 |
+| 소스 | **변경 없음** |
 
 ### 2026-08-03
 

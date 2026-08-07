@@ -598,6 +598,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | ID | 내용 | 비고 |
 |----|------|------|
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드 (압축 JPEG·개발자 공용 시트·Apps Script) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 초안 `docs/drafts/google-sheets-upload/` · **앱 미연동** |
+| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신→사업 폴더·취합 엑셀 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · **문서만·앱 미연동** |
 
 ---
 
@@ -732,6 +733,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-02 | 2AT·3 | 목록 **저장 유형 필터** · APK `214047` |
 | 2026-08-03 | 2AU·3 | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS** · APK `101849` 계열 |
 | 2026-08-03 | 2AV·3 | **F-Voice-10** 저장 직후 음성으로 항목 채우기 · APK `145506` · `restore-save-slot-speech.bat` |
+| 2026-08-07 | 4 (설계) | **FEAT-NCP-PROJECT-01** UI·구현 계획·SECURITY · **소스·APK 없음** |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
