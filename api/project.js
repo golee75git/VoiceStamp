@@ -119,16 +119,18 @@ function canonicalObjectUri(bucket, key) {
 }
 
 /**
- * SigV4 for NCP Object Storage.
- * Use real payload SHA-256 (same as typical AWS CLI PutObject), not UNSIGNED-PAYLOAD.
- * Sign Content-Type when it is sent. Prefer https.request over fetch for stable headers.
+ * SigV4 for NCP Object Storage (path-style).
+ * NCP samples use UNSIGNED-PAYLOAD and sign every header that is sent
+ * (including content-length / content-type).
  */
 function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
   const { amz, short } = amzDate();
   const body = bodyBuf && bodyBuf.length ? bodyBuf : Buffer.alloc(0);
-  const payloadHash = sha256Hex(body);
+  const payloadHash = 'UNSIGNED-PAYLOAD';
   const canonicalUri = canonicalObjectUri(bucket, key);
+  const contentLength = String(body.length);
   const headerMap = {
+    'content-length': contentLength,
     host: HOST,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
@@ -164,10 +166,10 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     sig;
   const headers = {
     Host: HOST,
+    'Content-Length': contentLength,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
     Authorization: authorization,
-    'Content-Length': String(body.length),
   };
   if (contentType) {
     headers['Content-Type'] = contentType;
