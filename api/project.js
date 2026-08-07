@@ -119,19 +119,32 @@ function canonicalObjectUri(bucket, key) {
 }
 
 /**
- * SigV4 for NCP Object Storage (path-style).
- * NCP samples use UNSIGNED-PAYLOAD and sign every header that is sent
- * (including content-length / content-type).
+ * SigV4 for NCP Object Storage.
+ * NCP samples use UNSIGNED-PAYLOAD and sign every header that is sent.
+ * style: 'path' | 'virtual'
  */
-function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
+function buildSignedRequest({
+  method,
+  key,
+  contentType,
+  bodyBuf,
+  accessKey,
+  secretKey,
+  bucket,
+  style = 'path',
+}) {
   const { amz, short } = amzDate();
   const body = bodyBuf && bodyBuf.length ? bodyBuf : Buffer.alloc(0);
   const payloadHash = 'UNSIGNED-PAYLOAD';
-  const canonicalUri = canonicalObjectUri(bucket, key);
+  const useVirtual = style === 'virtual';
+  const requestHost = useVirtual ? bucket + '.' + HOST : HOST;
+  const canonicalUri = useVirtual
+    ? '/' + encodeKeyPath(key)
+    : canonicalObjectUri(bucket, key);
   const contentLength = String(body.length);
   const headerMap = {
     'content-length': contentLength,
-    host: HOST,
+    host: requestHost,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
   };
@@ -165,7 +178,7 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     ', Signature=' +
     sig;
   const headers = {
-    Host: HOST,
+    Host: requestHost,
     'Content-Length': contentLength,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
@@ -175,7 +188,7 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     headers['Content-Type'] = contentType;
   }
   return {
-    hostname: HOST,
+    hostname: requestHost,
     path: canonicalUri,
     method,
     headers,
@@ -248,21 +261,32 @@ function httpsRequest(opts) {
 }
 
 async function s3Put(creds, key, contentType, bodyBuf) {
-  const signed = buildSignedRequest({
-    method: 'PUT',
-    key,
-    contentType,
-    bodyBuf,
-    ...creds,
-  });
-  const res = await httpsRequest(signed);
-  if (res.statusCode < 200 || res.statusCode >= 300) {
+  const styles = ['path', 'virtual'];
+  let lastErr = null;
+  for (const style of styles) {
+    const signed = buildSignedRequest({
+      method: 'PUT',
+      key,
+      contentType,
+      bodyBuf,
+      style,
+      ...creds,
+    });
+    const res = await httpsRequest(signed);
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      return { style };
+    }
     const text = res.body.toString('utf8');
     const err = new Error('s3_put_' + res.statusCode);
     err.code = 's3_put_' + res.statusCode;
     err.detail = text.slice(0, 240);
-    throw err;
+    err.style = style;
+    lastErr = err;
+    if (res.statusCode !== 403) {
+      throw err;
+    }
   }
+  throw lastErr;
 }
 
 async function s3Get(creds, key) {
@@ -280,20 +304,30 @@ async function s3Get(creds, key) {
 }
 
 async function s3Delete(creds, key) {
-  const signed = buildSignedRequest({
-    method: 'DELETE',
-    key,
-    contentType: '',
-    bodyBuf: Buffer.alloc(0),
-    ...creds,
-  });
-  const res = await httpsRequest(signed);
-  if (res.statusCode !== 404 && (res.statusCode < 200 || res.statusCode >= 300)) {
+  const styles = ['path', 'virtual'];
+  let lastErr = null;
+  for (const style of styles) {
+    const signed = buildSignedRequest({
+      method: 'DELETE',
+      key,
+      contentType: '',
+      bodyBuf: Buffer.alloc(0),
+      style,
+      ...creds,
+    });
+    const res = await httpsRequest(signed);
+    if (res.statusCode === 404 || (res.statusCode >= 200 && res.statusCode < 300)) {
+      return;
+    }
     const err = new Error('s3_delete_' + res.statusCode);
     err.code = 's3_delete_' + res.statusCode;
     err.detail = res.body.toString('utf8').slice(0, 240);
-    throw err;
+    lastErr = err;
+    if (res.statusCode !== 403) {
+      throw err;
+    }
   }
+  throw lastErr;
 }
 
 function projectKey(projectId, suffix) {
@@ -575,6 +609,30 @@ module.exports = async function handler(req, res) {
       return;
     }
 
+    if (action === 'ncpProbe') {
+      const probeKey = 'voicestamp/_probe/' + randomToken(6) + '.txt';
+      try {
+        const put = await s3Put(creds, probeKey, 'text/plain', Buffer.from('ok', 'utf8'));
+        await s3Delete(creds, probeKey);
+        json(res, 200, {
+          ok: true,
+          bucket: creds.bucket,
+          accessKeyPrefix: creds.accessKey.slice(0, 6),
+          style: put && put.style ? put.style : 'path',
+        });
+      } catch (probeErr) {
+        json(res, 200, {
+          ok: false,
+          bucket: creds.bucket,
+          accessKeyPrefix: creds.accessKey.slice(0, 6),
+          detail: probeErr && probeErr.code ? probeErr.code : 'probe_failed',
+          hint: probeErr && probeErr.detail ? String(probeErr.detail).slice(0, 200) : undefined,
+          style: probeErr && probeErr.style ? probeErr.style : undefined,
+        });
+      }
+      return;
+    }
+
     json(res, 400, { error: 'unknown_action' });
   } catch (e) {
     const code = e && e.code ? e.code : e && e.message ? e.message : 'error';
@@ -595,6 +653,21 @@ module.exports = async function handler(req, res) {
       return;
     }
     console.error('project api', e);
-    json(res, 500, { error: 'server_error', detail: String(code).slice(0, 80), hint: e && e.detail ? String(e.detail).slice(0, 200) : undefined });
+    const credsSafe = (() => {
+      try {
+        const c = requireNcp();
+        return { bucket: c.bucket, accessKeyPrefix: c.accessKey.slice(0, 6) };
+      } catch {
+        return {};
+      }
+    })();
+    json(res, 500, {
+      error: 'server_error',
+      detail: String(code).slice(0, 80),
+      hint: e && e.detail ? String(e.detail).slice(0, 200) : undefined,
+      style: e && e.style ? e.style : undefined,
+      bucket: credsSafe.bucket,
+      accessKeyPrefix: credsSafe.accessKeyPrefix,
+    });
   }
 };
