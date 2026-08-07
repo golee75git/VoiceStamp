@@ -347,6 +347,75 @@ async function s3Delete(creds, key) {
   throw err;
 }
 
+async function ncpListProbe(creds) {
+  const { amz, short } = amzDate();
+  const payloadHash = 'UNSIGNED-PAYLOAD';
+  const host = HOST;
+  const canonicalUri = '/' + creds.bucket;
+  const queryPairs = [
+    ['list-type', '2'],
+    ['max-keys', '1'],
+  ];
+  const canonicalQuery = queryPairs
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+    .join('&');
+  const headerMap = {
+    host: host,
+    'x-amz-content-sha256': payloadHash,
+    'x-amz-date': amz,
+  };
+  const signedHeaderNames = Object.keys(headerMap).sort();
+  const canonicalHeaders = signedHeaderNames
+    .map((n) => n + ':' + String(headerMap[n]).trim() + '\n')
+    .join('');
+  const signedHeaders = signedHeaderNames.join(';');
+  const canonicalRequest = [
+    'GET',
+    canonicalUri,
+    canonicalQuery,
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join('\n');
+  const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
+  const stringToSign = ['AWS4-HMAC-SHA256', amz, credentialScope, sha256Hex(canonicalRequest)].join(
+    '\n',
+  );
+  const sig = crypto
+    .createHmac('sha256', signingKey(creds.secretKey, short))
+    .update(stringToSign, 'utf8')
+    .digest('hex');
+  const authorization =
+    'AWS4-HMAC-SHA256 Credential=' +
+    creds.accessKey +
+    '/' +
+    credentialScope +
+    ', SignedHeaders=' +
+    signedHeaders +
+    ', Signature=' +
+    sig;
+  const res = await httpsRequest({
+    hostname: host,
+    path: canonicalUri + '?' + canonicalQuery,
+    method: 'GET',
+    headers: {
+      Host: host,
+      'x-amz-content-sha256': payloadHash,
+      'x-amz-date': amz,
+      Authorization: authorization,
+    },
+    body: Buffer.alloc(0),
+  });
+  const text = res.body.toString('utf8');
+  const codeMatch = text.match(/<Code>([^<]+)<\/Code>/);
+  return {
+    status: res.statusCode,
+    ok: res.statusCode >= 200 && res.statusCode < 300,
+    ncp: codeMatch ? codeMatch[1] : undefined,
+    hint: text.slice(0, 160),
+  };
+}
+
 async function ncpProbePutVariants(creds) {
   const bodyBuf = Buffer.from('ok', 'utf8');
   const modes = putModeList(null);
@@ -661,13 +730,17 @@ module.exports = async function handler(req, res) {
     }
 
     if (action === 'ncpProbe') {
+      const list = await ncpListProbe(creds);
       const variants = await ncpProbePutVariants(creds);
       const winner = variants.find((v) => v.ok);
       json(res, 200, {
         ok: Boolean(winner),
         bucket: creds.bucket,
         accessKeyPrefix: creds.accessKey.slice(0, 6),
+        accessKeyLen: creds.accessKey.length,
+        secretKeyLen: creds.secretKey.length,
         style: winner ? winner.label : undefined,
+        list: list,
         variants: variants.map((v) => ({
           label: v.label,
           ok: v.ok,
