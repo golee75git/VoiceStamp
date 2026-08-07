@@ -48,9 +48,9 @@ function readBody(req) {
 }
 
 function requireNcp() {
-  const accessKey = process.env.NCP_ACCESS_KEY || '';
-  const secretKey = process.env.NCP_SECRET_KEY || '';
-  const bucket = process.env.NCP_BUCKET || '';
+  const accessKey = String(process.env.NCP_ACCESS_KEY || '').trim();
+  const secretKey = String(process.env.NCP_SECRET_KEY || '').trim();
+  const bucket = String(process.env.NCP_BUCKET || '').trim();
   if (!accessKey || !secretKey || !bucket) {
     const err = new Error('ncp_not_configured');
     err.code = 'ncp_not_configured';
@@ -102,25 +102,34 @@ function signingKey(secretKey, shortDate) {
   return hmac(kService, 'aws4_request');
 }
 
+/** Path-style URI; keep / unencoded (NCP Object Storage SigV4). */
+function canonicalObjectUri(bucket, key) {
+  const safeKey = String(key)
+    .split('/')
+    .map((seg) =>
+      encodeURIComponent(seg).replace(/[!'()*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase()),
+    )
+    .join('/');
+  return '/' + bucket + '/' + safeKey;
+}
+
+/**
+ * NCP docs use UNSIGNED-PAYLOAD for S3 SigV4.
+ * Do not send a manual Host header with fetch (Node may drop/alter it → 403).
+ */
 function signRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
   const { amz, short } = amzDate();
-  const payloadHash = sha256Hex(bodyBuf || '');
-  const canonicalUri = `/${bucket}/${key.split('/').map(encodeURIComponent).join('/')}`;
+  const payloadHash = 'UNSIGNED-PAYLOAD';
+  const canonicalUri = canonicalObjectUri(bucket, key);
   const canonicalHeaders =
-    `content-type:${contentType}\n` +
-    `host:${HOST}\n` +
-    `x-amz-content-sha256:${payloadHash}\n` +
-    `x-amz-date:${amz}\n`;
-  const signedHeaders = 'content-type;host;x-amz-content-sha256;x-amz-date';
-  const canonicalRequest = [
-    method,
-    canonicalUri,
-    '',
-    canonicalHeaders,
-    signedHeaders,
-    payloadHash,
-  ].join('\n');
-  const credentialScope = `${short}/${REGION}/${SERVICE}/aws4_request`;
+    'host:' + HOST + '\n' +
+    'x-amz-content-sha256:' + payloadHash + '\n' +
+    'x-amz-date:' + amz + '\n';
+  const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
+  const canonicalRequest = [method, canonicalUri, '', canonicalHeaders, signedHeaders, payloadHash].join(
+    '\n',
+  );
+  const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
   const stringToSign = [
     'AWS4-HMAC-SHA256',
     amz,
@@ -132,34 +141,49 @@ function signRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, 
     .update(stringToSign, 'utf8')
     .digest('hex');
   const authorization =
-    `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, ` +
-    `SignedHeaders=${signedHeaders}, Signature=${sig}`;
+    'AWS4-HMAC-SHA256 Credential=' + accessKey + '/' + credentialScope + ', ' +
+    'SignedHeaders=' + signedHeaders + ', Signature=' + sig;
+  const headers = {
+    'x-amz-content-sha256': payloadHash,
+    'x-amz-date': amz,
+    Authorization: authorization,
+  };
+  if (contentType) {
+    headers['Content-Type'] = contentType;
+  }
+  if (bodyBuf && bodyBuf.length) {
+    headers['Content-Length'] = String(bodyBuf.length);
+  }
   return {
-    url: `https://${HOST}${canonicalUri}`,
-    headers: {
-      'Content-Type': contentType,
-      Host: HOST,
-      'x-amz-content-sha256': payloadHash,
-      'x-amz-date': amz,
-      Authorization: authorization,
-    },
+    url: 'https://' + HOST + canonicalUri,
+    headers,
+    bodyBuf: bodyBuf || null,
   };
 }
 
 function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GET }) {
   const { amz, short } = amzDate();
-  const credentialScope = `${short}/${REGION}/${SERVICE}/aws4_request`;
-  const credential = `${accessKey}/${credentialScope}`;
-  const canonicalUri = `/${bucket}/${key.split('/').map(encodeURIComponent).join('/')}`;
-  const qs =
-    `X-Amz-Algorithm=AWS4-HMAC-SHA256` +
-    `&X-Amz-Credential=${encodeURIComponent(credential)}` +
-    `&X-Amz-Date=${amz}` +
-    `&X-Amz-Expires=${expiresSec}` +
-    `&X-Amz-SignedHeaders=host`;
-  const canonicalRequest = ['GET', canonicalUri, qs, `host:${HOST}\n`, 'host', 'UNSIGNED-PAYLOAD'].join(
-    '\n',
-  );
+  const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
+  const credential = accessKey + '/' + credentialScope;
+  const canonicalUri = canonicalObjectUri(bucket, key);
+  const queryPairs = [
+    ['X-Amz-Algorithm', 'AWS4-HMAC-SHA256'],
+    ['X-Amz-Credential', credential],
+    ['X-Amz-Date', amz],
+    ['X-Amz-Expires', String(expiresSec)],
+    ['X-Amz-SignedHeaders', 'host'],
+  ];
+  const canonicalQuery = queryPairs
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+    .join('&');
+  const canonicalRequest = [
+    'GET',
+    canonicalUri,
+    canonicalQuery,
+    'host:' + HOST + '\n',
+    'host',
+    'UNSIGNED-PAYLOAD',
+  ].join('\n');
   const stringToSign = [
     'AWS4-HMAC-SHA256',
     amz,
@@ -170,7 +194,7 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
     .createHmac('sha256', signingKey(secretKey, short))
     .update(stringToSign, 'utf8')
     .digest('hex');
-  return `https://${HOST}${canonicalUri}?${qs}&X-Amz-Signature=${sig}`;
+  return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
 }
 
 async function s3Put(creds, key, contentType, bodyBuf) {
@@ -188,28 +212,23 @@ async function s3Put(creds, key, contentType, bodyBuf) {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    const err = new Error(`s3_put_${res.status}`);
-    err.detail = text.slice(0, 200);
+    const err = new Error('s3_put_' + res.status);
+    err.code = 's3_put_' + res.status;
+    err.detail = text.slice(0, 240);
     throw err;
   }
 }
 
 async function s3Get(creds, key) {
-  const signed = signRequest({
-    method: 'GET',
-    key,
-    contentType: 'application/octet-stream',
-    bodyBuf: Buffer.alloc(0),
-    ...creds,
-  });
-  // GET signing with empty body — content-type may confuse; use presign GET instead
   const url = presignGet({ key, ...creds });
   const res = await fetch(url);
   if (res.status === 404) {
     return null;
   }
   if (!res.ok) {
-    throw new Error(`s3_get_${res.status}`);
+    const err = new Error('s3_get_' + res.status);
+    err.code = 's3_get_' + res.status;
+    throw err;
   }
   return Buffer.from(await res.arrayBuffer());
 }
@@ -218,15 +237,18 @@ async function s3Delete(creds, key) {
   const signed = signRequest({
     method: 'DELETE',
     key,
-    contentType: 'application/octet-stream',
+    contentType: '',
     bodyBuf: Buffer.alloc(0),
     ...creds,
   });
   const res = await fetch(signed.url, { method: 'DELETE', headers: signed.headers });
   if (!res.ok && res.status !== 404) {
-    throw new Error(`s3_delete_${res.status}`);
+    const err = new Error('s3_delete_' + res.status);
+    err.code = 's3_delete_' + res.status;
+    throw err;
   }
 }
+
 
 function projectKey(projectId, suffix) {
   return `voicestamp/projects/${projectId}/${suffix}`;
@@ -527,6 +549,6 @@ module.exports = async function handler(req, res) {
       return;
     }
     console.error('project api', e);
-    json(res, 500, { error: 'server_error', detail: String(code).slice(0, 80) });
+    json(res, 500, { error: 'server_error', detail: String(code).slice(0, 80), hint: e && e.detail ? String(e.detail).slice(0, 200) : undefined });
   }
 };

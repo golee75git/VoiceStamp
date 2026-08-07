@@ -17,6 +17,15 @@
 
 미설정 시 API는 `503 ncp_not_configured`를 반환합니다.
 
+## 트러블슈팅
+
+| 증상 | 확인 |
+|------|------|
+| `ncp_not_configured` | 세 env 모두 Production에 있는지, 배포 후인지 |
+| `server_error` + `detail: s3_put_403` | 키·버킷명·`NCP_OBJECT_STORAGE_MANAGER` 권한, 한국 버킷 |
+| `server_error` + `hint` | NCP XML 메시지(짧게). SignatureDoesNotMatch면 서명/키, AccessDenied면 권한 |
+| env 변경 후 | Vercel Redeploy 필수 |
+
 ## 버킷
 
 - ACL: Private  

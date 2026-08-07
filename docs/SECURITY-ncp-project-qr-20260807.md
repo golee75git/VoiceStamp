@@ -5,6 +5,12 @@
 - QR/코드 1회 참여 → 저장 시 압축 업로드 → 관리자 수신·사업 폴더 import → 취합 엑셀.
 - NCP Object Storage (SigV4, 신규 npm 없음). 미설정 시 503.
 
+### 2026-08-07 SigV4 수정
+- `fetch`에 수동 `Host` 헤더를 넣으면 서명 불일치(403)가 날 수 있어 제거.
+- NCP 문서와 같이 `x-amz-content-sha256: UNSIGNED-PAYLOAD`로 서명.
+- Content-Type은 전송만 하고 SignedHeaders에는 넣지 않음.
+- 500 응답에 S3 본문 `hint`(짧게)를 넣어 운영 진단만 돕고, 비밀키는 노출하지 않음.
+
 ## 파일 구분
 
 | 구분 | 경로 |
