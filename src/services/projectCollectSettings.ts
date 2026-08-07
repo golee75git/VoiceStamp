@@ -7,6 +7,8 @@ const KEYS = {
   joinName: 'project_join_name',
   joinCode: 'project_join_upload_code',
   joinAt: 'project_join_at',
+  joinMark: 'project_join_mark',
+  joinMarkPref: 'project_join_mark_pref',
   autoUpload: 'project_auto_upload',
   wifiOnly: 'project_wifi_only',
   owned: 'project_owned_json',
@@ -15,6 +17,14 @@ const KEYS = {
   uploadStatus: 'project_upload_status_json',
   pinPrefix: 'project_pin_',
 } as const;
+
+/** Optional on-device label for project uploads (not a login id). Max 40. */
+export function sanitizeJoinMark(raw: string): string {
+  return String(raw || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .slice(0, 40);
+}
 
 export type ProjectImportFolderMode = 'date_name' | 'name_only';
 export type ProjectUploadStatus = 'pending' | 'uploading' | 'synced' | 'failed';
@@ -111,7 +121,19 @@ export type ProjectJoinState = {
   name: string;
   uploadCode: string;
   joinedAt: number;
+  /** Optional short label chosen by the joiner (empty if skipped). */
+  mark: string;
 } | null;
+
+export async function getJoinMarkPref(): Promise<string> {
+  return sanitizeJoinMark((await getValue(KEYS.joinMarkPref)) || '');
+}
+
+export async function setJoinMarkPref(mark: string): Promise<void> {
+  const safe = sanitizeJoinMark(mark);
+  if (safe) await setValue(KEYS.joinMarkPref, safe);
+  else await deleteValue(KEYS.joinMarkPref);
+}
 
 export async function getProjectJoin(): Promise<ProjectJoinState> {
   const projectId = await getValue(KEYS.joinId);
@@ -119,18 +141,24 @@ export async function getProjectJoin(): Promise<ProjectJoinState> {
   if (!projectId || !uploadCode) return null;
   const name = (await getValue(KEYS.joinName)) || projectId;
   const joinedAt = Number((await getValue(KEYS.joinAt)) || Date.now());
-  return { projectId, name, uploadCode, joinedAt };
+  const mark = sanitizeJoinMark((await getValue(KEYS.joinMark)) || '');
+  return { projectId, name, uploadCode, joinedAt, mark };
 }
 
 export async function setProjectJoin(input: {
   projectId: string;
   name: string;
   uploadCode: string;
+  mark?: string;
 }): Promise<void> {
+  const mark = sanitizeJoinMark(input.mark || '');
   await setValue(KEYS.joinId, input.projectId);
   await setValue(KEYS.joinName, input.name);
   await setValue(KEYS.joinCode, input.uploadCode);
   await setValue(KEYS.joinAt, String(Date.now()));
+  if (mark) await setValue(KEYS.joinMark, mark);
+  else await deleteValue(KEYS.joinMark);
+  if (mark) await setValue(KEYS.joinMarkPref, mark);
 }
 
 export async function clearProjectJoin(): Promise<void> {
@@ -138,6 +166,7 @@ export async function clearProjectJoin(): Promise<void> {
   await deleteValue(KEYS.joinName);
   await deleteValue(KEYS.joinCode);
   await deleteValue(KEYS.joinAt);
+  await deleteValue(KEYS.joinMark);
 }
 
 export async function listOwnedProjects(): Promise<OwnedProject[]> {

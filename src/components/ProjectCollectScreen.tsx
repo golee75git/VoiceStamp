@@ -31,11 +31,13 @@ import {
   buildImportGroupName,
   clearProjectJoin,
   getCollectorPin,
+  getJoinMarkPref,
   getProjectDeleteAfterImport,
   getProjectImportFolderMode,
   getProjectJoin,
   listOwnedProjects,
   removeOwnedProject,
+  sanitizeJoinMark,
   setCollectorPin,
   setProjectDeleteAfterImport,
   setProjectImportFolderMode,
@@ -115,6 +117,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
   const [pin2, setPin2] = useState('');
 
   const [joinCodeText, setJoinCodeText] = useState('');
+  const [joinMarkText, setJoinMarkText] = useState('');
   const [inbox, setInbox] = useState<ManifestStamp[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [folderMode, setFolderMode] = useState<ProjectImportFolderMode>('date_name');
@@ -135,6 +138,8 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
     setJoin(await getProjectJoin());
     setFolderMode(await getProjectImportFolderMode());
     setDeleteAfter(await getProjectDeleteAfterImport());
+    const pref = await getJoinMarkPref();
+    if (pref) setJoinMarkText((prev) => (prev.trim() ? prev : pref));
   }, []);
 
   useEffect(() => {
@@ -222,7 +227,12 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
                       {
                         text: '바꾸기',
                         onPress: () => {
-                          void setProjectJoin({ projectId, name: projectName, uploadCode }).then(
+                          void setProjectJoin({
+                            projectId,
+                            name: projectName,
+                            uploadCode,
+                            mark: sanitizeJoinMark(joinMarkText),
+                          }).then(
                             () => {
                               void reload();
                               Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
@@ -235,7 +245,12 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
                   );
                   return;
                 }
-                await setProjectJoin({ projectId, name: projectName, uploadCode });
+                await setProjectJoin({
+                  projectId,
+                  name: projectName,
+                  uploadCode,
+                  mark: sanitizeJoinMark(joinMarkText),
+                });
                 await reload();
                 Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
                 leaveAfterJoin();
@@ -260,7 +275,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
 
   const handleJoinScanPress = () => {
     if (Platform.OS === 'web') {
-      Alert.alert('QR 찍기', '웰에서는 카메라 QR 인식이 없습니다. 링크를 붙여 넣으세요.');
+      Alert.alert('QR 찍기', '웹에서는 카메라 QR 인식이 없습니다. 링크를 붙여 넣으세요.');
       return;
     }
     void (async () => {
@@ -431,7 +446,10 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
       ) : null}
       {join ? (
         <View style={styles.banner}>
-          <Text style={styles.bannerText}>참여 중 · {join.name}</Text>
+          <Text style={styles.bannerText}>
+            참여 중 · {join.name}
+            {join.mark ? ` · ${join.mark}` : ''}
+          </Text>
           <Pressable
             onPress={() => {
               Alert.alert('사업 연결을 끊을까요?', '이후 저장분은 더 이상 올라가지 않습니다.', [
@@ -578,6 +596,19 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
 
   const renderJoin = () => (
     <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+      <Text style={styles.label}>구분 표시 (선택)</Text>
+      <Text style={styles.hint}>
+        올리는 쪽을 구분할 짧은 글자. 별칭·번호 끝자리 등 원하는 형태로 적거나 비워 두세요.
+      </Text>
+      <TextInput
+        style={styles.input}
+        value={joinMarkText}
+        onChangeText={setJoinMarkText}
+        placeholder="예: 현장A / 1234"
+        maxLength={40}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
       <Text style={styles.label}>참여 링크 또는 코드</Text>
       <Text style={styles.hint}>형식: VS-… 코드 / 참여코드 또는 QR·웹 참여 링크</Text>
       <TextInput
@@ -656,7 +687,12 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
             >
               <Text style={styles.rowTitle}>{item.title || item.stampId}</Text>
               <Text style={styles.rowSub}>
-                {item.uploadedAt ? new Date(item.uploadedAt).toLocaleString() : ''}
+                {[
+                  item.uploadedByMark || '',
+                  item.uploadedAt ? new Date(item.uploadedAt).toLocaleString() : '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </Text>
             </Pressable>
           );

@@ -65,6 +65,7 @@ async function uploadOne(stampId: string): Promise<void> {
     imageBase64,
     meta: {
       uploadedByDeviceId: deviceId,
+      uploadedByMark: join.mark || null,
       title: stamp.title,
       memo: stamp.memo,
       placeLabel: stamp.placeLabel,

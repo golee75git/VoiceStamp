@@ -3572,3 +3572,14 @@ restore-project-join-scan.bat
 
 src.pre-project-join-scan/ 스냅샷으로 되돌립니다.
 
+
+## 238. 사업 참여 구분 표시 되돌리기 (선택)
+
+코드/QR 참여 시 선택 구분 표시·uploadedByMark 후 문제가 생기면:
+
+```bat
+restore-project-join-label.bat
+```
+
+`src.pre-project-join-label/` · `api.pre-project-join-label/` 스냅샷으로 되돌린 뒤 API 변경분은 Vercel 재배포합니다.
+

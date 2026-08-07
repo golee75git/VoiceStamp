@@ -19,6 +19,7 @@ export type ManifestStamp = {
   title?: string;
   uploadedAt?: number;
   uploadedByDeviceId?: string | null;
+  uploadedByMark?: string | null;
 };
 
 export type ManifestResult = {

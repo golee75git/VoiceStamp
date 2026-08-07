@@ -581,10 +581,13 @@ module.exports = async function handler(req, res) {
         return;
       }
       await s3Put(creds, projectKey(projectId, `stamps/${stampId}.jpg`), 'image/jpeg', imgBuf);
+      const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
+      const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
       const stampMeta = {
         stampId,
         projectId,
         uploadedByDeviceId: meta.uploadedByDeviceId || null,
+        uploadedByMark,
         uploadedAt: Date.now(),
         title: String(meta.title || '').slice(0, 200),
         memo: String(meta.memo || '').slice(0, 4000),
@@ -608,6 +611,7 @@ module.exports = async function handler(req, res) {
         title: stampMeta.title,
         uploadedAt: stampMeta.uploadedAt,
         uploadedByDeviceId: stampMeta.uploadedByDeviceId,
+        uploadedByMark: stampMeta.uploadedByMark,
       });
       manifest.stamps = stamps;
       manifest.lastUploadAt = stampMeta.uploadedAt;
