@@ -9,9 +9,10 @@ import { StampImageExportHost, type StampImageExportHostRef } from '../component
 import { StampListScreen } from '../components/StampListScreen';
 import { OpenSourceLicensesScreen } from '../components/OpenSourceLicensesScreen';
 import { TrashScreen } from '../components/TrashScreen';
+import { ProjectCollectScreen } from '../components/ProjectCollectScreen';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 
-type Screen = 'camera' | 'list' | 'settings' | 'trash' | 'ossLicenses';
+type Screen = 'camera' | 'list' | 'settings' | 'trash' | 'ossLicenses' | 'projectCollect';
 type SettingsReturn = 'camera' | 'list';
 
 export function MainScreen() {
@@ -47,6 +48,9 @@ export function MainScreen() {
           return true;
         case 'settings':
           setScreen(settingsReturn);
+          return true;
+        case 'projectCollect':
+          setScreen('settings');
           return true;
         case 'ossLicenses':
           setScreen('settings');
@@ -105,7 +109,10 @@ export function MainScreen() {
           onSettingsSaved={bumpRefresh}
           onShowOnboarding={() => setShowIntroOverlay(true)}
           onOpenOssLicenses={() => setScreen('ossLicenses')}
+          onOpenProjectCollect={() => setScreen('projectCollect')}
         />
+      ) : screen === 'projectCollect' ? (
+        <ProjectCollectScreen onBack={() => setScreen('settings')} onImported={bumpRefresh} />
       ) : screen === 'ossLicenses' ? (
         <OpenSourceLicensesScreen onBack={() => setScreen('settings')} />
       ) : screen === 'trash' ? (

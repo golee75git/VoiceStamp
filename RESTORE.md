@@ -3517,12 +3517,12 @@ src.pre-follow-root-label/·public.pre-follow-root-label/ 스냅샷으로 되돌
 
 ---
 
-## 232. 처음/이음·연결 비교 PDF 되돌리기 (선택)
+## 233. 사업 QR 일시 취합 되돌리기 (선택)
 
-용어 통일·연결 비교 PDF/삭제 후 문제가 생기면:
+사업 취합(FEAT-NCP-PROJECT-01) 후 문제가 생기면:
 
 ```bat
-restore-follow-ieum-compare.bat
+restore-ncp-project-qr.bat
 ```
 
-src.pre-follow-ieum-compare/·public.pre-follow-ieum-compare/ 스냅샷으로 되돌립니다.
+src.pre-ncp-project-qr/ · public.pre-ncp-project-qr/ · api.pre-ncp-project-qr/ 스냅샷으로 되돌리고 신규 파일을 제거합니다.

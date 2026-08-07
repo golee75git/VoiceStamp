@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceStamp 사업 참여</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f9fafb; color: #111; }
+    .card { max-width: 420px; margin: 40px auto; background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e5e7eb; }
+    h1 { font-size: 1.25rem; margin: 0 0 12px; }
+    p { line-height: 1.5; color: #374151; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+    a.btn { display: inline-block; margin-top: 16px; background: #111; color: #fff; text-decoration: none; padding: 12px 16px; border-radius: 10px; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>VoiceStamp 사업 참여</h1>
+    <p>앱에서 「설정 → 사업 취합 → 코드로 참여」에 아래 코드를 붙여 넣으세요.</p>
+    <p id="codes">링크를 확인하는 중…</p>
+    <a class="btn" href="https://voicestamp-gilt.vercel.app/">APK·앱 안내</a>
+  </div>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var p = q.get('p') || '';
+      var c = q.get('c') || '';
+      var el = document.getElementById('codes');
+      if (p && c) {
+        el.innerHTML = '사업코드 <code>' + p + '</code><br/>참여코드 <code>' + c + '</code>';
+      } else {
+        el.textContent = '유효한 참여 링크가 아닙니다.';
+      }
+    })();
+  </script>
+</body>
+</html>

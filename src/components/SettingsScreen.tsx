@@ -142,6 +142,7 @@ type SettingsScreenProps = {
   onSettingsSaved?: () => void;
   onShowOnboarding?: () => void;
   onOpenOssLicenses?: () => void;
+  onOpenProjectCollect?: () => void;
 };
 
 export function SettingsScreen({
@@ -151,6 +152,7 @@ export function SettingsScreen({
   onSettingsSaved,
   onShowOnboarding,
   onOpenOssLicenses,
+  onOpenProjectCollect,
 }: SettingsScreenProps) {
   const [folderName, setFolderName] = useState(DEFAULT_STAMPS_FOLDER);
   const [pdfPhotosPerPage, setPdfPhotosPerPageState] = useState<PdfPhotosPerPage>(
@@ -200,6 +202,8 @@ export function SettingsScreen({
   const [saveSlotSpeechEnabled, setSaveSlotSpeechEnabledState] = useState(
     DEFAULT_SAVE_SLOT_SPEECH_ENABLED,
   );
+  const [projectCollectEnabled, setProjectCollectEnabledState] = useState(false);
+  const [projectJoinSummary, setProjectJoinSummary] = useState<string | null>(null);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [cameraHomeBg, setCameraHomeBgState] = useState<CameraHomeBg>(DEFAULT_CAMERA_HOME_BG);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
@@ -259,6 +263,15 @@ export function SettingsScreen({
       setMlkitSceneLabelEnabledState(snapshot.mlkitSceneLabelEnabled);
       setSaveSlotSpeechEnabledState(snapshot.saveSlotSpeechEnabled);
       setCameraHandState(snapshot.cameraHand);
+      void (async () => {
+        const { getProjectCollectEnabled, getProjectJoin } = await import(
+          '../services/projectCollectSettings'
+        );
+        if (cancelled) return;
+        setProjectCollectEnabledState(await getProjectCollectEnabled());
+        const j = await getProjectJoin();
+        setProjectJoinSummary(j ? `참여 중 · ${j.name}` : null);
+      })();
       setCameraHomeBgState(snapshot.cameraHomeBg);
       setFloorPickerModeState(snapshot.floorPickerMode);
       setFloorDisplayModeState(snapshot.floorDisplayMode);
@@ -1282,6 +1295,50 @@ export function SettingsScreen({
               );
             })}
           </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>사업 취합</Text>
+          <Text style={styles.hint}>
+            QR로 연결하면 저장 시 일시 저장소(한국)로 올립니다. 기본 꺼짐.
+          </Text>
+          <View style={styles.optionRow}>
+            {(
+              [
+                { value: false, label: '사용 안 함' },
+                { value: true, label: '사용' },
+              ] as const
+            ).map((option) => {
+              const selected = projectCollectEnabled === option.value;
+              return (
+                <Pressable
+                  key={`project-collect-${option.label}`}
+                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                  onPress={() => {
+                    setProjectCollectEnabledState(option.value);
+                    void import('../services/projectCollectSettings').then(({ setProjectCollectEnabled }) =>
+                      setProjectCollectEnabled(option.value),
+                    );
+                  }}
+                  disabled={saving}
+                >
+                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          {projectCollectEnabled ? (
+            <>
+              {projectJoinSummary ? <Text style={styles.hint}>{projectJoinSummary}</Text> : null}
+              <Pressable
+                style={styles.secondaryButton}
+                onPress={() => onOpenProjectCollect?.()}
+                disabled={!onOpenProjectCollect}
+              >
+                <Text style={styles.secondaryButtonText}>시작하기 · QR·수신</Text>
+              </Pressable>
+            </>
+          ) : null}
 
           <Text style={[styles.label, styles.sectionGap]}>앱 정보</Text>
           <Text style={styles.hint}>
