@@ -4,7 +4,6 @@
  * Env: NCP_ACCESS_KEY, NCP_SECRET_KEY, NCP_BUCKET, optional PROJECT_PIN_SALT
  */
 const crypto = require('crypto');
-const https = require('https');
 
 const REGION = 'kr-standard';
 const HOST = 'kr.object.ncloudstorage.com';
@@ -103,42 +102,30 @@ function signingKey(secretKey, shortDate) {
   return hmac(kService, 'aws4_request');
 }
 
-/** Encode each path segment; leave `/` separators intact. */
-function encodeKeyPath(key) {
-  return String(key)
+/** Path-style URI; keep / unencoded (NCP Object Storage SigV4). */
+function canonicalObjectUri(bucket, key) {
+  const safeKey = String(key)
     .split('/')
     .map((seg) =>
       encodeURIComponent(seg).replace(/[!'()*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase()),
     )
     .join('/');
-}
-
-/** Path-style URI used by NCP endpoint + AWS CLI `--endpoint-url`. */
-function canonicalObjectUri(bucket, key) {
-  return '/' + bucket + '/' + encodeKeyPath(key);
+  return '/' + bucket + '/' + safeKey;
 }
 
 /**
- * SigV4 for NCP Object Storage.
- * Use real payload SHA-256 (same as typical AWS CLI PutObject), not UNSIGNED-PAYLOAD.
- * Sign Content-Type when it is sent. Prefer https.request over fetch for stable headers.
+ * NCP docs use UNSIGNED-PAYLOAD for S3 SigV4.
+ * Do not send a manual Host header with fetch (Node may drop/alter it → 403).
  */
-function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
+function signRequest({ method, key, contentType, bodyBuf, accessKey, secretKey, bucket }) {
   const { amz, short } = amzDate();
-  const body = bodyBuf && bodyBuf.length ? bodyBuf : Buffer.alloc(0);
-  const payloadHash = sha256Hex(body);
+  const payloadHash = 'UNSIGNED-PAYLOAD';
   const canonicalUri = canonicalObjectUri(bucket, key);
-  const headerMap = {
-    host: HOST,
-    'x-amz-content-sha256': payloadHash,
-    'x-amz-date': amz,
-  };
-  if (contentType) {
-    headerMap['content-type'] = contentType;
-  }
-  const signedHeaderNames = Object.keys(headerMap).sort();
-  const canonicalHeaders = signedHeaderNames.map((n) => n + ':' + String(headerMap[n]).trim() + '\n').join('');
-  const signedHeaders = signedHeaderNames.join(';');
+  const canonicalHeaders =
+    'host:' + HOST + '\n' +
+    'x-amz-content-sha256:' + payloadHash + '\n' +
+    'x-amz-date:' + amz + '\n';
+  const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
   const canonicalRequest = [method, canonicalUri, '', canonicalHeaders, signedHeaders, payloadHash].join(
     '\n',
   );
@@ -154,30 +141,23 @@ function buildSignedRequest({ method, key, contentType, bodyBuf, accessKey, secr
     .update(stringToSign, 'utf8')
     .digest('hex');
   const authorization =
-    'AWS4-HMAC-SHA256 Credential=' +
-    accessKey +
-    '/' +
-    credentialScope +
-    ', SignedHeaders=' +
-    signedHeaders +
-    ', Signature=' +
-    sig;
+    'AWS4-HMAC-SHA256 Credential=' + accessKey + '/' + credentialScope + ', ' +
+    'SignedHeaders=' + signedHeaders + ', Signature=' + sig;
   const headers = {
-    Host: HOST,
     'x-amz-content-sha256': payloadHash,
     'x-amz-date': amz,
     Authorization: authorization,
-    'Content-Length': String(body.length),
   };
   if (contentType) {
     headers['Content-Type'] = contentType;
   }
+  if (bodyBuf && bodyBuf.length) {
+    headers['Content-Length'] = String(bodyBuf.length);
+  }
   return {
-    hostname: HOST,
-    path: canonicalUri,
-    method,
+    url: 'https://' + HOST + canonicalUri,
     headers,
-    body,
+    bodyBuf: bodyBuf || null,
   };
 }
 
@@ -217,47 +197,23 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
   return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
 }
 
-function httpsRequest(opts) {
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      {
-        hostname: opts.hostname,
-        path: opts.path,
-        method: opts.method,
-        headers: opts.headers,
-      },
-      (res) => {
-        const chunks = [];
-        res.on('data', (c) => chunks.push(c));
-        res.on('end', () => {
-          resolve({
-            statusCode: res.statusCode || 0,
-            body: Buffer.concat(chunks),
-          });
-        });
-      },
-    );
-    req.on('error', reject);
-    if (opts.body && opts.body.length) {
-      req.write(opts.body);
-    }
-    req.end();
-  });
-}
-
 async function s3Put(creds, key, contentType, bodyBuf) {
-  const signed = buildSignedRequest({
+  const signed = signRequest({
     method: 'PUT',
     key,
     contentType,
     bodyBuf,
     ...creds,
   });
-  const res = await httpsRequest(signed);
-  if (res.statusCode < 200 || res.statusCode >= 300) {
-    const text = res.body.toString('utf8');
-    const err = new Error('s3_put_' + res.statusCode);
-    err.code = 's3_put_' + res.statusCode;
+  const res = await fetch(signed.url, {
+    method: 'PUT',
+    headers: signed.headers,
+    body: bodyBuf,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    const err = new Error('s3_put_' + res.status);
+    err.code = 's3_put_' + res.status;
     err.detail = text.slice(0, 240);
     throw err;
   }
@@ -278,21 +234,21 @@ async function s3Get(creds, key) {
 }
 
 async function s3Delete(creds, key) {
-  const signed = buildSignedRequest({
+  const signed = signRequest({
     method: 'DELETE',
     key,
     contentType: '',
     bodyBuf: Buffer.alloc(0),
     ...creds,
   });
-  const res = await httpsRequest(signed);
-  if (res.statusCode !== 404 && (res.statusCode < 200 || res.statusCode >= 300)) {
-    const err = new Error('s3_delete_' + res.statusCode);
-    err.code = 's3_delete_' + res.statusCode;
-    err.detail = res.body.toString('utf8').slice(0, 240);
+  const res = await fetch(signed.url, { method: 'DELETE', headers: signed.headers });
+  if (!res.ok && res.status !== 404) {
+    const err = new Error('s3_delete_' + res.status);
+    err.code = 's3_delete_' + res.status;
     throw err;
   }
 }
+
 
 function projectKey(projectId, suffix) {
   return `voicestamp/projects/${projectId}/${suffix}`;

@@ -3526,3 +3526,16 @@ restore-ncp-project-qr.bat
 ```
 
 src.pre-ncp-project-qr/ · public.pre-ncp-project-qr/ · api.pre-ncp-project-qr/ 스냅샷으로 되돌리고 신규 파일을 제거합니다.
+
+---
+
+## 234. NCP Put AccessDenied 수정 되돌리기 (선택)
+
+사업 만들기 API Put 서명 수정 후 문제가 생기면:
+
+```bat
+restore-ncp-put-fix.bat
+```
+
+`api.pre-ncp-put-fix/project.js`로 `api/project.js`를 되돌린 뒤 Vercel을 재배포합니다.
+

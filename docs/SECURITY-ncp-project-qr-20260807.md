@@ -11,6 +11,13 @@
 - Content-Type은 전송만 하고 SignedHeaders에는 넣지 않음.
 - 500 응답에 S3 본문 `hint`(짧게)를 넣어 운영 진단만 돕고, 비밀키는 노출하지 않음.
 
+### 2026-08-07 Put AccessDenied 수정 (콘솔 업로드 OK / API만 거부)
+- Put/Delete는 **본문 SHA-256 서명**(CLI PutObject와 동일 계열). GET presign만 UNSIGNED-PAYLOAD 유지.
+- 전송하는 `Content-Type`을 SignedHeaders에 포함.
+- Vercel에서 헤더가 흔들리지 않도록 Put/Delete는 Node `https.request` 사용.
+- 롤백: `restore-ncp-put-fix.bat` → `api.pre-ncp-put-fix/`.
+- 특허 비침해 보장하지 않음. SigV4·S3 호환 Put은 일반 관용 패턴.
+
 ## 파일 구분
 
 | 구분 | 경로 |
