@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import QRCode from 'qrcode';
 
 import { INFO_BASE_URL } from '../constants/infoUrls';
@@ -51,6 +52,8 @@ export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox';
 
 type Props = {
   onBack: () => void;
+  /** After join succeeds, open stamp camera (defaults to onBack). */
+  onJoinedGoCamera?: () => void;
   initialPhase?: ProjectCollectPhase;
   onImported?: () => void;
 };
@@ -97,7 +100,7 @@ function buildQrGrid(payload: string): QrGrid | null {
   }
 }
 
-export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported }: Props) {
+export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 'hub', onImported }: Props) {
   const [phase, setPhase] = useState<ProjectCollectPhase>(initialPhase);
   const [busy, setBusy] = useState(false);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
@@ -117,6 +120,15 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
   const [folderMode, setFolderMode] = useState<ProjectImportFolderMode>('date_name');
   const [deleteAfter, setDeleteAfter] = useState(true);
   const [collectorPinInput, setCollectorPinInput] = useState('');
+  const [joinScanning, setJoinScanning] = useState(false);
+  const [joinScanLocked, setJoinScanLocked] = useState(false);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+
+  const leaveAfterJoin = () => {
+    if (onJoinedGoCamera) onJoinedGoCamera();
+    else onBack();
+  };
+
 
   const reload = useCallback(async () => {
     setOwned(await listOwnedProjects());
@@ -213,8 +225,8 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
                           void setProjectJoin({ projectId, name: projectName, uploadCode }).then(
                             () => {
                               void reload();
-                              Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다.');
-                              onBack();
+                              Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
+                              leaveAfterJoin();
                             },
                           );
                         },
@@ -225,8 +237,8 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
                 }
                 await setProjectJoin({ projectId, name: projectName, uploadCode });
                 await reload();
-                Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다.');
-                onBack();
+                Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
+                leaveAfterJoin();
               })();
             },
           },
@@ -243,6 +255,41 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
       Alert.alert('참여', '사업코드와 참여코드를 확인하세요.');
       return;
     }
+    void confirmJoin(parsed.projectId, parsed.uploadCode);
+  };
+
+  const handleJoinScanPress = () => {
+    if (Platform.OS === 'web') {
+      Alert.alert('QR 찍기', '웰에서는 카메라 QR 인식이 없습니다. 링크를 붙여 넣으세요.');
+      return;
+    }
+    void (async () => {
+      const perm = cameraPermission?.granted
+        ? cameraPermission
+        : await requestCameraPermission();
+      if (!perm?.granted) {
+        Alert.alert('QR 찍기', '카메라 권한이 필요합니다.');
+        return;
+      }
+      setJoinScanLocked(false);
+      setJoinScanning(true);
+    })();
+  };
+
+  const onJoinBarcodeScanned = (result: { data?: string }) => {
+    if (joinScanLocked) return;
+    const raw = String(result?.data || '').trim();
+    if (!raw) return;
+    setJoinScanLocked(true);
+    setJoinScanning(false);
+    const parsed = parseJoinPayload(raw);
+    if (!parsed) {
+      Alert.alert('참여', '사업 참여용 QR이 아닙니다. 관리자 QR을 다시 찍어 주세요.', [
+        { text: '확인', onPress: () => setJoinScanLocked(false) },
+      ]);
+      return;
+    }
+    setJoinCodeText(raw);
     void confirmJoin(parsed.projectId, parsed.uploadCode);
   };
 
@@ -532,7 +579,7 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
   const renderJoin = () => (
     <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
       <Text style={styles.label}>참여 링크 또는 코드</Text>
-      <Text style={styles.hint}>형식: VS-… 코드 / 참여코드 또는 QR에서 복사한 링크</Text>
+      <Text style={styles.hint}>형식: VS-… 코드 / 참여코드 또는 QR·웹 참여 링크</Text>
       <TextInput
         style={[styles.input, styles.inputMulti]}
         value={joinCodeText}
@@ -541,6 +588,9 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
         autoCapitalize="characters"
         multiline
       />
+      <Pressable style={styles.secondary} onPress={handleJoinScanPress} disabled={busy}>
+        <Text style={styles.secondaryText}>QR 찍기</Text>
+      </Pressable>
       <Pressable style={styles.primary} onPress={handleJoinSubmit} disabled={busy}>
         <Text style={styles.primaryText}>연결</Text>
       </Pressable>
@@ -656,6 +706,28 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" color="#111" />
+        </View>
+      ) : null}
+      {joinScanning ? (
+        <View style={styles.scanOverlay}>
+          <CameraView
+            style={styles.scanCamera}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+            onBarcodeScanned={joinScanLocked ? undefined : onJoinBarcodeScanned}
+          />
+          <View style={styles.scanBottom}>
+            <Text style={styles.scanHint}>관리자 QR을 화면 안에 맞춰 주세요</Text>
+            <Pressable
+              style={styles.secondary}
+              onPress={() => {
+                setJoinScanning(false);
+                setJoinScanLocked(false);
+              }}
+            >
+              <Text style={styles.secondaryText}>닫기</Text>
+            </Pressable>
+          </View>
         </View>
       ) : null}
     </View>
@@ -777,4 +849,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  scanOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#000',
+    zIndex: 20,
+  },
+  scanCamera: { flex: 1 },
+  scanBottom: {
+    padding: 20,
+    paddingBottom: Platform.OS === 'android' ? 40 : 28,
+    gap: 12,
+    backgroundColor: '#111',
+  },
+  scanHint: { color: '#fff', textAlign: 'center', fontWeight: '600' },
 });

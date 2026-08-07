@@ -3561,3 +3561,14 @@ restore-project-inbox-qr-https.bat
 
 src.pre-project-inbox-qr-https/ · pi.pre-project-inbox-qr-https/ 스냅샷으로 되돌린 뒤 API 변경분은 Vercel 재배포합니다.
 
+
+## 237. 사업 참여 QR 찍기 되돌리기 (선택)
+
+앱 내 QR 찍기·참여 후 카메라 이동 후 문제가 생기면:
+
+`at
+restore-project-join-scan.bat
+`
+
+src.pre-project-join-scan/ 스냅샷으로 되돌립니다.
+

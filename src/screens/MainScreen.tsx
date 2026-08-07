@@ -112,7 +112,11 @@ export function MainScreen() {
           onOpenProjectCollect={() => setScreen('projectCollect')}
         />
       ) : screen === 'projectCollect' ? (
-        <ProjectCollectScreen onBack={() => setScreen('settings')} onImported={bumpRefresh} />
+        <ProjectCollectScreen
+          onBack={() => setScreen('settings')}
+          onJoinedGoCamera={() => setScreen('camera')}
+          onImported={bumpRefresh}
+        />
       ) : screen === 'ossLicenses' ? (
         <OpenSourceLicensesScreen onBack={() => setScreen('settings')} />
       ) : screen === 'trash' ? (
