@@ -3539,3 +3539,14 @@ restore-ncp-put-fix.bat
 
 `api.pre-ncp-put-fix/project.js`로 `api/project.js`를 되돌린 뒤 Vercel을 재배포합니다.
 
+
+## 235. 사업 QR 격자 표시 되돌리기 (선택)
+
+사업 취합 QR이 모듈 격자로 바뀐 뒤 문제가 생기면:
+
+```bat
+restore-project-qr-matrix.bat
+```
+
+`src.pre-project-qr-matrix/` 스냅샷으로 `ProjectCollectScreen.tsx`를 되돌립니다.
+

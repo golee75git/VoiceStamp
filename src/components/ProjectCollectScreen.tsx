@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Image,
   Pressable,
   ScrollView,
   Share,
@@ -74,23 +73,25 @@ function parseJoinPayload(raw: string): { projectId: string; uploadCode: string 
   return null;
 }
 
-async function buildQrDataUri(payload: string): Promise<string> {
-  const qr = QRCode.create(payload, { errorCorrectionLevel: 'M' });
-  const modules = qr.modules;
-  const size = modules.size;
-  const scale = 6;
-  const margin = 2;
-  const total = (size + margin * 2) * scale;
-  // Minimal PNG via qrcode toDataURL when available
-  if (typeof (QRCode as unknown as { toDataURL?: Function }).toDataURL === 'function') {
-    return (QRCode as unknown as { toDataURL: (t: string, o: object) => Promise<string> }).toDataURL(
-      payload,
-      { margin: 2, width: 280, errorCorrectionLevel: 'M' },
-    );
+/** RN has no canvas - draw qrcode.create() modules as Views (no toDataURL). */
+type QrGrid = { size: number; dark: boolean[][] };
+
+function buildQrGrid(payload: string): QrGrid | null {
+  try {
+    const qr = QRCode.create(payload, { errorCorrectionLevel: 'M' });
+    const size = qr.modules.size;
+    const dark: boolean[][] = [];
+    for (let row = 0; row < size; row += 1) {
+      const line: boolean[] = [];
+      for (let col = 0; col < size; col += 1) {
+        line.push(qr.modules.get(row, col) === 1);
+      }
+      dark.push(line);
+    }
+    return { size, dark };
+  } catch {
+    return null;
   }
-  void total;
-  void scale;
-  return '';
 }
 
 export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported }: Props) {
@@ -99,7 +100,8 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
   const [owned, setOwned] = useState<OwnedProject[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
   const [active, setActive] = useState<OwnedProject | null>(null);
-  const [qrUri, setQrUri] = useState<string | null>(null);
+  const [qrGrid, setQrGrid] = useState<QrGrid | null>(null);
+  const [qrFailed, setQrFailed] = useState(false);
 
   const [name, setName] = useState('');
   const [ttlDays, setTtlDays] = useState(7);
@@ -126,11 +128,14 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
 
   useEffect(() => {
     if (phase !== 'qr' || !active) {
-      setQrUri(null);
+      setQrGrid(null);
+      setQrFailed(false);
       return;
     }
     const payload = `voicestamp://join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`;
-    void buildQrDataUri(payload).then(setQrUri).catch(() => setQrUri(null));
+    const grid = buildQrGrid(payload);
+    setQrGrid(grid);
+    setQrFailed(!grid);
   }, [phase, active]);
 
   const folderPreview = useMemo(
@@ -431,8 +436,23 @@ export function ProjectCollectScreen({ onBack, initialPhase = 'hub', onImported 
       <ScrollView contentContainerStyle={styles.body}>
         <Text style={styles.title}>{active.name}</Text>
         <Text style={styles.hint}>일시 보관 · D-{left}</Text>
-        {qrUri ? (
-          <Image source={{ uri: qrUri }} style={styles.qr} />
+        {qrGrid ? (
+          <View style={styles.qrWrap}>
+            <View style={[styles.qrInner, { width: qrGrid.size * 8, height: qrGrid.size * 8 }]}>
+              {qrGrid.dark.map((line, row) => (
+                <View key={`r${row}`} style={styles.qrRow}>
+                  {line.map((isDark, col) => (
+                    <View
+                      key={`c${col}`}
+                      style={[styles.qrCell, isDark ? styles.qrCellDark : styles.qrCellLight]}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : qrFailed ? (
+          <Text style={styles.hint}>QR을 표시하지 못했습니다. 아래 코드·공유를 사용하세요.</Text>
         ) : (
           <Text style={styles.hint}>QR 준비 중…</Text>
         )}
@@ -716,7 +736,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerText: { color: '#065f46', fontWeight: '600' },
-  qr: { width: 280, height: 280, alignSelf: 'center', backgroundColor: '#fff' },
+  qrWrap: {
+    alignSelf: 'center',
+    padding: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  qrInner: { overflow: 'hidden' },
+  qrRow: { flexDirection: 'row' },
+  qrCell: { width: 8, height: 8 },
+  qrCellDark: { backgroundColor: '#111' },
+  qrCellLight: { backgroundColor: '#fff' },
   mono: { fontFamily: 'monospace', fontSize: 13, color: '#111' },
   inboxRow: {
     paddingHorizontal: 20,
