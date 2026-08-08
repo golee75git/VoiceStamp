@@ -20,6 +20,7 @@ import QRCode from 'qrcode';
 import {
   buildProjectJoinHttpsUrl,
   parseProjectJoinLink,
+  type ProjectJoinCodes,
 } from '../services/projectJoinLink';
 
 import {
@@ -28,8 +29,19 @@ import {
   apiLookupProject,
   apiManifest,
   apiRotateUploadCode,
+  apiSetInviteTemplate,
   mapProjectApiError,
 } from '../services/projectCollectApi';
+import {
+  applyInviteTemplateForJoin,
+  isBuiltinStampFieldTemplateId,
+  toInviteFieldTemplatePayload,
+} from '../services/projectInviteTemplate';
+import {
+  listCustomStampFieldTemplates,
+  STAMP_FIELD_TEMPLATES,
+  type StampFieldTemplate,
+} from '../services/stampFieldTemplates';
 import { importProjectStampToPhone } from '../services/projectImportService';
 import {
   buildImportGroupName,
@@ -74,29 +86,9 @@ type Props = {
   /** After join succeeds, open stamp camera (defaults to onBack). */
   onJoinedGoCamera?: () => void;
   initialPhase?: ProjectCollectPhase;
+  initialJoinText?: string;
   onImported?: () => void;
 };
-
-function parseJoinPayload(raw: string): { projectId: string; uploadCode: string } | null {
-  const trimmed = raw.trim();
-  try {
-    if (trimmed.includes('voicestamp://join') || trimmed.includes('/join?')) {
-      const url = trimmed.includes('://')
-        ? new URL(trimmed.replace('voicestamp://', 'https://join.local/'))
-        : new URL(trimmed, 'https://voicestamp-gilt.vercel.app/');
-      const p = url.searchParams.get('p') || '';
-      const c = url.searchParams.get('c') || '';
-      if (p && c) return { projectId: p, uploadCode: c };
-    }
-  } catch {
-    // fall through
-  }
-  const parts = trimmed.split(/[\s,|/]+/).filter(Boolean);
-  if (parts.length >= 2 && parts[0].startsWith('VS-')) {
-    return { projectId: parts[0], uploadCode: parts[1] };
-  }
-  return null;
-}
 
 /** RN has no canvas - draw qrcode.create() modules as Views (no toDataURL). */
 type QrGrid = { size: number; dark: boolean[][] };
@@ -151,6 +143,11 @@ export function ProjectCollectScreen({
   const [joinScanning, setJoinScanning] = useState(false);
   const [joinScanLocked, setJoinScanLocked] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [inviteTemplateName, setInviteTemplateName] = useState<string | null>(null);
+  const [inviteTemplateSourceId, setInviteTemplateSourceId] = useState<string | null>(null);
+  const [inviteId, setInviteId] = useState<string | null>(null);
+  const [templatePickerVisible, setTemplatePickerVisible] = useState(false);
+  const [templatePickerOptions, setTemplatePickerOptions] = useState<StampFieldTemplate[]>([]);
 
   const leaveAfterJoin = () => {
     if (onJoinedGoCamera) onJoinedGoCamera();
@@ -185,11 +182,94 @@ export function ProjectCollectScreen({
       setQrFailed(false);
       return;
     }
-    const payload = buildProjectJoinHttpsUrl(active.projectId, active.uploadCode);
+    const payload = buildProjectJoinHttpsUrl(active.projectId, active.uploadCode, {
+      templateId:
+        inviteTemplateSourceId && isBuiltinStampFieldTemplateId(inviteTemplateSourceId)
+          ? inviteTemplateSourceId
+          : null,
+      inviteId,
+    });
     const grid = buildQrGrid(payload);
     setQrGrid(grid);
     setQrFailed(!grid);
-  }, [phase, active]);
+  }, [phase, active, inviteTemplateSourceId, inviteId]);
+
+  const syncInviteStateFromOwned = (project: OwnedProject) => {
+    setInviteTemplateSourceId(project.inviteTemplateSourceId || null);
+    setInviteId(project.inviteId || null);
+    const sid = project.inviteTemplateSourceId || null;
+    if (!sid) {
+      setInviteTemplateName(null);
+      return;
+    }
+    const builtin = STAMP_FIELD_TEMPLATES.find((t) => t.id === sid);
+    setInviteTemplateName(project.inviteTemplateName || builtin?.name || sid);
+  };
+
+  const openInviteForProject = (project: OwnedProject) => {
+    setActive(project);
+    syncInviteStateFromOwned(project);
+    setPhase('qr');
+  };
+
+  const handlePickInviteTemplate = async (template: StampFieldTemplate) => {
+    if (!active) return;
+    setTemplatePickerVisible(false);
+    const p = (await getCollectorPin(active.projectId)) || '';
+    if (!p) {
+      Alert.alert('저장 템플릿', '취합 PIN이 필요합니다.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const payload = toInviteFieldTemplatePayload(template);
+      const r = await apiSetInviteTemplate({
+        projectId: active.projectId,
+        collectorPin: p,
+        template: payload,
+      });
+      const next: OwnedProject = {
+        ...active,
+        inviteTemplateSourceId: template.id,
+        inviteTemplateName: template.name,
+        inviteId: r.inviteId,
+      };
+      await upsertOwnedProject(next);
+      setActive(next);
+      setInviteTemplateSourceId(template.id);
+      setInviteTemplateName(template.name);
+      setInviteId(r.inviteId);
+    } catch (e) {
+      Alert.alert('저장 템플릿', mapProjectApiError(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openTemplatePicker = () => {
+    void (async () => {
+      const customs = await listCustomStampFieldTemplates();
+      setTemplatePickerOptions([...STAMP_FIELD_TEMPLATES, ...customs]);
+      setTemplatePickerVisible(true);
+    })();
+  };
+
+  const clearInviteTemplate = () => {
+    if (!active) return;
+    void (async () => {
+      const next: OwnedProject = {
+        ...active,
+        inviteTemplateSourceId: null,
+        inviteTemplateName: null,
+        inviteId: null,
+      };
+      await upsertOwnedProject(next);
+      setActive(next);
+      setInviteTemplateSourceId(null);
+      setInviteTemplateName(null);
+      setInviteId(null);
+    })();
+  };
 
   const folderPreview = useMemo(
     () => buildImportGroupName(active?.name || name || '사업', folderMode),
@@ -222,6 +302,9 @@ export function ProjectCollectScreen({
       await upsertOwnedProject(ownedItem);
       await setCollectorPin(created.projectId, pin);
       setActive(ownedItem);
+      setInviteTemplateSourceId(null);
+      setInviteTemplateName(null);
+      setInviteId(null);
       setPhase('qr');
       await reload();
     } catch (e) {
@@ -231,7 +314,49 @@ export function ProjectCollectScreen({
     }
   };
 
-  const confirmJoin = async (projectId: string, uploadCode: string) => {
+  const finishJoinWithTemplate = async (
+    projectId: string,
+    projectName: string,
+    uploadCode: string,
+    mark: string,
+    link: Pick<ProjectJoinCodes, 'templateId' | 'inviteId'>,
+    fieldTemplate: Parameters<typeof applyInviteTemplateForJoin>[0]['fieldTemplate'],
+  ) => {
+    await setProjectCollectEnabled(true);
+    await setProjectJoin({
+      projectId,
+      name: projectName,
+      uploadCode,
+      mark,
+    });
+    try {
+      await applyInviteTemplateForJoin({
+        fieldTemplate: fieldTemplate || null,
+        templateId: link.templateId || null,
+      });
+    } catch {
+      // join still ok if template apply fails
+    }
+    await reload();
+    const tplHint =
+      fieldTemplate?.name ||
+      (link.templateId
+        ? STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name
+        : null);
+    Alert.alert(
+      '연결되었습니다',
+      tplHint
+        ? `저장 템플릿 「${tplHint}」을 적용했습니다. 저장 시 자동으로 올라갑니다.`
+        : '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.',
+    );
+    leaveAfterJoin();
+  };
+
+  const confirmJoin = async (
+    projectId: string,
+    uploadCode: string,
+    link: Pick<ProjectJoinCodes, 'templateId' | 'inviteId'> = {},
+  ) => {
     const mark = sanitizeJoinMark(joinMarkText);
     if (!mark) {
       Alert.alert(
@@ -243,15 +368,22 @@ export function ProjectCollectScreen({
     setBusy(true);
     try {
       let projectName = projectId;
+      let fieldTemplate: Parameters<typeof applyInviteTemplateForJoin>[0]['fieldTemplate'] = null;
       try {
-        const looked = await apiLookupProject(projectId);
+        const looked = await apiLookupProject(projectId, { inviteId: link.inviteId });
         projectName = looked.name;
+        fieldTemplate = looked.fieldTemplate || null;
       } catch {
         // still allow join; upload will validate code
       }
+      const tplLine = fieldTemplate?.name
+        ? `\n저장 템플릿: ${fieldTemplate.name}`
+        : link.templateId
+          ? `\n저장 템플릿: ${STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name || link.templateId}`
+          : '';
       Alert.alert(
         `${projectName}에 참여할까요?`,
-        `구분 표시: ${mark}\n연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.`,
+        `구분 표시: ${mark}${tplLine}\n연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.`,
         [
           { text: '취소', style: 'cancel' },
           {
@@ -268,37 +400,28 @@ export function ProjectCollectScreen({
                       {
                         text: '바꾸기',
                         onPress: () => {
-                          void (async () => {
-                            await setProjectCollectEnabled(true);
-                            await setProjectJoin({
-                              projectId,
-                              name: projectName,
-                              uploadCode,
-                              mark,
-                            });
-                            await reload();
-                            Alert.alert(
-                              '연결되었습니다',
-                              '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.',
-                            );
-                            leaveAfterJoin();
-                          })();
+                          void finishJoinWithTemplate(
+                            projectId,
+                            projectName,
+                            uploadCode,
+                            mark,
+                            link,
+                            fieldTemplate,
+                          );
                         },
                       },
                     ],
                   );
                   return;
                 }
-                await setProjectCollectEnabled(true);
-                await setProjectJoin({
+                await finishJoinWithTemplate(
                   projectId,
-                  name: projectName,
+                  projectName,
                   uploadCode,
                   mark,
-                });
-                await reload();
-                Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
-                leaveAfterJoin();
+                  link,
+                  fieldTemplate,
+                );
               })();
             },
           },
@@ -317,12 +440,15 @@ export function ProjectCollectScreen({
       );
       return;
     }
-    const parsed = parseJoinPayload(joinCodeText);
+    const parsed = parseProjectJoinLink(joinCodeText);
     if (!parsed) {
       Alert.alert('참여', '사업코드와 참여코드를 확인하세요.');
       return;
     }
-    void confirmJoin(parsed.projectId, parsed.uploadCode);
+    void confirmJoin(parsed.projectId, parsed.uploadCode, {
+      templateId: parsed.templateId,
+      inviteId: parsed.inviteId,
+    });
   };
 
   const handleJoinScanPress = () => {
@@ -349,7 +475,7 @@ export function ProjectCollectScreen({
     if (!raw) return;
     setJoinScanLocked(true);
     setJoinScanning(false);
-    const parsed = parseJoinPayload(raw);
+    const parsed = parseProjectJoinLink(raw);
     if (!parsed) {
       Alert.alert('참여', '사업 참여용 QR이 아닙니다. 관리자 QR을 다시 찍어 주세요.', [
         { text: '확인', onPress: () => setJoinScanLocked(false) },
@@ -365,7 +491,10 @@ export function ProjectCollectScreen({
       setJoinScanLocked(false);
       return;
     }
-    void confirmJoin(parsed.projectId, parsed.uploadCode);
+    void confirmJoin(parsed.projectId, parsed.uploadCode, {
+      templateId: parsed.templateId,
+      inviteId: parsed.inviteId,
+    });
   };
 
   const openInbox = async (project: OwnedProject) => {
@@ -696,10 +825,7 @@ export function ProjectCollectScreen({
                 {!closed ? (
                   <Pressable
                     style={styles.ownedAction}
-                    onPress={() => {
-                      setActive(project);
-                      setPhase('qr');
-                    }}
+                    onPress={() => openInviteForProject(project)}
                   >
                     <Text style={styles.ownedActionText}>초대</Text>
                   </Pressable>
@@ -792,12 +918,37 @@ export function ProjectCollectScreen({
         )}
         <Text style={styles.mono}>사업코드 {active.projectId}</Text>
         <Text style={styles.mono}>참여코드 {active.uploadCode}</Text>
+        <Text style={styles.label}>저장 템플릿 (선택)</Text>
+        <Text style={styles.hint}>
+          지정하면 링크를 받은 사람이 참여·촬영할 때 칸 이름·저장 유형이 맞춰집니다. 공유·QR을 다시
+          받으세요.
+        </Text>
+        <Pressable style={styles.secondary} onPress={openTemplatePicker} disabled={busy}>
+          <Text style={styles.secondaryText}>
+            {inviteTemplateName ? `템플릿: ${inviteTemplateName}` : '템플릿 고르기'}
+          </Text>
+        </Pressable>
+        {inviteTemplateName ? (
+          <Pressable style={styles.secondary} onPress={clearInviteTemplate} disabled={busy}>
+            <Text style={styles.secondaryText}>템플릿 빼기</Text>
+          </Pressable>
+        ) : null}
         <Text style={styles.hint}>이 QR은 올리기 전용입니다. PIN을 함께 보내지 마세요.</Text>
         <Pressable
           style={styles.secondary}
           onPress={() =>
             void Share.share({
-              message: `VoiceStamp 사업 참여: ${active.name}\n${buildProjectJoinHttpsUrl(active.projectId, active.uploadCode)}`,
+              message: `VoiceStamp 사업 참여: ${active.name}\n${buildProjectJoinHttpsUrl(
+                active.projectId,
+                active.uploadCode,
+                {
+                  templateId:
+                    inviteTemplateSourceId && isBuiltinStampFieldTemplateId(inviteTemplateSourceId)
+                      ? inviteTemplateSourceId
+                      : null,
+                  inviteId,
+                },
+              )}`,
             })
           }
         >
@@ -1090,6 +1241,36 @@ export function ProjectCollectScreen({
           </View>
         </View>
       ) : null}
+      <Modal
+        visible={templatePickerVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setTemplatePickerVisible(false)}
+      >
+        <View style={styles.templatePickerBg}>
+          <View style={styles.templatePickerSheet}>
+            <Text style={styles.label}>초대 저장 템플릿</Text>
+            <Text style={styles.hint}>받는 사람 촬영 칸에 적용됩니다.</Text>
+            <FlatList
+              data={templatePickerOptions}
+              keyExtractor={(item) => item.id}
+              style={styles.templatePickerList}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={styles.templatePickerRow}
+                  onPress={() => void handlePickInviteTemplate(item)}
+                >
+                  <Text style={styles.templatePickerName}>{item.name}</Text>
+                  <Text style={styles.hint}>{item.custom ? '내 템플릿' : '기본'}</Text>
+                </Pressable>
+              )}
+            />
+            <Pressable style={styles.secondary} onPress={() => setTemplatePickerVisible(false)}>
+              <Text style={styles.secondaryText}>닫기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -1295,4 +1476,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.72)',
   },
   scanHint: { color: '#fff', textAlign: 'center', fontWeight: '600' },
+  templatePickerBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'flex-end',
+  },
+  templatePickerSheet: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: 20,
+    paddingBottom: Platform.OS === 'android' ? 36 : 28,
+    maxHeight: '70%',
+    gap: 8,
+  },
+  templatePickerList: { maxHeight: 360 },
+  templatePickerRow: {
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#e5e7eb',
+  },
+  templatePickerName: { fontSize: 16, fontWeight: '600', color: '#111' },
 });

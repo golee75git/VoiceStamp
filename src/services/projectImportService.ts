@@ -67,7 +67,10 @@ export async function importProjectStampToPhone(input: {
     extra2: null,
     extra3: null,
     sourceUrl: null,
-    templateId: null,
+    templateId:
+      meta.templateId != null && String(meta.templateId).trim()
+        ? String(meta.templateId).trim().slice(0, 64)
+        : null,
     titleFieldLabel: null,
     placeFieldLabel: null,
     memoFieldLabel: null,

@@ -18,6 +18,64 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+/** Sanitize invite save-template snapshot (labels/placeholders only; no secrets). */
+function sanitizeFieldTemplate(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const sourceId = String(raw.sourceId || '')
+    .trim()
+    .slice(0, 64);
+  const name = String(raw.name || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .slice(0, 40);
+  if (!name) return null;
+  const lab = (v, fb) => {
+    const s = String(v == null ? fb : v)
+      .trim()
+      .replace(/\s+/g, ' ')
+      .slice(0, 20);
+    return s || fb;
+  };
+  const ph = (v) =>
+    String(v == null ? '' : v)
+      .trim()
+      .replace(/\s+/g, ' ')
+      .slice(0, 80);
+  const labelsIn = raw.labels && typeof raw.labels === 'object' ? raw.labels : {};
+  const phIn = raw.placeholders && typeof raw.placeholders === 'object' ? raw.placeholders : {};
+  return {
+    sourceId: sourceId || 'invite',
+    name,
+    labels: {
+      titleFieldLabel: lab(labelsIn.titleFieldLabel, '제목'),
+      placeFieldLabel: lab(labelsIn.placeFieldLabel, '장소'),
+      memoFieldLabel: lab(labelsIn.memoFieldLabel, '메모'),
+      extra1FieldLabel: lab(labelsIn.extra1FieldLabel, '추가1'),
+      extra2FieldLabel: lab(labelsIn.extra2FieldLabel, '추가2'),
+      extra3FieldLabel: lab(labelsIn.extra3FieldLabel, '추가3'),
+    },
+    placeholders: {
+      title: ph(phIn.title),
+      place: ph(phIn.place),
+      memo: ph(phIn.memo),
+      extra1: ph(phIn.extra1),
+      extra2: ph(phIn.extra2),
+      extra3: ph(phIn.extra3),
+    },
+  };
+}
+
+function pruneInviteTemplates(map) {
+  const entries = Object.entries(map || {}).sort(
+    (a, b) => Number(b[1] && b[1].createdAt) - Number(a[1] && a[1].createdAt),
+  );
+  const next = {};
+  for (const [id, row] of entries.slice(0, 20)) {
+    next[id] = row;
+  }
+  return next;
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -583,11 +641,14 @@ module.exports = async function handler(req, res) {
       await s3Put(creds, projectKey(projectId, `stamps/${stampId}.jpg`), 'image/jpeg', imgBuf);
       const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
       const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
+      const templateIdRaw = meta.templateId == null ? '' : String(meta.templateId).trim().slice(0, 64);
+      const templateId = templateIdRaw || null;
       const stampMeta = {
         stampId,
         projectId,
         uploadedByDeviceId: meta.uploadedByDeviceId || null,
         uploadedByMark,
+        templateId,
         uploadedAt: Date.now(),
         title: String(meta.title || '').slice(0, 200),
         memo: String(meta.memo || '').slice(0, 4000),
@@ -612,6 +673,7 @@ module.exports = async function handler(req, res) {
         uploadedAt: stampMeta.uploadedAt,
         uploadedByDeviceId: stampMeta.uploadedByDeviceId,
         uploadedByMark: stampMeta.uploadedByMark,
+        templateId: stampMeta.templateId,
       });
       manifest.stamps = stamps;
       manifest.lastUploadAt = stampMeta.uploadedAt;
@@ -718,19 +780,57 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    if (action === 'lookup') {
-      // Public name lookup for join confirm (no secrets). Optional.
+    if (action === 'setInviteTemplate') {
       const projectId = String(body.projectId || '');
+      const collectorPin = String(body.collectorPin || '');
+      const project = await loadProject(creds, projectId);
+      if (!project) {
+        json(res, 404, { error: 'not_found' });
+        return;
+      }
+      assertCollectorPin(project, collectorPin);
+      assertNotExpired(project);
+      if (project.closedAt) {
+        json(res, 400, { error: 'project_closed' });
+        return;
+      }
+      const template = sanitizeFieldTemplate(body.template);
+      if (!template) {
+        json(res, 400, { error: 'invalid_template' });
+        return;
+      }
+      const inviteId = randomToken(6);
+      const map = pruneInviteTemplates(project.inviteTemplates || {});
+      map[inviteId] = { template, createdAt: Date.now() };
+      project.inviteTemplates = map;
+      project.activeInviteId = inviteId;
+      await saveProject(creds, project);
+      json(res, 200, { inviteId, template });
+      return;
+    }
+
+    if (action === 'lookup') {
+      // Public name lookup for join confirm (no secrets). Optional invite template.
+      const projectId = String(body.projectId || '');
+      const inviteId = String(body.inviteId || '')
+        .trim()
+        .slice(0, 32);
       const project = await loadProject(creds, projectId);
       if (!project || project.closedAt) {
         json(res, 404, { error: 'not_found' });
         return;
+      }
+      let fieldTemplate = null;
+      if (inviteId && project.inviteTemplates && project.inviteTemplates[inviteId]) {
+        fieldTemplate = sanitizeFieldTemplate(project.inviteTemplates[inviteId].template);
       }
       json(res, 200, {
         projectId: project.projectId,
         name: project.name,
         expiresAt: project.expiresAt,
         ttlDays: project.ttlDays,
+        inviteId: fieldTemplate ? inviteId : null,
+        fieldTemplate,
       });
       return;
     }

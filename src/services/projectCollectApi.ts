@@ -20,6 +20,28 @@ export type ManifestStamp = {
   uploadedAt?: number;
   uploadedByDeviceId?: string | null;
   uploadedByMark?: string | null;
+  templateId?: string | null;
+};
+
+export type InviteFieldTemplateDto = {
+  sourceId: string;
+  name: string;
+  labels: {
+    titleFieldLabel: string;
+    placeFieldLabel: string;
+    memoFieldLabel: string;
+    extra1FieldLabel: string;
+    extra2FieldLabel: string;
+    extra3FieldLabel: string;
+  };
+  placeholders: {
+    title: string;
+    place: string;
+    memo: string;
+    extra1: string;
+    extra2: string;
+    extra3: string;
+  };
 };
 
 export type ManifestResult = {
@@ -54,13 +76,30 @@ export async function apiCreateProject(input: {
   return postAction<ProjectCreateResult>({ action: 'create', ...input });
 }
 
-export async function apiLookupProject(projectId: string): Promise<{
+export async function apiLookupProject(
+  projectId: string,
+  opts?: { inviteId?: string | null },
+): Promise<{
   projectId: string;
   name: string;
   expiresAt: number;
   ttlDays: number;
+  inviteId?: string | null;
+  fieldTemplate?: InviteFieldTemplateDto | null;
 }> {
-  return postAction({ action: 'lookup', projectId });
+  return postAction({
+    action: 'lookup',
+    projectId,
+    inviteId: opts?.inviteId || undefined,
+  });
+}
+
+export async function apiSetInviteTemplate(input: {
+  projectId: string;
+  collectorPin: string;
+  template: InviteFieldTemplateDto;
+}): Promise<{ inviteId: string; template: InviteFieldTemplateDto }> {
+  return postAction({ action: 'setInviteTemplate', ...input });
 }
 
 export async function apiUploadStamp(input: {
@@ -121,6 +160,10 @@ export function mapProjectApiError(e: unknown): string {
       return '취합 PIN이 올바르지 않습니다.';
     case 'project_expired':
       return '이 사업은 종료되었습니다. 연결을 끊어 주세요.';
+    case 'project_closed':
+      return '종료된 사업에는 초대를 넣을 수 없습니다.';
+    case 'invalid_template':
+      return '저장 템플릿이 올바르지 않습니다.';
     case 'not_found':
       return '사업을 찾을 수 없습니다.';
     default:

@@ -630,13 +630,10 @@ export async function listStampFieldTemplatesForFilter(): Promise<
   ];
 }
 
-/** Apply template labels to app settings; placeholders are session hints for save inputs. */
-export async function applyStampFieldTemplate(templateId: string): Promise<StampFieldTemplate> {
-  const template = await findStampFieldTemplate(templateId);
-  if (!template) {
-    throw new Error('템플릿을 찾을 수 없습니다.');
-  }
-
+/** Apply a full template object (invite snapshot / custom) without requiring local catalog id. */
+export async function applyStampFieldTemplateObject(
+  template: StampFieldTemplate,
+): Promise<StampFieldTemplate> {
   const labels = resolveFieldLabels(template.labels);
   await setTitleFieldLabel(labels.titleFieldLabel);
   await setPlaceFieldLabel(labels.placeFieldLabel);
@@ -645,14 +642,21 @@ export async function applyStampFieldTemplate(templateId: string): Promise<Stamp
   await setExtra2FieldLabel(labels.extra2FieldLabel);
   await setExtra3FieldLabel(labels.extra3FieldLabel);
   await writeActiveTemplateId(template.id);
-
-  activePlaceholders = { ...template.placeholders };
-  // Keep save-modal layout cache in sync so the first paint shows template labels (no 제목/장소 flash).
+  activePlaceholders = { ...sanitizePlaceholders(template.placeholders) };
   if (peekStampSaveModalLayoutCache()) {
     patchStampSaveModalLayoutFieldLabels(labels);
   } else {
     invalidateStampSaveModalLayoutCache();
     await loadStampSaveModalLayoutSettings();
   }
-  return { ...template, labels };
+  return { ...template, labels, placeholders: { ...activePlaceholders } };
+}
+
+/** Apply template labels to app settings; placeholders are session hints for save inputs. */
+export async function applyStampFieldTemplate(templateId: string): Promise<StampFieldTemplate> {
+  const template = await findStampFieldTemplate(templateId);
+  if (!template) {
+    throw new Error('템플릿을 찾을 수 없습니다.');
+  }
+  return applyStampFieldTemplateObject(template);
 }

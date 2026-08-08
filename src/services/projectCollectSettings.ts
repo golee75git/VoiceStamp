@@ -38,6 +38,12 @@ export type OwnedProject = {
   uploadCode: string;
   /** Set when admin ends the project; kept until expiresAt. */
   closedAt?: number | null;
+  /** Built-in or custom source id last used for invite QR. */
+  inviteTemplateSourceId?: string | null;
+  /** Display name for invite template chip. */
+  inviteTemplateName?: string | null;
+  /** Server invite snapshot id for QR/share (`i=`). */
+  inviteId?: string | null;
 };
 
 /** Past or current projects this device joined to upload. */
@@ -187,6 +193,12 @@ export async function clearProjectJoin(): Promise<void> {
   await deleteValue(KEYS.joinCode);
   await deleteValue(KEYS.joinAt);
   await deleteValue(KEYS.joinMark);
+  try {
+    const { restoreJoinFieldTemplateBackup } = await import('./projectInviteTemplate');
+    await restoreJoinFieldTemplateBackup();
+  } catch {
+    // non-fatal
+  }
 }
 
 

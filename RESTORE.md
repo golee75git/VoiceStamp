@@ -3709,3 +3709,13 @@ restore-owned-close-invite.bat
 ```
 
 `src.pre-owned-close-invite/` 스냅샷으로 되돌립니다.
+
+## 251. 초대 저장 템플릿 되돌리기 (선택)
+
+초대 QR·공유에 저장 템플릿을 실어 참여 시 적용한 뒤 문제가 생기면:
+
+`at
+restore-invite-template.bat
+`
+
+src.pre-invite-template/ · pi.pre-invite-template/ · public.pre-invite-template/ 스냅샷으로 되돌립니다.

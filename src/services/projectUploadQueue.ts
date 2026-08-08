@@ -74,6 +74,7 @@ async function uploadOne(stampId: string): Promise<void> {
       longitude: stamp.longitude,
       createdAt: stamp.createdAt,
       localGroupName: null,
+      templateId: stamp.templateId || null,
     },
   });
   await setUploadStatus(stampId, 'synced');
