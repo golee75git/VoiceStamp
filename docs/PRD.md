@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-07 — FEAT-NCP-PROJECT-01 UI·구현 계획·보안 점검 (소스 없음) |
-| 최신 반영 커밋 | `143e4ac` — **소스·APK 변경 없음** (FEAT-NCP-PROJECT-01 문서) |
+| 문서 동기화 | 2026-08-08 — FEAT-NCP 앱 연동·수신함 병합·배포 채널 문서 (**본 커밋·소스 없음**) |
+| 최신 반영 커밋 | `89b643d` — 권장 APK `143848` · 기능 `54c93d2` |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -625,7 +625,7 @@
 | 목록 스크롤 | 휴지통 이동 후 카메라 갔다 재진입 시 `silent` load가 `loading` 해제 필요 (수정됨 `bfb77d8`) |
 | scrollToIndex | 앵커 인덱스 방식은 앱 종료 유발 → 사용 안 함 (`953c2cd` 되돌림) |
 | 웹 카메라 | APK 시스템 카메라와 동일한 핀치 줌 UI 아님; 브라우저·기기 의존 (`9260376`) |
-| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260802_124143.apk`** |
+| GitHub APK | `releases/` 최신 권장: **`VoiceStamp_20260808_143848.apk`** |
 | 워터마크 미리보기 | Android Modal+ScrollView에서 별도 180px 레이아웃 시 사진 미표시 → 캡션 120px 슬롯 재사용으로 수정 (`69c0b66`) |
 
 ### 10.1 개선 후보 (미구현)
@@ -640,8 +640,8 @@
 | **AI-ML-02** | **ML Kit** 온디바이스 **얼굴·숫자 블러**(개인정보 가리기) | ✅ MVP+ — 수동 탭 영역·푸터 여백(`101238`) — [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) |
 | **AI-ML-03** | **ML Kit** 한글 OCR → **제목·메모 초안** (규칙 채움, 생성형 없음) | ✅ MVP `8b74ccf`/`104328` · 긴 메모 스크롤 `1413de9` — [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) |
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드(압축 JPEG·공용 시트·Apps Script) | **설계·초안만** (2026-07-14) — [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 앱 미연동 |
-| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신→사업 폴더·취합 엑셀 | **UI·구현 계획만** (2026-08-07) — [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) · 앱 미연동 |
-| LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | [PLAN.md](./PLAN.md) §3 |
+| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신 병합·목록 배지·딥링크 | ✅ **앱 연동** (2026-08-07~08) — [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) |
+| LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 · 서명/버전 | [PLAN.md](./PLAN.md) §3 · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) |
 | FEAT-02 | PDF 생성 진행 표시 UI | 로드맵 |
 | FEAT-03 | DB+메타데이터 내보내기/가져오기 (재설치 복구) | 로드맵 |
 | RPT-01 | HTML/PDF/xlsx 보고서 서식 템플릿 | 장기 |
@@ -706,7 +706,8 @@
 | **2026-08-01** | **QR URL 연결확인** (`172149`) · **성능 번들 A/B/C** (`185512`→`191117`→`193317`) · **헬스체크 기준 고정** · 내보내기 마이크→검색 **혼입 수정** (`232652`) · 도움말·SECURITY · Vercel | `d363b00`~`f005041` |
 | **2026-08-02** | 저장 목록 **플랫·촘촘 행** (`105935`) · **행 높이 추가 축소** (`111920`) · 설정 **필드 표시명 UI 제거** (`115453`) · 선택 취소 **흰 썸네일 수정** (`124143`) · 목록 **저장 유형 필터** (`214047`) · 도움말·SECURITY · Vercel · 본 문서 동기화 | `037b0af`~`acb9a43` |
 | **2026-08-03** | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS 장소** · **저장 직후 음성으로 항목 채우기**(opt-in) · 시트 **유형·말하기 예** · **표시명** 「항목 말하기」 · APK `145506`→`151943`→`161016` · Vercel · 본 문서 동기화(**소스 변경 없음**) | `5850f1c`~`6cd1dc4` |
-| **2026-08-07** | **FEAT-NCP-PROJECT-01** 사업 QR·NCP 일시 취합 **UI 스펙·구현 계획·SECURITY** · PRD·PLAN·README 동기화 · **소스·APK 변경 없음** (권장 APK 유지 `161016`) | (본 문서 커밋) |
+| **2026-08-07** | **FEAT-NCP-PROJECT-01** 설계 후 **앱 연동**(사업 QR·NCP·수신·엑셀) · SigV4·QR 그리드·https 조인 · APK `121056`~`233124` | `143e4ac`·`934f390`~`f3a4789` |
+| **2026-08-08** | 인앱 조인 QR·구분표시·사업 목록·딥링크 · 전송/수신 배지 · **수신함 병합·썸네일** · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · **본 문서 동기화(소스 없음)** | `85c9406`~`89b643d` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 
@@ -714,11 +715,18 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-03:** 권장 파일은 **`VoiceStamp_20260803_161016.apk`**. 성능 번들 A/B/C는 누적 적용 · 회귀·다음 후보는 [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-08:** 권장 파일은 **`VoiceStamp_20260808_143848.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **설치·GitHub 권장** — 「항목 말하기」표시명 (+08-03 누적) |
+| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **설치·GitHub 권장** — 수신함 병합·썸네일 (+08-08 누적) |
+| `releases/VoiceStamp_20260808_140913.apk` | `92303e7` | **이전** — 목록 「수신」배지 |
+| `releases/VoiceStamp_20260808_134118.apk` | `e4eec17` | **이전** — 「전송」배지 |
+| `releases/VoiceStamp_20260808_120719.apk` | `d91ed1b` | **이전** — 가져온 미리보기 |
+| `releases/VoiceStamp_20260808_081515.apk` | `aec7175` | **이전** — 인앱 조인 QR |
+| `releases/VoiceStamp_20260807_233124.apk` | `f3a4789` | **이전** — https 조인·수신 바 |
+| `releases/VoiceStamp_20260807_121056.apk` | `6cc9f60` | **이전** — NCP 취합 초기 연동 |
+| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **이전** — 「항목 말하기」표시명 (+08-03 누적) |
 | `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **이전** — 칸 말하기 유형·말하기 예 (+08-03 누적) |
 | `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기(제목→장소→메모) |
 | `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 모달 유형 선택 · 웹 저장 |

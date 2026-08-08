@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-07** — FEAT-NCP-PROJECT-01 UI·구현 계획·SECURITY · **소스·APK 변경 없음** (권장 APK `161016`)
-최신 기능 커밋 기준: 장소 칩 · 저장 유형 선택(다음 기본값)
+문서 동기화: **2026-08-08** — FEAT-NCP 앱 연동·수신함 병합·[RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · **본 커밋 소스 없음** (권장 APK `143848`)
+최신 기능 커밋 기준: `54c93d2` / APK `89b643d` (`143848`)
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -472,7 +472,7 @@ VoiceStamp/
 | 369 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 | `6cd1dc4` | `restore-item-speak-label.bat` §219 |
 | 370 | GitHub APK `releases/20260803_161016` · 랜딩·`/info` | `6cd1dc4` | — |
 
-> **권장 APK:** `releases/VoiceStamp_20260803_161016.apk`
+> **권장 APK:** `releases/VoiceStamp_20260808_143848.apk`
 
 > **성능:** 번들 A/B/C 누적 적용. 회귀·다음 후보 → [HEALTHCHECK.md](./HEALTHCHECK.md)
 
@@ -1193,14 +1193,24 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-08-08
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | NCP 취합 UX — 조인 QR·구분표시·사업 목록·딥링크 · 전송/수신 배지 · **수신함 병합·썸네일** |
+| 커밋 | `85c9406`~`54c93d2` · APK `89b643d` (`143848`) |
+| APK | **권장** `releases/VoiceStamp_20260808_143848.apk` — [CHANGELOG.md](./CHANGELOG.md) |
+| 문서 | PRD·PLAN·PROJECT·README·CHANGELOG·RELEASE-CHANNELS (**소스 없음**) |
+| 롤백 | `restore-inbox-merged-list.bat` 등 |
+
 ### 2026-08-07
 
 | 항목 | 내용 |
 |------|------|
-| 분류 | **FEAT-NCP-PROJECT-01** 설계 문서만 |
+| 분류 | **FEAT-NCP-PROJECT-01** — 설계 → **앱 연동**(QR·NCP·수신·엑셀) · SigV4·QR 그리드 |
 | 문서 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) |
-| APK | **변경 없음** — 권장 `releases/VoiceStamp_20260803_161016.apk` 유지 |
-| 소스 | **변경 없음** |
+| 커밋 | `143e4ac` · `934f390`~`f3a4789` |
+| APK | `121056`~`233124` |
 
 ### 2026-08-03
 

@@ -9,6 +9,7 @@
 | 문서 | 대상 | 설명 |
 |------|------|------|
 | [CHANGELOG.md](./CHANGELOG.md) | 전체 | **날짜별·APK별** 최근 변경 요약 (권장 APK 포함) |
+| [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) | 배포 | 테스터 APK vs Play 스토어 · 서명·버전 정책 |
 | [HEALTHCHECK.md](./HEALTHCHECK.md) | 개발·QA | **성능·헬스체크 고정 기준** (번들 A/B/C 적용됨 · 다음 후보) |
 | [PRD.md](./PRD.md) | 기획·QA | 요구사항, 기능 ID, **§12 날짜별** · **§13 APK별** 요약 |
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, **§7.4 APK 빌드별 상세**, **§12 날짜별 커밋** |
@@ -18,8 +19,8 @@
 | [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md) | 기획·AI | **AI-ML-02** 온디바이스 얼굴·숫자 **블러** MVP 설계·구현 기준 |
 | [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) | 기획·AI | **AI-ML-03** OCR→제목·메모 초안 (**MVP** `8b74ccf` / `104328`) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
-| [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) | 기획·UI | **FEAT-NCP-PROJECT-01** 사업 QR·일시 취합·폴더·엑셀 **UI 스펙** (앱 미연동) |
-| [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 P0–P8 (문서만) |
+| [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) | 기획·UI | **FEAT-NCP-PROJECT-01** 사업 QR·일시 취합 UI 스펙 |
+| [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 — **앱 연동됨**(2026-08-07~) |
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
@@ -39,15 +40,16 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-08-03)
+## 현재 상태 스냅샷 (2026-08-08)
 
-- **문서 갱신일:** 2026-08-03 — 날짜별·APK별 정리 · [CHANGELOG.md](./CHANGELOG.md) (**소스 변경 없음**)
-- **최신 기능 커밋:** `6cd1dc4` — 「항목 말하기」표시명 · APK `161016`
+- **문서 갱신일:** 2026-08-08 — 날짜별·APK별 · [CHANGELOG.md](./CHANGELOG.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) (**소스 변경 없음**)
+- **최신 기능 커밋:** `54c93d2` / APK `89b643d` — 수신함 병합 · `143848`
+- **배포 단계:** 베타·테스터 APK — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [SECURITY-item-speak-label-20260803.md](./SECURITY-item-speak-label-20260803.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260803_161016.apk` — 「항목 말하기」표시명 + 08-03 누적
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260803_161016.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260808_143848.apk` — 수신함 병합 + 08-08 NCP 누적
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260808_143848.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260803_151943.apk` — 칸 말하기 유형·예
 - **이전 권장 APK:** `releases/VoiceStamp_20260803_145506.apk` — 저장 직후 칸 말하기
 - **이전 권장 APK:** `releases/VoiceStamp_20260802_214047.apk` — 목록 저장 유형 필터
@@ -110,11 +112,13 @@
 | 07-31 | **F-CAM-27** 왼손 홈 테마(`094832`) · 랜딩 **웹테스트** · **QR URL 마이크·https://**(`102403`) · 웹 보안 hardening(`626c1a4`) · 본 문서 동기화 |
 | 08-01 | **QR URL 연결확인**(`172149`) · **성능 번들 A/B/C**(`185512`→`191117`→`193317`) · **헬스체크 기준 고정** · 음성 타깃 가드(`232652`) · Vercel |
 | 08-02 | 목록 플랫·행 높이 · 설정 필드 표시명 UI 제거 · 선택 취소 썸네일 · **저장 유형 필터** · APK `105935`→`214047` · [CHANGELOG.md](./CHANGELOG.md) |
-| 08-03 | 웹 저장·**장소 칩**·앨범 EXIF 장소 · **항목 말하기**(opt-in·유형·예·표시명) · APK `101849`→`145506`→`151943`→`161016` · 본 문서 동기화(**소스 없음**) |
+| 08-03 | 웹 저장·장소 칩·항목 말하기 · APK `101849`→`161016` |
+| 08-07 | **FEAT-NCP** 앱 연동 · APK `121056`~`233124` |
+| 08-08 | 조인·배지·**수신함 병합** · APK `081515`~`143848` · RELEASE-CHANNELS · 본 문서 동기화(**소스 없음**) |
 
 ### APK별 (권장·주요)
 
-> **2026-08-03:** 권장 파일은 **`VoiceStamp_20260803_161016.apk`** (`6cd1dc4`). 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-08:** 권장 파일은 **`VoiceStamp_20260808_143848.apk`** (`89b643d`). 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|

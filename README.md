@@ -31,6 +31,7 @@ build-apk.bat
 | [docs/KAKAO-KEY-SECURITY.md](./docs/KAKAO-KEY-SECURITY.md) | 카카오 API 키 보안 체크리스트 |
 | [docs/README.md](./docs/README.md) | 문서 목록·날짜별 요약 |
 | [docs/CHANGELOG.md](./docs/CHANGELOG.md) | 날짜별·APK별 최근 변경 |
+| [docs/RELEASE-CHANNELS.md](./docs/RELEASE-CHANNELS.md) | 테스터 APK vs 스토어 릴리스·서명·버전 |
 | [docs/HEALTHCHECK.md](./docs/HEALTHCHECK.md) | 성능·헬스체크 기준 |
 | [docs/DESIGN-INFO-PAGES.md](./docs/DESIGN-INFO-PAGES.md) | 정보·법무 페이지 설계·구현 |
 | [LICENSE](./LICENSE) | MIT 라이선스 |
@@ -42,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260803_161016.apk` (`6cd1dc4`) — 항목 말하기 표시명 · 08-03 누적 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260808_143848.apk` (`89b643d`) — 수신함 병합 · 08-08 NCP 취합 누적 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

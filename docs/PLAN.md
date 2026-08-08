@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.11 |
-| 작성일 | 2026-08-03 |
-| 기준 커밋 | `6cd1dc4` — 항목 말하기 표시명 · APK `161016` |
-| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
+| 문서 버전 | 3.12 |
+| 작성일 | 2026-08-08 |
+| 기준 커밋 | `89b643d` — 권장 APK `143848` · NCP 취합·수신함 병합 |
+| 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
 
@@ -17,7 +17,7 @@
 | **Phase 1** | 설정·위치 제목·휴지통·갤러리·웹 배포 | ✅ 완료 |
 | **Phase 2** | PDF 고도화·UI/UX·손잡이·내보내기 확장 | ✅ 완료 |
 | **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 (LEG-04 ✅ LEG-06 ✅) |
-| **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 (**NCP 우선**, §12) | 📋 계획 |
+| **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 · **NCP 사업 취합(일시)** | 🔄 진행 중 (FEAT-NCP ✅ 앱 연동) |
 
 ---
 
@@ -598,7 +598,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | ID | 내용 | 비고 |
 |----|------|------|
 | **GS-UPLOAD-01** | **Google Sheets** 원클릭 업로드 (압축 JPEG·개발자 공용 시트·Apps Script) | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) · 초안 `docs/drafts/google-sheets-upload/` · **앱 미연동** |
-| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신→사업 폴더·취합 엑셀 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · **문서만·앱 미연동** |
+| **FEAT-NCP-PROJECT-01** | **사업 QR 1회 + NCP 일시 취합** · 수신 병합·배지·딥링크 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) · [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) · ✅ **앱 연동** (2026-08-07~08) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) |
 
 ---
 
@@ -616,7 +616,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | 순서 | 작업 | 이유 |
 |------|------|------|
-| 1 | LEG-05 Play 스토어 스크린샷·등록 | 정책 URL 준비됨 |
+| 1 | LEG-05 Play 스토어 · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) | 정책 URL·채널 문서 준비됨 |
 | 2 | F-QR-01 확장 — 워터마크 코너·PDF HTML QR | caption MVP 완료 |
 | 3 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
 | 4 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
@@ -733,7 +733,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-02 | 2AT·3 | 목록 **저장 유형 필터** · APK `214047` |
 | 2026-08-03 | 2AU·3 | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS** · APK `101849` 계열 |
 | 2026-08-03 | 2AV·3 | **F-Voice-10** 저장 직후 음성으로 항목 채우기 · APK `145506` · `restore-save-slot-speech.bat` |
-| 2026-08-07 | 4 (설계) | **FEAT-NCP-PROJECT-01** UI·구현 계획·SECURITY · **소스·APK 없음** |
+| 2026-08-07 | 4 | **FEAT-NCP-PROJECT-01** 설계→**앱 연동** · APK `121056`~`233124` |
+| 2026-08-08 | 4·3 | 조인·배지·**수신함 병합** · APK `081515`~`143848` |
+| 2026-08-08 | 문서 | 날짜별·APK별·RELEASE-CHANNELS · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -742,10 +744,16 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-03:** 권장 = `releases/VoiceStamp_20260803_161016.apk`. 성능 후보: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-08:** 권장 = `releases/VoiceStamp_20260808_143848.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **설치·GitHub 권장** — 「항목 말하기」표시명 |
+| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **설치·GitHub 권장** — 수신함 병합·썸네일 |
+| `releases/VoiceStamp_20260808_140913.apk` | `92303e7` | **이전** — 목록 「수신」배지 |
+| `releases/VoiceStamp_20260808_134118.apk` | `e4eec17` | **이전** — 「전송」배지 |
+| `releases/VoiceStamp_20260808_081515.apk` | `aec7175` | **이전** — 인앱 조인 QR |
+| `releases/VoiceStamp_20260807_233124.apk` | `f3a4789` | **이전** — https 조인·수신 바 |
+| `releases/VoiceStamp_20260807_121056.apk` | `6cc9f60` | **이전** — NCP 취합 초기 연동 |
+| `releases/VoiceStamp_20260803_161016.apk` | `6cd1dc4` | **이전** — 「항목 말하기」표시명 |
 | `releases/VoiceStamp_20260803_151943.apk` | `114b3dc` | **이전** — 칸 말하기 유형·말하기 예 |
 | `releases/VoiceStamp_20260803_145506.apk` | `7fbd20b` | **이전** — 저장 직후 칸 말하기 |
 | `releases/VoiceStamp_20260803_101849.apk` | `190a5e6` 계열 | **이전** — 장소 칩 · 저장 유형 선택 · 웹 저장 |
