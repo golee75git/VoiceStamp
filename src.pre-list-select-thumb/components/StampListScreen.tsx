@@ -374,17 +374,10 @@ export function StampListScreen({
     setPdfUri(null);
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      const wasSelected = next.has(id);
-      if (wasSelected) {
+      if (next.has(id)) {
         next.delete(id);
       } else {
         next.add(id);
-      }
-      // Last unchecked item: layout expands; refresh thumbs so Android does not keep blank cells.
-      if (wasSelected && next.size === 0) {
-        queueMicrotask(() => {
-          scheduleStampThumbs(stamps, resolveImageUri);
-        });
       }
       return next;
     });
@@ -1051,6 +1044,7 @@ export function StampListScreen({
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
             contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
             extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${placeFilter}:${[...selectedIds].join(',')}`}
+            maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
             initialNumToRender={8}
             maxToRenderPerBatch={6}
             windowSize={5}

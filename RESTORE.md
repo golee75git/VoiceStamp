@@ -3770,3 +3770,13 @@ restore-inbox-mark.bat
 
 src.pre-inbox-mark/ · public.pre-inbox-mark/ 스냅샷으로 되돌립니다. (이미 마이그레이션된 DB의 uploaded_by_mark 컬럼은 남아 있을 수 있습니다.)
 
+## 257. 목록 선택 해제 썸네일 되돌리기 (선택)
+
+선택/체크 해제 후 썸네일 표시 수정 뒤 문제가 생기면:
+
+`at
+restore-list-select-thumb.bat
+`
+
+src.pre-list-select-thumb/ · public.pre-list-select-thumb/ 스냅샷으로 되돌립니다.
+
