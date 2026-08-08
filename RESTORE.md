@@ -3760,3 +3760,13 @@ restore-put-datauri.bat
 
 src.pre-put-datauri/ 스냅샷으로 되돌립니다.
 
+## 256. 수신 촬영자·엑셀 되돌리기 (선택)
+
+수신함 가져오기 촬영자 저장·엑셀 첫 열 추가 후 문제가 생기면:
+
+`at
+restore-inbox-mark.bat
+`
+
+src.pre-inbox-mark/ · public.pre-inbox-mark/ 스냅샷으로 되돌립니다. (이미 마이그레이션된 DB의 uploaded_by_mark 컬럼은 남아 있을 수 있습니다.)
+

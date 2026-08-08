@@ -23,7 +23,7 @@ import type { FieldLabels } from './fieldLabels';
 
 const THUMB_WIDTH = 120;
 const THUMB_HEIGHT = 90;
-const THUMB_COL = 1;
+const THUMB_COL = 0;
 
 const DEFAULT_LABEL_SET = new Set([
   DEFAULT_FIELD_TITLE_LABEL,
@@ -160,9 +160,8 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
     views: [{ state: 'frozen', ySplit: 1 }],
   });
 
-  // fixed_plus: photographer + preview/index/floor/coords/datetime + template fields + type
+  // fixed_plus: keep preview/index/floor/coords/datetime + all template field columns + type
   sheet.columns = [
-    { header: '촬영자', key: 'uploader', width: 14 },
     { header: '미리보기', key: 'preview', width: 18 },
     { header: '순번', key: 'index', width: 8 },
     { header: headers.titleFieldLabel, key: 'title', width: 28 },
@@ -191,18 +190,17 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
       : '';
 
     sheet.getRow(rowIndex).height = 72;
-    sheet.getCell(rowIndex, 1).value = stamp.uploadedByMark?.trim() ?? '';
-    sheet.getCell(rowIndex, 3).value = i + 1;
-    sheet.getCell(rowIndex, 4).value = stamp.title;
-    sheet.getCell(rowIndex, 5).value = stamp.placeLabel?.trim() ?? '';
-    sheet.getCell(rowIndex, 6).value = stamp.memo;
-    sheet.getCell(rowIndex, 7).value = stamp.extra1?.trim() ?? '';
-    sheet.getCell(rowIndex, 8).value = stamp.extra2?.trim() ?? '';
-    sheet.getCell(rowIndex, 9).value = stamp.extra3?.trim() ?? '';
-    sheet.getCell(rowIndex, 10).value = formatFloor(stamp.floor);
-    sheet.getCell(rowIndex, 11).value = coords;
-    sheet.getCell(rowIndex, 12).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
-    sheet.getCell(rowIndex, 13).value = typeName;
+    sheet.getCell(rowIndex, 2).value = i + 1;
+    sheet.getCell(rowIndex, 3).value = stamp.title;
+    sheet.getCell(rowIndex, 4).value = stamp.placeLabel?.trim() ?? '';
+    sheet.getCell(rowIndex, 5).value = stamp.memo;
+    sheet.getCell(rowIndex, 6).value = stamp.extra1?.trim() ?? '';
+    sheet.getCell(rowIndex, 7).value = stamp.extra2?.trim() ?? '';
+    sheet.getCell(rowIndex, 8).value = stamp.extra3?.trim() ?? '';
+    sheet.getCell(rowIndex, 9).value = formatFloor(stamp.floor);
+    sheet.getCell(rowIndex, 10).value = coords;
+    sheet.getCell(rowIndex, 11).value = new Date(stamp.createdAt).toLocaleString('ko-KR');
+    sheet.getCell(rowIndex, 12).value = typeName;
 
     try {
       const { base64, extension } = await readImageBase64(stamp.imagePath);
@@ -215,7 +213,7 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
         ext: { width: THUMB_WIDTH, height: THUMB_HEIGHT },
       });
     } catch {
-      sheet.getCell(rowIndex, 2).value = '(이미지 없음)';
+      sheet.getCell(rowIndex, 1).value = '(이미지 없음)';
     }
   }
 

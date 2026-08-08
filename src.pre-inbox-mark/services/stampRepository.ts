@@ -5,7 +5,7 @@ import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id';
 
 function normalizeOptionalText(value?: string | null): string | null {
   return value?.trim() || null;
@@ -38,11 +38,6 @@ function normalizeFieldLabelSnapshot(value?: string | null): string | null {
   return trimmed ? trimmed.slice(0, 20) : null;
 }
 
-function normalizeJoinMark(value?: string | null): string | null {
-  const trimmed = value?.trim().replace(/\s+/g, ' ');
-  return trimmed ? trimmed.slice(0, 40) : null;
-}
-
 function mapRow(row: StampRow): Stamp {
   return {
     id: row.id,
@@ -69,7 +64,6 @@ function mapRow(row: StampRow): Stamp {
     extra2FieldLabel: normalizeFieldLabelSnapshot(row.extra2_field_label),
     extra3FieldLabel: normalizeFieldLabelSnapshot(row.extra3_field_label),
     parentId: normalizeParentId(row.parent_id),
-    uploadedByMark: normalizeJoinMark(row.uploaded_by_mark),
   };
 }
 
@@ -101,8 +95,8 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     extra3FieldLabel: stamp.extra3FieldLabel ?? undefined,
   });
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -127,7 +121,6 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     labels[4],
     labels[5],
     normalizeParentId(stamp.parentId),
-    normalizeJoinMark(stamp.uploadedByMark),
   );
 }
 
@@ -334,22 +327,4 @@ export async function updateStampGalleryAssetId(id: string, galleryAssetId: stri
     Date.now(),
     id,
   );
-}
-
-export async function setStampUploadedByMarkIfEmpty(
-  id: string,
-  mark: string | null | undefined,
-): Promise<boolean> {
-  const safe = normalizeJoinMark(mark);
-  if (!safe) return false;
-  const db = await getDatabase();
-  const result = await db.runAsync(
-    `UPDATE stamps SET uploaded_by_mark = ?, updated_at = ?
-     WHERE id = ? AND deleted_at IS NULL
-       AND (uploaded_by_mark IS NULL OR TRIM(uploaded_by_mark) = '')`,
-    safe,
-    Date.now(),
-    id,
-  );
-  return result.changes > 0;
 }

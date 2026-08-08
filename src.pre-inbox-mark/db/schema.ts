@@ -90,11 +90,6 @@ export const ALTER_STAMPS_ADD_PARENT_ID = `
   ALTER TABLE stamps ADD COLUMN parent_id TEXT;
 `;
 
-/** Project-collect photographer mark (join 구분 표시) from inbox import. */
-export const ALTER_STAMPS_ADD_UPLOADED_BY_MARK = `
-  ALTER TABLE stamps ADD COLUMN uploaded_by_mark TEXT;
-`;
-
 export const CREATE_STAMPS_PARENT_INDEX = `
   CREATE INDEX IF NOT EXISTS idx_stamps_parent_id ON stamps(parent_id);
 `;

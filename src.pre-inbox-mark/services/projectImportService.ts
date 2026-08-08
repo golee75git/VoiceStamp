@@ -2,7 +2,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 
 import { persistImage, resolveImageUri } from './fileService';
 import { ensureStampThumb } from './stampThumb';
-import { insertStamp, getStampById, setStampUploadedByMarkIfEmpty } from './stampRepository';
+import { insertStamp, getStampById } from './stampRepository';
 import { sanitizeStampFloor } from './stampFloor';
 import {
   apiDownloadUrl,
@@ -18,12 +18,6 @@ import {
 } from './projectCollectSettings';
 import type { Stamp } from '../types/stamp';
 
-function trimJoinMark(v: unknown): string | null {
-  if (v == null) return null;
-  const s = String(v).trim().replace(/\s+/g, ' ').slice(0, 40);
-  return s || null;
-}
-
 export async function importProjectStampToPhone(input: {
   project: OwnedProject;
   collectorPin: string;
@@ -32,25 +26,6 @@ export async function importProjectStampToPhone(input: {
   const existing = await getStampById(input.stampId);
   if (existing && !existing.deletedAt) {
     await markStampReceivedFromProject(input.stampId);
-    if (!existing.uploadedByMark) {
-      try {
-        const { meta } = await apiDownloadUrl({
-          projectId: input.project.projectId,
-          collectorPin: input.collectorPin,
-          stampId: input.stampId,
-        });
-        const filled = await setStampUploadedByMarkIfEmpty(
-          input.stampId,
-          trimJoinMark(meta.uploadedByMark),
-        );
-        if (filled) {
-          const refreshed = await getStampById(input.stampId);
-          return { stamp: refreshed || existing, skipped: true };
-        }
-      } catch {
-        // keep existing without mark
-      }
-    }
     return { stamp: existing, skipped: true };
   }
 
@@ -141,15 +116,12 @@ export async function importProjectStampToPhone(input: {
     extra2FieldLabel,
     extra3FieldLabel,
     parentId: null,
-    uploadedByMark: trimJoinMark(meta.uploadedByMark),
   };
 
   const again = await getStampById(id);
   if (again && !again.deletedAt) {
     await markStampReceivedFromProject(id);
-    await setStampUploadedByMarkIfEmpty(id, trimJoinMark(meta.uploadedByMark));
-    const refreshed = await getStampById(id);
-    return { stamp: refreshed || again, skipped: true };
+    return { stamp: again, skipped: true };
   }
   await insertStamp(stamp);
   void ensureStampThumb(id, resolveImageUri(imagePath)).catch(() => {});

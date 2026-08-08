@@ -29,8 +29,6 @@ export type Stamp = {
   extra3FieldLabel?: string | null;
   /** Root stamp id when this row is a follow-up (null = root / standalone). */
   parentId?: string | null;
-  /** Photographer join mark from project collect (null = not from inbox / unknown). */
-  uploadedByMark?: string | null;
 };
 
 export type StampRow = {
@@ -58,5 +56,4 @@ export type StampRow = {
   extra2_field_label?: string | null;
   extra3_field_label?: string | null;
   parent_id?: string | null;
-  uploaded_by_mark?: string | null;
 };

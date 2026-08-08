@@ -17,7 +17,6 @@ import {
   ALTER_STAMPS_ADD_SOURCE_URL,
   ALTER_STAMPS_ADD_TEMPLATE_ID,
   ALTER_STAMPS_ADD_PARENT_ID,
-  ALTER_STAMPS_ADD_UPLOADED_BY_MARK,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_STAMPS_PARENT_INDEX,
@@ -102,10 +101,6 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasParentId = columns.some((column) => column.name === 'parent_id');
   if (!hasParentId) {
     await db.execAsync(ALTER_STAMPS_ADD_PARENT_ID);
-  }
-  const hasUploadedByMark = columns.some((column) => column.name === 'uploaded_by_mark');
-  if (!hasUploadedByMark) {
-    await db.execAsync(ALTER_STAMPS_ADD_UPLOADED_BY_MARK);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
   await db.execAsync(CREATE_STAMPS_PARENT_INDEX);
