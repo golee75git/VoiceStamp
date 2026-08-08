@@ -13,6 +13,7 @@ import {
   buildImportGroupName,
   getProjectDeleteAfterImport,
   getProjectImportFolderMode,
+  markStampReceivedFromProject,
   type OwnedProject,
 } from './projectCollectSettings';
 import type { Stamp } from '../types/stamp';
@@ -25,6 +26,7 @@ export async function importProjectStampToPhone(input: {
 }): Promise<{ stamp: Stamp | null; skipped: boolean }> {
   const existing = await getStampById(input.stampId);
   if (existing && !existing.deletedAt) {
+    await markStampReceivedFromProject(input.stampId);
     return { stamp: existing, skipped: true };
   }
 
@@ -77,10 +79,12 @@ export async function importProjectStampToPhone(input: {
 
   const again = await getStampById(id);
   if (again && !again.deletedAt) {
+    await markStampReceivedFromProject(id);
     return { stamp: again, skipped: true };
   }
   await insertStamp(stamp);
   void ensureStampThumb(id, resolveImageUri(imagePath)).catch(() => {});
+  await markStampReceivedFromProject(id);
 
   if (await getProjectDeleteAfterImport()) {
     try {

@@ -3660,3 +3660,14 @@ restore-transmit-inbox-mark.bat
 
 `src.pre-transmit-inbox-mark/` 스냅샷으로 되돌립니다.
 
+
+## 246. 목록 「수신」배지 되돌리기 (선택)
+
+수신함 가져온 사진 「수신」표시 후 문제가 생기면:
+
+```bat
+restore-list-received-badge.bat
+```
+
+`src.pre-list-received-badge/` 스냅샷으로 되돌립니다.
+

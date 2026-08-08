@@ -1134,6 +1134,9 @@ export function StampListScreen({
                       {uploadStatusById[item.id] === 'failed' ? (
                         <Text style={styles.collectBadgeFail}>전송 실패</Text>
                       ) : null}
+                      {uploadStatusById[item.id] === 'received' ? (
+                        <Text style={styles.collectBadgeRecv}>수신</Text>
+                      ) : null}
                     </View>
                     {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
@@ -1871,6 +1874,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#991b1b',
     backgroundColor: '#fee2e2',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  collectBadgeRecv: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1e40af',
+    backgroundColor: '#dbeafe',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

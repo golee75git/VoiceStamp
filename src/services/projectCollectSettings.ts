@@ -27,7 +27,7 @@ export function sanitizeJoinMark(raw: string): string {
 }
 
 export type ProjectImportFolderMode = 'date_name' | 'name_only';
-export type ProjectUploadStatus = 'pending' | 'uploading' | 'synced' | 'failed';
+export type ProjectUploadStatus = 'pending' | 'uploading' | 'synced' | 'failed' | 'received';
 
 export type OwnedProject = {
   projectId: string;
@@ -226,6 +226,14 @@ export async function setUploadStatus(
     }
   }
   await setValue(KEYS.uploadStatus, JSON.stringify(map));
+}
+
+/** Mark a stamp brought in via project inbox import. Does not override active uploads. */
+export async function markStampReceivedFromProject(stampId: string): Promise<void> {
+  const map = await getUploadStatusMap();
+  const cur = map[stampId];
+  if (cur === 'synced' || cur === 'pending' || cur === 'uploading') return;
+  await setUploadStatus(stampId, 'received');
 }
 
 export function sanitizeProjectFolderPart(name: string): string {
