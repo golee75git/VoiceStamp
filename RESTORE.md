@@ -3649,3 +3649,14 @@ restore-list-collect-badge.bat
 
 `src.pre-list-collect-badge/` 스냅샷으로 되돌립니다.
 
+
+## 245. 전송 배지·수신 가져옴 표시 되돌리기 (선택)
+
+목록 「전송」문구·수신 「가져옴」표시 후 문제가 생기면:
+
+```bat
+restore-transmit-inbox-mark.bat
+```
+
+`src.pre-transmit-inbox-mark/` 스냅샷으로 되돌립니다.
+

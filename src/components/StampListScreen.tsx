@@ -1129,10 +1129,10 @@ export function StampListScreen({
                         {`${linkTypePrefix}${typeLabel}`}
                       </Text>
                       {uploadStatusById[item.id] === 'synced' ? (
-                        <Text style={styles.collectBadgeOk}>취합</Text>
+                        <Text style={styles.collectBadgeOk}>전송</Text>
                       ) : null}
                       {uploadStatusById[item.id] === 'failed' ? (
-                        <Text style={styles.collectBadgeFail}>취합 실패</Text>
+                        <Text style={styles.collectBadgeFail}>전송 실패</Text>
                       ) : null}
                     </View>
                     {showFullMeta && displayPlace ? (

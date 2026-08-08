@@ -53,7 +53,7 @@ import {
 } from '../services/projectCollectSettings';
 import { ProjectImportedList } from './ProjectImportedList';
 import { loadStampXlsxExport } from '../services/exportOnDemand';
-import { listStamps } from '../services/stampRepository';
+import { getStampById, listStamps } from '../services/stampRepository';
 
 export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox' | 'imported';
 
@@ -130,6 +130,7 @@ export function ProjectCollectScreen({
   const [joinCodeText, setJoinCodeText] = useState('');
   const [joinMarkText, setJoinMarkText] = useState('');
   const [inbox, setInbox] = useState<ManifestStamp[]>([]);
+  const [importedLocalById, setImportedLocalById] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [folderMode, setFolderMode] = useState<ProjectImportFolderMode>('date_name');
   const [deleteAfter, setDeleteAfter] = useState(true);
@@ -366,7 +367,18 @@ export function ProjectCollectScreen({
     try {
       await setCollectorPin(project.projectId, pinLocal);
       const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
-      setInbox(man.stamps || []);
+      const stamps = man.stamps || [];
+      setInbox(stamps);
+      const localFlags: Record<string, boolean> = {};
+      for (const item of stamps) {
+        try {
+          const row = await getStampById(item.stampId);
+          localFlags[item.stampId] = !!(row && !row.deletedAt);
+        } catch {
+          localFlags[item.stampId] = false;
+        }
+      }
+      setImportedLocalById(localFlags);
       setSelected(new Set());
       setPhase('inbox');
     } catch (e) {
@@ -756,7 +768,14 @@ export function ProjectCollectScreen({
                 });
               }}
             >
-              <Text style={styles.rowTitle}>{item.title || item.stampId}</Text>
+              <View style={styles.inboxTitleRow}>
+                <Text style={[styles.rowTitle, styles.inboxTitleFlex]} numberOfLines={2}>
+                  {item.title || item.stampId}
+                </Text>
+                {importedLocalById[item.stampId] ? (
+                  <Text style={styles.importedBadge}>가져옴</Text>
+                ) : null}
+              </View>
               <Text style={styles.rowSub}>
                 {[
                   item.uploadedByMark || '',
@@ -963,6 +982,22 @@ const styles = StyleSheet.create({
   qrCellDark: { backgroundColor: '#111' },
   qrCellLight: { backgroundColor: '#fff' },
   mono: { fontFamily: 'monospace', fontSize: 13, color: '#111' },
+  inboxTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  inboxTitleFlex: { flex: 1 },
+  importedBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1e40af',
+    backgroundColor: '#dbeafe',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
   inboxRow: {
     paddingHorizontal: 20,
     paddingVertical: 12,
