@@ -3627,3 +3627,14 @@ restore-join-deeplink.bat
 
 스냅샷 복구 후 **APK를 다시 빌드**하세요(`app.json` scheme/intentFilters).
 
+
+## 243. 가져온 미리보기·제목 사업명 되돌리기 (선택)
+
+가져옴 목록/썸네일·참여 시 제목 사업명 후 문제가 생기면:
+
+```bat
+restore-imported-preview.bat
+```
+
+`src.pre-imported-preview/` 스냅샷으로 되돌립니다.
+

@@ -51,10 +51,11 @@ import {
   type ProjectImportFolderMode,
   type ProjectJoinState,
 } from '../services/projectCollectSettings';
+import { ProjectImportedList } from './ProjectImportedList';
 import { loadStampXlsxExport } from '../services/exportOnDemand';
 import { listStamps } from '../services/stampRepository';
 
-export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox';
+export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox' | 'imported';
 
 type Props = {
   onBack: () => void;
@@ -500,6 +501,15 @@ export function ProjectCollectScreen({
                 >
                   <Text style={styles.ownedActionText}>엑셀</Text>
                 </Pressable>
+                <Pressable
+                  style={styles.ownedAction}
+                  onPress={() => {
+                    setActive(project);
+                    setPhase('imported');
+                  }}
+                >
+                  <Text style={styles.ownedActionText}>가져옴</Text>
+                </Pressable>
               </View>
             </View>
           );
@@ -778,6 +788,15 @@ export function ProjectCollectScreen({
         >
           <Text style={styles.barBtnText}>엑셀</Text>
         </Pressable>
+        <Pressable
+          style={styles.barBtn}
+          onPress={() => {
+            if (!active) return;
+            setPhase('imported');
+          }}
+        >
+          <Text style={styles.barBtnText}>가져옴</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -800,6 +819,13 @@ export function ProjectCollectScreen({
       {phase === 'qr' && renderQr()}
       {phase === 'join' && renderJoin()}
       {phase === 'inbox' && renderInbox()}
+      {phase === 'imported' && active ? (
+        <ProjectImportedList
+          project={active}
+          folderMode={folderMode}
+          onChanged={() => onImported?.()}
+        />
+      ) : null}
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" color="#111" />

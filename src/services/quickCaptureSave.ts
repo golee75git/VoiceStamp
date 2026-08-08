@@ -5,6 +5,8 @@ import {
 } from './fileService';
 import { getNearbyCachedPlaceLabel, getQuickLastKnownCoords } from './locationService';
 import { findNearestSchool } from './schoolLookup';
+import { getProjectJoin } from './projectCollectSettings';
+import { buildJoinAwareDefaultTitle } from './projectImportedStamps';
 import { saveStamp } from './saveStamp';
 import { resolveStampFloor } from './stampFloor';
 import {
@@ -119,7 +121,10 @@ export async function saveQuickCapture(
 
   const { latitude, longitude, placeLabel } = await resolveQuickCaptureLocation(input.reuseLocation);
 
-  const title = formatDefaultStampTitle(capturedAt);
+  const join = await getProjectJoin();
+  const title = join?.name
+    ? buildJoinAwareDefaultTitle(join.name, capturedAt, formatDefaultStampTitle)
+    : formatDefaultStampTitle(capturedAt);
   const floor = resolveStampFloor(pickerMode, lastFloor, placeLabel, siteName);
 
   await setCurrentSiteName(siteName);

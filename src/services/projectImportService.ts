@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 
-import { persistImage } from './fileService';
+import { persistImage, resolveImageUri } from './fileService';
+import { ensureStampThumb } from './stampThumb';
 import { insertStamp, getStampById } from './stampRepository';
 import { sanitizeStampFloor } from './stampFloor';
 import {
@@ -79,6 +80,7 @@ export async function importProjectStampToPhone(input: {
     return { stamp: again, skipped: true };
   }
   await insertStamp(stamp);
+  void ensureStampThumb(id, resolveImageUri(imagePath)).catch(() => {});
 
   if (await getProjectDeleteAfterImport()) {
     try {

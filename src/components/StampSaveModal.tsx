@@ -19,6 +19,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { confirmAlert, showAlert } from '../utils/confirmAlert';
+import { buildJoinAwareDefaultTitle } from '../services/projectImportedStamps';
 import {
   extractStampGroupFromImagePath,
   formatDefaultStampTitle,
@@ -969,7 +970,22 @@ export function StampSaveModal({
     const capturedAt = Date.now();
 
     if (!titleTouchedRef.current && !isFollowUpCreate) {
-      setTitle(formatDefaultStampTitle(capturedAt));
+      void (async () => {
+        try {
+          const { getProjectJoin } = await import('../services/projectCollectSettings');
+          const join = await getProjectJoin();
+          if (cancelled || titleTouchedRef.current) return;
+          setTitle(
+            join?.name
+              ? buildJoinAwareDefaultTitle(join.name, capturedAt, formatDefaultStampTitle)
+              : formatDefaultStampTitle(capturedAt),
+          );
+        } catch {
+          if (!cancelled && !titleTouchedRef.current) {
+            setTitle(formatDefaultStampTitle(capturedAt));
+          }
+        }
+      })();
     }
 
     if (!siteNameTouchedRef.current) {
