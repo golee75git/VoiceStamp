@@ -107,13 +107,7 @@ export async function apiPrepareUpload(input: {
   uploadCode: string;
   stampId: string;
   meta: Record<string, unknown>;
-}): Promise<{
-  stampId: string;
-  putUrl: string;
-  putUrlPlain?: string;
-  contentType: string;
-  expiresIn: number;
-}> {
+}): Promise<{ stampId: string; putUrl: string; contentType: string; expiresIn: number }> {
   return postAction({ action: 'prepareUpload', ...input });
 }
 
@@ -185,7 +179,7 @@ export function mapProjectApiError(e: unknown): string {
     case 'stamp_not_found':
       return '사진을 찾을 수 없습니다.';
     case 'put_failed':
-      return '일시 저장소에 올리지 못했습니다. 네트워크를 확인한 뒤 다시 저장해 주세요.';
+      return '일시 저장소에 올리지 못했습니다. 네트워크를 확인해 주세요.';
     case 'not_found':
       return '사업을 찾을 수 없습니다.';
     default:

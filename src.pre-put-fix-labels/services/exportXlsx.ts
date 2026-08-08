@@ -16,72 +16,13 @@ import {
   DEFAULT_FIELD_TITLE_LABEL,
   resolveFieldLabels,
 } from './fieldLabels';
-import { listStampFieldTemplatesForFilter, findStampFieldTemplate } from './stampFieldTemplates';
+import { listStampFieldTemplatesForFilter } from './stampFieldTemplates';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
-import type { FieldLabels } from './fieldLabels';
 
 const THUMB_WIDTH = 120;
 const THUMB_HEIGHT = 90;
 const THUMB_COL = 0;
-
-const DEFAULT_LABEL_SET = new Set([
-  DEFAULT_FIELD_TITLE_LABEL,
-  DEFAULT_FIELD_PLACE_LABEL,
-  DEFAULT_FIELD_MEMO_LABEL,
-  DEFAULT_FIELD_EXTRA1_LABEL,
-  DEFAULT_FIELD_EXTRA2_LABEL,
-  DEFAULT_FIELD_EXTRA3_LABEL,
-]);
-
-function labelLooksCustom(raw: string | null | undefined): boolean {
-  const s = (raw || '').trim();
-  return Boolean(s) && !DEFAULT_LABEL_SET.has(s);
-}
-
-function stampHasCustomFieldLabels(stamp: Stamp): boolean {
-  return (
-    labelLooksCustom(stamp.titleFieldLabel) ||
-    labelLooksCustom(stamp.placeFieldLabel) ||
-    labelLooksCustom(stamp.memoFieldLabel) ||
-    labelLooksCustom(stamp.extra1FieldLabel) ||
-    labelLooksCustom(stamp.extra2FieldLabel) ||
-    labelLooksCustom(stamp.extra3FieldLabel)
-  );
-}
-
-async function pickHeaderLabels(stamps: Stamp[]): Promise<FieldLabels> {
-  const customStamp = stamps.find(stampHasCustomFieldLabels);
-  if (customStamp) {
-    return resolveFieldLabels({
-      titleFieldLabel: customStamp.titleFieldLabel ?? undefined,
-      placeFieldLabel: customStamp.placeFieldLabel ?? undefined,
-      memoFieldLabel: customStamp.memoFieldLabel ?? undefined,
-      extra1FieldLabel: customStamp.extra1FieldLabel ?? undefined,
-      extra2FieldLabel: customStamp.extra2FieldLabel ?? undefined,
-      extra3FieldLabel: customStamp.extra3FieldLabel ?? undefined,
-    });
-  }
-
-  for (const stamp of stamps) {
-    const tid = stamp.templateId?.trim();
-    if (!tid) continue;
-    const tmpl = await findStampFieldTemplate(tid);
-    if (tmpl) {
-      return resolveFieldLabels(tmpl.labels);
-    }
-  }
-
-  const first = stamps[0];
-  return resolveFieldLabels({
-    titleFieldLabel: first?.titleFieldLabel ?? undefined,
-    placeFieldLabel: first?.placeFieldLabel ?? undefined,
-    memoFieldLabel: first?.memoFieldLabel ?? undefined,
-    extra1FieldLabel: first?.extra1FieldLabel ?? undefined,
-    extra2FieldLabel: first?.extra2FieldLabel ?? undefined,
-    extra3FieldLabel: first?.extra3FieldLabel ?? undefined,
-  });
-}
 
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
@@ -141,6 +82,35 @@ function formatFloor(floor: string | null | undefined): string {
   return `${floor}층`;
 }
 
+function pickHeaderLabels(stamps: Stamp[]) {
+  const withLabels = stamps.find(
+    (s) =>
+      (s.titleFieldLabel && s.titleFieldLabel.trim()) ||
+      (s.placeFieldLabel && s.placeFieldLabel.trim()) ||
+      (s.memoFieldLabel && s.memoFieldLabel.trim()) ||
+      (s.extra1FieldLabel && s.extra1FieldLabel.trim()),
+  );
+  return resolveFieldLabels(
+    withLabels
+      ? {
+          titleFieldLabel: withLabels.titleFieldLabel ?? undefined,
+          placeFieldLabel: withLabels.placeFieldLabel ?? undefined,
+          memoFieldLabel: withLabels.memoFieldLabel ?? undefined,
+          extra1FieldLabel: withLabels.extra1FieldLabel ?? undefined,
+          extra2FieldLabel: withLabels.extra2FieldLabel ?? undefined,
+          extra3FieldLabel: withLabels.extra3FieldLabel ?? undefined,
+        }
+      : {
+          titleFieldLabel: DEFAULT_FIELD_TITLE_LABEL,
+          placeFieldLabel: DEFAULT_FIELD_PLACE_LABEL,
+          memoFieldLabel: DEFAULT_FIELD_MEMO_LABEL,
+          extra1FieldLabel: DEFAULT_FIELD_EXTRA1_LABEL,
+          extra2FieldLabel: DEFAULT_FIELD_EXTRA2_LABEL,
+          extra3FieldLabel: DEFAULT_FIELD_EXTRA3_LABEL,
+        },
+  );
+}
+
 export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promise<ExportFileResult> {
   if (stamps.length === 0) {
     throw new Error('보낼 스탬프가 없습니다.');
@@ -148,7 +118,7 @@ export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promi
 
   const safeName = sanitizeExportBaseName(fileName);
   const coordsLabel = await getCoordsLabelMode();
-  const headers = await pickHeaderLabels(stamps);
+  const headers = pickHeaderLabels(stamps);
   const templateNames = await listStampFieldTemplatesForFilter();
   const templateNameById = new Map(templateNames.map((t) => [t.id, t.name]));
 

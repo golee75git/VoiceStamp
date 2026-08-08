@@ -49,45 +49,6 @@ export async function importProjectStampToPhone(input: {
     throw err;
   }
 
-  const trimLabel = (v: unknown) =>
-    v != null ? String(v).trim().slice(0, 20) || null : null;
-  const trimExtra = (v: unknown) =>
-    v != null ? String(v).trim().slice(0, 500) || null : null;
-
-  let titleFieldLabel = trimLabel(meta.titleFieldLabel);
-  let placeFieldLabel = trimLabel(meta.placeFieldLabel);
-  let memoFieldLabel = trimLabel(meta.memoFieldLabel);
-  let extra1FieldLabel = trimLabel(meta.extra1FieldLabel);
-  let extra2FieldLabel = trimLabel(meta.extra2FieldLabel);
-  let extra3FieldLabel = trimLabel(meta.extra3FieldLabel);
-  const templateId =
-    meta.templateId != null && String(meta.templateId).trim()
-      ? String(meta.templateId).trim().slice(0, 64)
-      : null;
-
-  if (
-    templateId &&
-    !titleFieldLabel &&
-    !placeFieldLabel &&
-    !memoFieldLabel &&
-    !extra1FieldLabel
-  ) {
-    try {
-      const { findStampFieldTemplate } = await import('./stampFieldTemplates');
-      const tmpl = await findStampFieldTemplate(templateId);
-      if (tmpl) {
-        titleFieldLabel = tmpl.labels.titleFieldLabel;
-        placeFieldLabel = tmpl.labels.placeFieldLabel;
-        memoFieldLabel = tmpl.labels.memoFieldLabel;
-        extra1FieldLabel = tmpl.labels.extra1FieldLabel;
-        extra2FieldLabel = tmpl.labels.extra2FieldLabel;
-        extra3FieldLabel = tmpl.labels.extra3FieldLabel;
-      }
-    } catch {
-      // keep nulls
-    }
-  }
-
   const title = String(meta.title || input.stampId).slice(0, 200) || '제목 없음';
   const id = input.stampId;
   const imagePath = await persistImage(downloaded.uri, title, id, groupName);
@@ -104,17 +65,26 @@ export async function importProjectStampToPhone(input: {
     longitude: typeof meta.longitude === 'number' ? meta.longitude : null,
     floor: sanitizeStampFloor(meta.floor != null ? String(meta.floor) : null),
     placeLabel: meta.placeLabel != null ? String(meta.placeLabel) : null,
-    extra1: trimExtra(meta.extra1),
-    extra2: trimExtra(meta.extra2),
-    extra3: trimExtra(meta.extra3),
+    extra1: meta.extra1 != null ? String(meta.extra1).trim().slice(0, 500) || null : null,
+    extra2: meta.extra2 != null ? String(meta.extra2).trim().slice(0, 500) || null : null,
+    extra3: meta.extra3 != null ? String(meta.extra3).trim().slice(0, 500) || null : null,
     sourceUrl: null,
-    templateId,
-    titleFieldLabel,
-    placeFieldLabel,
-    memoFieldLabel,
-    extra1FieldLabel,
-    extra2FieldLabel,
-    extra3FieldLabel,
+    templateId:
+      meta.templateId != null && String(meta.templateId).trim()
+        ? String(meta.templateId).trim().slice(0, 64)
+        : null,
+    titleFieldLabel:
+      meta.titleFieldLabel != null ? String(meta.titleFieldLabel).trim().slice(0, 20) || null : null,
+    placeFieldLabel:
+      meta.placeFieldLabel != null ? String(meta.placeFieldLabel).trim().slice(0, 20) || null : null,
+    memoFieldLabel:
+      meta.memoFieldLabel != null ? String(meta.memoFieldLabel).trim().slice(0, 20) || null : null,
+    extra1FieldLabel:
+      meta.extra1FieldLabel != null ? String(meta.extra1FieldLabel).trim().slice(0, 20) || null : null,
+    extra2FieldLabel:
+      meta.extra2FieldLabel != null ? String(meta.extra2FieldLabel).trim().slice(0, 20) || null : null,
+    extra3FieldLabel:
+      meta.extra3FieldLabel != null ? String(meta.extra3FieldLabel).trim().slice(0, 20) || null : null,
     parentId: null,
   };
 

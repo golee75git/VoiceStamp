@@ -42,11 +42,7 @@ export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void
   }
 }
 
-async function putImageToPresignedUrl(
-  putUrl: string,
-  dataUri: string,
-  contentType: string | null,
-): Promise<void> {
+async function putImageToPresignedUrl(putUrl: string, dataUri: string): Promise<void> {
   const imgRes = await fetch(dataUri);
   if (!imgRes.ok) {
     const err = new Error('bad_image');
@@ -59,19 +55,14 @@ async function putImageToPresignedUrl(
     (err as Error & { code?: string }).code = 'bad_image';
     throw err;
   }
-  const headers: Record<string, string> = {};
-  if (contentType) {
-    headers['Content-Type'] = contentType;
-  }
   const putRes = await fetch(putUrl, {
     method: 'PUT',
-    headers,
+    headers: { 'Content-Type': 'image/jpeg' },
     body,
   });
   if (!putRes.ok) {
     const err = new Error('put_failed');
-    (err as Error & { code?: string; detail?: string }).code = 'put_failed';
-    (err as Error & { detail?: string }).detail = String(putRes.status);
+    (err as Error & { code?: string }).code = 'put_failed';
     throw err;
   }
 }
@@ -115,19 +106,7 @@ async function uploadOne(stampId: string): Promise<void> {
       extra3FieldLabel: stamp.extra3FieldLabel || null,
     },
   });
-
-  const contentType = prepared.contentType || 'image/jpeg';
-  try {
-    await putImageToPresignedUrl(prepared.putUrl, dataUri, contentType);
-  } catch (first) {
-    const code = first instanceof Error ? (first as Error & { code?: string }).code : '';
-    if (code === 'put_failed' && prepared.putUrlPlain) {
-      await putImageToPresignedUrl(prepared.putUrlPlain, dataUri, null);
-    } else {
-      throw first;
-    }
-  }
-
+  await putImageToPresignedUrl(prepared.putUrl, dataUri);
   await apiCompleteUpload({
     projectId: join.projectId,
     uploadCode: join.uploadCode,
@@ -149,13 +128,9 @@ export async function drainProjectUploadQueue(): Promise<void> {
       } catch (e) {
         await setUploadStatus(id, 'failed');
         failStreak += 1;
-        if (Platform.OS !== 'web' && failStreak <= 2) {
+        if (failStreak === 3 && Platform.OS !== 'web') {
           const { Alert } = await import('react-native');
-          const detail =
-            e instanceof Error && (e as Error & { detail?: string }).detail
-              ? ` (${(e as Error & { detail?: string }).detail})`
-              : '';
-          Alert.alert('사업 올리기', mapProjectApiError(e) + detail);
+          Alert.alert('사업 올리기', mapProjectApiError(e));
         }
       }
     }

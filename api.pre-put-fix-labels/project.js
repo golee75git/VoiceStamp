@@ -282,30 +282,18 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
   return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
 }
 
-/** Client-direct PUT URL. When contentType is set, it is included in the signature. */
-function presignPut({
-  key,
-  accessKey,
-  secretKey,
-  bucket,
-  expiresSec = EXPIRES_PUT,
-  contentType,
-}) {
+/** Client-direct PUT URL (host only; no image bytes through Vercel). */
+function presignPut({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_PUT }) {
   const { amz, short } = amzDate();
   const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
   const credential = accessKey + '/' + credentialScope;
   const canonicalUri = '/' + bucket + '/' + encodeKeyPath(key);
-  const ct = contentType ? String(contentType).trim() : '';
-  const signedHeaderNames = ct ? 'content-type;host' : 'host';
-  const canonicalHeaders = ct
-    ? 'content-type:' + ct + '\nhost:' + HOST + '\n'
-    : 'host:' + HOST + '\n';
   const queryPairs = [
     ['X-Amz-Algorithm', 'AWS4-HMAC-SHA256'],
     ['X-Amz-Credential', credential],
     ['X-Amz-Date', amz],
     ['X-Amz-Expires', String(expiresSec)],
-    ['X-Amz-SignedHeaders', signedHeaderNames],
+    ['X-Amz-SignedHeaders', 'host'],
   ];
   const canonicalQuery = queryPairs
     .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
@@ -314,8 +302,8 @@ function presignPut({
     'PUT',
     canonicalUri,
     canonicalQuery,
-    canonicalHeaders,
-    signedHeaderNames,
+    'host:' + HOST + '\n',
+    'host',
     'UNSIGNED-PAYLOAD',
   ].join('\n');
   const stringToSign = ['AWS4-HMAC-SHA256', amz, credentialScope, sha256Hex(canonicalRequest)].join(
@@ -752,19 +740,15 @@ module.exports = async function handler(req, res) {
         'application/json',
         Buffer.from(JSON.stringify(stampMeta), 'utf8'),
       );
-      const imgKey = projectKey(projectId, `stamps/${stampId}.jpg`);
-      const putArgs = {
-        key: imgKey,
+      const putUrl = presignPut({
+        key: projectKey(projectId, `stamps/${stampId}.jpg`),
         accessKey: creds.accessKey,
         secretKey: creds.secretKey,
         bucket: creds.bucket,
-      };
-      const putUrl = presignPut({ ...putArgs, contentType: 'image/jpeg' });
-      const putUrlPlain = presignPut(putArgs);
+      });
       json(res, 200, {
         stampId,
         putUrl,
-        putUrlPlain,
         contentType: 'image/jpeg',
         expiresIn: EXPIRES_PUT,
       });
