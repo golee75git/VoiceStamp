@@ -3699,3 +3699,13 @@ restore-join-history.bat
 ```
 
 `src.pre-join-history/` 스냅샷으로 되돌립니다.
+
+## 250. 만든 사업 초대·종료·종료됨 유지 되돌리기 (선택)
+
+목록 초대 라벨·종료 이동·closedAt 유지 후 문제가 생기면:
+
+```bat
+restore-owned-close-invite.bat
+```
+
+`src.pre-owned-close-invite/` 스냅샷으로 되돌립니다.
