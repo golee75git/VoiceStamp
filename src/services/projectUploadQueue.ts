@@ -95,6 +95,15 @@ async function uploadOne(stampId: string): Promise<void> {
       createdAt: stamp.createdAt,
       localGroupName: null,
       templateId: stamp.templateId || null,
+      extra1: stamp.extra1 || null,
+      extra2: stamp.extra2 || null,
+      extra3: stamp.extra3 || null,
+      titleFieldLabel: stamp.titleFieldLabel || null,
+      placeFieldLabel: stamp.placeFieldLabel || null,
+      memoFieldLabel: stamp.memoFieldLabel || null,
+      extra1FieldLabel: stamp.extra1FieldLabel || null,
+      extra2FieldLabel: stamp.extra2FieldLabel || null,
+      extra3FieldLabel: stamp.extra3FieldLabel || null,
     },
   });
   await putImageToPresignedUrl(prepared.putUrl, dataUri);

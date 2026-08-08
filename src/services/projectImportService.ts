@@ -65,20 +65,26 @@ export async function importProjectStampToPhone(input: {
     longitude: typeof meta.longitude === 'number' ? meta.longitude : null,
     floor: sanitizeStampFloor(meta.floor != null ? String(meta.floor) : null),
     placeLabel: meta.placeLabel != null ? String(meta.placeLabel) : null,
-    extra1: null,
-    extra2: null,
-    extra3: null,
+    extra1: meta.extra1 != null ? String(meta.extra1).trim().slice(0, 500) || null : null,
+    extra2: meta.extra2 != null ? String(meta.extra2).trim().slice(0, 500) || null : null,
+    extra3: meta.extra3 != null ? String(meta.extra3).trim().slice(0, 500) || null : null,
     sourceUrl: null,
     templateId:
       meta.templateId != null && String(meta.templateId).trim()
         ? String(meta.templateId).trim().slice(0, 64)
         : null,
-    titleFieldLabel: null,
-    placeFieldLabel: null,
-    memoFieldLabel: null,
-    extra1FieldLabel: null,
-    extra2FieldLabel: null,
-    extra3FieldLabel: null,
+    titleFieldLabel:
+      meta.titleFieldLabel != null ? String(meta.titleFieldLabel).trim().slice(0, 20) || null : null,
+    placeFieldLabel:
+      meta.placeFieldLabel != null ? String(meta.placeFieldLabel).trim().slice(0, 20) || null : null,
+    memoFieldLabel:
+      meta.memoFieldLabel != null ? String(meta.memoFieldLabel).trim().slice(0, 20) || null : null,
+    extra1FieldLabel:
+      meta.extra1FieldLabel != null ? String(meta.extra1FieldLabel).trim().slice(0, 20) || null : null,
+    extra2FieldLabel:
+      meta.extra2FieldLabel != null ? String(meta.extra2FieldLabel).trim().slice(0, 20) || null : null,
+    extra3FieldLabel:
+      meta.extra3FieldLabel != null ? String(meta.extra3FieldLabel).trim().slice(0, 20) || null : null,
     parentId: null,
   };
 

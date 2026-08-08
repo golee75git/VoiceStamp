@@ -320,6 +320,12 @@ function buildStampMeta(projectId, stampId, meta) {
   const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
   const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
   const templateIdRaw = meta.templateId == null ? '' : String(meta.templateId).trim().slice(0, 64);
+  const textOrNull = (v, max) => {
+    if (v == null) return null;
+    const s = String(v).trim().slice(0, max);
+    return s || null;
+  };
+  const labelOrNull = (v) => textOrNull(v, 20);
   return {
     stampId,
     projectId,
@@ -335,6 +341,15 @@ function buildStampMeta(projectId, stampId, meta) {
     longitude: meta.longitude ?? null,
     createdAt: meta.createdAt ?? Date.now(),
     localGroupName: meta.localGroupName ?? null,
+    extra1: textOrNull(meta.extra1, 500),
+    extra2: textOrNull(meta.extra2, 500),
+    extra3: textOrNull(meta.extra3, 500),
+    titleFieldLabel: labelOrNull(meta.titleFieldLabel),
+    placeFieldLabel: labelOrNull(meta.placeFieldLabel),
+    memoFieldLabel: labelOrNull(meta.memoFieldLabel),
+    extra1FieldLabel: labelOrNull(meta.extra1FieldLabel),
+    extra2FieldLabel: labelOrNull(meta.extra2FieldLabel),
+    extra3FieldLabel: labelOrNull(meta.extra3FieldLabel),
   };
 }
 

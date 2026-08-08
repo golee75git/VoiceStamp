@@ -3729,3 +3729,13 @@ restore-presign-direct.bat
 `
 
 pi.pre-presign-direct/ · src.pre-presign-direct/ 스냅샷으로 되돌린 뒤 Vercel을 다시 배포하세요.
+
+## 253. 엑셀 템플릿 칸 되돌리기 (선택)
+
+엑셀·취합 필드 전달 변경 후 문제가 생기면:
+
+`at
+restore-xlsx-template-fields.bat
+`
+
+src.pre-xlsx-template-fields/ · pi.pre-xlsx-template-fields/ 스냅샷으로 되돌립니다.
