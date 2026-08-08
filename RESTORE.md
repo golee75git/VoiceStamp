@@ -3594,3 +3594,14 @@ restore-join-scan-preview.bat
 
 `src.pre-join-scan-preview/` 스냅샷으로 되돌립니다.
 
+
+## 240. 사업 참여 구분 표시 필수 되돌리기 (선택)
+
+구분 표시 필수·QR 후 입력 유도 후 문제가 생기면:
+
+```bat
+restore-join-mark-required.bat
+```
+
+`src.pre-join-mark-required/` 스냅샷으로 되돌립니다.
+

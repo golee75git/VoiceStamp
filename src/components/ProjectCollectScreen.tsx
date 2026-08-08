@@ -199,6 +199,14 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
   };
 
   const confirmJoin = async (projectId: string, uploadCode: string) => {
+    const mark = sanitizeJoinMark(joinMarkText);
+    if (!mark) {
+      Alert.alert(
+        '구분 표시',
+        '필수입니다. 올리는 쪽을 구분할 짧은 글자를 입력한 뒤 다시 연결해 주세요.',
+      );
+      return;
+    }
     setBusy(true);
     try {
       let projectName = projectId;
@@ -210,7 +218,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
       }
       Alert.alert(
         `${projectName}에 참여할까요?`,
-        '연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.',
+        `구분 표시: ${mark}\n연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.`,
         [
           { text: '취소', style: 'cancel' },
           {
@@ -231,7 +239,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
                             projectId,
                             name: projectName,
                             uploadCode,
-                            mark: sanitizeJoinMark(joinMarkText),
+                            mark,
                           }).then(
                             () => {
                               void reload();
@@ -249,7 +257,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
                   projectId,
                   name: projectName,
                   uploadCode,
-                  mark: sanitizeJoinMark(joinMarkText),
+                  mark,
                 });
                 await reload();
                 Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
@@ -265,6 +273,13 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
   };
 
   const handleJoinSubmit = () => {
+    if (!sanitizeJoinMark(joinMarkText)) {
+      Alert.alert(
+        '구분 표시',
+        '필수입니다. 올리는 쪽을 구분할 짧은 글자를 입력해 주세요.',
+      );
+      return;
+    }
     const parsed = parseJoinPayload(joinCodeText);
     if (!parsed) {
       Alert.alert('참여', '사업코드와 참여코드를 확인하세요.');
@@ -305,6 +320,14 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
       return;
     }
     setJoinCodeText(raw);
+    if (!sanitizeJoinMark(joinMarkText)) {
+      Alert.alert(
+        '구분 표시',
+        '필수입니다. 위쪽 「구분 표시」칸에 적은 뒤 「연결」을 눌러 주세요.',
+      );
+      setJoinScanLocked(false);
+      return;
+    }
     void confirmJoin(parsed.projectId, parsed.uploadCode);
   };
 
@@ -596,9 +619,9 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
 
   const renderJoin = () => (
     <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-      <Text style={styles.label}>구분 표시 (선택)</Text>
+      <Text style={styles.label}>구분 표시 (필수)</Text>
       <Text style={styles.hint}>
-        올리는 쪽을 구분할 짧은 글자. 별칭·번호 끝자리 등 원하는 형태로 적거나 비워 두세요.
+        올리는 쪽을 구분할 짧은 글자. 별칭·번호 끝자리 등 원하는 형태로 적어 주세요. 비울 수 없습니다.
       </Text>
       <TextInput
         style={styles.input}
