@@ -36,6 +36,8 @@ export type OwnedProject = {
   createdAt: number;
   expiresAt: number;
   uploadCode: string;
+  /** Set when admin ends the project; kept until expiresAt. */
+  closedAt?: number | null;
 };
 
 /** Past or current projects this device joined to upload. */
@@ -257,7 +259,7 @@ export async function removeJoinedProjectHistory(projectId: string): Promise<voi
 }
 
 
-export async function listOwnedProjects(): Promise<OwnedProject[]> {
+async function readOwnedProjectRaw(): Promise<OwnedProject[]> {
   const raw = await getValue(KEYS.owned);
   if (!raw) return [];
   try {
@@ -268,18 +270,49 @@ export async function listOwnedProjects(): Promise<OwnedProject[]> {
   }
 }
 
+async function writeOwnedProjects(list: OwnedProject[]): Promise<void> {
+  await setValue(KEYS.owned, JSON.stringify(list.slice(0, 20)));
+}
+
+export async function listOwnedProjects(): Promise<OwnedProject[]> {
+  const parsed = await readOwnedProjectRaw();
+  const now = Date.now();
+  const kept: OwnedProject[] = [];
+  const dropped: string[] = [];
+  for (const p of parsed) {
+    if (typeof p.expiresAt === 'number' && p.expiresAt <= now) {
+      dropped.push(p.projectId);
+    } else {
+      kept.push(p);
+    }
+  }
+  if (dropped.length > 0) {
+    await writeOwnedProjects(kept);
+    for (const id of dropped) {
+      await deleteValue(`${KEYS.pinPrefix}${id}`);
+    }
+  }
+  return kept;
+}
+
 export async function upsertOwnedProject(project: OwnedProject): Promise<void> {
-  const list = await listOwnedProjects();
+  const list = await readOwnedProjectRaw();
   const next = [project, ...list.filter((p) => p.projectId !== project.projectId)];
-  await setValue(KEYS.owned, JSON.stringify(next.slice(0, 20)));
+  await writeOwnedProjects(next);
+}
+
+/** Mark project closed locally; PIN kept so inbox/excel still work until expiresAt. */
+export async function markOwnedProjectClosed(projectId: string): Promise<void> {
+  const list = await readOwnedProjectRaw();
+  const next = list.map((p) =>
+    p.projectId === projectId ? { ...p, closedAt: Date.now() } : p,
+  );
+  await writeOwnedProjects(next);
 }
 
 export async function removeOwnedProject(projectId: string): Promise<void> {
-  const list = await listOwnedProjects();
-  await setValue(
-    KEYS.owned,
-    JSON.stringify(list.filter((p) => p.projectId !== projectId)),
-  );
+  const list = await readOwnedProjectRaw();
+  await writeOwnedProjects(list.filter((p) => p.projectId !== projectId));
   await deleteValue(`${KEYS.pinPrefix}${projectId}`);
 }
 

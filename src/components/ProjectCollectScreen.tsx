@@ -41,6 +41,7 @@ import {
   getProjectJoin,
   listJoinedProjectHistory,
   listOwnedProjects,
+  markOwnedProjectClosed,
   removeJoinedProjectHistory,
   removeOwnedProject,
   sanitizeJoinMark,
@@ -555,6 +556,43 @@ export function ProjectCollectScreen({
     );
   };
 
+  const handleCloseOwnedProject = (project: OwnedProject) => {
+    if (project.closedAt) {
+      Alert.alert('사업 종료', '이미 종료된 사업입니다.');
+      return;
+    }
+    Alert.alert('사업 종료', '종료하면 더 이상 올릴 수 없습니다. 보관 만료일까지 목록에 「종료됨」으로 남습니다.', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '종료',
+        style: 'destructive',
+        onPress: () => {
+          void (async () => {
+            setBusy(true);
+            try {
+              const p = (await getCollectorPin(project.projectId)) || '';
+              try {
+                if (p) await apiCloseProject({ projectId: project.projectId, collectorPin: p });
+              } catch {
+                // still mark local closed
+              }
+              await markOwnedProjectClosed(project.projectId);
+              if (active?.projectId === project.projectId) {
+                setActive(null);
+                setPhase('hub');
+              }
+              await reload();
+            } catch (e) {
+              Alert.alert('사업 종료', e instanceof Error ? e.message : '실패');
+            } finally {
+              setBusy(false);
+            }
+          })();
+        },
+      },
+    ]);
+  };
+
   const sanitizeLoose = (n: string) => n.trim().replace(/[\\/:*?"<>|]/g, '_').slice(0, 40);
   const formatYmd = (t: number) => {
     const d = new Date(t);
@@ -647,22 +685,25 @@ export function ProjectCollectScreen({
       ) : (
         owned.map((project) => {
           const left = Math.max(0, Math.ceil((project.expiresAt - Date.now()) / 86400000));
+          const closed = !!project.closedAt;
           return (
             <View key={project.projectId} style={styles.row}>
               <Text style={styles.rowTitle}>{project.name}</Text>
               <Text style={styles.rowSub}>
-                D-{left} · {project.projectId}
+                {[closed ? '종료됨' : '', 'D-' + left, project.projectId].filter(Boolean).join(' · ')}
               </Text>
               <View style={styles.ownedActions}>
-                <Pressable
-                  style={styles.ownedAction}
-                  onPress={() => {
-                    setActive(project);
-                    setPhase('qr');
-                  }}
-                >
-                  <Text style={styles.ownedActionText}>QR</Text>
-                </Pressable>
+                {!closed ? (
+                  <Pressable
+                    style={styles.ownedAction}
+                    onPress={() => {
+                      setActive(project);
+                      setPhase('qr');
+                    }}
+                  >
+                    <Text style={styles.ownedActionText}>초대</Text>
+                  </Pressable>
+                ) : null}
                 <Pressable
                   style={styles.ownedAction}
                   onPress={() => void openInbox(project)}
@@ -677,6 +718,15 @@ export function ProjectCollectScreen({
                 >
                   <Text style={styles.ownedActionText}>엑셀</Text>
                 </Pressable>
+                {!closed ? (
+                  <Pressable
+                    style={styles.ownedAction}
+                    onPress={() => handleCloseOwnedProject(project)}
+                    disabled={busy}
+                  >
+                    <Text style={[styles.ownedActionText, styles.linkDanger]}>종료</Text>
+                  </Pressable>
+                ) : null}
               </View>
             </View>
           );
@@ -779,33 +829,7 @@ export function ProjectCollectScreen({
         <Pressable style={styles.primary} onPress={() => void openInbox(active)}>
           <Text style={styles.primaryText}>수신 목록</Text>
         </Pressable>
-        <Pressable
-          onPress={() => {
-            Alert.alert('사업 종료', '종료하면 더 이상 올릴 수 없습니다.', [
-              { text: '취소', style: 'cancel' },
-              {
-                text: '종료',
-                style: 'destructive',
-                onPress: () => {
-                  void (async () => {
-                    const p = (await getCollectorPin(active.projectId)) || '';
-                    try {
-                      if (p) await apiCloseProject({ projectId: active.projectId, collectorPin: p });
-                    } catch {
-                      // still remove local
-                    }
-                    await removeOwnedProject(active.projectId);
-                    setActive(null);
-                    setPhase('hub');
-                    await reload();
-                  })();
-                },
-              },
-            ]);
-          }}
-        >
-          <Text style={styles.linkDanger}>사업 종료</Text>
-        </Pressable>
+        <Text style={styles.hint}>사업을 끝내려면 허브 목록의 「종료」를 사용하세요.</Text>
       </ScrollView>
     );
   };
