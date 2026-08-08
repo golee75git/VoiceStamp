@@ -3583,3 +3583,14 @@ restore-project-join-label.bat
 
 `src.pre-project-join-label/` · `api.pre-project-join-label/` 스냅샷으로 되돌린 뒤 API 변경분은 Vercel 재배포합니다.
 
+
+## 239. 사업 QR 찍기 미리보기 되돌리기 (선택)
+
+QR 찍기 화면 미리보기·가이드 프레임 후 문제가 생기면:
+
+```bat
+restore-join-scan-preview.bat
+```
+
+`src.pre-join-scan-preview/` 스냅샷으로 되돌립니다.
+

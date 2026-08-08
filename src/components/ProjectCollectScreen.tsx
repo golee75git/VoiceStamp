@@ -752,17 +752,22 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
             barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
             onBarcodeScanned={joinScanLocked ? undefined : onJoinBarcodeScanned}
           />
-          <View style={styles.scanBottom}>
-            <Text style={styles.scanHint}>관리자 QR을 화면 안에 맞춰 주세요</Text>
-            <Pressable
-              style={styles.secondary}
-              onPress={() => {
-                setJoinScanning(false);
-                setJoinScanLocked(false);
-              }}
-            >
-              <Text style={styles.secondaryText}>닫기</Text>
-            </Pressable>
+          <View style={styles.scanUi} pointerEvents="box-none">
+            <View style={styles.scanFrameWrap} pointerEvents="none">
+              <View style={styles.scanFrame} />
+            </View>
+            <View style={styles.scanBottom}>
+              <Text style={styles.scanHint}>가운데 네모 안에 관리자 QR이 들어오게 맞춰 주세요</Text>
+              <Pressable
+                style={styles.secondary}
+                onPress={() => {
+                  setJoinScanning(false);
+                  setJoinScanLocked(false);
+                }}
+              >
+                <Text style={styles.secondaryText}>닫기</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       ) : null}
@@ -890,12 +895,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     zIndex: 20,
   },
-  scanCamera: { flex: 1 },
+  scanCamera: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  scanUi: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+  },
+  scanFrameWrap: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scanFrame: {
+    width: 240,
+    height: 240,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.92)',
+    borderRadius: 12,
+    backgroundColor: 'transparent',
+  },
   scanBottom: {
     padding: 20,
     paddingBottom: Platform.OS === 'android' ? 40 : 28,
     gap: 12,
-    backgroundColor: '#111',
+    backgroundColor: 'rgba(0,0,0,0.72)',
   },
   scanHint: { color: '#fff', textAlign: 'center', fontWeight: '600' },
 });
