@@ -3,6 +3,8 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -27,7 +29,6 @@ import {
   apiManifest,
   apiRotateUploadCode,
   mapProjectApiError,
-  type ManifestStamp,
 } from '../services/projectCollectApi';
 import { importProjectStampToPhone } from '../services/projectImportService';
 import {
@@ -51,11 +52,18 @@ import {
   type ProjectImportFolderMode,
   type ProjectJoinState,
 } from '../services/projectCollectSettings';
-import { ProjectImportedList } from './ProjectImportedList';
+import { StampListThumb } from './StampListThumb';
 import { loadStampXlsxExport } from '../services/exportOnDemand';
-import { getStampById, listStamps } from '../services/stampRepository';
+import { resolveImageUri } from '../services/fileService';
+import {
+  listImportedStampsForProject,
+  mergeInboxWithLocal,
+  type MergedInboxItem,
+} from '../services/projectImportedStamps';
+import { listStamps } from '../services/stampRepository';
+import { moveStampsToTrash } from '../services/stampTrash';
 
-export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox' | 'imported';
+export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox';
 
 type Props = {
   onBack: () => void;
@@ -129,9 +137,9 @@ export function ProjectCollectScreen({
 
   const [joinCodeText, setJoinCodeText] = useState('');
   const [joinMarkText, setJoinMarkText] = useState('');
-  const [inbox, setInbox] = useState<ManifestStamp[]>([]);
-  const [importedLocalById, setImportedLocalById] = useState<Record<string, boolean>>({});
+  const [inbox, setInbox] = useState<MergedInboxItem[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [folderMode, setFolderMode] = useState<ProjectImportFolderMode>('date_name');
   const [deleteAfter, setDeleteAfter] = useState(true);
   const [collectorPinInput, setCollectorPinInput] = useState('');
@@ -367,18 +375,9 @@ export function ProjectCollectScreen({
     try {
       await setCollectorPin(project.projectId, pinLocal);
       const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
-      const stamps = man.stamps || [];
-      setInbox(stamps);
-      const localFlags: Record<string, boolean> = {};
-      for (const item of stamps) {
-        try {
-          const row = await getStampById(item.stampId);
-          localFlags[item.stampId] = !!(row && !row.deletedAt);
-        } catch {
-          localFlags[item.stampId] = false;
-        }
-      }
-      setImportedLocalById(localFlags);
+      const all = await listStamps();
+      const localImp = listImportedStampsForProject(all, project.name, folderMode);
+      setInbox(mergeInboxWithLocal(man.stamps || [], localImp));
       setSelected(new Set());
       setPhase('inbox');
     } catch (e) {
@@ -403,7 +402,13 @@ export function ProjectCollectScreen({
     try {
       await setProjectImportFolderMode(folderMode);
       await setProjectDeleteAfterImport(deleteAfter);
+      const byId = new Map(inbox.map((r) => [r.stampId, r]));
       for (const stampId of ids) {
+        const row = byId.get(stampId);
+        if (!row?.onServer) {
+          skipped += 1;
+          continue;
+        }
         const result = await importProjectStampToPhone({
           project: active,
           collectorPin: pinLocal,
@@ -512,15 +517,6 @@ export function ProjectCollectScreen({
                   disabled={busy}
                 >
                   <Text style={styles.ownedActionText}>엑셀</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.ownedAction}
-                  onPress={() => {
-                    setActive(project);
-                    setPhase('imported');
-                  }}
-                >
-                  <Text style={styles.ownedActionText}>가져옴</Text>
                 </Pressable>
               </View>
             </View>
@@ -711,6 +707,36 @@ export function ProjectCollectScreen({
     </ScrollView>
   );
 
+  const handleTrashSelected = () => {
+    const ids = [...selected].filter((id) => inbox.some((r) => r.stampId === id && r.localImagePath));
+    if (ids.length === 0) {
+      Alert.alert('휴지통', '내 폰에 가져온 항목만 휴지통으로 옮길 수 있습니다.');
+      return;
+    }
+    Alert.alert('휴지통으로 이동', `선택한 ${ids.length}장을 휴지통으로 옮깁니다.`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '이동',
+        style: 'destructive',
+        onPress: () => {
+          void (async () => {
+            if (!active) return;
+            setBusy(true);
+            try {
+              await moveStampsToTrash(ids);
+              onImported?.();
+              await openInbox(active);
+            } catch (e) {
+              Alert.alert('삭제', e instanceof Error ? e.message : '실패');
+            } finally {
+              setBusy(false);
+            }
+          })();
+        },
+      },
+    ]);
+  };
+
   const renderInbox = () => (
     <View style={styles.flex}>
       <View style={styles.bodyPad}>
@@ -727,13 +753,19 @@ export function ProjectCollectScreen({
         <View style={styles.chips}>
           <Pressable
             style={[styles.chip, folderMode === 'date_name' && styles.chipOn]}
-            onPress={() => setFolderMode('date_name')}
+            onPress={() => {
+              setFolderMode('date_name');
+              if (active) void openInbox(active);
+            }}
           >
             <Text style={[styles.chipText, folderMode === 'date_name' && styles.chipTextOn]}>날짜_사업명</Text>
           </Pressable>
           <Pressable
             style={[styles.chip, folderMode === 'name_only' && styles.chipOn]}
-            onPress={() => setFolderMode('name_only')}
+            onPress={() => {
+              setFolderMode('name_only');
+              if (active) void openInbox(active);
+            }}
           >
             <Text style={[styles.chipText, folderMode === 'name_only' && styles.chipTextOn]}>사업명만</Text>
           </Pressable>
@@ -749,13 +781,18 @@ export function ProjectCollectScreen({
             가져온 뒤 일시 저장소에서 삭제: {deleteAfter ? 'ON' : 'OFF'}
           </Text>
         </Pressable>
+        <Text style={styles.hint}>
+          서버에 남은 사진과 내 폰으로 가져온 사진을 함께 봅니다. 썸네일을 누르면 크게 볼 수 있습니다.
+        </Text>
       </View>
       <FlatList
         data={inbox}
         keyExtractor={(item) => item.stampId}
+        contentContainerStyle={styles.inboxListPad}
         ListEmptyComponent={<Text style={styles.hintPad}>아직 올라온 사진이 없습니다.</Text>}
         renderItem={({ item }) => {
           const on = selected.has(item.stampId);
+          const got = !!item.localImagePath;
           return (
             <Pressable
               style={[styles.inboxRow, on && styles.inboxRowOn]}
@@ -768,22 +805,39 @@ export function ProjectCollectScreen({
                 });
               }}
             >
-              <View style={styles.inboxTitleRow}>
-                <Text style={[styles.rowTitle, styles.inboxTitleFlex]} numberOfLines={2}>
-                  {item.title || item.stampId}
+              {got ? (
+                <Pressable
+                  onPress={() => setPreviewUri(resolveImageUri(item.localImagePath!))}
+                  hitSlop={4}
+                >
+                  <StampListThumb
+                    id={item.stampId}
+                    imagePath={item.localImagePath!}
+                    style={styles.inboxThumb}
+                  />
+                </Pressable>
+              ) : (
+                <View style={styles.inboxThumbPlaceholder}>
+                  <Text style={styles.inboxThumbPlaceholderText}>대기</Text>
+                </View>
+              )}
+              <View style={styles.inboxMeta}>
+                <View style={styles.inboxTitleRow}>
+                  <Text style={[styles.rowTitle, styles.inboxTitleFlex]} numberOfLines={2}>
+                    {item.title || item.stampId}
+                  </Text>
+                  {got ? <Text style={styles.importedBadge}>가져옴</Text> : null}
+                </View>
+                <Text style={styles.rowSub}>
+                  {[
+                    item.uploadedByMark || '',
+                    item.uploadedAt ? new Date(item.uploadedAt).toLocaleString() : '',
+                    !item.onServer && got ? '폰에만 있음' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
                 </Text>
-                {importedLocalById[item.stampId] ? (
-                  <Text style={styles.importedBadge}>가져옴</Text>
-                ) : null}
               </View>
-              <Text style={styles.rowSub}>
-                {[
-                  item.uploadedByMark || '',
-                  item.uploadedAt ? new Date(item.uploadedAt).toLocaleString() : '',
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </Text>
             </Pressable>
           );
         }}
@@ -791,7 +845,7 @@ export function ProjectCollectScreen({
       <View style={styles.bar}>
         <Pressable
           style={styles.barBtn}
-          onPress={() => setSelected(new Set(inbox.map((s) => s.stampId)))}
+          onPress={() => setSelected(new Set(inbox.filter((r) => r.onServer).map((r) => r.stampId)))}
         >
           <Text style={styles.barBtnText}>전체</Text>
         </Pressable>
@@ -807,16 +861,23 @@ export function ProjectCollectScreen({
         >
           <Text style={styles.barBtnText}>엑셀</Text>
         </Pressable>
-        <Pressable
-          style={styles.barBtn}
-          onPress={() => {
-            if (!active) return;
-            setPhase('imported');
-          }}
-        >
-          <Text style={styles.barBtnText}>가져옴</Text>
+        <Pressable style={styles.barBtn} onPress={handleTrashSelected} disabled={busy || selected.size === 0}>
+          <Text style={[styles.barBtnText, styles.barBtnDanger]}>휴지통</Text>
         </Pressable>
       </View>
+      <Modal
+        visible={!!previewUri}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPreviewUri(null)}
+      >
+        <Pressable style={styles.previewBg} onPress={() => setPreviewUri(null)}>
+          {previewUri ? (
+            <Image source={{ uri: previewUri }} style={styles.previewImg} resizeMode="contain" />
+          ) : null}
+          <Text style={styles.previewHint}>탭하면 닫힙니다</Text>
+        </Pressable>
+      </Modal>
     </View>
   );
 
@@ -838,13 +899,6 @@ export function ProjectCollectScreen({
       {phase === 'qr' && renderQr()}
       {phase === 'join' && renderJoin()}
       {phase === 'inbox' && renderInbox()}
-      {phase === 'imported' && active ? (
-        <ProjectImportedList
-          project={active}
-          folderMode={folderMode}
-          onChanged={() => onImported?.()}
-        />
-      ) : null}
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" color="#111" />
@@ -998,13 +1052,41 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
+  inboxListPad: { paddingHorizontal: 12, paddingBottom: 8 },
   inboxRow: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 8,
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
     backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
   },
+  inboxThumb: { width: 64, height: 64, borderRadius: 8 },
+  inboxThumbPlaceholder: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
+    backgroundColor: '#e5e7eb',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inboxThumbPlaceholderText: { fontSize: 11, color: '#6b7280', fontWeight: '700' },
+  inboxMeta: { flex: 1, gap: 4 },
+  barBtnDanger: { color: '#b91c1c' },
+  previewBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  previewImg: { width: '100%', height: '80%' },
+  previewHint: { color: '#fff', marginTop: 12, fontWeight: '600' },
   inboxRowOn: { backgroundColor: '#eff6ff' },
   bar: {
     flexDirection: 'row',

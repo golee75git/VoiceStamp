@@ -3671,3 +3671,12 @@ restore-list-received-badge.bat
 
 `src.pre-list-received-badge/` 스냅샷으로 되돌립니다.
 
+## 247. 수신함 병합 목록 되돌리기 (선택)
+
+수신함 서버+로컬 병합·썸네일 통합 후 문제가 생기면:
+
+```bat
+restore-inbox-merged-list.bat
+```
+
+`src.pre-inbox-merged-list/` 스냅샷으로 되돌립니다.
