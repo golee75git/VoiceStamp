@@ -102,14 +102,21 @@ export async function apiSetInviteTemplate(input: {
   return postAction({ action: 'setInviteTemplate', ...input });
 }
 
-export async function apiUploadStamp(input: {
+export async function apiPrepareUpload(input: {
   projectId: string;
   uploadCode: string;
   stampId: string;
-  imageBase64: string;
   meta: Record<string, unknown>;
-}): Promise<{ ok: boolean }> {
-  return postAction({ action: 'upload', ...input });
+}): Promise<{ stampId: string; putUrl: string; contentType: string; expiresIn: number }> {
+  return postAction({ action: 'prepareUpload', ...input });
+}
+
+export async function apiCompleteUpload(input: {
+  projectId: string;
+  uploadCode: string;
+  stampId: string;
+}): Promise<{ ok: boolean; stampId: string }> {
+  return postAction({ action: 'completeUpload', ...input });
 }
 
 export async function apiManifest(input: {
@@ -119,12 +126,12 @@ export async function apiManifest(input: {
   return postAction({ action: 'manifest', ...input });
 }
 
-export async function apiDownloadStamp(input: {
+export async function apiDownloadUrl(input: {
   projectId: string;
   collectorPin: string;
   stampId: string;
-}): Promise<{ meta: Record<string, unknown>; imageBase64: string }> {
-  return postAction({ action: 'download', ...input });
+}): Promise<{ meta: Record<string, unknown>; url: string; expiresIn: number }> {
+  return postAction({ action: 'downloadUrl', ...input });
 }
 
 export async function apiImportAck(input: {
@@ -161,9 +168,18 @@ export function mapProjectApiError(e: unknown): string {
     case 'project_expired':
       return '이 사업은 종료되었습니다. 연결을 끊어 주세요.';
     case 'project_closed':
-      return '종료된 사업에는 초대를 넣을 수 없습니다.';
+      return '종료된 사업에는 올리거나 초대할 수 없습니다.';
     case 'invalid_template':
       return '저장 템플릿이 올바르지 않습니다.';
+    case 'use_prepare_upload':
+    case 'use_download_url':
+      return '앱을 최신 버전으로 업데이트해 주세요.';
+    case 'incomplete_upload':
+      return '사진 올리기가 끝나지 않았습니다. 다시 시도해 주세요.';
+    case 'stamp_not_found':
+      return '사진을 찾을 수 없습니다.';
+    case 'put_failed':
+      return '일시 저장소에 올리지 못했습니다. 네트워크를 확인해 주세요.';
     case 'not_found':
       return '사업을 찾을 수 없습니다.';
     default:

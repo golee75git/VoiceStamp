@@ -10,6 +10,7 @@ const REGION = 'kr-standard';
 const HOST = 'kr.object.ncloudstorage.com';
 const SERVICE = 's3';
 const EXPIRES_GET = 900;
+const EXPIRES_PUT = 900;
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -281,6 +282,62 @@ function presignGet({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_GE
   return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
 }
 
+/** Client-direct PUT URL (host only; no image bytes through Vercel). */
+function presignPut({ key, accessKey, secretKey, bucket, expiresSec = EXPIRES_PUT }) {
+  const { amz, short } = amzDate();
+  const credentialScope = short + '/' + REGION + '/' + SERVICE + '/aws4_request';
+  const credential = accessKey + '/' + credentialScope;
+  const canonicalUri = '/' + bucket + '/' + encodeKeyPath(key);
+  const queryPairs = [
+    ['X-Amz-Algorithm', 'AWS4-HMAC-SHA256'],
+    ['X-Amz-Credential', credential],
+    ['X-Amz-Date', amz],
+    ['X-Amz-Expires', String(expiresSec)],
+    ['X-Amz-SignedHeaders', 'host'],
+  ];
+  const canonicalQuery = queryPairs
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+    .join('&');
+  const canonicalRequest = [
+    'PUT',
+    canonicalUri,
+    canonicalQuery,
+    'host:' + HOST + '\n',
+    'host',
+    'UNSIGNED-PAYLOAD',
+  ].join('\n');
+  const stringToSign = ['AWS4-HMAC-SHA256', amz, credentialScope, sha256Hex(canonicalRequest)].join(
+    '\n',
+  );
+  const sig = crypto
+    .createHmac('sha256', signingKey(secretKey, short))
+    .update(stringToSign, 'utf8')
+    .digest('hex');
+  return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
+}
+
+function buildStampMeta(projectId, stampId, meta) {
+  const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
+  const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
+  const templateIdRaw = meta.templateId == null ? '' : String(meta.templateId).trim().slice(0, 64);
+  return {
+    stampId,
+    projectId,
+    uploadedByDeviceId: meta.uploadedByDeviceId || null,
+    uploadedByMark,
+    templateId: templateIdRaw || null,
+    uploadedAt: Date.now(),
+    title: String(meta.title || '').slice(0, 200),
+    memo: String(meta.memo || '').slice(0, 4000),
+    placeLabel: meta.placeLabel ?? null,
+    floor: meta.floor ?? null,
+    latitude: meta.latitude ?? null,
+    longitude: meta.longitude ?? null,
+    createdAt: meta.createdAt ?? Date.now(),
+    localGroupName: meta.localGroupName ?? null,
+  };
+}
+
 function httpsRequest(opts) {
   return new Promise((resolve, reject) => {
     const req = https.request(
@@ -380,6 +437,24 @@ async function s3Get(creds, key) {
     throw err;
   }
   return Buffer.from(await res.arrayBuffer());
+}
+
+async function s3ObjectExists(creds, key) {
+  const url = presignGet({
+    key: key,
+    accessKey: creds.accessKey,
+    secretKey: creds.secretKey,
+    bucket: creds.bucket,
+  });
+  const res = await fetch(url, { method: 'HEAD' });
+  if (res.status === 404) {
+    return false;
+  }
+  if (!res.ok) {
+    const getRes = await fetch(url, { headers: { Range: 'bytes=0-0' } });
+    return getRes.ok || getRes.status === 206;
+  }
+  return true;
 }
 
 async function s3Delete(creds, key) {
@@ -616,13 +691,60 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    if (action === 'upload') {
+    if (action === 'upload' || action === 'download') {
+      json(res, 400, {
+        error: action === 'upload' ? 'use_prepare_upload' : 'use_download_url',
+      });
+      return;
+    }
+
+    if (action === 'prepareUpload') {
       const projectId = String(body.projectId || '');
       const uploadCode = String(body.uploadCode || '');
       const stampId = String(body.stampId || '').slice(0, 80);
-      const imageBase64 = String(body.imageBase64 || '');
       const meta = body.meta && typeof body.meta === 'object' ? body.meta : {};
-      if (!projectId || !stampId || !imageBase64) {
+      if (!projectId || !stampId) {
+        json(res, 400, { error: 'invalid_upload' });
+        return;
+      }
+      const project = await loadProject(creds, projectId);
+      if (!project) {
+        json(res, 404, { error: 'not_found' });
+        return;
+      }
+      assertNotExpired(project);
+      if (project.closedAt) {
+        json(res, 400, { error: 'project_closed' });
+        return;
+      }
+      assertUploadCode(project, uploadCode);
+      const stampMeta = buildStampMeta(projectId, stampId, meta);
+      await s3Put(
+        creds,
+        projectKey(projectId, `meta/${stampId}.json`),
+        'application/json',
+        Buffer.from(JSON.stringify(stampMeta), 'utf8'),
+      );
+      const putUrl = presignPut({
+        key: projectKey(projectId, `stamps/${stampId}.jpg`),
+        accessKey: creds.accessKey,
+        secretKey: creds.secretKey,
+        bucket: creds.bucket,
+      });
+      json(res, 200, {
+        stampId,
+        putUrl,
+        contentType: 'image/jpeg',
+        expiresIn: EXPIRES_PUT,
+      });
+      return;
+    }
+
+    if (action === 'completeUpload') {
+      const projectId = String(body.projectId || '');
+      const uploadCode = String(body.uploadCode || '');
+      const stampId = String(body.stampId || '').slice(0, 80);
+      if (!projectId || !stampId) {
         json(res, 400, { error: 'invalid_upload' });
         return;
       }
@@ -633,32 +755,20 @@ module.exports = async function handler(req, res) {
       }
       assertNotExpired(project);
       assertUploadCode(project, uploadCode);
-      const imgBuf = Buffer.from(imageBase64, 'base64');
-      if (imgBuf.length < 32 || imgBuf.length > 2_800_000) {
-        json(res, 400, { error: 'bad_image' });
+      const metaBuf = await s3Get(creds, projectKey(projectId, `meta/${stampId}.json`));
+      const imageOk = await s3ObjectExists(creds, projectKey(projectId, `stamps/${stampId}.jpg`));
+      if (!metaBuf || !imageOk) {
+        json(res, 400, { error: 'incomplete_upload' });
         return;
       }
-      await s3Put(creds, projectKey(projectId, `stamps/${stampId}.jpg`), 'image/jpeg', imgBuf);
-      const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
-      const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
-      const templateIdRaw = meta.templateId == null ? '' : String(meta.templateId).trim().slice(0, 64);
-      const templateId = templateIdRaw || null;
-      const stampMeta = {
-        stampId,
-        projectId,
-        uploadedByDeviceId: meta.uploadedByDeviceId || null,
-        uploadedByMark,
-        templateId,
-        uploadedAt: Date.now(),
-        title: String(meta.title || '').slice(0, 200),
-        memo: String(meta.memo || '').slice(0, 4000),
-        placeLabel: meta.placeLabel ?? null,
-        floor: meta.floor ?? null,
-        latitude: meta.latitude ?? null,
-        longitude: meta.longitude ?? null,
-        createdAt: meta.createdAt ?? Date.now(),
-        localGroupName: meta.localGroupName ?? null,
-      };
+      let stampMeta;
+      try {
+        stampMeta = JSON.parse(metaBuf.toString('utf8'));
+      } catch {
+        json(res, 400, { error: 'invalid_meta' });
+        return;
+      }
+      stampMeta.uploadedAt = Date.now();
       await s3Put(
         creds,
         projectKey(projectId, `meta/${stampId}.json`),
@@ -666,14 +776,16 @@ module.exports = async function handler(req, res) {
         Buffer.from(JSON.stringify(stampMeta), 'utf8'),
       );
       const manifest = await loadManifest(creds, projectId);
-      const stamps = Array.isArray(manifest.stamps) ? manifest.stamps.filter((s) => s.stampId !== stampId) : [];
+      const stamps = Array.isArray(manifest.stamps)
+        ? manifest.stamps.filter((s) => s.stampId !== stampId)
+        : [];
       stamps.push({
         stampId,
         title: stampMeta.title,
         uploadedAt: stampMeta.uploadedAt,
         uploadedByDeviceId: stampMeta.uploadedByDeviceId,
         uploadedByMark: stampMeta.uploadedByMark,
-        templateId: stampMeta.templateId,
+        templateId: stampMeta.templateId || null,
       });
       manifest.stamps = stamps;
       manifest.lastUploadAt = stampMeta.uploadedAt;
@@ -703,7 +815,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    if (action === 'download') {
+    if (action === 'downloadUrl') {
       const projectId = String(body.projectId || '');
       const collectorPin = String(body.collectorPin || '');
       const stampId = String(body.stampId || '');
@@ -714,15 +826,24 @@ module.exports = async function handler(req, res) {
       }
       assertCollectorPin(project, collectorPin);
       const metaBuf = await s3Get(creds, projectKey(projectId, `meta/${stampId}.json`));
-      const imgBuf = await s3Get(creds, projectKey(projectId, `stamps/${stampId}.jpg`));
-      if (!metaBuf || !imgBuf) {
+      if (!metaBuf) {
         json(res, 404, { error: 'stamp_not_found' });
         return;
       }
-      json(res, 200, {
-        meta: JSON.parse(metaBuf.toString('utf8')),
-        imageBase64: imgBuf.toString('base64'),
+      let meta;
+      try {
+        meta = JSON.parse(metaBuf.toString('utf8'));
+      } catch {
+        json(res, 404, { error: 'stamp_not_found' });
+        return;
+      }
+      const url = presignGet({
+        key: projectKey(projectId, `stamps/${stampId}.jpg`),
+        accessKey: creds.accessKey,
+        secretKey: creds.secretKey,
+        bucket: creds.bucket,
       });
+      json(res, 200, { meta, url, expiresIn: EXPIRES_GET });
       return;
     }
 

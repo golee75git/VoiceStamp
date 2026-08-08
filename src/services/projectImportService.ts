@@ -5,7 +5,7 @@ import { ensureStampThumb } from './stampThumb';
 import { insertStamp, getStampById } from './stampRepository';
 import { sanitizeStampFloor } from './stampFloor';
 import {
-  apiDownloadStamp,
+  apiDownloadUrl,
   apiImportAck,
   mapProjectApiError,
 } from './projectCollectApi';
@@ -18,7 +18,6 @@ import {
 } from './projectCollectSettings';
 import type { Stamp } from '../types/stamp';
 
-
 export async function importProjectStampToPhone(input: {
   project: OwnedProject;
   collectorPin: string;
@@ -30,7 +29,7 @@ export async function importProjectStampToPhone(input: {
     return { stamp: existing, skipped: true };
   }
 
-  const { meta, imageBase64 } = await apiDownloadStamp({
+  const { meta, url } = await apiDownloadUrl({
     projectId: input.project.projectId,
     collectorPin: input.collectorPin,
     stampId: input.stampId,
@@ -43,13 +42,16 @@ export async function importProjectStampToPhone(input: {
     throw new Error('cache_unavailable');
   }
   const tempUri = `${cacheDir}project-import-${input.stampId}.jpg`;
-  await FileSystem.writeAsStringAsync(tempUri, imageBase64, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
+  const downloaded = await FileSystem.downloadAsync(url, tempUri);
+  if (downloaded.status < 200 || downloaded.status >= 300) {
+    const err = new Error('stamp_not_found');
+    (err as Error & { code?: string }).code = 'stamp_not_found';
+    throw err;
+  }
 
   const title = String(meta.title || input.stampId).slice(0, 200) || '제목 없음';
   const id = input.stampId;
-  const imagePath = await persistImage(tempUri, title, id, groupName);
+  const imagePath = await persistImage(downloaded.uri, title, id, groupName);
   const now = Date.now();
   const stamp: Stamp = {
     id,

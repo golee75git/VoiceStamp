@@ -1296,47 +1296,54 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>사업 취합</Text>
-          <Text style={styles.hint}>
-            QR로 연결하면 저장 시 일시 저장소(한국)로 올립니다. 기본 꺼짐.
-          </Text>
-          <View style={styles.optionRow}>
-            {(
-              [
-                { value: false, label: '사용 안 함' },
-                { value: true, label: '사용' },
-              ] as const
-            ).map((option) => {
-              const selected = projectCollectEnabled === option.value;
-              return (
-                <Pressable
-                  key={`project-collect-${option.label}`}
-                  style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                  onPress={() => {
-                    setProjectCollectEnabledState(option.value);
-                    void import('../services/projectCollectSettings').then(({ setProjectCollectEnabled }) =>
-                      setProjectCollectEnabled(option.value),
-                    );
-                  }}
-                  disabled={saving}
-                >
-                  <Text style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}>
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-          {projectCollectEnabled ? (
+          {Platform.OS !== 'web' ? (
             <>
-              {projectJoinSummary ? <Text style={styles.hint}>{projectJoinSummary}</Text> : null}
-              <Pressable
-                style={styles.secondaryButton}
-                onPress={() => onOpenProjectCollect?.()}
-                disabled={!onOpenProjectCollect}
-              >
-                <Text style={styles.secondaryButtonText}>시작하기 · QR·수신</Text>
-              </Pressable>
+              <Text style={[styles.label, styles.sectionGap]}>사업 취합</Text>
+              <Text style={styles.hint}>
+                QR로 연결하면 저장 시 일시 저장소(한국)로 올립니다. 기본 꺼짐. Android 앱에서만
+                사용할 수 있습니다.
+              </Text>
+              <View style={styles.optionRow}>
+                {(
+                  [
+                    { value: false, label: '사용 안 함' },
+                    { value: true, label: '사용' },
+                  ] as const
+                ).map((option) => {
+                  const selected = projectCollectEnabled === option.value;
+                  return (
+                    <Pressable
+                      key={`project-collect-${option.label}`}
+                      style={[styles.optionButton, selected && styles.optionButtonSelected]}
+                      onPress={() => {
+                        setProjectCollectEnabledState(option.value);
+                        void import('../services/projectCollectSettings').then(
+                          ({ setProjectCollectEnabled }) => setProjectCollectEnabled(option.value),
+                        );
+                      }}
+                      disabled={saving}
+                    >
+                      <Text
+                        style={[styles.optionButtonText, selected && styles.optionButtonTextSelected]}
+                      >
+                        {option.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              {projectCollectEnabled ? (
+                <>
+                  {projectJoinSummary ? <Text style={styles.hint}>{projectJoinSummary}</Text> : null}
+                  <Pressable
+                    style={styles.secondaryButton}
+                    onPress={() => onOpenProjectCollect?.()}
+                    disabled={!onOpenProjectCollect}
+                  >
+                    <Text style={styles.secondaryButtonText}>시작하기 · QR·수신</Text>
+                  </Pressable>
+                </>
+              ) : null}
             </>
           ) : null}
 

@@ -3719,3 +3719,13 @@ restore-invite-template.bat
 `
 
 src.pre-invite-template/ · pi.pre-invite-template/ · public.pre-invite-template/ 스냅샷으로 되돌립니다.
+
+## 252. NCP presigned 직통 되돌리기 (선택)
+
+사진 올리기·받기를 presigned 직통으로 바꾼 뒤 문제가 생기면:
+
+`at
+restore-presign-direct.bat
+`
+
+pi.pre-presign-direct/ · src.pre-presign-direct/ 스냅샷으로 되돌린 뒤 Vercel을 다시 배포하세요.

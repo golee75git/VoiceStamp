@@ -2,7 +2,8 @@ import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import {
-  apiUploadStamp,
+  apiCompleteUpload,
+  apiPrepareUpload,
   mapProjectApiError,
 } from './projectCollectApi';
 import {
@@ -18,11 +19,6 @@ let failStreak = 0;
 let draining = false;
 const queue: string[] = [];
 
-function dataUriToBase64(dataUri: string): string {
-  const i = dataUri.indexOf('base64,');
-  return i >= 0 ? dataUri.slice(i + 7) : '';
-}
-
 export function enqueueProjectUpload(stampId: string): void {
   if (!queue.includes(stampId)) {
     queue.push(stampId);
@@ -32,6 +28,7 @@ export function enqueueProjectUpload(stampId: string): void {
 
 export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void> {
   try {
+    if (Platform.OS === 'web') return;
     const enabled = await getProjectCollectEnabled();
     if (!enabled) return;
     const join = await getProjectJoin();
@@ -42,6 +39,31 @@ export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void
     enqueueProjectUpload(stamp.id);
   } catch {
     // non-fatal
+  }
+}
+
+async function putImageToPresignedUrl(putUrl: string, dataUri: string): Promise<void> {
+  const imgRes = await fetch(dataUri);
+  if (!imgRes.ok) {
+    const err = new Error('bad_image');
+    (err as Error & { code?: string }).code = 'bad_image';
+    throw err;
+  }
+  const body = await imgRes.arrayBuffer();
+  if (body.byteLength < 32 || body.byteLength > 2_800_000) {
+    const err = new Error('bad_image');
+    (err as Error & { code?: string }).code = 'bad_image';
+    throw err;
+  }
+  const putRes = await fetch(putUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'image/jpeg' },
+    body,
+  });
+  if (!putRes.ok) {
+    const err = new Error('put_failed');
+    (err as Error & { code?: string }).code = 'put_failed';
+    throw err;
   }
 }
 
@@ -57,12 +79,10 @@ async function uploadOne(stampId: string): Promise<void> {
   await setUploadStatus(stampId, 'uploading');
   const deviceId = await getOrCreateDeviceId();
   const dataUri = await readImageDataUriForPdf(stamp.imagePath, 'compressed');
-  const imageBase64 = dataUriToBase64(dataUri);
-  await apiUploadStamp({
+  const prepared = await apiPrepareUpload({
     projectId: join.projectId,
     uploadCode: join.uploadCode,
     stampId: stamp.id,
-    imageBase64,
     meta: {
       uploadedByDeviceId: deviceId,
       uploadedByMark: join.mark || null,
@@ -76,6 +96,12 @@ async function uploadOne(stampId: string): Promise<void> {
       localGroupName: null,
       templateId: stamp.templateId || null,
     },
+  });
+  await putImageToPresignedUrl(prepared.putUrl, dataUri);
+  await apiCompleteUpload({
+    projectId: join.projectId,
+    uploadCode: join.uploadCode,
+    stampId: stamp.id,
   });
   await setUploadStatus(stampId, 'synced');
   failStreak = 0;

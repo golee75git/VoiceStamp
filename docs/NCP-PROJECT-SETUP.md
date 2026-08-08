@@ -39,8 +39,14 @@ Invoke-RestMethod -Method POST -Uri "https://voicestamp-gilt.vercel.app/api/proj
 ## 버킷
 
 - ACL: Private  
-- CORS: APK는 서버 경유 업로드(base64)라 클라이언트 PUT CORS 불필요  
+- CORS: **APK는 클라이언트→NCP 직통 PUT/GET**을 씁니다. 네이티브는 CORS가 없어 버킷 CORS가 필수는 아닙니다. 웹 취합은 앱에서 숨겨 두었습니다.  
 - Lifecycle(권장): `voicestamp/projects/` 접두 7~30일 후 삭제  
+
+## 전송 경로
+
+- 앱 → `prepareUpload` / `completeUpload` / `downloadUrl` (작은 JSON만 Vercel Function)  
+- 사진 바이트 → NCP Object Storage **presigned PUT/GET** (Vercel 본문에 base64 없음)  
+- 구 `upload`·`download`(base64) action은 `400`으로 거절합니다. 최신 APK 필요.
 
 ## 앱
 
