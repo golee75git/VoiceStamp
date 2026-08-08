@@ -3605,3 +3605,14 @@ restore-join-mark-required.bat
 
 `src.pre-join-mark-required/` 스냅샷으로 되돌립니다.
 
+
+## 241. 사업 목록 관리 되돌리기 (선택)
+
+허브 만든 사업 목록(사업별 QR·수신·엑셀) 후 문제가 생기면:
+
+```bat
+restore-owned-project-list.bat
+```
+
+`src.pre-owned-project-list/` 스냅샷으로 되돌립니다.
+

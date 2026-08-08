@@ -393,23 +393,29 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
     }
   };
 
-  const handleExcelCollected = async () => {
-    if (!active) return;
+  const handleExcelCollected = async (project: OwnedProject) => {
+    setActive(project);
     setBusy(true);
     try {
-      const folder = buildImportGroupName(active.name, folderMode);
+      const folder = buildImportGroupName(project.name, folderMode);
       const all = await listStamps();
-      const matched = all.filter((s) => s.imagePath.includes(`/${folder}/`) || s.imagePath.includes(`\\${folder}\\`));
+      const matched = all.filter(
+        (s) =>
+          s.imagePath.includes('/' + folder + '/') ||
+          s.imagePath.includes('\\' + folder + '\\'),
+      );
       // Also match by group folder segment
       const stamps = matched.length
         ? matched
-        : all.filter((s) => s.imagePath.split('/').some((p) => p.includes(sanitizeLoose(active.name))));
+        : all.filter((s) =>
+            s.imagePath.split('/').some((seg) => seg.includes(sanitizeLoose(project.name))),
+          );
       if (stamps.length === 0) {
         Alert.alert('취합 엑셀', '아직 내 폰에 가져온 사진이 없습니다.');
         return;
       }
       const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
-      const base = `${sanitizeLoose(active.name)}_취합_${formatYmd(Date.now())}`;
+      const base = sanitizeLoose(project.name) + '_취합_' + formatYmd(Date.now());
       const result = await createStampsXlsx(stamps, base);
       await shareStampsXlsx(result);
     } catch (e) {
@@ -429,44 +435,55 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
     <ScrollView contentContainerStyle={styles.body}>
       <Pressable style={styles.row} onPress={() => setPhase('create')}>
         <Text style={styles.rowTitle}>사업 만들기</Text>
-        <Text style={styles.rowSub}>관리자 · QR을 보여 줍니다</Text>
+        <Text style={styles.rowSub}>기존 사업은 유지 · 새 사업을 추가합니다 (최대 20)</Text>
       </Pressable>
       <Pressable style={styles.row} onPress={() => setPhase('join')}>
         <Text style={styles.rowTitle}>코드로 참여</Text>
         <Text style={styles.rowSub}>촬영자 · 한 번만 연결</Text>
       </Pressable>
-      {owned[0] ? (
-        <Pressable style={styles.row} onPress={() => void openInbox(owned[0])}>
-          <Text style={styles.rowTitle}>수신 목록</Text>
-          <Text style={styles.rowSub}>
-            {owned[0].name} · 올린 사진 확인·내 폰으로
-          </Text>
-        </Pressable>
-      ) : (
+      <Text style={styles.label}>만든 사업 {owned.length ? '(' + owned.length + ')' : ''}</Text>
+      {owned.length === 0 ? (
         <View style={styles.row}>
-          <Text style={styles.rowTitle}>수신 목록</Text>
           <Text style={styles.rowSub}>만든 사업이 없습니다</Text>
         </View>
+      ) : (
+        owned.map((project) => {
+          const left = Math.max(0, Math.ceil((project.expiresAt - Date.now()) / 86400000));
+          return (
+            <View key={project.projectId} style={styles.row}>
+              <Text style={styles.rowTitle}>{project.name}</Text>
+              <Text style={styles.rowSub}>
+                D-{left} · {project.projectId}
+              </Text>
+              <View style={styles.ownedActions}>
+                <Pressable
+                  style={styles.ownedAction}
+                  onPress={() => {
+                    setActive(project);
+                    setPhase('qr');
+                  }}
+                >
+                  <Text style={styles.ownedActionText}>QR</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.ownedAction}
+                  onPress={() => void openInbox(project)}
+                  disabled={busy}
+                >
+                  <Text style={styles.ownedActionText}>수신</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.ownedAction}
+                  onPress={() => void handleExcelCollected(project)}
+                  disabled={busy}
+                >
+                  <Text style={styles.ownedActionText}>엑셀</Text>
+                </Pressable>
+              </View>
+            </View>
+          );
+        })
       )}
-      {owned[0] ? (
-        <>
-          <Pressable
-            style={styles.row}
-            onPress={() => {
-              setActive(owned[0]);
-              setPhase('qr');
-            }}
-          >
-            <Text style={styles.rowTitle}>QR 보기</Text>
-            <Text style={styles.rowSub}>
-              {owned[0].name} · 남은 기간 확인
-            </Text>
-          </Pressable>
-          <Pressable style={styles.primary} onPress={() => void handleExcelCollected()} disabled={busy}>
-            <Text style={styles.primaryText}>취합 엑셀 보내기</Text>
-          </Pressable>
-        </>
-      ) : null}
       {join ? (
         <View style={styles.banner}>
           <Text style={styles.bannerText}>
@@ -836,6 +853,16 @@ const styles = StyleSheet.create({
   },
   rowTitle: { fontSize: 16, fontWeight: '700', color: '#111' },
   rowSub: { fontSize: 13, color: '#6b7280' },
+  ownedActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
+  ownedAction: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#f9fafb',
+  },
+  ownedActionText: { fontWeight: '700', color: '#111', fontSize: 13 },
   hint: { fontSize: 12, color: '#6b7280', lineHeight: 18 },
   hintPad: { padding: 20, color: '#6b7280' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
