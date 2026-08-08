@@ -3750,3 +3750,13 @@ restore-put-fix-labels.bat
 
 src.pre-put-fix-labels/ · pi.pre-put-fix-labels/ · public.pre-put-fix-labels/ 스냅샷으로 되돌린 뒤 Vercel을 다시 배포하세요.
 
+## 255. data URI PUT 디코드 되돌리기 (선택)
+
+사업 올리기 data URI fetch 수정 후 문제가 생기면:
+
+`at
+restore-put-datauri.bat
+`
+
+src.pre-put-datauri/ 스냅샷으로 되돌립니다.
+

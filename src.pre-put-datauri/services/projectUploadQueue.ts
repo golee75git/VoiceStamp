@@ -42,35 +42,18 @@ export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void
   }
 }
 
-function dataUriToBytes(dataUri: string): Uint8Array {
-  const comma = dataUri.indexOf(',');
-  if (comma < 0 || !dataUri.startsWith('data:')) {
-    const err = new Error('bad_image');
-    (err as Error & { code?: string }).code = 'bad_image';
-    throw err;
-  }
-  const meta = dataUri.slice(5, comma);
-  const payload = dataUri.slice(comma + 1);
-  if (!/;base64/i.test(meta) || !payload) {
-    const err = new Error('bad_image');
-    (err as Error & { code?: string }).code = 'bad_image';
-    throw err;
-  }
-  const binary = atob(payload);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-}
-
 async function putImageToPresignedUrl(
   putUrl: string,
   dataUri: string,
   contentType: string | null,
 ): Promise<void> {
-  // Android native fetch rejects data: URLs; decode base64 locally instead.
-  const body = dataUriToBytes(dataUri);
+  const imgRes = await fetch(dataUri);
+  if (!imgRes.ok) {
+    const err = new Error('bad_image');
+    (err as Error & { code?: string }).code = 'bad_image';
+    throw err;
+  }
+  const body = await imgRes.arrayBuffer();
   if (body.byteLength < 32 || body.byteLength > 2_800_000) {
     const err = new Error('bad_image');
     (err as Error & { code?: string }).code = 'bad_image';
