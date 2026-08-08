@@ -18,6 +18,7 @@ import { openInfoPage } from '../constants/infoUrls';
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
+import type { ProjectUploadStatus } from '../services/projectCollectSettings';
 import { StampSaveModal } from './StampSaveModal';
 import { FollowLinkCompareSheet } from './FollowLinkCompareSheet';
 import { ExportNameModal } from './ExportNameModal';
@@ -90,6 +91,7 @@ export function StampListScreen({
   captureStampForExport,
 }: StampListScreenProps) {
   const [stamps, setStamps] = useState<Stamp[]>([]);
+  const [uploadStatusById, setUploadStatusById] = useState<Record<string, ProjectUploadStatus>>({});
   const [loading, setLoading] = useState(true);
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
@@ -199,6 +201,12 @@ export function StampListScreen({
       const rows = await listStamps();
       setStamps(rows);
       scheduleStampThumbs(rows, resolveImageUri);
+      try {
+        const { getUploadStatusMap } = await import('../services/projectCollectSettings');
+        setUploadStatusById(await getUploadStatusMap());
+      } catch {
+        setUploadStatusById({});
+      }
       try {
         setTemplateOptions(await listStampFieldTemplatesForFilter());
       } catch {
@@ -1116,9 +1124,17 @@ export function StampListScreen({
                     <Text style={[styles.cardTitle, { textAlign: titleTextAlign }]} numberOfLines={1}>
                       {displayTitle}
                     </Text>
-                    <Text style={styles.cardTypeLabel} numberOfLines={1}>
-                      {`${linkTypePrefix}${typeLabel}`}
-                    </Text>
+                    <View style={styles.cardTypeRow}>
+                      <Text style={styles.cardTypeLabel} numberOfLines={1}>
+                        {`${linkTypePrefix}${typeLabel}`}
+                      </Text>
+                      {uploadStatusById[item.id] === 'synced' ? (
+                        <Text style={styles.collectBadgeOk}>취합</Text>
+                      ) : null}
+                      {uploadStatusById[item.id] === 'failed' ? (
+                        <Text style={styles.collectBadgeFail}>취합 실패</Text>
+                      ) : null}
+                    </View>
                     {showFullMeta && displayPlace ? (
                       <Text style={styles.cardPlace} numberOfLines={1}>
                         {displayPlace}
@@ -1833,6 +1849,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111',
+  },
+  cardTypeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap',
+  },
+  collectBadgeOk: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#065f46',
+    backgroundColor: '#d1fae5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  collectBadgeFail: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#991b1b',
+    backgroundColor: '#fee2e2',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
   },
   cardTypeLabel: {
     fontSize: 12,

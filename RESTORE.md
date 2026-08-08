@@ -3638,3 +3638,14 @@ restore-imported-preview.bat
 
 `src.pre-imported-preview/` 스냅샷으로 되돌립니다.
 
+
+## 244. 저장 목록 취합 배지 되돌리기 (선택)
+
+목록 카드 「취합」「취합 실패」표시 후 문제가 생기면:
+
+```bat
+restore-list-collect-badge.bat
+```
+
+`src.pre-list-collect-badge/` 스냅샷으로 되돌립니다.
+
