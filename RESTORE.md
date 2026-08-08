@@ -3689,3 +3689,13 @@ restore-inbox-excel-selected.bat
 ```
 
 `src.pre-inbox-excel-selected/` 스냅샷으로 되돌립니다.
+
+## 249. 참여 사업 이력 되돌리기 (선택)
+
+참여한 사업 목록·다시 연결 후 문제가 생기면:
+
+```bat
+restore-join-history.bat
+```
+
+`src.pre-join-history/` 스냅샷으로 되돌립니다.

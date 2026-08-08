@@ -39,7 +39,9 @@ import {
   getProjectDeleteAfterImport,
   getProjectImportFolderMode,
   getProjectJoin,
+  listJoinedProjectHistory,
   listOwnedProjects,
+  removeJoinedProjectHistory,
   removeOwnedProject,
   sanitizeJoinMark,
   setCollectorPin,
@@ -48,6 +50,7 @@ import {
   setProjectImportFolderMode,
   setProjectJoin,
   upsertOwnedProject,
+  type JoinedProjectHistory,
   type OwnedProject,
   type ProjectImportFolderMode,
   type ProjectJoinState,
@@ -125,6 +128,7 @@ export function ProjectCollectScreen({
   const [phase, setPhase] = useState<ProjectCollectPhase>(initialPhase);
   const [busy, setBusy] = useState(false);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
+  const [joinHistory, setJoinHistory] = useState<JoinedProjectHistory[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
   const [active, setActive] = useState<OwnedProject | null>(null);
   const [qrGrid, setQrGrid] = useState<QrGrid | null>(null);
@@ -155,6 +159,7 @@ export function ProjectCollectScreen({
 
   const reload = useCallback(async () => {
     setOwned(await listOwnedProjects());
+    setJoinHistory(await listJoinedProjectHistory());
     setJoin(await getProjectJoin());
     setFolderMode(await getProjectImportFolderMode());
     setDeleteAfter(await getProjectDeleteAfterImport());
@@ -497,6 +502,59 @@ export function ProjectCollectScreen({
     }
   };
 
+  const handleReconnectJoin = (item: JoinedProjectHistory) => {
+    const apply = () => {
+      void (async () => {
+        setBusy(true);
+        try {
+          await setProjectCollectEnabled(true);
+          await setProjectJoin({
+            projectId: item.projectId,
+            name: item.name,
+            uploadCode: item.uploadCode,
+            mark: item.mark,
+          });
+          if (item.mark) setJoinMarkText(item.mark);
+          await reload();
+          Alert.alert('연결되었습니다', item.name + '에 다시 연결했습니다. 이후 저장분이 올라갑니다.');
+        } catch (e) {
+          Alert.alert('다시 연결', e instanceof Error ? e.message : '실패');
+        } finally {
+          setBusy(false);
+        }
+      })();
+    };
+    if (join && join.projectId !== item.projectId) {
+      Alert.alert(
+        '사업 연결',
+        '지금 ' + join.name + '에 연결되어 있습니다. ' + item.name + '로 바꿀까요?',
+        [
+          { text: '유지', style: 'cancel' },
+          { text: '바꾸기', onPress: apply },
+        ],
+      );
+      return;
+    }
+    apply();
+  };
+
+  const handleRemoveJoinHistory = (item: JoinedProjectHistory) => {
+    Alert.alert(
+      '이력에서 제거',
+      item.name + '을(를) 참여 목록에서 뺄까요? (서버 사업은 지우지 않습니다)',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '제거',
+          style: 'destructive',
+          onPress: () => {
+            void removeJoinedProjectHistory(item.projectId).then(reload);
+          },
+        },
+      ],
+    );
+  };
+
   const sanitizeLoose = (n: string) => n.trim().replace(/[\\/:*?"<>|]/g, '_').slice(0, 40);
   const formatYmd = (t: number) => {
     const d = new Date(t);
@@ -511,8 +569,76 @@ export function ProjectCollectScreen({
       </Pressable>
       <Pressable style={styles.row} onPress={() => setPhase('join')}>
         <Text style={styles.rowTitle}>코드로 참여</Text>
-        <Text style={styles.rowSub}>촬영자 · 한 번만 연결</Text>
+        <Text style={styles.rowSub}>촬영자 · 이력에서 다시 연결 가능</Text>
       </Pressable>
+      {join ? (
+        <View style={styles.banner}>
+          <Text style={styles.bannerText}>
+            참여 중 · {join.name}
+            {join.mark ? ' · ' + join.mark : ''}
+          </Text>
+          <Pressable
+            onPress={() => {
+              Alert.alert(
+                '사업 연결을 끊을까요?',
+                '이후 저장분은 더 이상 올라가지 않습니다. 참여 목록에는 남습니다.',
+                [
+                  { text: '취소', style: 'cancel' },
+                  {
+                    text: '끊기',
+                    style: 'destructive',
+                    onPress: () => void clearProjectJoin().then(reload),
+                  },
+                ],
+              );
+            }}
+          >
+            <Text style={styles.linkDanger}>연결 끊기</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      <Text style={styles.label}>참여한 사업 {joinHistory.length ? '(' + joinHistory.length + ')' : ''}</Text>
+      {joinHistory.length === 0 ? (
+        <View style={styles.row}>
+          <Text style={styles.rowSub}>참여한 사업이 없습니다</Text>
+        </View>
+      ) : (
+        joinHistory.map((item) => {
+          const active = join?.projectId === item.projectId;
+          return (
+            <View key={item.projectId} style={styles.row}>
+              <Text style={styles.rowTitle}>{item.name}</Text>
+              <Text style={styles.rowSub}>
+                {[
+                  active ? '연결됨' : '',
+                  item.mark || '',
+                  item.joinedAt ? new Date(item.joinedAt).toLocaleDateString() : '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+              <View style={styles.ownedActions}>
+                {!active ? (
+                  <Pressable
+                    style={styles.ownedAction}
+                    onPress={() => handleReconnectJoin(item)}
+                    disabled={busy}
+                  >
+                    <Text style={styles.ownedActionText}>다시 연결</Text>
+                  </Pressable>
+                ) : null}
+                <Pressable
+                  style={styles.ownedAction}
+                  onPress={() => handleRemoveJoinHistory(item)}
+                  disabled={busy}
+                >
+                  <Text style={styles.ownedActionText}>목록에서 빼기</Text>
+                </Pressable>
+              </View>
+            </View>
+          );
+        })
+      )}
       <Text style={styles.label}>만든 사업 {owned.length ? '(' + owned.length + ')' : ''}</Text>
       {owned.length === 0 ? (
         <View style={styles.row}>
@@ -556,28 +682,6 @@ export function ProjectCollectScreen({
           );
         })
       )}
-      {join ? (
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>
-            참여 중 · {join.name}
-            {join.mark ? ` · ${join.mark}` : ''}
-          </Text>
-          <Pressable
-            onPress={() => {
-              Alert.alert('사업 연결을 끊을까요?', '이후 저장분은 더 이상 올라가지 않습니다.', [
-                { text: '취소', style: 'cancel' },
-                {
-                  text: '끊기',
-                  style: 'destructive',
-                  onPress: () => void clearProjectJoin().then(reload),
-                },
-              ]);
-            }}
-          >
-            <Text style={styles.linkDanger}>연결 끊기</Text>
-          </Pressable>
-        </View>
-      ) : null}
       <Text style={styles.hint}>일시 보관 후 삭제됩니다. 영구 저장소가 아닙니다.</Text>
     </ScrollView>
   );

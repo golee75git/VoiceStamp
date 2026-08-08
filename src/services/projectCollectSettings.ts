@@ -12,6 +12,7 @@ const KEYS = {
   autoUpload: 'project_auto_upload',
   wifiOnly: 'project_wifi_only',
   owned: 'project_owned_json',
+  joinHistory: 'project_join_history_json',
   importFolderMode: 'project_import_folder_mode',
   deleteAfterImport: 'project_delete_after_import',
   uploadStatus: 'project_upload_status_json',
@@ -35,6 +36,15 @@ export type OwnedProject = {
   createdAt: number;
   expiresAt: number;
   uploadCode: string;
+};
+
+/** Past or current projects this device joined to upload. */
+export type JoinedProjectHistory = {
+  projectId: string;
+  name: string;
+  uploadCode: string;
+  mark: string;
+  joinedAt: number;
 };
 
 async function getValue(key: string): Promise<string | null> {
@@ -152,13 +162,21 @@ export async function setProjectJoin(input: {
   mark?: string;
 }): Promise<void> {
   const mark = sanitizeJoinMark(input.mark || '');
+  const joinedAt = Date.now();
   await setValue(KEYS.joinId, input.projectId);
   await setValue(KEYS.joinName, input.name);
   await setValue(KEYS.joinCode, input.uploadCode);
-  await setValue(KEYS.joinAt, String(Date.now()));
+  await setValue(KEYS.joinAt, String(joinedAt));
   if (mark) await setValue(KEYS.joinMark, mark);
   else await deleteValue(KEYS.joinMark);
   if (mark) await setValue(KEYS.joinMarkPref, mark);
+  await upsertJoinedProjectHistory({
+    projectId: input.projectId,
+    name: input.name,
+    uploadCode: input.uploadCode,
+    mark,
+    joinedAt,
+  });
 }
 
 export async function clearProjectJoin(): Promise<void> {
@@ -168,6 +186,76 @@ export async function clearProjectJoin(): Promise<void> {
   await deleteValue(KEYS.joinAt);
   await deleteValue(KEYS.joinMark);
 }
+
+
+export async function listJoinedProjectHistory(): Promise<JoinedProjectHistory[]> {
+  const raw = await getValue(KEYS.joinHistory);
+  let list: JoinedProjectHistory[] = [];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as JoinedProjectHistory[];
+      list = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      list = [];
+    }
+  }
+  const active = await getProjectJoin();
+  if (active) {
+    const exists = list.some((p) => p.projectId === active.projectId);
+    if (!exists) {
+      list = [
+        {
+          projectId: active.projectId,
+          name: active.name,
+          uploadCode: active.uploadCode,
+          mark: active.mark || '',
+          joinedAt: active.joinedAt,
+        },
+        ...list,
+      ].slice(0, 20);
+      await setValue(KEYS.joinHistory, JSON.stringify(list));
+    }
+  }
+  return list;
+}
+
+export async function upsertJoinedProjectHistory(entry: JoinedProjectHistory): Promise<void> {
+  const raw = await getValue(KEYS.joinHistory);
+  let list: JoinedProjectHistory[] = [];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as JoinedProjectHistory[];
+      list = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      list = [];
+    }
+  }
+  const next: JoinedProjectHistory = {
+    projectId: entry.projectId,
+    name: entry.name,
+    uploadCode: entry.uploadCode,
+    mark: sanitizeJoinMark(entry.mark || ''),
+    joinedAt: entry.joinedAt || Date.now(),
+  };
+  const merged = [next, ...list.filter((p) => p.projectId !== next.projectId)].slice(0, 20);
+  await setValue(KEYS.joinHistory, JSON.stringify(merged));
+}
+
+export async function removeJoinedProjectHistory(projectId: string): Promise<void> {
+  const raw = await getValue(KEYS.joinHistory);
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw) as JoinedProjectHistory[];
+    if (!Array.isArray(parsed)) return;
+    await setValue(
+      KEYS.joinHistory,
+      JSON.stringify(parsed.filter((p) => p.projectId !== projectId)),
+    );
+  } catch {
+    // ignore
+  }
+}
+
 
 export async function listOwnedProjects(): Promise<OwnedProject[]> {
   const raw = await getValue(KEYS.owned);
