@@ -3680,3 +3680,12 @@ restore-inbox-merged-list.bat
 ```
 
 `src.pre-inbox-merged-list/` 스냅샷으로 되돌립니다.
+## 248. 수신함 선택 엑셀 되돌리기 (선택)
+
+수신 목록 선택→엑셀 후 문제가 생기면:
+
+```bat
+restore-inbox-excel-selected.bat
+```
+
+`src.pre-inbox-excel-selected/` 스냅샷으로 되돌립니다.

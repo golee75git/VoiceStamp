@@ -432,6 +432,39 @@ export function ProjectCollectScreen({
     }
   };
 
+
+  const handleInboxExcelSelected = async () => {
+    if (!active) return;
+    const ids = [...selected];
+    if (ids.length === 0) return;
+    const localIds = ids.filter((id) => inbox.some((r) => r.stampId === id && r.localImagePath));
+    if (localIds.length === 0) {
+      Alert.alert(
+        '엑셀',
+        '선택한 항목 중 내 폰으로 가져온 사진이 없습니다. 먼저 「내 폰으로」를 눌러 주세요.',
+      );
+      return;
+    }
+    setBusy(true);
+    try {
+      const all = await listStamps();
+      const want = new Set(localIds);
+      const stamps = all.filter((st) => want.has(st.id) && !st.deletedAt);
+      if (stamps.length === 0) {
+        Alert.alert('엑셀', '선택한 항목 중 내 폰으로 가져온 사진이 없습니다.');
+        return;
+      }
+      const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
+      const base = sanitizeLoose(active.name) + '_선택_' + formatYmd(Date.now());
+      const result = await createStampsXlsx(stamps, base);
+      await shareStampsXlsx(result);
+    } catch (e) {
+      Alert.alert('엑셀', e instanceof Error ? e.message : '실패');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleExcelCollected = async (project: OwnedProject) => {
     setActive(project);
     setBusy(true);
@@ -854,10 +887,8 @@ export function ProjectCollectScreen({
         </Pressable>
         <Pressable
           style={styles.barBtn}
-          onPress={() => {
-            if (selected.size === 0) return;
-            Alert.alert('엑셀', '엑셀로 보내려면 먼저 「내 폰으로」를 눌러 주세요. 허브의 취합 엑셀을 사용하세요.');
-          }}
+          onPress={() => void handleInboxExcelSelected()}
+          disabled={busy || selected.size === 0}
         >
           <Text style={styles.barBtnText}>엑셀</Text>
         </Pressable>
