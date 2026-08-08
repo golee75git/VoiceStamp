@@ -10,15 +10,19 @@
     h1 { font-size: 1.25rem; margin: 0 0 12px; }
     p { line-height: 1.5; color: #374151; }
     code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
-    a.btn { display: inline-block; margin-top: 16px; background: #111; color: #fff; text-decoration: none; padding: 12px 16px; border-radius: 10px; font-weight: 700; }
+    a.btn { display: inline-block; margin-top: 12px; margin-right: 8px; background: #111; color: #fff; text-decoration: none; padding: 12px 16px; border-radius: 10px; font-weight: 700; }
+    a.btn.secondary { background: #fff; color: #111; border: 1px solid #d1d5db; }
+    .hint { font-size: 0.875rem; color: #6b7280; margin-top: 16px; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>VoiceStamp 사업 참여</h1>
-    <p>앱에서 「설정 → 사업 취합 → 코드로 참여」에 아래 코드를 붙여 넣으세요.</p>
+    <p>앱이 있으면 아래 버튼으로 열어 「코드로 참여」에서 구분 표시를 입력한 뒤 연결하세요. 연결 후 촬영할 수 있습니다.</p>
     <p id="codes">링크를 확인하는 중…</p>
-    <a class="btn" href="https://voicestamp-gilt.vercel.app/">APK·앱 안내</a>
+    <a class="btn" id="openApp" href="#">앱에서 참여</a>
+    <a class="btn secondary" href="https://voicestamp-gilt.vercel.app/">APK·앱 안내</a>
+    <p class="hint">앱이 열리지 않으면 APK를 설치한 뒤 다시 누르거나, 앱 설정 → 사업 취합 → 코드로 참여에 위 코드를 붙여 넣으세요.</p>
   </div>
   <script>
     (function () {
@@ -26,10 +30,31 @@
       var p = q.get('p') || '';
       var c = q.get('c') || '';
       var el = document.getElementById('codes');
+      var openBtn = document.getElementById('openApp');
       if (p && c) {
         el.innerHTML = '사업코드 <code>' + p + '</code><br/>참여코드 <code>' + c + '</code>';
+        var appUrl = 'voicestamp://join?p=' + encodeURIComponent(p) + '&c=' + encodeURIComponent(c);
+        var fallback = 'https://voicestamp-gilt.vercel.app/';
+        var intentUrl =
+          'intent://join?p=' +
+          encodeURIComponent(p) +
+          '&c=' +
+          encodeURIComponent(c) +
+          '#Intent;scheme=voicestamp;package=com.voicestamp.app;S.browser_fallback_url=' +
+          encodeURIComponent(fallback) +
+          ';end';
+        openBtn.href = intentUrl;
+        openBtn.addEventListener('click', function () {
+          // Also try custom scheme for some browsers
+          setTimeout(function () {
+            try {
+              window.location.href = appUrl;
+            } catch (e) {}
+          }, 400);
+        });
       } else {
         el.textContent = '유효한 참여 링크가 아닙니다.';
+        openBtn.style.display = 'none';
       }
     })();
   </script>

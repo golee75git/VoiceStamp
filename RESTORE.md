@@ -3616,3 +3616,14 @@ restore-owned-project-list.bat
 
 `src.pre-owned-project-list/` 스냅샷으로 되돌립니다.
 
+
+## 242. 사업 참여 딥링크 되돌리기 (선택)
+
+공유 링크 → 앱 코드 참여 연결 후 문제가 생기면:
+
+```bat
+restore-join-deeplink.bat
+```
+
+스냅샷 복구 후 **APK를 다시 빌드**하세요(`app.json` scheme/intentFilters).
+

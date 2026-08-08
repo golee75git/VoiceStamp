@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, BackHandler, Platform, StyleSheet, View } from 'react-native';
+import { Alert, BackHandler, Linking, Platform, StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { CameraScreen } from '../components/CameraScreen';
@@ -11,6 +11,10 @@ import { OpenSourceLicensesScreen } from '../components/OpenSourceLicensesScreen
 import { TrashScreen } from '../components/TrashScreen';
 import { ProjectCollectScreen } from '../components/ProjectCollectScreen';
 import type { CaptureStampForExport } from '../services/exportStampImage';
+import {
+  parseProjectJoinLink,
+  takePendingJoinUrl,
+} from '../services/projectJoinLink';
 
 type Screen = 'camera' | 'list' | 'settings' | 'trash' | 'ossLicenses' | 'projectCollect';
 type SettingsReturn = 'camera' | 'list';
@@ -20,6 +24,8 @@ export function MainScreen() {
   const [settingsReturn, setSettingsReturn] = useState<SettingsReturn>('camera');
   const [refreshKey, setRefreshKey] = useState(0);
   const [showIntroOverlay, setShowIntroOverlay] = useState(false);
+  const [joinLaunchText, setJoinLaunchText] = useState<string | null>(null);
+  const [collectOpenedFromLink, setCollectOpenedFromLink] = useState(false);
   const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
@@ -36,6 +42,25 @@ export function MainScreen() {
     setScreen('settings');
   };
 
+  const openJoinFromUrl = useCallback((url: string) => {
+    if (Platform.OS === 'web') return;
+    if (!parseProjectJoinLink(url)) return;
+    takePendingJoinUrl();
+    setJoinLaunchText(url);
+    setCollectOpenedFromLink(true);
+    setScreen('projectCollect');
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    const pending = takePendingJoinUrl();
+    if (pending) openJoinFromUrl(pending);
+    const sub = Linking.addEventListener('url', ({ url }) => {
+      openJoinFromUrl(url);
+    });
+    return () => sub.remove();
+  }, [openJoinFromUrl]);
+
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (showIntroOverlay) {
@@ -50,7 +75,9 @@ export function MainScreen() {
           setScreen(settingsReturn);
           return true;
         case 'projectCollect':
-          setScreen('settings');
+          setJoinLaunchText(null);
+          setScreen(collectOpenedFromLink ? 'camera' : 'settings');
+          setCollectOpenedFromLink(false);
           return true;
         case 'ossLicenses':
           setScreen('settings');
@@ -79,7 +106,7 @@ export function MainScreen() {
     });
 
     return () => sub.remove();
-  }, [screen, settingsReturn, showIntroOverlay]);
+  }, [screen, settingsReturn, showIntroOverlay, collectOpenedFromLink]);
 
   if (showIntroOverlay) {
     return (
@@ -109,12 +136,27 @@ export function MainScreen() {
           onSettingsSaved={bumpRefresh}
           onShowOnboarding={() => setShowIntroOverlay(true)}
           onOpenOssLicenses={() => setScreen('ossLicenses')}
-          onOpenProjectCollect={() => setScreen('projectCollect')}
+          onOpenProjectCollect={() => {
+            setJoinLaunchText(null);
+            setCollectOpenedFromLink(false);
+            setScreen('projectCollect');
+          }}
         />
       ) : screen === 'projectCollect' ? (
         <ProjectCollectScreen
-          onBack={() => setScreen('settings')}
-          onJoinedGoCamera={() => setScreen('camera')}
+          key={joinLaunchText || 'collect-hub'}
+          onBack={() => {
+            setJoinLaunchText(null);
+            setScreen(collectOpenedFromLink ? 'camera' : 'settings');
+            setCollectOpenedFromLink(false);
+          }}
+          onJoinedGoCamera={() => {
+            setJoinLaunchText(null);
+            setCollectOpenedFromLink(false);
+            setScreen('camera');
+          }}
+          initialPhase={joinLaunchText ? 'join' : 'hub'}
+          initialJoinText={joinLaunchText || undefined}
           onImported={bumpRefresh}
         />
       ) : screen === 'ossLicenses' ? (

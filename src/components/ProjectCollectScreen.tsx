@@ -15,7 +15,10 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import QRCode from 'qrcode';
 
-import { INFO_BASE_URL } from '../constants/infoUrls';
+import {
+  buildProjectJoinHttpsUrl,
+  parseProjectJoinLink,
+} from '../services/projectJoinLink';
 
 import {
   apiCloseProject,
@@ -39,6 +42,7 @@ import {
   removeOwnedProject,
   sanitizeJoinMark,
   setCollectorPin,
+  setProjectCollectEnabled,
   setProjectDeleteAfterImport,
   setProjectImportFolderMode,
   setProjectJoin,
@@ -102,7 +106,13 @@ function buildQrGrid(payload: string): QrGrid | null {
   }
 }
 
-export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 'hub', onImported }: Props) {
+export function ProjectCollectScreen({
+  onBack,
+  onJoinedGoCamera,
+  initialPhase = 'hub',
+  initialJoinText,
+  onImported,
+}: Props) {
   const [phase, setPhase] = useState<ProjectCollectPhase>(initialPhase);
   const [busy, setBusy] = useState(false);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
@@ -147,12 +157,19 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
   }, [reload]);
 
   useEffect(() => {
+    const text = (initialJoinText || '').trim();
+    if (!text) return;
+    setJoinCodeText(text);
+    setPhase('join');
+  }, [initialJoinText]);
+
+  useEffect(() => {
     if (phase !== 'qr' || !active) {
       setQrGrid(null);
       setQrFailed(false);
       return;
     }
-    const payload = `${INFO_BASE_URL}/join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`;
+    const payload = buildProjectJoinHttpsUrl(active.projectId, active.uploadCode);
     const grid = buildQrGrid(payload);
     setQrGrid(grid);
     setQrFailed(!grid);
@@ -235,24 +252,28 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
                       {
                         text: '바꾸기',
                         onPress: () => {
-                          void setProjectJoin({
-                            projectId,
-                            name: projectName,
-                            uploadCode,
-                            mark,
-                          }).then(
-                            () => {
-                              void reload();
-                              Alert.alert('연결되었습니다', '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.');
-                              leaveAfterJoin();
-                            },
-                          );
+                          void (async () => {
+                            await setProjectCollectEnabled(true);
+                            await setProjectJoin({
+                              projectId,
+                              name: projectName,
+                              uploadCode,
+                              mark,
+                            });
+                            await reload();
+                            Alert.alert(
+                              '연결되었습니다',
+                              '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.',
+                            );
+                            leaveAfterJoin();
+                          })();
                         },
                       },
                     ],
                   );
                   return;
                 }
+                await setProjectCollectEnabled(true);
                 await setProjectJoin({
                   projectId,
                   name: projectName,
@@ -571,7 +592,7 @@ export function ProjectCollectScreen({ onBack, onJoinedGoCamera, initialPhase = 
           style={styles.secondary}
           onPress={() =>
             void Share.share({
-              message: `VoiceStamp 사업 참여: ${active.name}\n${INFO_BASE_URL}/join?p=${encodeURIComponent(active.projectId)}&c=${encodeURIComponent(active.uploadCode)}`,
+              message: `VoiceStamp 사업 참여: ${active.name}\n${buildProjectJoinHttpsUrl(active.projectId, active.uploadCode)}`,
             })
           }
         >

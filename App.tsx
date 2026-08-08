@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Linking, Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { IntroScreen } from './src/components/IntroScreen';
 import { StartScreen } from './src/components/StartScreen';
 import { WebLimitNoticeScreen } from './src/components/WebLimitNoticeScreen';
 import { MainScreen } from './src/screens/MainScreen';
+import { stashProjectJoinUrl } from './src/services/projectJoinLink';
 import {
   getFloorDisplayMode,
   getTitleDatetimeMode,
@@ -41,6 +42,17 @@ export default function App() {
     }
     await proceedTowardMain();
   }, [proceedTowardMain]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    void Linking.getInitialURL().then((url) => {
+      stashProjectJoinUrl(url);
+    });
+    const sub = Linking.addEventListener('url', ({ url }) => {
+      stashProjectJoinUrl(url);
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
