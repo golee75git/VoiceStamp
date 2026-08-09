@@ -4,7 +4,8 @@
 
 - 「취소」로 선택 모드를 나갈 때 `StampListThumb`가 `fullUri`로 강제 교체하지 않음(그린 비트맵 유지, 썸네일만 있으면 soft upgrade).
 - 취소 직후 짧은 `selectChromeHold`로 체크 열·카드 인셋 폭을 유지해 Image 가로 리플로우를 늦춤.
-- `exitSelection` / hold 해제 시 `restoreListScroll`로 오프셋 복원.
+- 검색·필터는 hold가 끝난 뒤 복귀(`showBrowseChrome`).
+- 선택 진입 시 스크롤을 기억하고, 취소 중 `onChromeLayout` 보정은 건너뛴 뒤 그 위치로 복원.
 
 ## 보안
 

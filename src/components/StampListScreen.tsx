@@ -148,6 +148,8 @@ export function StampListScreen({
   const [draftReportTitle, setDraftReportTitle] = useState('');
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
+  const scrollAtSelectEnterRef = useRef(0);
+  const skipChromeLayoutAdjustRef = useRef(false);
   const skipRefreshLoadRef = useRef(false);
   const chromeHeightRef = useRef(0);
   const selectChromeHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -189,6 +191,9 @@ export function StampListScreen({
     (height: number) => {
       const prev = chromeHeightRef.current;
       chromeHeightRef.current = height;
+      if (skipChromeLayoutAdjustRef.current) {
+        return;
+      }
       if (prev <= 0 || prev === height) {
         return;
       }
@@ -376,6 +381,10 @@ export function StampListScreen({
       clearTimeout(selectChromeHoldTimerRef.current);
       selectChromeHoldTimerRef.current = null;
     }
+    // Cancel: freeze chrome scroll math and put list back where select began.
+    skipChromeLayoutAdjustRef.current = true;
+    const targetOffset = scrollAtSelectEnterRef.current;
+    scrollOffsetRef.current = targetOffset;
     setSelecting(false);
     setSelectedIds(new Set());
     setPdfUri(null);
@@ -384,13 +393,24 @@ export function StampListScreen({
     setExportNameModalVisible(false);
     // Hold row inset so Image width does not jump the same frame chrome expands.
     setSelectChromeHold(true);
-    restoreListScroll();
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+      });
+    });
     scheduleStampThumbs(stamps, resolveImageUri);
     selectChromeHoldTimerRef.current = setTimeout(() => {
       setSelectChromeHold(false);
       selectChromeHoldTimerRef.current = null;
-      restoreListScroll();
-    }, 320);
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+        requestAnimationFrame(() => {
+          listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+          skipChromeLayoutAdjustRef.current = false;
+        });
+      });
+    }, 360);
   };
 
   const openExportNameModal = () => {
@@ -435,6 +455,24 @@ export function StampListScreen({
 
   const getSelectedStamps = () => stamps.filter((s) => selectedIds.has(s.id));
 
+  const beginSelection = (initialIds?: Set<string>) => {
+    if (searchListening) {
+      stopSearchSpeech();
+    }
+    if (selectChromeHoldTimerRef.current) {
+      clearTimeout(selectChromeHoldTimerRef.current);
+      selectChromeHoldTimerRef.current = null;
+    }
+    scrollAtSelectEnterRef.current = scrollOffsetRef.current;
+    skipChromeLayoutAdjustRef.current = false;
+    setSelectChromeHold(false);
+    setSelecting(true);
+    setPdfUri(null);
+    if (initialIds) {
+      setSelectedIds(initialIds);
+    }
+  };
+
   const handleCardPress = (item: Stamp) => {
     if (selecting) {
       toggleSelect(item.id);
@@ -445,17 +483,7 @@ export function StampListScreen({
 
   const handleCardLongPress = (item: Stamp) => {
     if (!selecting) {
-      if (searchListening) {
-        stopSearchSpeech();
-      }
-      if (selectChromeHoldTimerRef.current) {
-        clearTimeout(selectChromeHoldTimerRef.current);
-        selectChromeHoldTimerRef.current = null;
-      }
-      setSelectChromeHold(false);
-      setSelecting(true);
-      setPdfUri(null);
-      setSelectedIds(new Set([item.id]));
+      beginSelection(new Set([item.id]));
       return;
     }
     toggleSelect(item.id);
@@ -795,6 +823,8 @@ export function StampListScreen({
   const hasListFilters = hasTemplateFilter || hasPlaceFilter;
   const selectionCompact = selecting && selectedCount > 0;
   const showSelectChrome = selecting || selectChromeHold;
+  // Search/filter return after row hold so header jump and row unlock are not simultaneous.
+  const showBrowseChrome = !selecting && !selectChromeHold;
   // Keep bottom inset whenever gallery bar or export bar is showing (avoids jump on select).
   const reserveBottomChrome = !selecting || selectionCompact;
   const { width } = useWindowDimensions();
@@ -827,15 +857,7 @@ export function StampListScreen({
               stamps.length > 0 && (
                 <Pressable
                   onPress={() => {
-                    if (searchListening) {
-                      stopSearchSpeech();
-                    }
-                    if (selectChromeHoldTimerRef.current) {
-                      clearTimeout(selectChromeHoldTimerRef.current);
-                      selectChromeHoldTimerRef.current = null;
-                    }
-                    setSelectChromeHold(false);
-                    setSelecting(true);
+                    beginSelection();
                   }}
                 >
                   <Text style={styles.actionText}>선택</Text>
@@ -853,7 +875,7 @@ export function StampListScreen({
             ) : null}
           </View>
         </View>
-        {!selecting ? (
+        {showBrowseChrome ? (
           <View style={styles.searchRow}>
             <Pressable
               style={[styles.searchMicButton, searchListening && styles.searchMicButtonActive]}
@@ -888,7 +910,7 @@ export function StampListScreen({
             ) : null}
           </View>
         ) : null}
-        {!selecting ? (
+        {showBrowseChrome ? (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -953,7 +975,7 @@ export function StampListScreen({
             </Pressable>
           </ScrollView>
         ) : null}
-        {!selecting && (placeChipItems.length > 0 || hasUnplacedStamps) ? (
+        {showBrowseChrome && (placeChipItems.length > 0 || hasUnplacedStamps) ? (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -1051,7 +1073,7 @@ export function StampListScreen({
             </Pressable>
           </View>
         ) : null}
-        {!selecting ? (
+        {showBrowseChrome ? (
           <>
             <Text style={styles.countLine}>
               {hasSearchQuery || hasListFilters ? (
