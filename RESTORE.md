@@ -3850,3 +3850,13 @@ restore-list-cancel-stable.bat
 ```
 
 src.pre-list-cancel-stable/ · public.pre-list-cancel-stable/ 스냅샷으로 되돌립니다.
+
+## 265. 목록 헤더 스크롤 보정 제거 되돌리기 (선택)
+
+onChromeLayout scrollToOffset 보정 제거 후 문제가 생기면:
+
+```bat
+restore-chrome-scroll-adj.bat
+```
+
+src.pre-chrome-scroll-adj/ · public.pre-chrome-scroll-adj/ 스냅샷으로 되돌립니다.

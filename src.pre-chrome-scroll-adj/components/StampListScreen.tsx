@@ -147,7 +147,9 @@ export function StampListScreen({
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const scrollAtSelectEnterRef = useRef(0);
+  const skipChromeLayoutAdjustRef = useRef(false);
   const skipRefreshLoadRef = useRef(false);
+  const chromeHeightRef = useRef(0);
 
   const { listening: searchListening, available: searchSpeechAvailable, start: startSearchSpeech, stop: stopSearchSpeech } =
     useSpeechInput({
@@ -180,6 +182,10 @@ export function StampListScreen({
         listRef.current?.scrollToOffset({ offset, animated: false });
       });
     });
+  }, []);
+
+  const onChromeLayout = useCallback((height: number) => {
+    chromeHeightRef.current = height;
   }, []);
 
   const removeStampsKeepScroll = useCallback(
@@ -342,6 +348,8 @@ export function StampListScreen({
     if (searchListening) {
       stopSearchSpeech();
     }
+    // Cancel: freeze chrome scroll math and put list back where select began.
+    skipChromeLayoutAdjustRef.current = true;
     const targetOffset = scrollAtSelectEnterRef.current;
     scrollOffsetRef.current = targetOffset;
     setSelecting(false);
@@ -354,6 +362,9 @@ export function StampListScreen({
       listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
       requestAnimationFrame(() => {
         listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+        setTimeout(() => {
+          skipChromeLayoutAdjustRef.current = false;
+        }, 120);
       });
     });
     scheduleStampThumbs(stamps, resolveImageUri);
@@ -406,6 +417,7 @@ export function StampListScreen({
       stopSearchSpeech();
     }
     scrollAtSelectEnterRef.current = scrollOffsetRef.current;
+    skipChromeLayoutAdjustRef.current = false;
     setSelecting(true);
     setPdfUri(null);
     if (initialIds) {
@@ -777,6 +789,7 @@ export function StampListScreen({
       ) : null}
       <View
         style={[styles.header, selectionCompact && styles.headerCompact]}
+        onLayout={(e) => onChromeLayout(e.nativeEvent.layout.height)}
       >
         <View style={styles.headerRow}>
           <View style={styles.headerTitleGroup}>
