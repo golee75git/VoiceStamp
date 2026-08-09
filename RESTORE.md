@@ -3870,3 +3870,13 @@ restore-cancel-scroll-boost.bat
 ```
 
 src.pre-cancel-scroll-boost/ · public.pre-cancel-scroll-boost/ 스냅샷으로 되돌립니다.
+
+## 267. 취소 시 목록 재마운트 되돌리기 (선택)
+
+취소 전용 FlatList remount 후 문제가 생기면:
+
+```bat
+restore-cancel-list-remount.bat
+```
+
+src.pre-cancel-list-remount/ · public.pre-cancel-list-remount/ 스냅샷으로 되돌립니다.

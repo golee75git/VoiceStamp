@@ -96,8 +96,6 @@ export function StampListScreen({
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  /** Bumped only on 「취소」 so Android list rows rebuild outside select mode. */
-  const [listBrowseMountKey, setListBrowseMountKey] = useState(0);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
@@ -374,8 +372,6 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
-    // One remount after cancel: clears blank/stale native rows without touching mid-toggle.
-    setListBrowseMountKey((key) => key + 1);
     // Header/search chrome layout finishes over several frames — retry enter offset.
     const delaysMs = [0, 32, 80, 160, 280];
     for (const delay of delaysMs) {
@@ -1098,7 +1094,7 @@ export function StampListScreen({
         ) : (
           <FlatList
             ref={listRef}
-            key={`${numColumns}-${listBrowseMountKey}`}
+            key={numColumns}
             data={filteredStamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
