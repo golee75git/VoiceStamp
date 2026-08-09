@@ -1,4 +1,4 @@
-﻿import { Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import {
@@ -35,7 +35,7 @@ export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void
     if (!join) return;
     const auto = await getProjectAutoUpload();
     if (!auto) return;
-    await setUploadStatus(stamp.id, 'pending', join.projectId);
+    await setUploadStatus(stamp.id, 'pending');
     enqueueProjectUpload(stamp.id);
   } catch {
     // non-fatal
@@ -102,7 +102,7 @@ async function uploadOne(stampId: string): Promise<void> {
   const join = await getProjectJoin();
   if (!join) return;
 
-  await setUploadStatus(stampId, 'uploading', join.projectId);
+  await setUploadStatus(stampId, 'uploading');
   const deviceId = await getOrCreateDeviceId();
   const dataUri = await readImageDataUriForPdf(stamp.imagePath, 'compressed');
   const prepared = await apiPrepareUpload({
@@ -150,7 +150,7 @@ async function uploadOne(stampId: string): Promise<void> {
     uploadCode: join.uploadCode,
     stampId: stamp.id,
   });
-  await setUploadStatus(stampId, 'synced', join.projectId);
+  await setUploadStatus(stampId, 'synced');
   failStreak = 0;
 }
 
@@ -164,8 +164,7 @@ export async function drainProjectUploadQueue(): Promise<void> {
       try {
         await uploadOne(id);
       } catch (e) {
-        const join = await getProjectJoin();
-        await setUploadStatus(id, 'failed', join?.projectId ?? null);
+        await setUploadStatus(id, 'failed');
         failStreak += 1;
         if (Platform.OS !== 'web' && failStreak <= 2) {
           const { Alert } = await import('react-native');
@@ -173,7 +172,7 @@ export async function drainProjectUploadQueue(): Promise<void> {
             e instanceof Error && (e as Error & { detail?: string }).detail
               ? ` (${(e as Error & { detail?: string }).detail})`
               : '';
-          Alert.alert('?ъ뾽 ?щ━湲?, mapProjectApiError(e) + detail);
+          Alert.alert('사업 올리기', mapProjectApiError(e) + detail);
         }
       }
     }
@@ -183,7 +182,6 @@ export async function drainProjectUploadQueue(): Promise<void> {
 }
 
 export async function retryProjectUpload(stampId: string): Promise<void> {
-  const join = await getProjectJoin();
-  await setUploadStatus(stampId, 'pending', join?.projectId ?? null);
+  await setUploadStatus(stampId, 'pending');
   enqueueProjectUpload(stampId);
 }

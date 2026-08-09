@@ -69,7 +69,6 @@ import {
   type ProjectJoinState,
 } from '../services/projectCollectSettings';
 import { StampListThumb } from './StampListThumb';
-import { ProjectSentList } from './ProjectSentList';
 import { loadStampXlsxExport } from '../services/exportOnDemand';
 import { resolveImageUri } from '../services/fileService';
 import {
@@ -80,7 +79,7 @@ import {
 import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 
-export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox' | 'sent';
+export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox';
 
 type Props = {
   onBack: () => void;
@@ -125,7 +124,6 @@ export function ProjectCollectScreen({
   const [joinHistory, setJoinHistory] = useState<JoinedProjectHistory[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
   const [active, setActive] = useState<OwnedProject | null>(null);
-  const [sentFocus, setSentFocus] = useState<JoinedProjectHistory | null>(null);
   const [qrGrid, setQrGrid] = useState<QrGrid | null>(null);
   const [qrFailed, setQrFailed] = useState(false);
 
@@ -794,15 +792,6 @@ export function ProjectCollectScreen({
                   .join(' · ')}
               </Text>
               <View style={styles.ownedActions}>
-                <Pressable
-                  style={styles.ownedAction}
-                  onPress={() => {
-                    setSentFocus(item);
-                    setPhase('sent');
-                  }}
-                >
-                  <Text style={styles.ownedActionText}>보낸 사진</Text>
-                </Pressable>
                 {!active ? (
                   <Pressable
                     style={styles.ownedAction}
@@ -1235,26 +1224,18 @@ export function ProjectCollectScreen({
         <Pressable
           onPress={() => {
             if (phase === 'hub') onBack();
-            else {
-              setSentFocus(null);
-              setPhase('hub');
-            }
+            else setPhase('hub');
           }}
         >
           <Text style={styles.back}>← 뒤로</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>
-          {phase === 'sent' && sentFocus ? `보낸 사진 · ${sentFocus.name}` : '사업 취합'}
-        </Text>
+        <Text style={styles.headerTitle}>사업 취합</Text>
       </View>
       {phase === 'hub' && renderHub()}
       {phase === 'create' && renderCreate()}
       {phase === 'qr' && renderQr()}
       {phase === 'join' && renderJoin()}
       {phase === 'inbox' && renderInbox()}
-      {phase === 'sent' && sentFocus ? (
-        <ProjectSentList project={sentFocus} onChanged={onImported} />
-      ) : null}
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" color="#111" />

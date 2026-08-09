@@ -203,7 +203,6 @@ export function SettingsScreen({
     DEFAULT_SAVE_SLOT_SPEECH_ENABLED,
   );
   const [projectCollectEnabled, setProjectCollectEnabledState] = useState(false);
-  const [hideProjectSyncedFromList, setHideProjectSyncedFromList] = useState(false);
   const [projectJoinSummary, setProjectJoinSummary] = useState<string | null>(null);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [cameraHomeBg, setCameraHomeBgState] = useState<CameraHomeBg>(DEFAULT_CAMERA_HOME_BG);
@@ -270,14 +269,6 @@ export function SettingsScreen({
         );
         if (cancelled) return;
         setProjectCollectEnabledState(await getProjectCollectEnabled());
-        try {
-          const { getHideProjectSyncedFromStampList } = await import(
-            '../services/projectCollectSettings'
-          );
-          setHideProjectSyncedFromList(await getHideProjectSyncedFromStampList());
-        } catch {
-          setHideProjectSyncedFromList(false);
-        }
         const j = await getProjectJoin();
         setProjectJoinSummary(j ? `참여 중 · ${j.name}` : null);
       })();
@@ -1344,43 +1335,6 @@ export function SettingsScreen({
               {projectCollectEnabled ? (
                 <>
                   {projectJoinSummary ? <Text style={styles.hint}>{projectJoinSummary}</Text> : null}
-                  <Text style={styles.hint}>
-                    전송이 끝난 사진을 저장 목록에서 숨길 수 있습니다. 기본은 그대로 보이며, 사업 취합 → 보낸
-                    사진에서는 계속 볼 수 있습니다.
-                  </Text>
-                  <View style={styles.optionRow}>
-                    {(
-                      [
-                        { value: false, label: '저장목록에 보이기' },
-                        { value: true, label: '전송분 숨기기' },
-                      ] as const
-                    ).map((option) => {
-                      const selected = hideProjectSyncedFromList === option.value;
-                      return (
-                        <Pressable
-                          key={`hide-synced-${option.label}`}
-                          style={[styles.optionButton, selected && styles.optionButtonSelected]}
-                          onPress={() => {
-                            setHideProjectSyncedFromList(option.value);
-                            void import('../services/projectCollectSettings').then(
-                              ({ setHideProjectSyncedFromStampList }) =>
-                                setHideProjectSyncedFromStampList(option.value),
-                            );
-                          }}
-                          disabled={saving}
-                        >
-                          <Text
-                            style={[
-                              styles.optionButtonText,
-                              selected && styles.optionButtonTextSelected,
-                            ]}
-                          >
-                            {option.label}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
                   <Pressable
                     style={styles.secondaryButton}
                     onPress={() => onOpenProjectCollect?.()}

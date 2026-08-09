@@ -3900,3 +3900,13 @@ restore-save-collect-badge.bat
 ```
 
 src.pre-save-collect-badge/ · public.pre-save-collect-badge/ 스냅샷으로 되돌립니다.
+
+## 270. 보낸 사진 목록·전송분 숨김 되돌리기 (선택)
+
+참여 사업 보낸 사진 / 저장목록 숨김 옵션 추가 후 문제가 생기면:
+
+```bat
+restore-project-sent-list.bat
+```
+
+src.pre-project-sent-list/ · public.pre-project-sent-list/ 스냅샷으로 되돌립니다. (ProjectSentList.tsx는 삭제)

@@ -17,8 +17,6 @@ const KEYS = {
   deleteAfterImport: 'project_delete_after_import',
   uploadStatus: 'project_upload_status_json',
   pinPrefix: 'project_pin_',
-  /** Hide project-synced stamps from the main stamp list (default off). */
-  hideSyncedFromList: 'project_hide_synced_from_list',
 } as const;
 
 /** Optional on-device label for project uploads (not a login id). Max 40. */
@@ -121,15 +119,6 @@ export async function getProjectWifiOnly(): Promise<boolean> {
 
 export async function setProjectWifiOnly(on: boolean): Promise<void> {
   await setValue(KEYS.wifiOnly, on ? '1' : '0');
-}
-
-/** Default false: synced uploads still appear in the main stamp list. */
-export async function getHideProjectSyncedFromStampList(): Promise<boolean> {
-  return (await getValue(KEYS.hideSyncedFromList)) === '1';
-}
-
-export async function setHideProjectSyncedFromStampList(on: boolean): Promise<void> {
-  await setValue(KEYS.hideSyncedFromList, on ? '1' : '0');
 }
 
 export async function getProjectImportFolderMode(): Promise<ProjectImportFolderMode> {
@@ -352,45 +341,22 @@ export async function getCollectorPin(projectId: string): Promise<string | null>
   return getValue(`${KEYS.pinPrefix}${projectId}`);
 }
 
-export type ProjectUploadRecord = {
-  status: ProjectUploadStatus;
-  /** Join project id when known (older entries may omit). */
-  projectId?: string | null;
-};
-
-function normalizeUploadRecord(raw: unknown): ProjectUploadRecord | null {
-  if (typeof raw === 'string') {
-    return { status: raw as ProjectUploadStatus };
-  }
-  if (raw && typeof raw === 'object' && typeof (raw as { status?: unknown }).status === 'string') {
-    const row = raw as { status: ProjectUploadStatus; projectId?: string | null };
-    return {
-      status: row.status,
-      projectId: row.projectId ?? null,
-    };
-  }
-  return null;
-}
-
-async function readUploadRecordMap(): Promise<Record<string, ProjectUploadRecord>> {
+export async function getUploadStatusMap(): Promise<Record<string, ProjectUploadStatus>> {
   const raw = await getValue(KEYS.uploadStatus);
   if (!raw) return {};
   try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const out: Record<string, ProjectUploadRecord> = {};
-    for (const [id, value] of Object.entries(parsed)) {
-      const entry = normalizeUploadRecord(value);
-      if (entry) {
-        out[id] = entry;
-      }
-    }
-    return out;
+    return JSON.parse(raw) as Record<string, ProjectUploadStatus>;
   } catch {
     return {};
   }
 }
 
-async function writeUploadRecordMap(map: Record<string, ProjectUploadRecord>): Promise<void> {
+export async function setUploadStatus(
+  stampId: string,
+  status: ProjectUploadStatus,
+): Promise<void> {
+  const map = await getUploadStatusMap();
+  map[stampId] = status;
   const keys = Object.keys(map);
   if (keys.length > 400) {
     for (const k of keys.slice(0, keys.length - 300)) {
@@ -398,43 +364,6 @@ async function writeUploadRecordMap(map: Record<string, ProjectUploadRecord>): P
     }
   }
   await setValue(KEYS.uploadStatus, JSON.stringify(map));
-}
-
-export async function getUploadStatusMap(): Promise<Record<string, ProjectUploadStatus>> {
-  const records = await readUploadRecordMap();
-  const out: Record<string, ProjectUploadStatus> = {};
-  for (const [id, row] of Object.entries(records)) {
-    out[id] = row.status;
-  }
-  return out;
-}
-
-export async function getUploadRecordMap(): Promise<Record<string, ProjectUploadRecord>> {
-  return readUploadRecordMap();
-}
-
-export async function setUploadStatus(
-  stampId: string,
-  status: ProjectUploadStatus,
-  projectId?: string | null,
-): Promise<void> {
-  const map = await readUploadRecordMap();
-  const prev = map[stampId];
-  map[stampId] = {
-    status,
-    projectId: projectId ?? prev?.projectId ?? null,
-  };
-  await writeUploadRecordMap(map);
-}
-
-/** Stamp ids uploaded (any status) for a joined project. */
-export async function listSentStampIdsForProject(projectId: string): Promise<string[]> {
-  const pid = projectId.trim();
-  if (!pid) return [];
-  const map = await readUploadRecordMap();
-  return Object.entries(map)
-    .filter(([, row]) => row.projectId === pid)
-    .map(([id]) => id);
 }
 
 /** Mark a stamp brought in via project inbox import. Does not override active uploads. */

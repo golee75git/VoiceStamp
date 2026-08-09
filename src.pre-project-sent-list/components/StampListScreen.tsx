@@ -216,23 +216,14 @@ export function StampListScreen({
     }
     try {
       const rows = await listStamps();
-      let displayRows = rows;
+      setStamps(rows);
+      scheduleStampThumbs(rows, resolveImageUri);
       try {
-        const {
-          getUploadStatusMap,
-          getHideProjectSyncedFromStampList,
-        } = await import('../services/projectCollectSettings');
-        const statusMap = await getUploadStatusMap();
-        setUploadStatusById(statusMap);
-        const hideSynced = await getHideProjectSyncedFromStampList();
-        if (hideSynced) {
-          displayRows = rows.filter((stamp) => statusMap[stamp.id] !== 'synced');
-        }
+        const { getUploadStatusMap } = await import('../services/projectCollectSettings');
+        setUploadStatusById(await getUploadStatusMap());
       } catch {
         setUploadStatusById({});
       }
-      setStamps(displayRows);
-      scheduleStampThumbs(displayRows, resolveImageUri);
       try {
         setTemplateOptions(await listStampFieldTemplatesForFilter());
       } catch {
