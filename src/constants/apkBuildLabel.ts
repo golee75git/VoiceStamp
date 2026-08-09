@@ -1,1 +1,1 @@
-export const APK_BUILD_FILENAME = 'VoiceStamp_20260809_183720.apk';
+export const APK_BUILD_FILENAME = 'VoiceStamp_20260810_085356.apk';
