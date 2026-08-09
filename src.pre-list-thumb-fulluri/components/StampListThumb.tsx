@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import { Image, Platform, StyleSheet, type ImageStyle, type StyleProp } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
-import {
-  ensureStampThumb,
-  resolveStampThumbUri,
-  stampThumbExists,
-} from '../services/stampThumb';
+import { ensureStampThumb, resolveStampThumbUri } from '../services/stampThumb';
 
 type StampListThumbProps = {
   id: string;
@@ -14,41 +10,40 @@ type StampListThumbProps = {
   style?: StyleProp<ImageStyle>;
 };
 
+function initialListUri(id: string, fullUri: string): string {
+  if (Platform.OS === 'web' || !id) {
+    return fullUri;
+  }
+  // Prefer known thumb path immediately so remount (select/deselect) is not blank.
+  return resolveStampThumbUri(id) || fullUri;
+}
+
 /**
- * 목록·휴지통 카드용.
- * 항상 원본 URI로 먼저 그린 뒤, 디스크 썸네일이 있을 때만 교체한다.
- * (없는 thumbs/ 경로를 먼저 넣으면 Android에서 하얀 칸이 남음)
+ * 목록·휴지통 카드용. 디스크 썸네일 우선, 없으면 생성 후 표시.
+ * 리마운트·선택 해제 시에도 원본/썸네일 경로를 바로 넣어 빈 칸을 막는다.
  */
 export function StampListThumb({ id, imagePath, style }: StampListThumbProps) {
   const fullUri = resolveImageUri(imagePath);
-  const [uri, setUri] = useState(fullUri);
+  const [uri, setUri] = useState(() => initialListUri(id, fullUri));
+  const [gen, setGen] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    setUri(fullUri);
-
+    const boot = initialListUri(id, fullUri);
+    setUri(boot);
     (async () => {
-      if (Platform.OS === 'web' || !id) {
-        return;
-      }
       try {
-        const hasThumb = await stampThumbExists(id);
-        if (cancelled) return;
-        if (hasThumb) {
-          setUri(resolveStampThumbUri(id));
-          return;
-        }
         const thumbUri = await ensureStampThumb(id, fullUri);
-        if (!cancelled) {
-          setUri(thumbUri);
-        }
+        if (cancelled) return;
+        setUri(thumbUri);
+        setGen((n) => n + 1);
       } catch {
         if (!cancelled) {
           setUri(fullUri);
+          setGen((n) => n + 1);
         }
       }
     })();
-
     return () => {
       cancelled = true;
     };
@@ -56,11 +51,13 @@ export function StampListThumb({ id, imagePath, style }: StampListThumbProps) {
 
   return (
     <Image
+      key={`${id}:${gen}:${uri}`}
       source={{ uri }}
       style={[styles.thumb, style]}
       onError={() => {
         if (uri !== fullUri) {
           setUri(fullUri);
+          setGen((n) => n + 1);
         }
       }}
     />

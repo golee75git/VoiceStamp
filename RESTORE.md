@@ -3780,3 +3780,13 @@ restore-list-select-thumb.bat
 
 src.pre-list-select-thumb/ · public.pre-list-select-thumb/ 스냅샷으로 되돌립니다.
 
+## 258. 목록 썸네일 원본 우선 되돌리기 (선택)
+
+선택 해제 하얀 칸(fullUri-first) 수정 후 문제가 생기면:
+
+`at
+restore-list-thumb-fulluri.bat
+`
+
+src.pre-list-thumb-fulluri/ · public.pre-list-thumb-fulluri/ 스냅샷으로 되돌립니다.
+

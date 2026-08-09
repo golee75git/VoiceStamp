@@ -96,8 +96,6 @@ export function StampListScreen({
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  /** Bump FlatList identity after select layout collapse so Android Images reattach. */
-  const [listPaintEpoch, setListPaintEpoch] = useState(0);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
@@ -349,7 +347,6 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
-    setListPaintEpoch((n) => n + 1);
     scheduleStampThumbs(stamps, resolveImageUri);
   };
 
@@ -383,10 +380,9 @@ export function StampListScreen({
       } else {
         next.add(id);
       }
-      // Last unchecked item: layout expands; remount list + refresh thumbs.
+      // Last unchecked item: layout expands; refresh thumbs so Android does not keep blank cells.
       if (wasSelected && next.size === 0) {
         queueMicrotask(() => {
-          setListPaintEpoch((n) => n + 1);
           scheduleStampThumbs(stamps, resolveImageUri);
         });
       }
@@ -1048,7 +1044,7 @@ export function StampListScreen({
         ) : (
           <FlatList
             ref={listRef}
-            key={`cols-${numColumns}-paint-${listPaintEpoch}`}
+            key={numColumns}
             data={filteredStamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
