@@ -129,7 +129,6 @@ export function ProjectCollectScreen({
 
   const [name, setName] = useState('');
   const [ttlDays, setTtlDays] = useState(7);
-  const [creatorLabel, setCreatorLabel] = useState('');
   const [pin, setPin] = useState('');
   const [pin2, setPin2] = useState('');
 
@@ -282,11 +281,6 @@ export function ProjectCollectScreen({
       Alert.alert('사업 만들기', '사업 이름을 입력하세요.');
       return;
     }
-    const creator = creatorLabel.trim().replace(/[\\/:*?"<>|]/g, '_').slice(0, 40);
-    if (!creator) {
-      Alert.alert('사업 만들기', '만든 회사 또는 사람을 입력하세요.');
-      return;
-    }
     if (!/^\d{4,6}$/.test(pin) || pin !== pin2) {
       Alert.alert('사업 만들기', '취합 PIN 4~6자리를 확인하고 동일하게 입력하세요.');
       return;
@@ -304,7 +298,6 @@ export function ProjectCollectScreen({
         createdAt: Date.now(),
         expiresAt: created.expiresAt,
         uploadCode: created.uploadCode,
-        creatorLabel: creator,
       };
       await upsertOwnedProject(ownedItem);
       await setCollectorPin(created.projectId, pin);
@@ -826,14 +819,7 @@ export function ProjectCollectScreen({
             <View key={project.projectId} style={styles.row}>
               <Text style={styles.rowTitle}>{project.name}</Text>
               <Text style={styles.rowSub}>
-                {[
-                  project.creatorLabel?.trim() || '',
-                  closed ? '종료됨' : '',
-                  'D-' + left,
-                  project.projectId,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
+                {[closed ? '종료됨' : '', 'D-' + left, project.projectId].filter(Boolean).join(' · ')}
               </Text>
               <View style={styles.ownedActions}>
                 {!closed ? (
@@ -880,16 +866,6 @@ export function ProjectCollectScreen({
     <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
       <Text style={styles.label}>사업 이름</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="예: 2026 여름 점검" maxLength={40} />
-      <Text style={styles.label}>만든 회사/사람</Text>
-      <TextInput
-        style={styles.input}
-        value={creatorLabel}
-        onChangeText={setCreatorLabel}
-        placeholder="예: OO건설 · 홍길동"
-        maxLength={40}
-        accessibilityLabel="만든 회사 또는 사람"
-      />
-      <Text style={styles.hint}>이 기기에만 남습니다. 초대 QR·서버에는 올라가지 않습니다.</Text>
       <Text style={styles.label}>보관 기간</Text>
       <View style={styles.chips}>
         {[3, 7, 14, 30].map((d) => (
@@ -919,9 +895,6 @@ export function ProjectCollectScreen({
     return (
       <ScrollView contentContainerStyle={styles.body}>
         <Text style={styles.title}>{active.name}</Text>
-        {active.creatorLabel?.trim() ? (
-          <Text style={styles.hint}>만든이 · {active.creatorLabel.trim()}</Text>
-        ) : null}
         <Text style={styles.hint}>일시 보관 · D-{left}</Text>
         {qrGrid ? (
           <View style={styles.qrWrap}>

@@ -3880,3 +3880,13 @@ restore-cancel-list-remount.bat
 ```
 
 src.pre-cancel-list-remount/ · public.pre-cancel-list-remount/ 스냅샷으로 되돌립니다.
+
+## 268. 사업 만든 회사/사람 되돌리기 (선택)
+
+만든 회사/사람(creatorLabel) 로컬 필드 추가 후 문제가 생기면:
+
+```bat
+restore-project-creator-label.bat
+```
+
+src.pre-project-creator-label/ · public.pre-project-creator-label/ 스냅샷으로 되돌립니다.
