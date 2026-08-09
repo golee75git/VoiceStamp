@@ -3840,3 +3840,13 @@ restore-list-thumb-stable.bat
 
 src.pre-list-thumb-stable/ · public.pre-list-thumb-stable/ 스냅샷으로 되돌립니다.
 
+
+## 264. 목록 취소 경로 안정 되돌리기 (선택)
+
+「취소」 soft unlock·chrome hold·스크롤 복원 수정 후 문제가 생기면:
+
+```bat
+restore-list-cancel-stable.bat
+```
+
+src.pre-list-cancel-stable/ · public.pre-list-cancel-stable/ 스냅샷으로 되돌립니다.

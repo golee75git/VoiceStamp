@@ -1,0 +1,22 @@
+# SECURITY: list cancel path stability (2026-08-09)
+
+## 변경 요약
+
+- 「취소」로 선택 모드를 나갈 때 `StampListThumb`가 `fullUri`로 강제 교체하지 않음(그린 비트맵 유지, 썸네일만 있으면 soft upgrade).
+- 취소 직후 짧은 `selectChromeHold`로 체크 열·카드 인셋 폭을 유지해 Image 가로 리플로우를 늦춤.
+- `exitSelection` / hold 해제 시 `restoreListScroll`로 오프셋 복원.
+
+## 보안
+
+- 로컬 UI·스크롤만. 네트워크·권한·저장 경로 변경 없음.
+- 새 npm 없음. Play 정책(권한/데이터) 영향 없음.
+
+## 라이선스·특허
+
+- 자체 UI 타이밍 조정. 외부 구현 복사 없음.
+- OFL 글꼴·GPL 새 의존성 없음(기존 패키지만).
+- 특허 claim 대조 대상이 되는 원격·서버 전송 로직 없음.
+
+## 롤백
+
+`restore-list-cancel-stable.bat`

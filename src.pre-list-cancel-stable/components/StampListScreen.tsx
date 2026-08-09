@@ -96,8 +96,6 @@ export function StampListScreen({
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  /** After 「취소」, keep row left inset briefly so Image width does not jump with chrome. */
-  const [selectChromeHold, setSelectChromeHold] = useState(false);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
@@ -150,7 +148,6 @@ export function StampListScreen({
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
   const chromeHeightRef = useRef(0);
-  const selectChromeHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { listening: searchListening, available: searchSpeechAvailable, start: startSearchSpeech, stop: stopSearchSpeech } =
     useSpeechInput({
@@ -359,22 +356,9 @@ export function StampListScreen({
     setPdfReportTitle(defaultName);
   }, [selectedIds, stamps, selecting, pdfFilenameIncludeDatetime]);
 
-  useEffect(() => {
-    return () => {
-      if (selectChromeHoldTimerRef.current) {
-        clearTimeout(selectChromeHoldTimerRef.current);
-        selectChromeHoldTimerRef.current = null;
-      }
-    };
-  }, []);
-
   const exitSelection = () => {
     if (searchListening) {
       stopSearchSpeech();
-    }
-    if (selectChromeHoldTimerRef.current) {
-      clearTimeout(selectChromeHoldTimerRef.current);
-      selectChromeHoldTimerRef.current = null;
     }
     setSelecting(false);
     setSelectedIds(new Set());
@@ -382,15 +366,7 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
-    // Hold row inset so Image width does not jump the same frame chrome expands.
-    setSelectChromeHold(true);
-    restoreListScroll();
     scheduleStampThumbs(stamps, resolveImageUri);
-    selectChromeHoldTimerRef.current = setTimeout(() => {
-      setSelectChromeHold(false);
-      selectChromeHoldTimerRef.current = null;
-      restoreListScroll();
-    }, 320);
   };
 
   const openExportNameModal = () => {
@@ -448,11 +424,6 @@ export function StampListScreen({
       if (searchListening) {
         stopSearchSpeech();
       }
-      if (selectChromeHoldTimerRef.current) {
-        clearTimeout(selectChromeHoldTimerRef.current);
-        selectChromeHoldTimerRef.current = null;
-      }
-      setSelectChromeHold(false);
       setSelecting(true);
       setPdfUri(null);
       setSelectedIds(new Set([item.id]));
@@ -794,7 +765,6 @@ export function StampListScreen({
   const hasPlaceFilter = placeFilter !== 'all';
   const hasListFilters = hasTemplateFilter || hasPlaceFilter;
   const selectionCompact = selecting && selectedCount > 0;
-  const showSelectChrome = selecting || selectChromeHold;
   // Keep bottom inset whenever gallery bar or export bar is showing (avoids jump on select).
   const reserveBottomChrome = !selecting || selectionCompact;
   const { width } = useWindowDimensions();
@@ -830,11 +800,6 @@ export function StampListScreen({
                     if (searchListening) {
                       stopSearchSpeech();
                     }
-                    if (selectChromeHoldTimerRef.current) {
-                      clearTimeout(selectChromeHoldTimerRef.current);
-                      selectChromeHoldTimerRef.current = null;
-                    }
-                    setSelectChromeHold(false);
                     setSelecting(true);
                   }}
                 >
@@ -1162,27 +1127,25 @@ export function StampListScreen({
                   style={[
                     styles.card,
                     isGrid && styles.cardGrid,
-                    showSelectChrome && styles.cardSelectChrome,
+                    selecting && styles.cardSelectChrome,
                     selecting && isSelected && styles.cardSelected,
                   ]}
                   onPress={() => handleCardPress(item)}
                   onLongPress={() => handleCardLongPress(item)}
                   delayLongPress={400}
                 >
-                  {showSelectChrome ? (
+                  {selecting && (
                     <View style={isGrid ? styles.checkboxGrid : styles.checkboxCol}>
-                      {selecting ? (
-                        <View
-                          style={[
-                            styles.checkboxInner,
-                            isSelected && styles.checkboxChecked,
-                          ]}
-                        >
-                          {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                        </View>
-                      ) : null}
+                      <View
+                        style={[
+                          styles.checkboxInner,
+                          isSelected && styles.checkboxChecked,
+                        ]}
+                      >
+                        {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                      </View>
                     </View>
-                  ) : null}
+                  )}
                   <StampListThumb
                     id={item.id}
                     imagePath={item.imagePath}

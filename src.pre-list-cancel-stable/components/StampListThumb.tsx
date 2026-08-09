@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Platform, StyleSheet, type ImageStyle, type StyleProp } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
@@ -22,7 +22,7 @@ type StampListThumbProps = {
 /**
  * 목록·휴지통 카드용.
  * 평소: 원본 → 디스크 썸네일.
- * 선택 모드: URI 고정. 선택 해제(취소) 직후에도 fullUri로 덮지 않고 그린 비트맵을 유지.
+ * 선택 모드: 이미 그려진 URI를 유지(토글해도 Image 인스턴스·source 고정).
  */
 export function StampListThumb({
   id,
@@ -32,36 +32,13 @@ export function StampListThumb({
 }: StampListThumbProps) {
   const fullUri = resolveImageUri(imagePath);
   const [uri, setUri] = useState(fullUri);
-  const wasLockedRef = useRef(lockOriginal);
 
   useEffect(() => {
     let cancelled = false;
-    const leavingSelect = wasLockedRef.current && !lockOriginal;
-    wasLockedRef.current = lockOriginal;
 
     if (lockOriginal) {
+      // Keep painted bitmap; only fill if somehow empty.
       setUri((prev) => prev || fullUri);
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    // 「취소」 등: 선택 모드를 벗어날 때 fullUri로 강제 교체하지 않음(하얀 칸 방지).
-    if (leavingSelect) {
-      (async () => {
-        if (Platform.OS === 'web' || !id) {
-          return;
-        }
-        try {
-          if (await stampThumbExists(id)) {
-            if (!cancelled) {
-              setUri(resolveStampThumbUri(id));
-            }
-          }
-        } catch {
-          // keep painted uri
-        }
-      })();
       return () => {
         cancelled = true;
       };
