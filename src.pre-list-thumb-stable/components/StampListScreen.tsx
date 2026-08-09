@@ -96,6 +96,8 @@ export function StampListScreen({
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  /** Remount list after compact chrome clears (white Android Image cells); scroll restored. */
+  const [listPaintEpoch, setListPaintEpoch] = useState(0);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
@@ -181,6 +183,17 @@ export function StampListScreen({
       });
     });
   }, []);
+
+  const remountListKeepScroll = useCallback(() => {
+    setListPaintEpoch((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    if (listPaintEpoch === 0) {
+      return;
+    }
+    restoreListScroll();
+  }, [listPaintEpoch, restoreListScroll]);
 
   const onChromeLayout = useCallback(
     (height: number) => {
@@ -366,6 +379,7 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
+    remountListKeepScroll();
     scheduleStampThumbs(stamps, resolveImageUri);
   };
 
@@ -399,9 +413,10 @@ export function StampListScreen({
       } else {
         next.add(id);
       }
-      // Last unchecked: chrome expands; refresh thumbs without remounting list Images.
+      // Last unchecked: chrome expands + white cells — remount Image host but restore scroll.
       if (wasSelected && next.size === 0) {
         queueMicrotask(() => {
+          remountListKeepScroll();
           scheduleStampThumbs(stamps, resolveImageUri);
         });
       }
@@ -1068,7 +1083,7 @@ export function StampListScreen({
         ) : (
           <FlatList
             ref={listRef}
-            key={numColumns}
+            key={`cols-${numColumns}-paint-${listPaintEpoch}`}
             data={filteredStamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
@@ -1127,7 +1142,6 @@ export function StampListScreen({
                   style={[
                     styles.card,
                     isGrid && styles.cardGrid,
-                    selecting && styles.cardSelectChrome,
                     selecting && isSelected && styles.cardSelected,
                   ]}
                   onPress={() => handleCardPress(item)}
@@ -1135,7 +1149,7 @@ export function StampListScreen({
                   delayLongPress={400}
                 >
                   {selecting && (
-                    <View style={isGrid ? styles.checkboxGrid : styles.checkboxCol}>
+                    <View style={isGrid ? styles.checkboxGrid : styles.checkbox}>
                       <View
                         style={[
                           styles.checkboxInner,
@@ -1147,8 +1161,10 @@ export function StampListScreen({
                     </View>
                   )}
                   <StampListThumb
+                    key={`${item.id}-${isSelected ? 1 : 0}`}
                     id={item.id}
                     imagePath={item.imagePath}
+                    selected={isSelected}
                     lockOriginal={selecting}
                     style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                   />
@@ -1825,27 +1841,16 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     borderRadius: 12,
   },
-  /** Fixed left inset while selecting so Image width does not jump on toggle. */
-  cardSelectChrome: {
-    borderLeftWidth: 3,
-    borderLeftColor: 'transparent',
-  },
   cardSelected: {
     backgroundColor: '#eff6ff',
+    borderLeftWidth: 3,
     borderLeftColor: '#2563eb',
-  },
-  checkboxCol: {
-    width: 36,
-    paddingLeft: 8,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
   },
   checkbox: {
     paddingLeft: 8,
     justifyContent: 'center',
   },
   checkboxGrid: {
-    width: 38,
     padding: 8,
     alignSelf: 'flex-start',
   },

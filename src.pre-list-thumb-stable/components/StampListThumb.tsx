@@ -12,22 +12,20 @@ type StampListThumbProps = {
   id: string;
   imagePath: string;
   style?: StyleProp<ImageStyle>;
-  /**
-   * Select mode: do not swap URI / remount Image.
-   * Keeps whatever is already painted so check toggles do not blank Android images.
-   */
+  selected?: boolean;
+  /** When true (list select mode), keep original file URI only — no thumb swap (Android white cells). */
   lockOriginal?: boolean;
 };
 
 /**
  * 목록·휴지통 카드용.
- * 평소: 원본 → 디스크 썸네일.
- * 선택 모드: 이미 그려진 URI를 유지(토글해도 Image 인스턴스·source 고정).
+ * 평소: 원본 → 디스크 썸네일. 선택 모드(lockOriginal): 원본만 유지.
  */
 export function StampListThumb({
   id,
   imagePath,
   style,
+  selected = false,
   lockOriginal = false,
 }: StampListThumbProps) {
   const fullUri = resolveImageUri(imagePath);
@@ -35,17 +33,9 @@ export function StampListThumb({
 
   useEffect(() => {
     let cancelled = false;
-
-    if (lockOriginal) {
-      // Keep painted bitmap; only fill if somehow empty.
-      setUri((prev) => prev || fullUri);
-      return () => {
-        cancelled = true;
-      };
-    }
-
     setUri(fullUri);
-    if (Platform.OS === 'web' || !id) {
+
+    if (lockOriginal || Platform.OS === 'web' || !id) {
       return () => {
         cancelled = true;
       };
@@ -75,9 +65,12 @@ export function StampListThumb({
     };
   }, [id, imagePath, fullUri, lockOriginal]);
 
+  const displayUri = lockOriginal ? fullUri : uri;
+
   return (
     <Image
-      source={{ uri }}
+      key={`${id}:sel-${selected ? 1 : 0}:lock-${lockOriginal ? 1 : 0}`}
+      source={{ uri: displayUri }}
       style={[styles.thumb, style]}
       onError={() => {
         if (uri !== fullUri) {

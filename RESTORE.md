@@ -3830,3 +3830,13 @@ restore-list-thumb-lockorig.bat
 
 src.pre-list-thumb-lockorig/ · public.pre-list-thumb-lockorig/ 스냅샷으로 되돌립니다.
 
+## 263. 목록 선택 Image 고정 되돌리기 (선택)
+
+선택 토글 시 Image remount 제거·테두리/체크 고정폭 수정 후 문제가 생기면:
+
+`at
+restore-list-thumb-stable.bat
+`
+
+src.pre-list-thumb-stable/ · public.pre-list-thumb-stable/ 스냅샷으로 되돌립니다.
+
