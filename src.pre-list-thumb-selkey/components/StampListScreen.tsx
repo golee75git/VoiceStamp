@@ -1163,7 +1163,6 @@ export function StampListScreen({
                   <StampListThumb
                     id={item.id}
                     imagePath={item.imagePath}
-                    selected={isSelected}
                     style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                   />
                   <View style={styles.meta}>

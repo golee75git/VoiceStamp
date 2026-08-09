@@ -12,16 +12,14 @@ type StampListThumbProps = {
   id: string;
   imagePath: string;
   style?: StyleProp<ImageStyle>;
-  /** Selection chrome change remounts Image on Android (avoids white cells mid-unselect). */
-  selected?: boolean;
 };
 
 /**
  * 목록·휴지통 카드용.
  * 항상 원본 URI로 먼저 그린 뒤, 디스크 썸네일이 있을 때만 교체한다.
- * selected 토글 시 Image만 다시 마운트해 선택 해제 중 하얀 칸을 막는다.
+ * (없는 thumbs/ 경로를 먼저 넣으면 Android에서 하얀 칸이 남음)
  */
-export function StampListThumb({ id, imagePath, style, selected = false }: StampListThumbProps) {
+export function StampListThumb({ id, imagePath, style }: StampListThumbProps) {
   const fullUri = resolveImageUri(imagePath);
   const [uri, setUri] = useState(fullUri);
 
@@ -54,11 +52,10 @@ export function StampListThumb({ id, imagePath, style, selected = false }: Stamp
     return () => {
       cancelled = true;
     };
-  }, [id, imagePath, fullUri, selected]);
+  }, [id, imagePath, fullUri]);
 
   return (
     <Image
-      key={`${id}:sel-${selected ? 1 : 0}`}
       source={{ uri }}
       style={[styles.thumb, style]}
       onError={() => {

@@ -3810,3 +3810,13 @@ restore-list-select-stable.bat
 
 src.pre-list-select-stable/ · public.pre-list-select-stable/ 스냅샷으로 되돌립니다.
 
+## 261. 목록 카드별 선택 썸네일 key 되돌리기 (선택)
+
+카드 Image selected-key 수정 후 문제가 생기면:
+
+`at
+restore-list-thumb-selkey.bat
+`
+
+src.pre-list-thumb-selkey/ · public.pre-list-thumb-selkey/ 스냅샷으로 되돌립니다.
+
