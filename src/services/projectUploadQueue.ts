@@ -1,4 +1,4 @@
-﻿import { Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import {
@@ -173,7 +173,7 @@ export async function drainProjectUploadQueue(): Promise<void> {
             e instanceof Error && (e as Error & { detail?: string }).detail
               ? ` (${(e as Error & { detail?: string }).detail})`
               : '';
-          Alert.alert('?ъ뾽 ?щ━湲?, mapProjectApiError(e) + detail);
+          Alert.alert('사업 올리기', mapProjectApiError(e) + detail);
         }
       }
     }
