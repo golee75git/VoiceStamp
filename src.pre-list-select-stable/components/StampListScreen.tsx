@@ -96,8 +96,6 @@ export function StampListScreen({
   const [editingStamp, setEditingStamp] = useState<Stamp | null>(null);
   const [selecting, setSelecting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  /** Remount list after compact chrome clears (white Android Image cells); scroll restored. */
-  const [listPaintEpoch, setListPaintEpoch] = useState(0);
   const [pdfUri, setPdfUri] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfReportTitle, setPdfReportTitle] = useState('');
@@ -149,7 +147,6 @@ export function StampListScreen({
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const skipRefreshLoadRef = useRef(false);
-  const chromeHeightRef = useRef(0);
 
   const { listening: searchListening, available: searchSpeechAvailable, start: startSearchSpeech, stop: stopSearchSpeech } =
     useSpeechInput({
@@ -183,35 +180,6 @@ export function StampListScreen({
       });
     });
   }, []);
-
-  const remountListKeepScroll = useCallback(() => {
-    setListPaintEpoch((n) => n + 1);
-  }, []);
-
-  useEffect(() => {
-    if (listPaintEpoch === 0) {
-      return;
-    }
-    restoreListScroll();
-  }, [listPaintEpoch, restoreListScroll]);
-
-  const onChromeLayout = useCallback(
-    (height: number) => {
-      const prev = chromeHeightRef.current;
-      chromeHeightRef.current = height;
-      if (prev <= 0 || prev === height) {
-        return;
-      }
-      // Header shrink/grow moves FlatList; adjust offset so the same stamp stays on screen.
-      const nextOffset = Math.max(0, scrollOffsetRef.current - (height - prev));
-      scrollOffsetRef.current = nextOffset;
-      listRef.current?.scrollToOffset({ offset: nextOffset, animated: false });
-      requestAnimationFrame(() => {
-        listRef.current?.scrollToOffset({ offset: nextOffset, animated: false });
-      });
-    },
-    [],
-  );
 
   const removeStampsKeepScroll = useCallback(
     (ids: string[]) => {
@@ -379,7 +347,6 @@ export function StampListScreen({
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
-    remountListKeepScroll();
     scheduleStampThumbs(stamps, resolveImageUri);
   };
 
@@ -413,10 +380,9 @@ export function StampListScreen({
       } else {
         next.add(id);
       }
-      // Last unchecked: chrome expands + white cells — remount Image host but restore scroll.
+      // Last unchecked item: layout expands; refresh thumbs without remounting the list (keeps scroll).
       if (wasSelected && next.size === 0) {
         queueMicrotask(() => {
-          remountListKeepScroll();
           scheduleStampThumbs(stamps, resolveImageUri);
         });
       }
@@ -780,8 +746,6 @@ export function StampListScreen({
   const hasPlaceFilter = placeFilter !== 'all';
   const hasListFilters = hasTemplateFilter || hasPlaceFilter;
   const selectionCompact = selecting && selectedCount > 0;
-  // Keep bottom inset whenever gallery bar or export bar is showing (avoids jump on select).
-  const reserveBottomChrome = !selecting || selectionCompact;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
   const isGrid = numColumns > 1;
@@ -793,10 +757,7 @@ export function StampListScreen({
       {menuVisible ? (
         <Pressable style={styles.menuBackdrop} onPress={closeMenu} accessibilityLabel="메뉴 닫기" />
       ) : null}
-      <View
-        style={[styles.header, selectionCompact && styles.headerCompact]}
-        onLayout={(e) => onChromeLayout(e.nativeEvent.layout.height)}
-      >
+      <View style={[styles.header, selectionCompact && styles.headerCompact]}>
         <View style={styles.headerRow}>
           <View style={styles.headerTitleGroup}>
             <Text style={styles.title}>
@@ -1059,7 +1020,7 @@ export function StampListScreen({
         ) : null}
       </View>
 
-      <View style={[styles.listArea, reserveBottomChrome && styles.listAreaWithBottomBar]}>
+      <View style={[styles.listArea, !selecting && styles.listAreaWithBottomBar]}>
         {loading ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" />
@@ -1083,12 +1044,12 @@ export function StampListScreen({
         ) : (
           <FlatList
             ref={listRef}
-            key={`cols-${numColumns}-paint-${listPaintEpoch}`}
+            key={numColumns}
             data={filteredStamps}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
-            contentContainerStyle={[styles.list, reserveBottomChrome && styles.listWithBottomBar]}
+            contentContainerStyle={[styles.list, !selecting && styles.listWithBottomBar]}
             extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${placeFilter}:${[...selectedIds].join(',')}`}
             initialNumToRender={8}
             maxToRenderPerBatch={6}

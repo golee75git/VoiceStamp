@@ -3800,3 +3800,13 @@ restore-list-scroll-keep.bat
 
 src.pre-list-scroll-keep/ · public.pre-list-scroll-keep/ 스냅샷으로 되돌립니다.
 
+## 260. 목록 선택 스크롤·하얀칸 안정화 되돌리기 (선택)
+
+선택 롤링·해제 하얀 칸 수정 후 문제가 생기면:
+
+`at
+restore-list-select-stable.bat
+`
+
+src.pre-list-select-stable/ · public.pre-list-select-stable/ 스냅샷으로 되돌립니다.
+
