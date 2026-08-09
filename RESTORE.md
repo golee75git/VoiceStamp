@@ -3910,3 +3910,13 @@ restore-project-sent-list.bat
 ```
 
 src.pre-project-sent-list/ · public.pre-project-sent-list/ 스냅샷으로 되돌립니다. (ProjectSentList.tsx는 삭제)
+
+## 271. 카메라 홈 취합 아이콘 되돌리기 (선택)
+
+카메라 홈 옆 메뉴 「취합」 아이콘 추가 후 문제가 생기면:
+
+```bat
+restore-camera-collect-icon.bat
+```
+
+src.pre-camera-collect-icon/ · public.pre-camera-collect-icon/ 스냅샷으로 되돌리고 `assets/project-collect-icon.png` 를 제거합니다.

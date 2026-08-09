@@ -44,8 +44,6 @@ const settingsIconBlack = require('../../assets/settings-icon-black.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const templateIcon = require('../../assets/template-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const projectCollectIcon = require('../../assets/project-collect-icon.png');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeMainint = require('../../assets/camera-home.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const cameraHomeMainint1 = require('../../assets/camera-home-mainint1.png');
@@ -61,7 +59,6 @@ type CameraScreenProps = {
   refreshKey: number;
   onOpenList: () => void;
   onOpenSettings: () => void;
-  onOpenProjectCollect?: () => void;
   onSaved: () => void;
   captureStampForExport: CaptureStampForExport;
 };
@@ -72,7 +69,6 @@ export function CameraScreen({
   refreshKey,
   onOpenList,
   onOpenSettings,
-  onOpenProjectCollect,
   onSaved,
   captureStampForExport,
 }: CameraScreenProps) {
@@ -81,7 +77,6 @@ export function CameraScreen({
   const [pendingCaptureUri, setPendingCaptureUri] = useState<string | null>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [templateSheetVisible, setTemplateSheetVisible] = useState(false);
-  const [projectCollectEnabled, setProjectCollectEnabled] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
@@ -197,31 +192,7 @@ export function CameraScreen({
     getCameraHand().then(setCameraHand);
     getCameraHomeBg().then(setCameraHomeBg);
     void loadStampSaveModalLayoutSettings();
-    if (Platform.OS === 'web') {
-      setProjectCollectEnabled(false);
-    } else {
-      void import('../services/projectCollectSettings').then(({ getProjectCollectEnabled }) =>
-        getProjectCollectEnabled().then(setProjectCollectEnabled),
-      );
-    }
   }, [refreshKey]);
-
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      return;
-    }
-    const refreshCollectFlag = () => {
-      void import('../services/projectCollectSettings').then(({ getProjectCollectEnabled }) =>
-        getProjectCollectEnabled().then(setProjectCollectEnabled),
-      );
-    };
-    const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
-      if (nextState === 'active') {
-        refreshCollectFlag();
-      }
-    });
-    return () => sub.remove();
-  }, []);
 
   useEffect(() => {
     if (isWeb || !permission?.granted) {
@@ -829,17 +800,6 @@ export function CameraScreen({
           isLeftHand ? styles.sideNavLeft : styles.sideNavRight,
         ]}
       >
-        {projectCollectEnabled && onOpenProjectCollect ? (
-          <Pressable
-            style={[styles.navButton, styles.navIconButton]}
-            onPress={onOpenProjectCollect}
-            disabled={cameraBusy || actionSheetVisible}
-            accessibilityRole="button"
-            accessibilityLabel="취합"
-          >
-            <Image source={projectCollectIcon} style={styles.navIcon} resizeMode="contain" />
-          </Pressable>
-        ) : null}
         <Pressable
           style={[styles.navButton, styles.navIconButton]}
           onPress={() => setTemplateSheetVisible(true)}

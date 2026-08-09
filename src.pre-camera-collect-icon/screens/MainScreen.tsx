@@ -72,17 +72,11 @@ export function MainScreen() {
           setScreen('camera');
           return true;
         case 'settings':
-          bumpRefresh();
           setScreen(settingsReturn);
           return true;
         case 'projectCollect':
           setJoinLaunchText(null);
-          if (collectOpenedFromLink) {
-            bumpRefresh();
-            setScreen('camera');
-          } else {
-            setScreen('settings');
-          }
+          setScreen(collectOpenedFromLink ? 'camera' : 'settings');
           setCollectOpenedFromLink(false);
           return true;
         case 'ossLicenses':
@@ -131,20 +125,12 @@ export function MainScreen() {
           refreshKey={refreshKey}
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => openSettings('camera')}
-          onOpenProjectCollect={() => {
-            setJoinLaunchText(null);
-            setCollectOpenedFromLink(true);
-            setScreen('projectCollect');
-          }}
           onSaved={bumpRefresh}
           captureStampForExport={captureStampForExport}
         />
       ) : screen === 'settings' ? (
         <SettingsScreen
-          onBack={() => {
-            bumpRefresh();
-            setScreen(settingsReturn);
-          }}
+          onBack={() => setScreen(settingsReturn)}
           backLabel={settingsReturn === 'list' ? '목록' : '카메라'}
           refreshKey={refreshKey}
           onSettingsSaved={bumpRefresh}
@@ -161,15 +147,12 @@ export function MainScreen() {
           key={joinLaunchText || 'collect-hub'}
           onBack={() => {
             setJoinLaunchText(null);
-            const next = collectOpenedFromLink ? 'camera' : 'settings';
+            setScreen(collectOpenedFromLink ? 'camera' : 'settings');
             setCollectOpenedFromLink(false);
-            if (next === 'camera') bumpRefresh();
-            setScreen(next);
           }}
           onJoinedGoCamera={() => {
             setJoinLaunchText(null);
             setCollectOpenedFromLink(false);
-            bumpRefresh();
             setScreen('camera');
           }}
           initialPhase={joinLaunchText ? 'join' : 'hub'}
