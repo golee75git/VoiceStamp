@@ -2410,8 +2410,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   collectTxBadge: {
-    flexShrink: 1,
-    maxWidth: '72%',
     fontSize: 11,
     fontWeight: '700',
     color: '#065f46',

@@ -3940,3 +3940,13 @@ restore-inbox-received-match.bat
 `
 
 src.pre-inbox-received-match/ · public.pre-inbox-received-match/ 스냅샷으로 되돌립니다.
+
+## 274. 취합전송 사업명 표시 되돌리기 (선택)
+
+저장 화면 취합전송 배지에 사업명 표시 후 문제가 생기면:
+
+`at
+restore-collect-tx-name.bat
+`
+
+src.pre-collect-tx-name/ · public.pre-collect-tx-name/ 스냅샷으로 되돌립니다.
