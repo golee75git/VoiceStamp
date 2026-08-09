@@ -12,22 +12,16 @@ type StampListThumbProps = {
   id: string;
   imagePath: string;
   style?: StyleProp<ImageStyle>;
+  /** Selection chrome change remounts Image on Android (avoids white cells mid-unselect). */
   selected?: boolean;
-  /** When true (list select mode), keep original file URI only — no thumb swap (Android white cells). */
-  lockOriginal?: boolean;
 };
 
 /**
  * 목록·휴지통 카드용.
- * 평소: 원본 → 디스크 썸네일. 선택 모드(lockOriginal): 원본만 유지.
+ * 항상 원본 URI로 먼저 그린 뒤, 디스크 썸네일이 있을 때만 교체한다.
+ * selected 토글 시 Image만 다시 마운트해 선택 해제 중 하얀 칸을 막는다.
  */
-export function StampListThumb({
-  id,
-  imagePath,
-  style,
-  selected = false,
-  lockOriginal = false,
-}: StampListThumbProps) {
+export function StampListThumb({ id, imagePath, style, selected = false }: StampListThumbProps) {
   const fullUri = resolveImageUri(imagePath);
   const [uri, setUri] = useState(fullUri);
 
@@ -35,13 +29,10 @@ export function StampListThumb({
     let cancelled = false;
     setUri(fullUri);
 
-    if (lockOriginal || Platform.OS === 'web' || !id) {
-      return () => {
-        cancelled = true;
-      };
-    }
-
     (async () => {
+      if (Platform.OS === 'web' || !id) {
+        return;
+      }
       try {
         const hasThumb = await stampThumbExists(id);
         if (cancelled) return;
@@ -63,14 +54,12 @@ export function StampListThumb({
     return () => {
       cancelled = true;
     };
-  }, [id, imagePath, fullUri, lockOriginal]);
-
-  const displayUri = lockOriginal ? fullUri : uri;
+  }, [id, imagePath, fullUri, selected]);
 
   return (
     <Image
-      key={`${id}:sel-${selected ? 1 : 0}:lock-${lockOriginal ? 1 : 0}`}
-      source={{ uri: displayUri }}
+      key={`${id}:sel-${selected ? 1 : 0}`}
+      source={{ uri }}
       style={[styles.thumb, style]}
       onError={() => {
         if (uri !== fullUri) {

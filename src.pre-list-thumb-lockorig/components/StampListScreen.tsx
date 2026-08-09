@@ -1161,11 +1161,9 @@ export function StampListScreen({
                     </View>
                   )}
                   <StampListThumb
-                    key={`${item.id}-${isSelected ? 1 : 0}`}
                     id={item.id}
                     imagePath={item.imagePath}
                     selected={isSelected}
-                    lockOriginal={selecting}
                     style={isGrid ? styles.thumbnailGrid : styles.thumbnail}
                   />
                   <View style={styles.meta}>

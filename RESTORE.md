@@ -3820,3 +3820,13 @@ restore-list-thumb-selkey.bat
 
 src.pre-list-thumb-selkey/ · public.pre-list-thumb-selkey/ 스냅샷으로 되돌립니다.
 
+## 262. 선택 모드 원본 미리보기 되돌리기 (선택)
+
+lockOriginal(선택 중 원본 URI) 수정 후 문제가 생기면:
+
+`at
+restore-list-thumb-lockorig.bat
+`
+
+src.pre-list-thumb-lockorig/ · public.pre-list-thumb-lockorig/ 스냅샷으로 되돌립니다.
+
