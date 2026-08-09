@@ -3920,3 +3920,13 @@ restore-camera-collect-icon.bat
 ```
 
 src.pre-camera-collect-icon/ · public.pre-camera-collect-icon/ 스냅샷으로 되돌리고 `assets/project-collect-icon.png` 를 제거합니다.
+
+## 272. landing.html UTF-8 복구 되돌리기 (선택)
+
+랜딩 페이지 UTF-8 복구 후 문제가 생기면:
+
+`at
+restore-landing-utf8-fix.bat
+`
+
+public.pre-landing-utf8-fix/ 스냅샷으로 landing.html을 되돌립니다.
