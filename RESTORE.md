@@ -3790,3 +3790,13 @@ restore-list-thumb-fulluri.bat
 
 src.pre-list-thumb-fulluri/ · public.pre-list-thumb-fulluri/ 스냅샷으로 되돌립니다.
 
+## 259. 목록 선택 해제 스크롤 유지 되돌리기 (선택)
+
+listPaintEpoch 제거(스크롤 유지) 후 문제가 생기면:
+
+`at
+restore-list-scroll-keep.bat
+`
+
+src.pre-list-scroll-keep/ · public.pre-list-scroll-keep/ 스냅샷으로 되돌립니다.
+
