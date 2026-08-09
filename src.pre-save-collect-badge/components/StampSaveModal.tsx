@@ -364,8 +364,6 @@ export function StampSaveModal({
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [selectedTemplateName, setSelectedTemplateName] = useState('유형 선택');
-  /** Non-null when this device is joined to a collect project (upload after save). */
-  const [collectJoinName, setCollectJoinName] = useState<string | null>(null);
   const [templatePickerVisible, setTemplatePickerVisible] = useState(false);
   const [templatePickerOptions, setTemplatePickerOptions] = useState<
     Array<{ id: string; name: string }>
@@ -790,30 +788,6 @@ export function StampSaveModal({
     }
     setSlotSpeechOpen(false);
   }, []);
-
-  useEffect(() => {
-    if (!visible) {
-      setCollectJoinName(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const { getProjectJoin } = await import('../services/projectCollectSettings');
-        const join = await getProjectJoin();
-        if (cancelled) return;
-        const label = join?.name?.trim() || null;
-        setCollectJoinName(label);
-      } catch {
-        if (!cancelled) {
-          setCollectJoinName(null);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [visible]);
 
   useEffect(() => {
     if (!visible) {
@@ -1734,27 +1708,13 @@ export function StampSaveModal({
             ) : null}
 
             <View style={styles.templatePickRow}>
-              <View style={styles.templatePickLabelRow}>
-                <Text style={styles.siteLabel}>저장 유형</Text>
-                {collectJoinName ? (
-                  <Text
-                    style={styles.collectTxBadge}
-                    accessibilityLabel={`취합전송, ${collectJoinName}`}
-                  >
-                    취합전송
-                  </Text>
-                ) : null}
-              </View>
+              <Text style={styles.siteLabel}>저장 유형</Text>
               <Pressable
                 style={[styles.templatePickButton, saving ? { opacity: 0.5 } : null]}
                 onPress={openTemplatePicker}
                 disabled={saving}
                 accessibilityRole="button"
-                accessibilityLabel={
-                  collectJoinName
-                    ? `저장 유형, ${selectedTemplateName}, 취합전송`
-                    : `저장 유형, ${selectedTemplateName}`
-                }
+                accessibilityLabel={`저장 유형, ${selectedTemplateName}`}
               >
                 <Text style={styles.templatePickButtonText} numberOfLines={1}>
                   {selectedTemplateName}
@@ -2401,22 +2361,6 @@ const styles = StyleSheet.create({
   },
   templatePickRow: {
     gap: 8,
-  },
-  templatePickLabelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  collectTxBadge: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#065f46',
-    backgroundColor: '#d1fae5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    overflow: 'hidden',
   },
   followLinkRow: {
     flexDirection: 'row',

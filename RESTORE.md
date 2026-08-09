@@ -3890,3 +3890,13 @@ restore-project-creator-label.bat
 ```
 
 src.pre-project-creator-label/ · public.pre-project-creator-label/ 스냅샷으로 되돌립니다.
+
+## 269. 저장 유형 취합전송 뱃지 되돌리기 (선택)
+
+저장 화면 취합전송 뱃지 추가 후 문제가 생기면:
+
+```bat
+restore-save-collect-badge.bat
+```
+
+src.pre-save-collect-badge/ · public.pre-save-collect-badge/ 스냅샷으로 되돌립니다.
