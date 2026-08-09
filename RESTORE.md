@@ -3860,3 +3860,13 @@ restore-chrome-scroll-adj.bat
 ```
 
 src.pre-chrome-scroll-adj/ · public.pre-chrome-scroll-adj/ 스냅샷으로 되돌립니다.
+
+## 266. 취소 스크롤 복원 강화 되돌리기 (선택)
+
+취소 진입 오프셋 재시도 강화 후 문제가 생기면:
+
+```bat
+restore-cancel-scroll-boost.bat
+```
+
+src.pre-cancel-scroll-boost/ · public.pre-cancel-scroll-boost/ 스냅샷으로 되돌립니다.

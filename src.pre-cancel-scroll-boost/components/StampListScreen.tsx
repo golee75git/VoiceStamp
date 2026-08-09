@@ -147,8 +147,6 @@ export function StampListScreen({
   const listRef = useRef<FlatList<Stamp>>(null);
   const scrollOffsetRef = useRef(0);
   const scrollAtSelectEnterRef = useRef(0);
-  const pendingCancelScrollRef = useRef<number | null>(null);
-  const cancelScrollTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const skipRefreshLoadRef = useRef(false);
 
   const { listening: searchListening, available: searchSpeechAvailable, start: startSearchSpeech, stop: stopSearchSpeech } =
@@ -182,18 +180,6 @@ export function StampListScreen({
         listRef.current?.scrollToOffset({ offset, animated: false });
       });
     });
-  }, []);
-
-  const clearCancelScrollTimers = useCallback(() => {
-    for (const timer of cancelScrollTimersRef.current) {
-      clearTimeout(timer);
-    }
-    cancelScrollTimersRef.current = [];
-  }, []);
-
-  const applyCancelScroll = useCallback((offset: number) => {
-    scrollOffsetRef.current = offset;
-    listRef.current?.scrollToOffset({ offset, animated: false });
   }, []);
 
   const removeStampsKeepScroll = useCallback(
@@ -352,41 +338,24 @@ export function StampListScreen({
     setPdfReportTitle(defaultName);
   }, [selectedIds, stamps, selecting, pdfFilenameIncludeDatetime]);
 
-  useEffect(() => {
-    return () => {
-      clearCancelScrollTimers();
-    };
-  }, [clearCancelScrollTimers]);
-
   const exitSelection = () => {
     if (searchListening) {
       stopSearchSpeech();
     }
-    clearCancelScrollTimers();
-    const targetOffset = Math.max(0, scrollAtSelectEnterRef.current);
+    const targetOffset = scrollAtSelectEnterRef.current;
     scrollOffsetRef.current = targetOffset;
-    pendingCancelScrollRef.current = targetOffset;
     setSelecting(false);
     setSelectedIds(new Set());
     setPdfUri(null);
     setPdfFileName('VoiceStamp');
     setPdfReportTitle('');
     setExportNameModalVisible(false);
-    // Header/search chrome layout finishes over several frames — retry enter offset.
-    const delaysMs = [0, 32, 80, 160, 280];
-    for (const delay of delaysMs) {
-      const timer = setTimeout(() => {
-        const pending = pendingCancelScrollRef.current;
-        if (pending == null) {
-          return;
-        }
-        applyCancelScroll(pending);
-        if (delay === delaysMs[delaysMs.length - 1]) {
-          pendingCancelScrollRef.current = null;
-        }
-      }, delay);
-      cancelScrollTimersRef.current.push(timer);
-    }
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset: targetOffset, animated: false });
+      });
+    });
     scheduleStampThumbs(stamps, resolveImageUri);
   };
 
@@ -436,9 +405,7 @@ export function StampListScreen({
     if (searchListening) {
       stopSearchSpeech();
     }
-    clearCancelScrollTimers();
-    pendingCancelScrollRef.current = null;
-    scrollAtSelectEnterRef.current = Math.max(0, scrollOffsetRef.current);
+    scrollAtSelectEnterRef.current = scrollOffsetRef.current;
     setSelecting(true);
     setPdfUri(null);
     if (initialIds) {
@@ -1108,13 +1075,6 @@ export function StampListScreen({
             removeClippedSubviews={false}
             onScroll={(event) => {
               scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
-            }}
-            onContentSizeChange={() => {
-              const pending = pendingCancelScrollRef.current;
-              if (pending == null) {
-                return;
-              }
-              applyCancelScroll(pending);
             }}
             scrollEventThrottle={16}
             renderItem={({ item }) => {
