@@ -31,7 +31,7 @@ export async function importProjectStampToPhone(input: {
 }): Promise<{ stamp: Stamp | null; skipped: boolean }> {
   const existing = await getStampById(input.stampId);
   if (existing && !existing.deletedAt) {
-    await markStampReceivedFromProject(input.stampId, input.project.projectId);
+    await markStampReceivedFromProject(input.stampId);
     if (!existing.uploadedByMark) {
       try {
         const { meta } = await apiDownloadUrl({
@@ -146,14 +146,14 @@ export async function importProjectStampToPhone(input: {
 
   const again = await getStampById(id);
   if (again && !again.deletedAt) {
-    await markStampReceivedFromProject(id, input.project.projectId);
+    await markStampReceivedFromProject(id);
     await setStampUploadedByMarkIfEmpty(id, trimJoinMark(meta.uploadedByMark));
     const refreshed = await getStampById(id);
     return { stamp: refreshed || again, skipped: true };
   }
   await insertStamp(stamp);
   void ensureStampThumb(id, resolveImageUri(imagePath)).catch(() => {});
-  await markStampReceivedFromProject(id, input.project.projectId);
+  await markStampReceivedFromProject(id);
 
   if (await getProjectDeleteAfterImport()) {
     try {

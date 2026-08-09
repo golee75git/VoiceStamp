@@ -34,7 +34,7 @@ export function ProjectImportedList({ project, folderMode, onChanged }: Props) {
 
   const reload = useCallback(async () => {
     const all = await listStamps();
-    setRows(await listImportedStampsForProject(all, project.projectId, project.name, folderMode));
+    setRows(listImportedStampsForProject(all, project.name, folderMode));
     setSelected(new Set());
   }, [project.name, folderMode]);
 

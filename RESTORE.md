@@ -3930,3 +3930,13 @@ restore-landing-utf8-fix.bat
 `
 
 public.pre-landing-utf8-fix/ 스냅샷으로 landing.html을 되돌립니다.
+
+## 273. 수신 가져옴 매칭 되돌리기 (선택)
+
+수신 목록 received+projectId 매칭 변경 후 문제가 생기면:
+
+`at
+restore-inbox-received-match.bat
+`
+
+src.pre-inbox-received-match/ · public.pre-inbox-received-match/ 스냅샷으로 되돌립니다.

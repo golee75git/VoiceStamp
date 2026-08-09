@@ -520,12 +520,7 @@ export function ProjectCollectScreen({
       await setCollectorPin(project.projectId, pinLocal);
       const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
       const all = await listStamps();
-      const localImp = await listImportedStampsForProject(
-        all,
-        project.projectId,
-        project.name,
-        folderMode,
-      );
+      const localImp = listImportedStampsForProject(all, project.name, folderMode);
       setInbox(mergeInboxWithLocal(man.stamps || [], localImp));
       setSelected(new Set());
       setPhase('inbox');

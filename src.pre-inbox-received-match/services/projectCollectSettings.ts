@@ -437,25 +437,12 @@ export async function listSentStampIdsForProject(projectId: string): Promise<str
     .map(([id]) => id);
 }
 
-/** Stamp ids brought in via project inbox import for an owned project. */
-export async function listReceivedStampIdsForProject(projectId: string): Promise<string[]> {
-  const pid = projectId.trim();
-  if (!pid) return [];
-  const map = await readUploadRecordMap();
-  return Object.entries(map)
-    .filter(([, row]) => row.status === 'received' && row.projectId === pid)
-    .map(([id]) => id);
-}
-
 /** Mark a stamp brought in via project inbox import. Does not override active uploads. */
-export async function markStampReceivedFromProject(
-  stampId: string,
-  projectId?: string | null,
-): Promise<void> {
+export async function markStampReceivedFromProject(stampId: string): Promise<void> {
   const map = await getUploadStatusMap();
   const cur = map[stampId];
   if (cur === 'synced' || cur === 'pending' || cur === 'uploading') return;
-  await setUploadStatus(stampId, 'received', projectId ?? null);
+  await setUploadStatus(stampId, 'received');
 }
 
 export function sanitizeProjectFolderPart(name: string): string {
