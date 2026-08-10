@@ -24,25 +24,6 @@ import type { FieldLabels } from './fieldLabels';
 const THUMB_WIDTH = 120;
 const THUMB_HEIGHT = 90;
 const THUMB_COL = 1;
-const PREVIEW_WIDTH_MIN = 120;
-const PREVIEW_WIDTH_MAX = 800;
-
-export type CreateStampsXlsxOptions = {
-  /** Excel embedded preview width in px (clamped). Height keeps 4:3. */
-  previewWidthPx?: number;
-};
-
-function resolvePreviewSize(previewWidthPx?: number): { width: number; height: number; rowHeight: number; colWidth: number } {
-  const raw =
-    typeof previewWidthPx === 'number' && Number.isFinite(previewWidthPx)
-      ? previewWidthPx
-      : THUMB_WIDTH;
-  const width = Math.min(PREVIEW_WIDTH_MAX, Math.max(PREVIEW_WIDTH_MIN, Math.round(raw)));
-  const height = Math.max(1, Math.round((width * THUMB_HEIGHT) / THUMB_WIDTH));
-  const rowHeight = Math.max(72, Math.round(height * 0.75));
-  const colWidth = Math.max(18, Math.round(width / 7));
-  return { width, height, rowHeight, colWidth };
-}
 
 const DEFAULT_LABEL_SET = new Set([
   DEFAULT_FIELD_TITLE_LABEL,
@@ -160,16 +141,11 @@ function formatFloor(floor: string | null | undefined): string {
   return `${floor}층`;
 }
 
-export async function createStampsXlsx(
-  stamps: Stamp[],
-  fileName: string,
-  options?: CreateStampsXlsxOptions,
-): Promise<ExportFileResult> {
+export async function createStampsXlsx(stamps: Stamp[], fileName: string): Promise<ExportFileResult> {
   if (stamps.length === 0) {
     throw new Error('보낼 스탬프가 없습니다.');
   }
 
-  const preview = resolvePreviewSize(options?.previewWidthPx);
   const safeName = sanitizeExportBaseName(fileName);
   const coordsLabel = await getCoordsLabelMode();
   const headers = await pickHeaderLabels(stamps);
@@ -187,7 +163,7 @@ export async function createStampsXlsx(
   // fixed_plus: photographer + preview/index/floor/coords/datetime + template fields + type
   sheet.columns = [
     { header: '촬영자', key: 'uploader', width: 14 },
-    { header: '미리보기', key: 'preview', width: preview.colWidth },
+    { header: '미리보기', key: 'preview', width: 18 },
     { header: '순번', key: 'index', width: 8 },
     { header: headers.titleFieldLabel, key: 'title', width: 28 },
     { header: headers.placeFieldLabel, key: 'place', width: 24 },
@@ -214,7 +190,7 @@ export async function createStampsXlsx(
       ? templateNameById.get(typeId) || typeId
       : '';
 
-    sheet.getRow(rowIndex).height = preview.rowHeight;
+    sheet.getRow(rowIndex).height = 72;
     sheet.getCell(rowIndex, 1).value = stamp.uploadedByMark?.trim() ?? '';
     sheet.getCell(rowIndex, 3).value = i + 1;
     sheet.getCell(rowIndex, 4).value = stamp.title;
@@ -236,7 +212,7 @@ export async function createStampsXlsx(
       });
       sheet.addImage(imageId, {
         tl: { col: THUMB_COL, row: rowIndex - 1 },
-        ext: { width: preview.width, height: preview.height },
+        ext: { width: THUMB_WIDTH, height: THUMB_HEIGHT },
       });
     } catch {
       sheet.getCell(rowIndex, 2).value = '(이미지 없음)';

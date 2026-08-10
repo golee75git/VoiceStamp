@@ -19,25 +19,7 @@ const KEYS = {
   pinPrefix: 'project_pin_',
   /** Hide project-synced stamps from the main stamp list (default off). */
   hideSyncedFromList: 'project_hide_synced_from_list',
-  /** Inbox/hub Excel preview image width in px (120–800). */
-  inboxExcelPreviewWidth: 'project_inbox_excel_preview_width',
 } as const;
-
-export const DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH = 240;
-export const MIN_INBOX_EXCEL_PREVIEW_WIDTH = 120;
-export const MAX_INBOX_EXCEL_PREVIEW_WIDTH = 800;
-
-export function sanitizeInboxExcelPreviewWidth(raw: unknown): number {
-  const n =
-    typeof raw === 'number'
-      ? raw
-      : Number.parseInt(String(raw ?? '').trim().replace(/[^\d]/g, ''), 10);
-  if (!Number.isFinite(n)) return DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH;
-  return Math.min(
-    MAX_INBOX_EXCEL_PREVIEW_WIDTH,
-    Math.max(MIN_INBOX_EXCEL_PREVIEW_WIDTH, Math.round(n)),
-  );
-}
 
 /** Optional on-device label for project uploads (not a login id). Max 40. */
 export function sanitizeJoinMark(raw: string): string {
@@ -166,17 +148,6 @@ export async function getProjectDeleteAfterImport(): Promise<boolean> {
 
 export async function setProjectDeleteAfterImport(on: boolean): Promise<void> {
   await setValue(KEYS.deleteAfterImport, on ? '1' : '0');
-}
-
-export async function getInboxExcelPreviewWidth(): Promise<number> {
-  const raw = await getValue(KEYS.inboxExcelPreviewWidth);
-  return sanitizeInboxExcelPreviewWidth(raw);
-}
-
-export async function setInboxExcelPreviewWidth(widthPx: number): Promise<number> {
-  const safe = sanitizeInboxExcelPreviewWidth(widthPx);
-  await setValue(KEYS.inboxExcelPreviewWidth, String(safe));
-  return safe;
 }
 
 export type ProjectJoinState = {

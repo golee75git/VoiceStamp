@@ -3980,3 +3980,13 @@ restore-qr-scan-modal.bat
 `
 
 src.pre-qr-scan-modal/ · public.pre-qr-scan-modal/ 스냅샷으로 되돌립니다.
+
+## 278. 수신 엑셀 사진 크기 되돌리기 (선택)
+
+수신·취합 엑셀 미리보기 가로 px 지정 후 문제가 생기면:
+
+`at
+restore-inbox-xlsx-preview-px.bat
+`
+
+src.pre-inbox-xlsx-preview-px/ · public.pre-inbox-xlsx-preview-px/ 스냅샷으로 되돌립니다.

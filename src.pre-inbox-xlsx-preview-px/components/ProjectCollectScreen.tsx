@@ -48,7 +48,6 @@ import {
   buildImportGroupName,
   clearProjectJoin,
   getCollectorPin,
-  getInboxExcelPreviewWidth,
   getJoinMarkPref,
   getProjectDeleteAfterImport,
   getProjectImportFolderMode,
@@ -58,18 +57,13 @@ import {
   markOwnedProjectClosed,
   removeJoinedProjectHistory,
   removeOwnedProject,
-  sanitizeInboxExcelPreviewWidth,
   sanitizeJoinMark,
   setCollectorPin,
-  setInboxExcelPreviewWidth,
   setProjectCollectEnabled,
   setProjectDeleteAfterImport,
   setProjectImportFolderMode,
   setProjectJoin,
   upsertOwnedProject,
-  DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH,
-  MAX_INBOX_EXCEL_PREVIEW_WIDTH,
-  MIN_INBOX_EXCEL_PREVIEW_WIDTH,
   type JoinedProjectHistory,
   type OwnedProject,
   type ProjectImportFolderMode,
@@ -86,7 +80,6 @@ import {
 } from '../services/projectImportedStamps';
 import { listStamps } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
-import type { Stamp } from '../types/stamp';
 
 export type ProjectCollectPhase = 'hub' | 'create' | 'qr' | 'join' | 'inbox' | 'sent';
 
@@ -161,12 +154,6 @@ export function ProjectCollectScreen({
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [templatePickerVisible, setTemplatePickerVisible] = useState(false);
   const [templatePickerOptions, setTemplatePickerOptions] = useState<StampFieldTemplate[]>([]);
-  const [excelPxVisible, setExcelPxVisible] = useState(false);
-  const [excelPxText, setExcelPxText] = useState(String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH));
-  const [excelPxPending, setExcelPxPending] = useState<{
-    stamps: Stamp[];
-    fileBase: string;
-  } | null>(null);
 
   const leaveAfterJoin = () => {
     if (onJoinedGoCamera) onJoinedGoCamera();
@@ -616,41 +603,6 @@ export function ProjectCollectScreen({
   };
 
 
-  const runExcelExportWithWidth = async (stamps: Stamp[], fileBase: string, widthPx: number) => {
-    const safeWidth = await setInboxExcelPreviewWidth(widthPx);
-    const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
-    const result = await createStampsXlsx(stamps, fileBase, { previewWidthPx: safeWidth });
-    await shareStampsXlsx(result);
-  };
-
-  const openExcelPreviewWidthPrompt = async (stamps: Stamp[], fileBase: string) => {
-    const last = await getInboxExcelPreviewWidth();
-    setExcelPxText(String(last));
-    setExcelPxPending({ stamps, fileBase });
-    setExcelPxVisible(true);
-  };
-
-  const confirmExcelPreviewWidth = () => {
-    const pending = excelPxPending;
-    if (!pending) {
-      setExcelPxVisible(false);
-      return;
-    }
-    const widthPx = sanitizeInboxExcelPreviewWidth(excelPxText);
-    setExcelPxVisible(false);
-    setExcelPxPending(null);
-    setBusy(true);
-    void (async () => {
-      try {
-        await runExcelExportWithWidth(pending.stamps, pending.fileBase, widthPx);
-      } catch (e) {
-        Alert.alert('엑셀', e instanceof Error ? e.message : '실패');
-      } finally {
-        setBusy(false);
-      }
-    })();
-  };
-
   const handleInboxExcelSelected = async () => {
     if (!active) return;
     const ids = [...selected];
@@ -663,6 +615,7 @@ export function ProjectCollectScreen({
       );
       return;
     }
+    setBusy(true);
     try {
       const all = await listStamps();
       const want = new Set(localIds);
@@ -671,10 +624,14 @@ export function ProjectCollectScreen({
         Alert.alert('엑셀', '선택한 항목 중 내 폰으로 가져온 사진이 없습니다.');
         return;
       }
+      const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
       const base = sanitizeLoose(active.name) + '_선택_' + formatYmd(Date.now());
-      await openExcelPreviewWidthPrompt(stamps, base);
+      const result = await createStampsXlsx(stamps, base);
+      await shareStampsXlsx(result);
     } catch (e) {
       Alert.alert('엑셀', e instanceof Error ? e.message : '실패');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -699,9 +656,10 @@ export function ProjectCollectScreen({
         Alert.alert('취합 엑셀', '아직 내 폰에 가져온 사진이 없습니다.');
         return;
       }
+      const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
       const base = sanitizeLoose(project.name) + '_취합_' + formatYmd(Date.now());
-      setBusy(false);
-      await openExcelPreviewWidthPrompt(stamps, base);
+      const result = await createStampsXlsx(stamps, base);
+      await shareStampsXlsx(result);
     } catch (e) {
       Alert.alert('취합 엑셀', e instanceof Error ? e.message : '실패');
     } finally {
@@ -1420,58 +1378,6 @@ export function ProjectCollectScreen({
           </View>
         </View>
       </Modal>
-      <Modal
-        visible={excelPxVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => {
-          setExcelPxVisible(false);
-          setExcelPxPending(null);
-        }}
-      >
-        <View style={styles.excelPxBg}>
-          <View style={styles.excelPxCard}>
-            <Text style={styles.label}>엑셀 사진 가로 크기 (px)</Text>
-            <Text style={styles.hint}>
-              {MIN_INBOX_EXCEL_PREVIEW_WIDTH}–{MAX_INBOX_EXCEL_PREVIEW_WIDTH} · 기본{' '}
-              {DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH} · 세로는 비율 유지
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={excelPxText}
-              onChangeText={setExcelPxText}
-              keyboardType="number-pad"
-              maxLength={3}
-              placeholder={String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH)}
-            />
-            <View style={styles.excelPxChips}>
-              {[180, 240, 320, 480].map((n) => (
-                <Pressable
-                  key={n}
-                  style={[styles.chip, excelPxText === String(n) && styles.chipOn]}
-                  onPress={() => setExcelPxText(String(n))}
-                >
-                  <Text style={[styles.chipText, excelPxText === String(n) && styles.chipTextOn]}>
-                    {n}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            <Pressable style={styles.primary} onPress={confirmExcelPreviewWidth} disabled={busy}>
-              <Text style={styles.primaryText}>엑셀 만들기</Text>
-            </Pressable>
-            <Pressable
-              style={styles.secondary}
-              onPress={() => {
-                setExcelPxVisible(false);
-                setExcelPxPending(null);
-              }}
-            >
-              <Text style={styles.secondaryText}>취소</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -1683,23 +1589,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
-  },
-  excelPxBg: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  excelPxCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    gap: 12,
-  },
-  excelPxChips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
   },
   templatePickerSheet: {
     backgroundColor: '#fff',
