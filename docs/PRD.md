@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-08 — FEAT-NCP 앱 연동·수신함 병합·배포 채널 문서 (**본 커밋·소스 없음**) |
-| 최신 반영 커밋 | `89b643d` — 권장 APK `143848` · 기능 `54c93d2` |
+| 문서 동기화 | 2026-08-10 — 08-08~10 NCP/취합·엑셀·QR · 날짜별·APK별 (**본 커밋·소스 없음**) |
+| 최신 반영 커밋 | `dda285a` — 권장 APK `113846` · 기능 `086377c` |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -707,7 +707,9 @@
 | **2026-08-02** | 저장 목록 **플랫·촘촘 행** (`105935`) · **행 높이 추가 축소** (`111920`) · 설정 **필드 표시명 UI 제거** (`115453`) · 선택 취소 **흰 썸네일 수정** (`124143`) · 목록 **저장 유형 필터** (`214047`) · 도움말·SECURITY · Vercel · 본 문서 동기화 | `037b0af`~`acb9a43` |
 | **2026-08-03** | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS 장소** · **저장 직후 음성으로 항목 채우기**(opt-in) · 시트 **유형·말하기 예** · **표시명** 「항목 말하기」 · APK `145506`→`151943`→`161016` · Vercel · 본 문서 동기화(**소스 변경 없음**) | `5850f1c`~`6cd1dc4` |
 | **2026-08-07** | **FEAT-NCP-PROJECT-01** 설계 후 **앱 연동**(사업 QR·NCP·수신·엑셀) · SigV4·QR 그리드·https 조인 · APK `121056`~`233124` | `143e4ac`·`934f390`~`f3a4789` |
-| **2026-08-08** | 인앱 조인 QR·구분표시·사업 목록·딥링크 · 전송/수신 배지 · **수신함 병합·썸네일** · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · **본 문서 동기화(소스 없음)** | `85c9406`~`89b643d` |
+| **2026-08-08** | 인앱 조인 QR·구분표시·사업 목록·딥링크 · 전송/수신 배지 · **수신함 병합** · 선택 엑셀·참여 이력·초대 템플릿 · **NCP 직통 Put** · 엑셀 템플릿·촬영자 열 · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · APK `081515`~`231815` | `85c9406`~`1f53a7d` |
+| **2026-08-09** | 목록 선택 썸네일·취소 스크롤 · **만든 회사/사람** · 저장 취합 배지 · **보낸 사진** · 카메라 홈 취합 아이콘 · 랜딩 UTF-8 · 수신 「가져옴」매칭 · APK `085617`~`183720` | `1d49485`~`2ba4edf` |
+| **2026-08-10** | 취합전송 사업명·참여 전환 · QR Modal 스캔 · 엑셀 **미리보기 px·800칩·글자 작음/보통/큼** · 도움말·SECURITY · **본 문서 동기화(소스 없음)** | `3e18bf3`~`dda285a` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 
@@ -715,14 +717,21 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-08:** 권장 파일은 **`VoiceStamp_20260808_143848.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-10:** 권장 파일은 **`VoiceStamp_20260810_113846.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **설치·GitHub 권장** — 수신함 병합·썸네일 (+08-08 누적) |
-| `releases/VoiceStamp_20260808_140913.apk` | `92303e7` | **이전** — 목록 「수신」배지 |
-| `releases/VoiceStamp_20260808_134118.apk` | `e4eec17` | **이전** — 「전송」배지 |
-| `releases/VoiceStamp_20260808_120719.apk` | `d91ed1b` | **이전** — 가져온 미리보기 |
+| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **설치·GitHub 권장** — 엑셀 800칩·글자 작음/보통/큼 (+08-10 누적) |
+| `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 수신 엑셀 미리보기 가로 px |
+| `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal·스캔 게이트 |
+| `releases/VoiceStamp_20260810_091329.apk` | `48f9db6` | **이전** — 저장 배지 참여 사업 전환 |
+| `releases/VoiceStamp_20260810_085356.apk` | `0940d2e` | **이전** — 취합전송 · 사업명 배지 |
+| `releases/VoiceStamp_20260809_183720.apk` | `2ba4edf` | **이전** — 수신 「가져옴」매칭 |
+| `releases/VoiceStamp_20260809_150428.apk` | `48dc7b5` | **이전** — 카메라 홈 취합 아이콘 |
+| `releases/VoiceStamp_20260809_143152.apk` | `3b7445a` | **이전** — 보낸 사진·전송분 숨기기 |
+| `releases/VoiceStamp_20260808_231815.apk` | `1f53a7d` | **이전** — 수신 촬영자·엑셀 선두 열 |
+| `releases/VoiceStamp_20260808_173120.apk` | `8a5b58a` | **이전** — NCP presigned 직통 |
+| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **이전** — 수신함 병합·썸네일 |
 | `releases/VoiceStamp_20260808_081515.apk` | `aec7175` | **이전** — 인앱 조인 QR |
 | `releases/VoiceStamp_20260807_233124.apk` | `f3a4789` | **이전** — https 조인·수신 바 |
 | `releases/VoiceStamp_20260807_121056.apk` | `6cc9f60` | **이전** — NCP 취합 초기 연동 |

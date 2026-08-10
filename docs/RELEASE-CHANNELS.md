@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 작성 | 2026-08-08 |
+| 문서 작성 | 2026-08-08 (동기화 참고 2026-08-10 — 권장 APK `113846`) |
 | 배포 단계 | **베타·내부 테스트** (Play 정식 출시 전) — [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) |
 | 관련 | [BUILD-APK.md](../BUILD-APK.md) · [PLAN.md](./PLAN.md) LEG-05 · `eas.json` |
 

@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.12 |
-| 작성일 | 2026-08-08 |
-| 기준 커밋 | `89b643d` — 권장 APK `143848` · NCP 취합·수신함 병합 |
+| 문서 버전 | 3.13 |
+| 작성일 | 2026-08-10 |
+| 기준 커밋 | `dda285a` — 권장 APK `113846` · 엑셀 800·글자·08-08~10 누적 |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -634,9 +634,9 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 |------|-----|
 | GitHub | https://github.com/golee75git/VoiceStamp (`main`) |
 | Vercel | https://voicestamp-gilt.vercel.app |
-| 최신 APK (문서 기준) | `releases/VoiceStamp_20260730_114713.apk` |
-| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260730_114713.apk |
-| 최신 소스 | `49e9c70` — caption QR MVP + 카메라 홈·OCR·장면 키워드 누적 |
+| 최신 APK (문서 기준) | `releases/VoiceStamp_20260810_113846.apk` |
+| GitHub APK raw | https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260810_113846.apk |
+| 최신 소스 | `dda285a` — 엑셀 글자·800칩 + 08-08~10 취합 누적 |
 | APK 다운로드 (웹) | https://voicestamp-gilt.vercel.app/ → GitHub `releases/` |
 | 정책 URL | https://voicestamp-gilt.vercel.app/privacy |
 | Android 패키지 | `com.voicestamp.app` |
@@ -734,8 +734,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-03 | 2AU·3 | 웹 저장 알림·persist · **장소 칩**·저장 모달 유형 선택 · 앨범 **EXIF GPS** · APK `101849` 계열 |
 | 2026-08-03 | 2AV·3 | **F-Voice-10** 저장 직후 음성으로 항목 채우기 · APK `145506` · `restore-save-slot-speech.bat` |
 | 2026-08-07 | 4 | **FEAT-NCP-PROJECT-01** 설계→**앱 연동** · APK `121056`~`233124` |
-| 2026-08-08 | 4·3 | 조인·배지·**수신함 병합** · APK `081515`~`143848` |
-| 2026-08-08 | 문서 | 날짜별·APK별·RELEASE-CHANNELS · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
+| 2026-08-08 | 4·3 | 조인·배지·**수신함 병합** · NCP 직통·초대 템플릿·엑셀 · APK `081515`~`231815` |
+| 2026-08-08 | 문서 | RELEASE-CHANNELS · PRD/PLAN/PROJECT/README/CHANGELOG (`6811dc9`) |
+| 2026-08-09 | 4·3 | 목록 썸네일·취소 · 만든이 라벨 · 취합 배지 · 보낸 사진 · 홈 취합 아이콘 · 가져옴 매칭 · APK `085617`~`183720` |
+| 2026-08-10 | 4·3 | 취합전송 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` |
+| 2026-08-10 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -744,12 +747,18 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-08:** 권장 = `releases/VoiceStamp_20260808_143848.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-10:** 권장 = `releases/VoiceStamp_20260810_113846.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **설치·GitHub 권장** — 수신함 병합·썸네일 |
-| `releases/VoiceStamp_20260808_140913.apk` | `92303e7` | **이전** — 목록 「수신」배지 |
-| `releases/VoiceStamp_20260808_134118.apk` | `e4eec17` | **이전** — 「전송」배지 |
+| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **설치·GitHub 권장** — 엑셀 800칩·글자 작음/보통/큼 |
+| `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 수신 엑셀 미리보기 px |
+| `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal |
+| `releases/VoiceStamp_20260810_091329.apk` | `48f9db6` | **이전** — 저장 배지 참여 전환 |
+| `releases/VoiceStamp_20260809_183720.apk` | `2ba4edf` | **이전** — 수신 「가져옴」매칭 |
+| `releases/VoiceStamp_20260809_150428.apk` | `48dc7b5` | **이전** — 카메라 홈 취합 아이콘 |
+| `releases/VoiceStamp_20260808_231815.apk` | `1f53a7d` | **이전** — 수신 촬영자·엑셀 열 |
+| `releases/VoiceStamp_20260808_173120.apk` | `8a5b58a` | **이전** — NCP presigned 직통 |
+| `releases/VoiceStamp_20260808_143848.apk` | `89b643d` | **이전** — 수신함 병합·썸네일 |
 | `releases/VoiceStamp_20260808_081515.apk` | `aec7175` | **이전** — 인앱 조인 QR |
 | `releases/VoiceStamp_20260807_233124.apk` | `f3a4789` | **이전** — https 조인·수신 바 |
 | `releases/VoiceStamp_20260807_121056.apk` | `6cc9f60` | **이전** — NCP 취합 초기 연동 |
