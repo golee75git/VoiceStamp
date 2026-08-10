@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Dimensions,
   FlatList,
   Image,
   Modal,
@@ -146,8 +145,6 @@ export function ProjectCollectScreen({
   const [collectorPinInput, setCollectorPinInput] = useState('');
   const [joinScanning, setJoinScanning] = useState(false);
   const [joinScanLocked, setJoinScanLocked] = useState(false);
-  const [joinScanCameraMounted, setJoinScanCameraMounted] = useState(false);
-  const [joinScanCameraReady, setJoinScanCameraReady] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [inviteTemplateName, setInviteTemplateName] = useState<string | null>(null);
   const [inviteTemplateSourceId, setInviteTemplateSourceId] = useState<string | null>(null);
@@ -174,24 +171,6 @@ export function ProjectCollectScreen({
   useEffect(() => {
     void reload();
   }, [reload]);
-
-  useEffect(() => {
-    if (!joinScanning) {
-      setJoinScanCameraMounted(false);
-      setJoinScanCameraReady(false);
-      return;
-    }
-    setJoinScanCameraMounted(false);
-    setJoinScanCameraReady(false);
-    const timer = setTimeout(() => setJoinScanCameraMounted(true), 80);
-    return () => clearTimeout(timer);
-  }, [joinScanning]);
-
-  const closeJoinScan = useCallback(() => {
-    setJoinScanning(false);
-    setJoinScanCameraMounted(false);
-    setJoinScanCameraReady(false);
-  }, []);
 
   useEffect(() => {
     const text = (initialJoinText || '').trim();
@@ -500,11 +479,11 @@ export function ProjectCollectScreen({
   };
 
   const onJoinBarcodeScanned = (result: { data?: string }) => {
-    if (joinScanLocked || !joinScanCameraReady) return;
+    if (joinScanLocked) return;
     const raw = String(result?.data || '').trim();
     if (!raw) return;
     setJoinScanLocked(true);
-    closeJoinScan();
+    setJoinScanning(false);
     const parsed = parseProjectJoinLink(raw);
     if (!parsed) {
       Alert.alert('참여', '사업 참여용 QR이 아닙니다. 관리자 QR을 다시 찍어 주세요.', [
@@ -1286,49 +1265,17 @@ export function ProjectCollectScreen({
           <ActivityIndicator size="large" color="#111" />
         </View>
       ) : null}
-      <Modal
-        visible={joinScanning}
-        animationType="fade"
-        presentationStyle="fullScreen"
-        onRequestClose={() => {
-          setJoinScanLocked(false);
-          closeJoinScan();
-        }}
-      >
-        <View style={styles.scanModalRoot}>
-          {(() => {
-            const win = Dimensions.get('window');
-            return (
-              <View
-                style={[styles.scanCameraSlot, { width: win.width, height: win.height }]}
-                collapsable={false}
-              >
-                {joinScanCameraMounted ? (
-                  <CameraView
-                    key="join-qr-scan-modal"
-                    style={{ width: win.width, height: win.height }}
-                    facing="back"
-                    barcodeScannerSettings={
-                      joinScanCameraReady ? { barcodeTypes: ['qr'] } : undefined
-                    }
-                    onBarcodeScanned={
-                      joinScanCameraReady && !joinScanLocked
-                        ? onJoinBarcodeScanned
-                        : undefined
-                    }
-                    onCameraReady={() => setJoinScanCameraReady(true)}
-                  />
-                ) : (
-                  <View
-                    style={[
-                      styles.scanCameraPlaceholder,
-                      { width: win.width, height: win.height },
-                    ]}
-                  />
-                )}
-              </View>
-            );
-          })()}
+      {joinScanning ? (
+        <View style={styles.scanOverlay}>
+          <View style={styles.scanCameraSlot} collapsable={false}>
+            <CameraView
+              key="join-qr-scan"
+              style={styles.scanCamera}
+              facing="back"
+              barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+              onBarcodeScanned={joinScanLocked ? undefined : onJoinBarcodeScanned}
+            />
+          </View>
           <View style={styles.scanUi} pointerEvents="box-none">
             <View style={styles.scanFrameWrap} pointerEvents="none">
               <View style={styles.scanFrame} />
@@ -1338,8 +1285,8 @@ export function ProjectCollectScreen({
               <Pressable
                 style={styles.secondary}
                 onPress={() => {
+                  setJoinScanning(false);
                   setJoinScanLocked(false);
-                  closeJoinScan();
                 }}
               >
                 <Text style={styles.secondaryText}>닫기</Text>
@@ -1347,7 +1294,7 @@ export function ProjectCollectScreen({
             </View>
           </View>
         </View>
-      </Modal>
+      ) : null}
       <Modal
         visible={templatePickerVisible}
         transparent
@@ -1551,15 +1498,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scanModalRoot: {
-    flex: 1,
+  scanOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: '#000',
+    zIndex: 20,
   },
   scanCameraSlot: {
-    backgroundColor: '#000',
+    flex: 1,
   },
-  scanCameraPlaceholder: {
-    backgroundColor: '#111',
+  scanCamera: {
+    flex: 1,
   },
   scanUi: {
     ...StyleSheet.absoluteFillObject,
@@ -1574,7 +1522,7 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.92)',
+    borderColor: 'rgba(255,255,255,0.92)',
     borderRadius: 12,
     backgroundColor: 'transparent',
   },

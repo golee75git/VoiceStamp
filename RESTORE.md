@@ -3970,3 +3970,13 @@ restore-qr-preview-badge.bat
 `
 
 src.pre-qr-preview-badge/ · public.pre-qr-preview-badge/ 스냅샷으로 되돌립니다.
+
+## 277. QR 스캔 Modal 미리보기 되돌리기 (선택)
+
+QR 찍기 Modal·고정 크기 미리보기 변경 후 문제가 생기면:
+
+`at
+restore-qr-scan-modal.bat
+`
+
+src.pre-qr-scan-modal/ · public.pre-qr-scan-modal/ 스냅샷으로 되돌립니다.
