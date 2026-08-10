@@ -3998,3 +3998,11 @@ restore-inbox-xlsx-font.bat
 ```
 
 src.pre-inbox-xlsx-font/ · public.pre-inbox-xlsx-font/ 스냅샷으로 되돌립니다.
+
+체험여행 사전답사기록 템플릿 이후 문제가 생기면:
+
+```bat
+restore-trip-presurvey-template.bat
+```
+
+src.pre-trip-presurvey-template/ · public.pre-trip-presurvey-template/ 스냅샷으로 되돌립니다.

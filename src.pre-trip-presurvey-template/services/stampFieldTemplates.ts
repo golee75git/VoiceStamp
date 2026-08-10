@@ -185,26 +185,6 @@ export const STAMP_FIELD_TEMPLATES: StampFieldTemplate[] = [
     },
   },
   {
-    id: 'experience-trip-presurvey',
-    name: '체험여행 사전답사기록',
-    labels: {
-      titleFieldLabel: '여행명',
-      placeFieldLabel: '답사장소',
-      memoFieldLabel: '답사내용',
-      extra1FieldLabel: '체험활동',
-      extra2FieldLabel: '확인사항',
-      extra3FieldLabel: '답사단계',
-    },
-    placeholders: {
-      title: '춘천 레일바이크·닭갈비 체험',
-      place: '○○역 광장 / 체험장 입구',
-      memo: '이동 동선·소요시간·체험 가능 인원 확인',
-      extra1: '레일바이크 / 도예 / 숲해설',
-      extra2: '우천 대안·화장실·점심·안전수칙',
-      extra3: '1차 / 재답사 / 확정',
-    },
-  },
-  {
     id: 'safety-site',
     name: '안전현장기록',
     labels: {
