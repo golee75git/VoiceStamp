@@ -3950,3 +3950,13 @@ restore-collect-tx-name.bat
 `
 
 src.pre-collect-tx-name/ · public.pre-collect-tx-name/ 스냅샷으로 되돌립니다.
+
+## 275. 저장 화면 취합 사업 전환 되돌리기 (선택)
+
+저장 화면 취합전송 배지 탭→사업 전환 후 문제가 생기면:
+
+`at
+restore-collect-join-switch.bat
+`
+
+src.pre-collect-join-switch/ · public.pre-collect-join-switch/ 스냅샷으로 되돌립니다.

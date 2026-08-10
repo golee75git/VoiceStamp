@@ -638,12 +638,6 @@ export function StampSaveModal({
     setPrivacyModalOpen(false);
     setSelectedTemplateId(null);
     setSelectedTemplateName('유형 선택');
-    setCollectJoinName(null);
-    setCollectJoinId(null);
-    setJoinPickerVisible(false);
-    setJoinPickerOptions([]);
-    setJoinPickerLoading(false);
-    setJoinSwitchBusy(false);
     setTemplatePickerVisible(false);
     setTemplatePickerOptions([]);
     setTemplatePickerLoading(false);
@@ -807,11 +801,6 @@ export function StampSaveModal({
   useEffect(() => {
     if (!visible) {
       setCollectJoinName(null);
-      setCollectJoinId(null);
-      setJoinPickerVisible(false);
-      setJoinPickerOptions([]);
-      setJoinPickerLoading(false);
-      setJoinSwitchBusy(false);
       return;
     }
     let cancelled = false;
@@ -822,11 +811,9 @@ export function StampSaveModal({
         if (cancelled) return;
         const label = join?.name?.trim() || null;
         setCollectJoinName(label);
-        setCollectJoinId(join?.projectId?.trim() || null);
       } catch {
         if (!cancelled) {
           setCollectJoinName(null);
-          setCollectJoinId(null);
         }
       }
     })();
@@ -834,85 +821,6 @@ export function StampSaveModal({
       cancelled = true;
     };
   }, [visible]);
-
-  const openJoinPicker = useCallback(() => {
-    if (!collectJoinName || joinSwitchBusy || saving) return;
-    setJoinPickerLoading(true);
-    void import('../services/projectCollectSettings')
-      .then(({ listJoinedProjectHistory }) => listJoinedProjectHistory())
-      .then((list) => {
-        const rows = (list || [])
-          .map((item) => ({
-            projectId: String(item.projectId || '').trim(),
-            name: String(item.name || '').trim() || String(item.projectId || '').trim(),
-            uploadCode: String(item.uploadCode || '').trim(),
-            mark: String(item.mark || '').trim(),
-          }))
-          .filter((item) => item.projectId && item.uploadCode);
-        const others = rows.filter((item) => item.projectId !== collectJoinId);
-        if (others.length === 0) {
-          setJoinPickerOptions([]);
-          Alert.alert('사업 연결', '변경할 다른 참여 사업이 없습니다.');
-          return;
-        }
-        setJoinPickerOptions(rows);
-        setJoinPickerVisible(true);
-      })
-      .catch(() => {
-        setJoinPickerOptions([]);
-        Alert.alert('사업 연결', '참여 이력을 불러오지 못했습니다.');
-      })
-      .finally(() => setJoinPickerLoading(false));
-  }, [collectJoinId, collectJoinName, joinSwitchBusy, saving]);
-
-  const applyJoinSwitch = useCallback(
-    (item: { projectId: string; name: string; uploadCode: string; mark: string }) => {
-      void (async () => {
-        setJoinSwitchBusy(true);
-        try {
-          const { setProjectCollectEnabled, setProjectJoin } = await import(
-            '../services/projectCollectSettings'
-          );
-          await setProjectCollectEnabled(true);
-          await setProjectJoin({
-            projectId: item.projectId,
-            name: item.name,
-            uploadCode: item.uploadCode,
-            mark: item.mark,
-          });
-          setCollectJoinName(item.name);
-          setCollectJoinId(item.projectId);
-          setJoinPickerVisible(false);
-          Alert.alert('연결되었습니다', `${item.name}에 다시 연결했습니다. 이후 저장분이 올라갑니다.`);
-        } catch (e) {
-          Alert.alert('사업 연결', e instanceof Error ? e.message : '연결에 실패했습니다.');
-        } finally {
-          setJoinSwitchBusy(false);
-        }
-      })();
-    },
-    [],
-  );
-
-  const handleSelectJoinProject = useCallback(
-    (item: { projectId: string; name: string; uploadCode: string; mark: string }) => {
-      if (joinSwitchBusy) return;
-      if (item.projectId === collectJoinId) {
-        setJoinPickerVisible(false);
-        return;
-      }
-      const currentLabel = collectJoinName || '현재 사업';
-      Alert.alert(
-        '사업 연결',
-        `지금 ${currentLabel}에 연결되어 있습니다. ${item.name}로 바꿀까요?`,
-        [
-          { text: '유지', style: 'cancel' },
-          { text: '바꾸기', onPress: () => applyJoinSwitch(item) },
-        ],
-      );
-    },
-    [applyJoinSwitch, collectJoinId, collectJoinName, joinSwitchBusy],
-  );
 
   useEffect(() => {
     if (!visible) {
@@ -1836,18 +1744,13 @@ export function StampSaveModal({
               <View style={styles.templatePickLabelRow}>
                 <Text style={styles.siteLabel}>저장 유형</Text>
                 {collectJoinName ? (
-                  <Pressable
-                    onPress={openJoinPicker}
-                    disabled={saving || joinSwitchBusy}
-                    accessibilityRole="button"
-                    accessibilityLabel={`취합전송, ${collectJoinName}, 탭하면 참여 사업 변경`}
-                    accessibilityHint="참여한 사업 목록에서 다른 사업으로 바꿉니다"
-                    hitSlop={6}
+                  <Text
+                    style={styles.collectTxBadge}
+                    numberOfLines={1}
+                    accessibilityLabel={`취합전송, ${collectJoinName}`}
                   >
-                    <Text style={styles.collectTxBadge} numberOfLines={1}>
-                      {`취합전송 · ${collectJoinName}`}
-                    </Text>
-                  </Pressable>
+                    {`취합전송 · ${collectJoinName}`}
+                  </Text>
                 ) : null}
               </View>
               <Pressable
@@ -2427,73 +2330,6 @@ export function StampSaveModal({
           <Pressable
             style={styles.folderPickerClose}
             onPress={() => setTemplatePickerVisible(false)}
-          >
-            <Text style={styles.folderPickerCloseText}>닫기</Text>
-          </Pressable>
-        </Pressable>
-      </Pressable>
-    </Modal>
-
-    <Modal
-      visible={joinPickerVisible}
-      transparent
-      animationType="fade"
-      onRequestClose={() => {
-        if (!joinSwitchBusy) setJoinPickerVisible(false);
-      }}
-    >
-      <Pressable
-        style={styles.folderPickerOverlay}
-        onPress={() => {
-          if (!joinSwitchBusy) setJoinPickerVisible(false);
-        }}
-      >
-        <Pressable style={styles.folderPickerCard} onPress={() => {}}>
-          <Text style={styles.folderPickerTitle}>참여 사업 선택</Text>
-          <Text style={styles.templatePickerSubHint}>
-            고른 사업으로 연결을 바꿉니다. 이후 저장분이 그 사업으로 올라갑니다.
-          </Text>
-          {joinPickerLoading || joinSwitchBusy ? (
-            <ActivityIndicator style={styles.folderPickerLoading} color="#2563eb" />
-          ) : (
-            <FlatList
-              data={joinPickerOptions}
-              keyExtractor={(item) => item.projectId}
-              style={styles.folderPickerList}
-              keyboardShouldPersistTaps="handled"
-              ListEmptyComponent={
-                <Text style={styles.folderPickerEmpty}>참여 이력이 없습니다.</Text>
-              }
-              renderItem={({ item }) => {
-                const selected = item.projectId === collectJoinId;
-                return (
-                  <Pressable
-                    style={styles.folderPickerItem}
-                    onPress={() => handleSelectJoinProject(item)}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    accessibilityLabel={item.name}
-                  >
-                    <Text
-                      style={[
-                        styles.folderPickerItemText,
-                        selected ? styles.templatePickerItemSelected : null,
-                      ]}
-                      numberOfLines={2}
-                    >
-                      {item.name}
-                      {selected ? ' · 연결 중' : ''}
-                    </Text>
-                  </Pressable>
-                );
-              }}
-            />
-          )}
-          <Pressable
-            style={styles.folderPickerClose}
-            onPress={() => {
-              if (!joinSwitchBusy) setJoinPickerVisible(false);
-            }}
           >
             <Text style={styles.folderPickerCloseText}>닫기</Text>
           </Pressable>
