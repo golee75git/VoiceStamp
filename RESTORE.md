@@ -3960,3 +3960,13 @@ restore-collect-join-switch.bat
 `
 
 src.pre-collect-join-switch/ · public.pre-collect-join-switch/ 스냅샷으로 되돌립니다.
+
+## 276. QR 미리보기·취합 배지 표시 되돌리기 (선택)
+
+QR 미리보기 검정·취합전송 사업명 말줄임 수정 후 문제가 생기면:
+
+`at
+restore-qr-preview-badge.bat
+`
+
+src.pre-qr-preview-badge/ · public.pre-qr-preview-badge/ 스냅샷으로 되돌립니다.

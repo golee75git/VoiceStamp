@@ -1503,11 +1503,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     zIndex: 20,
   },
-  scanCameraSlot: {
-    flex: 1,
-  },
   scanCamera: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
   },
   scanUi: {
     ...StyleSheet.absoluteFillObject,
