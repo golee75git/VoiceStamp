@@ -21,16 +21,11 @@ const KEYS = {
   hideSyncedFromList: 'project_hide_synced_from_list',
   /** Inbox/hub Excel preview image width in px (120–800). */
   inboxExcelPreviewWidth: 'project_inbox_excel_preview_width',
-  /** Inbox/hub Excel cell font size preset. */
-  inboxExcelFontSize: 'project_inbox_excel_font_size',
 } as const;
 
 export const DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH = 240;
 export const MIN_INBOX_EXCEL_PREVIEW_WIDTH = 120;
 export const MAX_INBOX_EXCEL_PREVIEW_WIDTH = 800;
-
-export type InboxExcelFontSize = 'small' | 'normal' | 'large';
-export const DEFAULT_INBOX_EXCEL_FONT_SIZE: InboxExcelFontSize = 'normal';
 
 export function sanitizeInboxExcelPreviewWidth(raw: unknown): number {
   const n =
@@ -42,18 +37,6 @@ export function sanitizeInboxExcelPreviewWidth(raw: unknown): number {
     MAX_INBOX_EXCEL_PREVIEW_WIDTH,
     Math.max(MIN_INBOX_EXCEL_PREVIEW_WIDTH, Math.round(n)),
   );
-}
-
-export function sanitizeInboxExcelFontSize(raw: unknown): InboxExcelFontSize {
-  const v = String(raw ?? '').trim();
-  if (v === 'small' || v === 'large' || v === 'normal') return v;
-  return DEFAULT_INBOX_EXCEL_FONT_SIZE;
-}
-
-export function inboxExcelFontSizeToPt(size: InboxExcelFontSize): number {
-  if (size === 'small') return 10;
-  if (size === 'large') return 14;
-  return 11;
 }
 
 /** Optional on-device label for project uploads (not a login id). Max 40. */
@@ -193,16 +176,6 @@ export async function getInboxExcelPreviewWidth(): Promise<number> {
 export async function setInboxExcelPreviewWidth(widthPx: number): Promise<number> {
   const safe = sanitizeInboxExcelPreviewWidth(widthPx);
   await setValue(KEYS.inboxExcelPreviewWidth, String(safe));
-  return safe;
-}
-
-export async function getInboxExcelFontSize(): Promise<InboxExcelFontSize> {
-  return sanitizeInboxExcelFontSize(await getValue(KEYS.inboxExcelFontSize));
-}
-
-export async function setInboxExcelFontSize(size: InboxExcelFontSize): Promise<InboxExcelFontSize> {
-  const safe = sanitizeInboxExcelFontSize(size);
-  await setValue(KEYS.inboxExcelFontSize, safe);
   return safe;
 }
 

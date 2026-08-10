@@ -30,8 +30,6 @@ const PREVIEW_WIDTH_MAX = 800;
 export type CreateStampsXlsxOptions = {
   /** Excel embedded preview width in px (clamped). Height keeps 4:3. */
   previewWidthPx?: number;
-  /** Cell font size in points (header stays bold). */
-  fontSizePt?: number;
 };
 
 function resolvePreviewSize(previewWidthPx?: number): { width: number; height: number; rowHeight: number; colWidth: number } {
@@ -44,13 +42,6 @@ function resolvePreviewSize(previewWidthPx?: number): { width: number; height: n
   const rowHeight = Math.max(72, Math.round(height * 0.75));
   const colWidth = Math.max(18, Math.round(width / 7));
   return { width, height, rowHeight, colWidth };
-}
-
-function resolveFontSizePt(fontSizePt?: number): number {
-  if (typeof fontSizePt === 'number' && Number.isFinite(fontSizePt)) {
-    return Math.min(18, Math.max(8, Math.round(fontSizePt)));
-  }
-  return 11;
 }
 
 const DEFAULT_LABEL_SET = new Set([
@@ -179,7 +170,6 @@ export async function createStampsXlsx(
   }
 
   const preview = resolvePreviewSize(options?.previewWidthPx);
-  const fontSize = resolveFontSizePt(options?.fontSizePt);
   const safeName = sanitizeExportBaseName(fileName);
   const coordsLabel = await getCoordsLabelMode();
   const headers = await pickHeaderLabels(stamps);
@@ -212,7 +202,7 @@ export async function createStampsXlsx(
   ];
 
   const headerRow = sheet.getRow(1);
-  headerRow.font = { bold: true, size: fontSize };
+  headerRow.font = { bold: true };
   headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
   for (let i = 0; i < stamps.length; i++) {
@@ -224,9 +214,7 @@ export async function createStampsXlsx(
       ? templateNameById.get(typeId) || typeId
       : '';
 
-    const dataRow = sheet.getRow(rowIndex);
-    dataRow.height = preview.rowHeight;
-    dataRow.font = { size: fontSize };
+    sheet.getRow(rowIndex).height = preview.rowHeight;
     sheet.getCell(rowIndex, 1).value = stamp.uploadedByMark?.trim() ?? '';
     sheet.getCell(rowIndex, 3).value = i + 1;
     sheet.getCell(rowIndex, 4).value = stamp.title;

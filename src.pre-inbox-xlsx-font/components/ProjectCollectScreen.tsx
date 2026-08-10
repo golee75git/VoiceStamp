@@ -48,34 +48,28 @@ import {
   buildImportGroupName,
   clearProjectJoin,
   getCollectorPin,
-  getInboxExcelFontSize,
   getInboxExcelPreviewWidth,
   getJoinMarkPref,
   getProjectDeleteAfterImport,
   getProjectImportFolderMode,
   getProjectJoin,
-  inboxExcelFontSizeToPt,
   listJoinedProjectHistory,
   listOwnedProjects,
   markOwnedProjectClosed,
   removeJoinedProjectHistory,
   removeOwnedProject,
-  sanitizeInboxExcelFontSize,
   sanitizeInboxExcelPreviewWidth,
   sanitizeJoinMark,
   setCollectorPin,
-  setInboxExcelFontSize,
   setInboxExcelPreviewWidth,
   setProjectCollectEnabled,
   setProjectDeleteAfterImport,
   setProjectImportFolderMode,
   setProjectJoin,
   upsertOwnedProject,
-  DEFAULT_INBOX_EXCEL_FONT_SIZE,
   DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH,
   MAX_INBOX_EXCEL_PREVIEW_WIDTH,
   MIN_INBOX_EXCEL_PREVIEW_WIDTH,
-  type InboxExcelFontSize,
   type JoinedProjectHistory,
   type OwnedProject,
   type ProjectImportFolderMode,
@@ -169,7 +163,6 @@ export function ProjectCollectScreen({
   const [templatePickerOptions, setTemplatePickerOptions] = useState<StampFieldTemplate[]>([]);
   const [excelPxVisible, setExcelPxVisible] = useState(false);
   const [excelPxText, setExcelPxText] = useState(String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH));
-  const [excelFontSize, setExcelFontSize] = useState<InboxExcelFontSize>(DEFAULT_INBOX_EXCEL_FONT_SIZE);
   const [excelPxPending, setExcelPxPending] = useState<{
     stamps: Stamp[];
     fileBase: string;
@@ -623,29 +616,16 @@ export function ProjectCollectScreen({
   };
 
 
-  const runExcelExportWithWidth = async (
-    stamps: Stamp[],
-    fileBase: string,
-    widthPx: number,
-    fontSize: InboxExcelFontSize,
-  ) => {
+  const runExcelExportWithWidth = async (stamps: Stamp[], fileBase: string, widthPx: number) => {
     const safeWidth = await setInboxExcelPreviewWidth(widthPx);
-    const safeFont = await setInboxExcelFontSize(fontSize);
     const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
-    const result = await createStampsXlsx(stamps, fileBase, {
-      previewWidthPx: safeWidth,
-      fontSizePt: inboxExcelFontSizeToPt(safeFont),
-    });
+    const result = await createStampsXlsx(stamps, fileBase, { previewWidthPx: safeWidth });
     await shareStampsXlsx(result);
   };
 
   const openExcelPreviewWidthPrompt = async (stamps: Stamp[], fileBase: string) => {
-    const [lastWidth, lastFont] = await Promise.all([
-      getInboxExcelPreviewWidth(),
-      getInboxExcelFontSize(),
-    ]);
-    setExcelPxText(String(lastWidth));
-    setExcelFontSize(lastFont);
+    const last = await getInboxExcelPreviewWidth();
+    setExcelPxText(String(last));
     setExcelPxPending({ stamps, fileBase });
     setExcelPxVisible(true);
   };
@@ -657,13 +637,12 @@ export function ProjectCollectScreen({
       return;
     }
     const widthPx = sanitizeInboxExcelPreviewWidth(excelPxText);
-    const fontSize = sanitizeInboxExcelFontSize(excelFontSize);
     setExcelPxVisible(false);
     setExcelPxPending(null);
     setBusy(true);
     void (async () => {
       try {
-        await runExcelExportWithWidth(pending.stamps, pending.fileBase, widthPx, fontSize);
+        await runExcelExportWithWidth(pending.stamps, pending.fileBase, widthPx);
       } catch (e) {
         Alert.alert('엑셀', e instanceof Error ? e.message : '실패');
       } finally {
@@ -1466,7 +1445,7 @@ export function ProjectCollectScreen({
               placeholder={String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH)}
             />
             <View style={styles.excelPxChips}>
-              {[180, 240, 320, 480, 800].map((n) => (
+              {[180, 240, 320, 480].map((n) => (
                 <Pressable
                   key={n}
                   style={[styles.chip, excelPxText === String(n) && styles.chipOn]}
@@ -1474,27 +1453,6 @@ export function ProjectCollectScreen({
                 >
                   <Text style={[styles.chipText, excelPxText === String(n) && styles.chipTextOn]}>
                     {n}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            <Text style={styles.label}>글자 크기</Text>
-            <Text style={styles.hint}>작음 10 · 보통 11 · 큼 14 (전체 시트, 머리글은 굵게)</Text>
-            <View style={styles.excelPxChips}>
-              {(
-                [
-                  { id: 'small' as const, label: '작음' },
-                  { id: 'normal' as const, label: '보통' },
-                  { id: 'large' as const, label: '큼' },
-                ] as const
-              ).map((opt) => (
-                <Pressable
-                  key={opt.id}
-                  style={[styles.chip, excelFontSize === opt.id && styles.chipOn]}
-                  onPress={() => setExcelFontSize(opt.id)}
-                >
-                  <Text style={[styles.chipText, excelFontSize === opt.id && styles.chipTextOn]}>
-                    {opt.label}
                   </Text>
                 </Pressable>
               ))}

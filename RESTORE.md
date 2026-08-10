@@ -3990,3 +3990,11 @@ restore-inbox-xlsx-preview-px.bat
 `
 
 src.pre-inbox-xlsx-preview-px/ Â· public.pre-inbox-xlsx-preview-px/ ìŠ¤ëƒ…ìƒ·ìœ¼ë¡œ ë˜ëŒë¦½ë‹ˆë‹¤.
+
+¼ö½Å¡¤ÃëÇÕ ¿¢¼¿ ±ÛÀÚ Å©±â¡¤800 Ä¨ ÀÌÈÄ ¹®Á¦°¡ »ı±â¸é:
+
+```bat
+restore-inbox-xlsx-font.bat
+```
+
+src.pre-inbox-xlsx-font/ ¡¤ public.pre-inbox-xlsx-font/ ½º³À¼¦À¸·Î µÇµ¹¸³´Ï´Ù.
