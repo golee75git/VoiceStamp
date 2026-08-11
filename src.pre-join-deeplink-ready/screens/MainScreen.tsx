@@ -55,9 +55,6 @@ export function MainScreen() {
     if (Platform.OS === 'web') return;
     const pending = takePendingJoinUrl();
     if (pending) openJoinFromUrl(pending);
-    void Linking.getInitialURL().then((url) => {
-      if (url) openJoinFromUrl(url);
-    });
     const sub = Linking.addEventListener('url', ({ url }) => {
       openJoinFromUrl(url);
     });
@@ -177,7 +174,6 @@ export function MainScreen() {
           }}
           initialPhase={joinLaunchText ? 'join' : 'hub'}
           initialJoinText={joinLaunchText || undefined}
-          openedFromLink={collectOpenedFromLink}
           onImported={bumpRefresh}
         />
       ) : screen === 'ossLicenses' ? (

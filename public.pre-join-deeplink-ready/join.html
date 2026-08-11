@@ -18,9 +18,9 @@
 <body>
   <div class="card">
     <h1>VoiceStamp 사업 참여</h1>
-    <p>앱이 설치되어 있으면 아래에서 앱을 엽니다. 앱에서는 참여 코드가 채워지고, <strong>구분 표시</strong>만 입력한 뒤 「연결 후 촬영」하면 촬영 화면으로 갑니다.</p>
+    <p>앱이 있으면 아래 버튼으로 열어 「코드로 참여」에서 구분 표시를 입력한 뒤 연결하세요. 연결 후 촬영할 수 있습니다.</p>
     <p id="codes">링크를 확인하는 중…</p>
-    <a class="btn" id="openApp" href="#">앱에서 참여·촬영</a>
+    <a class="btn" id="openApp" href="#">앱에서 참여</a>
     <a class="btn secondary" href="https://voicestamp-gilt.vercel.app/">APK·앱 안내</a>
     <p class="hint">앱이 열리지 않으면 APK를 설치한 뒤 다시 누르거나, 앱 설정 → 사업 취합 → 코드로 참여에 위 코드를 붙여 넣으세요.</p>
   </div>
@@ -45,21 +45,13 @@
           ';end';
         openBtn.href = intentUrl;
         openBtn.addEventListener('click', function () {
+          // Also try custom scheme for some browsers
           setTimeout(function () {
             try {
               window.location.href = appUrl;
             } catch (e) {}
           }, 400);
         });
-        // Android: try opening the app once when the page loads (best-effort).
-        var ua = navigator.userAgent || '';
-        if (/Android/i.test(ua)) {
-          setTimeout(function () {
-            try {
-              window.location.href = intentUrl;
-            } catch (e) {}
-          }, 250);
-        }
       } else {
         el.textContent = '유효한 참여 링크가 아닙니다.';
         openBtn.style.display = 'none';

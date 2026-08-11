@@ -4045,3 +4045,11 @@ restore-photo-sheet-template.bat
 `
 
 Restores stampFieldTemplates.ts and help.html from *.pre-photo-sheet-template/.
+
+## Join deeplink ready restore (2026-08-11)
+
+`at
+restore-join-deeplink-ready.bat
+`
+
+Restores ProjectCollectScreen, MainScreen, help.html, join.html from *.pre-join-deeplink-ready/.

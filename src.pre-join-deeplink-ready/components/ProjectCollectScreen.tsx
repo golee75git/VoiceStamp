@@ -102,8 +102,6 @@ type Props = {
   onJoinedGoCamera?: () => void;
   initialPhase?: ProjectCollectPhase;
   initialJoinText?: string;
-  /** True when opened from https/voicestamp join deep link. */
-  openedFromLink?: boolean;
   onImported?: () => void;
 };
 
@@ -133,7 +131,6 @@ export function ProjectCollectScreen({
   onJoinedGoCamera,
   initialPhase = 'hub',
   initialJoinText,
-  openedFromLink = false,
   onImported,
 }: Props) {
   const [phase, setPhase] = useState<ProjectCollectPhase>(initialPhase);
@@ -177,7 +174,6 @@ export function ProjectCollectScreen({
     stamps: Stamp[];
     fileBase: string;
   } | null>(null);
-  const [linkInviteHint, setLinkInviteHint] = useState<string | null>(null);
 
   const leaveAfterJoin = () => {
     if (onJoinedGoCamera) onJoinedGoCamera();
@@ -222,17 +218,6 @@ export function ProjectCollectScreen({
     if (!text) return;
     setJoinCodeText(text);
     setPhase('join');
-    const parsed = parseProjectJoinLink(text);
-    if (parsed) {
-      setLinkInviteHint(parsed.projectId);
-      void apiLookupProject(parsed.projectId, { inviteId: parsed.inviteId || undefined })
-        .then((looked) => {
-          if (looked?.name) setLinkInviteHint(looked.name);
-        })
-        .catch(() => {
-          /* keep projectId hint */
-        });
-    }
   }, [initialJoinText]);
 
   useEffect(() => {
@@ -408,10 +393,6 @@ export function ProjectCollectScreen({
       (link.templateId
         ? STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name
         : null);
-    if (openedFromLink) {
-      leaveAfterJoin();
-      return;
-    }
     Alert.alert(
       '연결되었습니다',
       tplHint
@@ -450,47 +431,6 @@ export function ProjectCollectScreen({
         : link.templateId
           ? `\n저장 템플릿: ${STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name || link.templateId}`
           : '';
-
-      const runJoin = async () => {
-        const existing = await getProjectJoin();
-        if (existing && existing.projectId !== projectId) {
-          Alert.alert(
-            '사업 연결',
-            `지금 ${existing.name}에 연결되어 있습니다. ${projectName}로 바꿀까요?`,
-            [
-              { text: '유지', style: 'cancel' },
-              {
-                text: '바꾸기',
-                onPress: () => {
-                  void finishJoinWithTemplate(
-                    projectId,
-                    projectName,
-                    uploadCode,
-                    mark,
-                    link,
-                    fieldTemplate,
-                  );
-                },
-              },
-            ],
-          );
-          return;
-        }
-        await finishJoinWithTemplate(
-          projectId,
-          projectName,
-          uploadCode,
-          mark,
-          link,
-          fieldTemplate,
-        );
-      };
-
-      if (openedFromLink) {
-        await runJoin();
-        return;
-      }
-
       Alert.alert(
         `${projectName}에 참여할까요?`,
         `구분 표시: ${mark}${tplLine}\n연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.`,
@@ -499,7 +439,40 @@ export function ProjectCollectScreen({
           {
             text: '참여하고 자동으로 올리기',
             onPress: () => {
-              void runJoin();
+              void (async () => {
+                const existing = await getProjectJoin();
+                if (existing && existing.projectId !== projectId) {
+                  Alert.alert(
+                    '사업 연결',
+                    `지금 ${existing.name}에 연결되어 있습니다. ${projectName}로 바꿀까요?`,
+                    [
+                      { text: '유지', style: 'cancel' },
+                      {
+                        text: '바꾸기',
+                        onPress: () => {
+                          void finishJoinWithTemplate(
+                            projectId,
+                            projectName,
+                            uploadCode,
+                            mark,
+                            link,
+                            fieldTemplate,
+                          );
+                        },
+                      },
+                    ],
+                  );
+                  return;
+                }
+                await finishJoinWithTemplate(
+                  projectId,
+                  projectName,
+                  uploadCode,
+                  mark,
+                  link,
+                  fieldTemplate,
+                );
+              })();
             },
           },
         ],
@@ -1141,16 +1114,6 @@ export function ProjectCollectScreen({
 
   const renderJoin = () => (
     <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-      {openedFromLink ? (
-        <View style={styles.linkBanner}>
-          <Text style={styles.linkBannerTitle}>공유 링크로 열림</Text>
-          <Text style={styles.linkBannerText}>
-            {linkInviteHint
-              ? `「${linkInviteHint}」 참여 코드가 채워져 있습니다. 구분 표시만 입력한 뒤 연결하면 촬영 화면으로 갑니다.`
-              : '참여 코드가 채워져 있습니다. 구분 표시만 입력한 뒤 연결하면 촬영 화면으로 갑니다.'}
-          </Text>
-        </View>
-      ) : null}
       <Text style={styles.label}>구분 표시 (필수)</Text>
       <Text style={styles.hint}>
         올리는 쪽을 구분할 짧은 글자. 별칭·번호 끝자리 등 원하는 형태로 적어 주세요. 비울 수 없습니다.
@@ -1165,11 +1128,7 @@ export function ProjectCollectScreen({
         autoCorrect={false}
       />
       <Text style={styles.label}>참여 링크 또는 코드</Text>
-      {openedFromLink ? (
-        <Text style={styles.hint}>공유 링크에서 자동으로 채워졌습니다. 필요하면 수정할 수 있습니다.</Text>
-      ) : (
-        <Text style={styles.hint}>형식: VS-… 코드 / 참여코드 또는 QR·웹 참여 링크</Text>
-      )}
+      <Text style={styles.hint}>형식: VS-… 코드 / 참여코드 또는 QR·웹 참여 링크</Text>
       <TextInput
         style={[styles.input, styles.inputMulti]}
         value={joinCodeText}
@@ -1177,15 +1136,12 @@ export function ProjectCollectScreen({
         placeholder="https://voicestamp-gilt.vercel.app/join?p=…&c=…"
         autoCapitalize="characters"
         multiline
-        editable={!openedFromLink}
       />
-      {openedFromLink ? null : (
-        <Pressable style={styles.secondary} onPress={handleJoinScanPress} disabled={busy}>
-          <Text style={styles.secondaryText}>QR 찍기</Text>
-        </Pressable>
-      )}
+      <Pressable style={styles.secondary} onPress={handleJoinScanPress} disabled={busy}>
+        <Text style={styles.secondaryText}>QR 찍기</Text>
+      </Pressable>
       <Pressable style={styles.primary} onPress={handleJoinSubmit} disabled={busy}>
-        <Text style={styles.primaryText}>{openedFromLink ? '연결 후 촬영' : '연결'}</Text>
+        <Text style={styles.primaryText}>연결</Text>
       </Pressable>
     </ScrollView>
   );
@@ -1649,16 +1605,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerText: { color: '#065f46', fontWeight: '600' },
-  linkBanner: {
-    backgroundColor: '#eff6ff',
-    borderRadius: 12,
-    padding: 12,
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
-  },
-  linkBannerTitle: { color: '#1e3a8a', fontWeight: '700', fontSize: 15 },
-  linkBannerText: { color: '#1e40af', fontSize: 13, lineHeight: 19 },
   qrWrap: {
     alignSelf: 'center',
     padding: 12,
