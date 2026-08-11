@@ -4089,3 +4089,8 @@ Restores the pre-fix (corrupted) `landing.html`/`info.html` from `public.pre-lan
 estore-collect-banner-shutter.bat
 Restores CameraScreen + help from \*.pre-collect-banner-shutter/\.
 
+## Collect banner copy restore (2026-08-12)
+
+restore-collect-banner-copy.bat
+
+Restores CameraScreen + help from *.pre-collect-banner-copy/.

@@ -810,14 +810,14 @@ export function CameraScreen({
             onPress={() => onOpenProjectCollect?.()}
             disabled={cameraBusy || actionSheetVisible || !onOpenProjectCollect}
             accessibilityRole="button"
-            accessibilityLabel={`취합 중, ${collectJoinName}`}
+            accessibilityLabel={`이 사업으로 전송, ${collectJoinName}`}
             accessibilityHint="사업 취합 화면으로 이동합니다"
           >
             <Text
               style={[styles.collectJoinBannerTitle, homeOnLight && styles.collectJoinBannerTitleOnLight]}
               numberOfLines={1}
             >
-              취합 중
+              이 사업으로 전송
             </Text>
             <Text
               style={[styles.collectJoinBannerName, homeOnLight && styles.collectJoinBannerNameOnLight]}
