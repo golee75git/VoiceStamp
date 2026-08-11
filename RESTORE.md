@@ -4083,3 +4083,9 @@ Restores CameraScreen, StampSaveModal, help from `*.pre-collect-join-banner/`.
 `restore-landing-utf8-fix.bat`
 
 Restores the pre-fix (corrupted) `landing.html`/`info.html` from `public.pre-landing-utf8-fix/` ? use only to undo this fix; prefer `public.pre-mainint1-refresh/` for a good copy.
+
+## Collect banner shutter restore (2026-08-12)
+
+estore-collect-banner-shutter.bat
+Restores CameraScreen + help from \*.pre-collect-banner-shutter/\.
+

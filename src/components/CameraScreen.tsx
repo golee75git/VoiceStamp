@@ -796,6 +796,14 @@ export function CameraScreen({
   return (
     <View style={[styles.container, { backgroundColor: homeFill }]}>
       <View style={[styles.launcher, { backgroundColor: homeFill }]}>
+        <View style={styles.launcherSplash}>
+          <Image
+            source={homeImage}
+            style={styles.launcherImage}
+            resizeMode="contain"
+            accessibilityIgnoresInvertColors
+          />
+        </View>
         {collectJoinName ? (
           <Pressable
             style={[styles.collectJoinBanner, homeOnLight && styles.collectJoinBannerOnLight]}
@@ -819,14 +827,6 @@ export function CameraScreen({
             </Text>
           </Pressable>
         ) : null}
-        <View style={styles.launcherSplash}>
-          <Image
-            source={homeImage}
-            style={styles.launcherImage}
-            resizeMode="contain"
-            accessibilityIgnoresInvertColors
-          />
-        </View>
         <Pressable
           style={[
             styles.launchCaptureButton,
@@ -953,11 +953,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   collectJoinBanner: {
-    alignSelf: 'stretch',
+    alignSelf: 'center',
+    maxWidth: '88%',
     marginHorizontal: 16,
-    marginTop: 12,
+    marginBottom: 4,
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     backgroundColor: 'rgba(6, 95, 70, 0.92)',
     gap: 2,
