@@ -4059,3 +4059,9 @@ Restores ProjectCollectScreen, MainScreen, help.html, join.html from *.pre-join-
 `restore-join-kakao-fallback.bat`
 
 Restores `public/join.html` and `public/help.html` from `public.pre-join-kakao-fallback/`.
+
+## mainint1 refresh restore (2026-08-11)
+
+`restore-mainint1-refresh.bat`
+
+Restores `assets/mainint1.png`, landing/info/help, and `apkBuildLabel.ts` from `*.pre-mainint1-refresh/`.
