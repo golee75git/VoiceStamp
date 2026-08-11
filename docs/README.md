@@ -28,6 +28,7 @@
 | [SECURITY-join-kakao-fallback-20260811.md](./SECURITY-join-kakao-fallback-20260811.md) | 보안·UX | 카톡 `/join` 자동 intent·메인 fallback 수정 |
 | [SECURITY-mainint1-refresh-20260811.md](./SECURITY-mainint1-refresh-20260811.md) | 보안·에셋 | 왼손 홈 `mainint1.png` 교체 (로직 없음) |
 | [SECURITY-collect-tx-badge-20260811.md](./SECURITY-collect-tx-badge-20260811.md) | 보안·UX | 취합전송 칩 확대 · QR 안내를 설정으로 이동 |
+| [SECURITY-collect-join-banner-20260811.md](./SECURITY-collect-join-banner-20260811.md) | 보안·UX | 취합 중 카메라 홈·저장 직전 안내 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

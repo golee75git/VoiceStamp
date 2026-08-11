@@ -4071,3 +4071,9 @@ Restores `assets/mainint1.png`, landing/info/help, and `apkBuildLabel.ts` from `
 `restore-collect-tx-badge.bat`
 
 Restores StampSaveModal, SettingsScreen, help from `*.pre-collect-tx-badge/`.
+
+## Collect join banner restore (2026-08-11)
+
+`restore-collect-join-banner.bat`
+
+Restores CameraScreen, StampSaveModal, help from `*.pre-collect-join-banner/`.

@@ -2257,6 +2257,11 @@ export function StampSaveModal({
             {error ? <Text style={styles.error}>{error}</Text> : null}
           </View>
           </ScrollView>
+          {collectJoinName && !isEdit ? (
+            <Text style={styles.collectSaveHint} numberOfLines={2}>
+              {`이 사진이 「${collectJoinName}」으로 전송됩니다`}
+            </Text>
+          ) : null}
           <View style={styles.actionsFooter}>
             <View style={styles.actions}>
               <Pressable style={styles.cancelButton} onPress={onClose} disabled={saving}>
@@ -2901,6 +2906,16 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: Platform.OS === 'android' ? 56 : 20,
     backgroundColor: '#fff',
+  },
+  collectSaveHint: {
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: 2,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#065f46',
+    backgroundColor: '#ecfdf5',
+    textAlign: 'center',
   },
   actions: {
     flexDirection: 'row',

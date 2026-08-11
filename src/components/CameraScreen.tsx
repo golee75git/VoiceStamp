@@ -82,6 +82,7 @@ export function CameraScreen({
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [templateSheetVisible, setTemplateSheetVisible] = useState(false);
   const [projectCollectEnabled, setProjectCollectEnabled] = useState(false);
+  const [collectJoinName, setCollectJoinName] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
@@ -199,9 +200,13 @@ export function CameraScreen({
     void loadStampSaveModalLayoutSettings();
     if (Platform.OS === 'web') {
       setProjectCollectEnabled(false);
+      setCollectJoinName(null);
     } else {
-      void import('../services/projectCollectSettings').then(({ getProjectCollectEnabled }) =>
-        getProjectCollectEnabled().then(setProjectCollectEnabled),
+      void import('../services/projectCollectSettings').then(
+        ({ getProjectCollectEnabled, getProjectJoin }) => {
+          void getProjectCollectEnabled().then(setProjectCollectEnabled);
+          void getProjectJoin().then((join) => setCollectJoinName(join?.name ?? null));
+        },
       );
     }
   }, [refreshKey]);
@@ -211,8 +216,11 @@ export function CameraScreen({
       return;
     }
     const refreshCollectFlag = () => {
-      void import('../services/projectCollectSettings').then(({ getProjectCollectEnabled }) =>
-        getProjectCollectEnabled().then(setProjectCollectEnabled),
+      void import('../services/projectCollectSettings').then(
+        ({ getProjectCollectEnabled, getProjectJoin }) => {
+          void getProjectCollectEnabled().then(setProjectCollectEnabled);
+          void getProjectJoin().then((join) => setCollectJoinName(join?.name ?? null));
+        },
       );
     };
     const sub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
@@ -788,6 +796,29 @@ export function CameraScreen({
   return (
     <View style={[styles.container, { backgroundColor: homeFill }]}>
       <View style={[styles.launcher, { backgroundColor: homeFill }]}>
+        {collectJoinName ? (
+          <Pressable
+            style={[styles.collectJoinBanner, homeOnLight && styles.collectJoinBannerOnLight]}
+            onPress={() => onOpenProjectCollect?.()}
+            disabled={cameraBusy || actionSheetVisible || !onOpenProjectCollect}
+            accessibilityRole="button"
+            accessibilityLabel={`취합 중, ${collectJoinName}`}
+            accessibilityHint="사업 취합 화면으로 이동합니다"
+          >
+            <Text
+              style={[styles.collectJoinBannerTitle, homeOnLight && styles.collectJoinBannerTitleOnLight]}
+              numberOfLines={1}
+            >
+              취합 중
+            </Text>
+            <Text
+              style={[styles.collectJoinBannerName, homeOnLight && styles.collectJoinBannerNameOnLight]}
+              numberOfLines={1}
+            >
+              {collectJoinName}
+            </Text>
+          </Pressable>
+        ) : null}
         <View style={styles.launcherSplash}>
           <Image
             source={homeImage}
@@ -920,6 +951,38 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 100,
     gap: 12,
+  },
+  collectJoinBanner: {
+    alignSelf: 'stretch',
+    marginHorizontal: 16,
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: 'rgba(6, 95, 70, 0.92)',
+    gap: 2,
+    zIndex: 2,
+  },
+  collectJoinBannerOnLight: {
+    backgroundColor: '#d1fae5',
+    borderWidth: 1,
+    borderColor: '#6ee7b7',
+  },
+  collectJoinBannerTitle: {
+    color: '#a7f3d0',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  collectJoinBannerTitleOnLight: {
+    color: '#047857',
+  },
+  collectJoinBannerName: {
+    color: '#ecfdf5',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  collectJoinBannerNameOnLight: {
+    color: '#064e3b',
   },
   launcherSplash: {
     flex: 1,
