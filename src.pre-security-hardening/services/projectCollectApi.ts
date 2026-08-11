@@ -171,8 +171,6 @@ export function mapProjectApiError(e: unknown): string {
       return '참여 코드가 올바르지 않습니다. QR을 다시 받아 주세요.';
     case 'bad_collector_pin':
       return '취합 PIN이 올바르지 않습니다.';
-    case 'too_many_attempts':
-      return '취합 PIN 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.';
     case 'project_expired':
       return '이 사업은 종료되었습니다. 연결을 끊어 주세요.';
     case 'project_closed':

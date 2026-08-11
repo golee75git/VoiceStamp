@@ -13,30 +13,28 @@
 | `NCP_ACCESS_KEY` | Object Storage 권한이 있는 서브 계정 Access Key |
 | `NCP_SECRET_KEY` | Secret Key |
 | `NCP_BUCKET` | Private 버킷 이름 |
-| `PROJECT_PIN_SALT` | (권장) PIN·업로드 코드 해시용 소금 — **반드시 랜덤값**으로 Production에 설정 |
+| `PROJECT_PIN_SALT` | (권장) PIN·업로드 코드 해시용 소금 |
 
 미설정 시 API는 `503 ncp_not_configured`를 반환합니다.
-
-## 보안 (2026-08-11)
-
-| 항목 | 내용 |
-|------|------|
-| `ncpProbe` | **공개 비활성** — `404 gone` (라이브 Put 진단 불가) |
-| 취합 PIN | **신규 사업 6자리** · 실패 시 IP·사업별 **5분 10회** 후 `429 too_many_attempts` |
-| 500 응답 | 버킷·키 prefix 미포함 (로그에만) |
-
-롤백: `restore-security-hardening.bat` → `api.pre-security-hardening/`
 
 ## 트러블슈팅
 
 | 증상 | 확인 |
 |------|------|
 | `ncp_not_configured` | 세 env 모두 Production에 있는지, 배포 후인지 |
-| `server_error` + `detail: s3_put_403` | NCP 콘솔·서브계정 정책·키 짝 확인. 공개 `ncpProbe`는 더 이상 사용하지 않음 |
+| `server_error` + `detail: s3_put_403` + AccessDenied | `ncpProbe`로 list·Put 변이 확인. 키가 SDK/콘솔에서 OK인데 API만 실패하면 서명 시각 형식(`x-amz-date`가 `…ZZ`면 버그)부터 볼 것. CLI는 `AWS_REQUEST_CHECKSUM_CALCULATION=WHEN_REQUIRED` 권장 |
 | SignatureDoesNotMatch | Access/Secret 짝 오타 |
-| `too_many_attempts` | PIN을 여러 번 틀림 — 잠시 후 재시도 |
 | `hint` Resource가 `/버킷/voicestamp/projects/...` | 정상 경로(접두 `voicestamp/projects/`). 버킷 이름만 `NCP_BUCKET`에 넣고 경로를 넣지 말 것 |
 | env 변경 후 | Vercel Redeploy 필수 |
+
+### 권한 프로브 (비밀키 불필요)
+
+```powershell
+Invoke-RestMethod -Method POST -Uri "https://voicestamp-gilt.vercel.app/api/project" `
+  -ContentType "application/json" -Body '{"action":"ncpProbe"}'
+```
+
+응답 예: `ok`, `bucket`, `accessKeyPrefix`(키 앞 6자). `ok:false` + AccessDenied이면 **그 Prefix의 Access Key**로 Sub Account Access Key 탭·정책을 대조하세요.
 
 ## 버킷
 

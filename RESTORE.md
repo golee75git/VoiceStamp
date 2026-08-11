@@ -3991,18 +3991,49 @@ restore-inbox-xlsx-preview-px.bat
 
 src.pre-inbox-xlsx-preview-px/ Â· public.pre-inbox-xlsx-preview-px/ ìŠ¤ëƒ…ìƒ·ìœ¼ë¡œ ë˜ëŒë¦½ë‹ˆë‹¤.
 
-¼ö½Å¡¤ÃëÇÕ ¿¢¼¿ ±ÛÀÚ Å©±â¡¤800 Ä¨ ÀÌÈÄ ¹®Á¦°¡ »ı±â¸é:
+ï¿½ï¿½ï¿½Å¡ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â¡¤800 Ä¨ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½:
 
 ```bat
 restore-inbox-xlsx-font.bat
 ```
 
-src.pre-inbox-xlsx-font/ ¡¤ public.pre-inbox-xlsx-font/ ½º³À¼¦À¸·Î µÇµ¹¸³´Ï´Ù.
+src.pre-inbox-xlsx-font/ ï¿½ï¿½ public.pre-inbox-xlsx-font/ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 
-Ã¼Çè¿©Çà »çÀü´ä»ç±â·Ï ÅÛÇÃ¸´ ÀÌÈÄ ¹®Á¦°¡ »ı±â¸é:
+Ã¼ï¿½è¿©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½:
 
 ```bat
 restore-trip-presurvey-template.bat
 ```
 
-src.pre-trip-presurvey-template/ ¡¤ public.pre-trip-presurvey-template/ ½º³À¼¦À¸·Î µÇµ¹¸³´Ï´Ù.
+src.pre-trip-presurvey-template/ ï¿½ï¿½ public.pre-trip-presurvey-template/ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+
+
+## Play Store prep restore (2026-08-11)
+
+Play Internal prep (eas.json production AAB / QA docs) rollback:
+
+`at
+restore-play-store.bat
+`
+
+Restores:
+
+- eas.json from eas.json.pre-play-store
+- package.json from package.json.pre-play-store (removes EAS npm scripts)
+- docs/RELEASE-CHANNELS.md from docs/RELEASE-CHANNELS.md.pre-play-store
+- docs/LICENSE-NOTICE.md, PRIVACY.md, README.md from docs.pre-play-store/
+
+Optional manual delete: docs/PLAY-STORE-QA.md, docs/PLAY-DATA-SAFETY.md, docs/LEG-05-STORE-LISTING.md, scripts/create-upload-keystore.bat, credentials/README.md, 
+estore-play-store.bat
+
+Upload keystore under C:\\VoiceStamp-secrets\\ is outside git; restore does not delete it.
+
+## Security hardening restore (2026-08-11)
+
+S1/S2 API hardening rollback:
+
+`at
+restore-security-hardening.bat
+`
+
+Restores pi/project.js, ProjectCollectScreen.tsx, projectCollectApi.ts, help.html, NCP-PROJECT-SETUP.md from *.pre-security-hardening/.

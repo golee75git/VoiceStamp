@@ -330,8 +330,8 @@ export function ProjectCollectScreen({
       Alert.alert('사업 만들기', '만든 회사 또는 사람을 입력하세요.');
       return;
     }
-    if (!/^\d{6}$/.test(pin) || pin !== pin2) {
-      Alert.alert('사업 만들기', '취합 PIN 6자리를 확인하고 동일하게 입력하세요.');
+    if (!/^\d{4,6}$/.test(pin) || pin !== pin2) {
+      Alert.alert('사업 만들기', '취합 PIN 4~6자리를 확인하고 동일하게 입력하세요.');
       return;
     }
     setBusy(true);
@@ -1002,11 +1002,11 @@ export function ProjectCollectScreen({
           </Pressable>
         ))}
       </View>
-      <Text style={styles.label}>취합 PIN (6자리)</Text>
+      <Text style={styles.label}>취합 PIN (4~6자리)</Text>
       <TextInput style={styles.input} value={pin} onChangeText={setPin} keyboardType="number-pad" secureTextEntry maxLength={6} />
       <Text style={styles.label}>취합 PIN 확인</Text>
       <TextInput style={styles.input} value={pin2} onChangeText={setPin2} keyboardType="number-pad" secureTextEntry maxLength={6} />
-      <Text style={styles.hint}>PIN은 수신·삭제에만 씁니다. QR에는 들어가지 않습니다. 새 사업은 숫자 6자리입니다.</Text>
+      <Text style={styles.hint}>PIN은 수신·삭제에만 씁니다. QR에는 들어가지 않습니다.</Text>
       <Pressable style={styles.primary} onPress={() => void handleCreate()} disabled={busy}>
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryText}>만들기</Text>}
       </Pressable>

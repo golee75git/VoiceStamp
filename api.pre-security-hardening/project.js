@@ -124,62 +124,6 @@ function hashSecret(projectId, value) {
   return crypto.createHash('sha256').update(`${salt}:${projectId}:${value}`).digest('hex');
 }
 
-/** Best-effort pin-fail throttle (serverless instances do not share memory). */
-const PIN_FAIL_WINDOW_MS = 5 * 60 * 1000;
-const PIN_FAIL_MAX = 10;
-const pinFailByKey = new Map();
-
-function clientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.trim()) {
-    return forwarded.split(',')[0].trim();
-  }
-  if (Array.isArray(forwarded) && forwarded[0]) {
-    return String(forwarded[0]).split(',')[0].trim();
-  }
-  return req.socket?.remoteAddress || 'unknown';
-}
-
-function pinFailKey(projectId, ip) {
-  return String(projectId || '') + '|' + String(ip || 'unknown');
-}
-
-function assertPinAttemptAllowed(projectId, ip) {
-  const now = Date.now();
-  const key = pinFailKey(projectId, ip);
-  let entry = pinFailByKey.get(key);
-  if (!entry || now - entry.windowStart >= PIN_FAIL_WINDOW_MS) {
-    return;
-  }
-  if (entry.count >= PIN_FAIL_MAX) {
-    const err = new Error('too_many_attempts');
-    err.code = 'too_many_attempts';
-    throw err;
-  }
-}
-
-function recordPinFail(projectId, ip) {
-  const now = Date.now();
-  const key = pinFailKey(projectId, ip);
-  let entry = pinFailByKey.get(key);
-  if (!entry || now - entry.windowStart >= PIN_FAIL_WINDOW_MS) {
-    entry = { windowStart: now, count: 0 };
-    pinFailByKey.set(key, entry);
-  }
-  entry.count += 1;
-  if (pinFailByKey.size > 5000) {
-    for (const [k, value] of pinFailByKey) {
-      if (now - value.windowStart >= PIN_FAIL_WINDOW_MS) {
-        pinFailByKey.delete(k);
-      }
-    }
-  }
-}
-
-function clearPinFails(projectId, ip) {
-  pinFailByKey.delete(pinFailKey(projectId, ip));
-}
-
 function randomToken(len) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const bytes = crypto.randomBytes(len);
@@ -712,20 +656,6 @@ function assertCollectorPin(project, pin) {
   }
 }
 
-function assertCollectorPinGuarded(req, project, pin) {
-  const ip = clientIp(req);
-  assertPinAttemptAllowed(project.projectId, ip);
-  try {
-    assertCollectorPin(project, pin);
-    clearPinFails(project.projectId, ip);
-  } catch (e) {
-    if (e && e.code === 'bad_collector_pin') {
-      recordPinFail(project.projectId, ip);
-    }
-    throw e;
-  }
-}
-
 function assertNotExpired(project) {
   if (project.closedAt || (project.expiresAt && Date.now() > project.expiresAt)) {
     const err = new Error('project_expired');
@@ -758,8 +688,7 @@ module.exports = async function handler(req, res) {
       const name = String(body.name || '').trim().slice(0, 40);
       const ttlDays = [3, 7, 14, 30].includes(Number(body.ttlDays)) ? Number(body.ttlDays) : 7;
       const collectorPin = String(body.collectorPin || '');
-      // New projects: 6 digits. Existing 4–5 digit PINs still verify via hash.
-      if (!name || !/^\d{6}$/.test(collectorPin)) {
+      if (!name || !/^\d{4,6}$/.test(collectorPin)) {
         json(res, 400, { error: 'invalid_create' });
         return;
       }
@@ -904,7 +833,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       const manifest = await loadManifest(creds, projectId);
       json(res, 200, {
         projectId,
@@ -926,7 +855,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       const metaBuf = await s3Get(creds, projectKey(projectId, `meta/${stampId}.json`));
       if (!metaBuf) {
         json(res, 404, { error: 'stamp_not_found' });
@@ -958,7 +887,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       await s3Delete(creds, projectKey(projectId, `stamps/${stampId}.jpg`));
       await s3Delete(creds, projectKey(projectId, `meta/${stampId}.json`));
       const manifest = await loadManifest(creds, projectId);
@@ -976,7 +905,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       project.closedAt = Date.now();
       await saveProject(creds, project);
       json(res, 200, { ok: true });
@@ -991,7 +920,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       assertNotExpired(project);
       const uploadCode = randomToken(6);
       project.uploadCodeHash = hashSecret(projectId, uploadCode);
@@ -1011,7 +940,7 @@ module.exports = async function handler(req, res) {
         json(res, 404, { error: 'not_found' });
         return;
       }
-      assertCollectorPinGuarded(req, project, collectorPin);
+      assertCollectorPin(project, collectorPin);
       assertNotExpired(project);
       if (project.closedAt) {
         json(res, 400, { error: 'project_closed' });
@@ -1059,8 +988,24 @@ module.exports = async function handler(req, res) {
     }
 
     if (action === 'ncpProbe') {
-      // Disabled: live Put/Delete probe must not be public (Play / data safety).
-      json(res, 404, { error: 'gone' });
+      const list = await ncpListProbe(creds);
+      const variants = await ncpProbePutVariants(creds);
+      const winner = variants.find((v) => v.ok);
+      json(res, 200, {
+        ok: Boolean(winner),
+        bucket: creds.bucket,
+        accessKeyPrefix: creds.accessKey.slice(0, 6),
+        accessKeyLen: creds.accessKey.length,
+        secretKeyLen: creds.secretKey.length,
+        style: winner ? winner.label : undefined,
+        list: list,
+        variants: variants.map((v) => ({
+          label: v.label,
+          ok: v.ok,
+          detail: v.detail,
+          ncp: v.ncp,
+        })),
+      });
       return;
     }
 
@@ -1069,10 +1014,6 @@ module.exports = async function handler(req, res) {
     const code = e && e.code ? e.code : e && e.message ? e.message : 'error';
     if (code === 'ncp_not_configured') {
       json(res, 503, { error: 'ncp_not_configured' });
-      return;
-    }
-    if (code === 'too_many_attempts') {
-      json(res, 429, { error: 'too_many_attempts' });
       return;
     }
     if (code === 'bad_upload_code' || code === 'bad_collector_pin') {
@@ -1088,9 +1029,21 @@ module.exports = async function handler(req, res) {
       return;
     }
     console.error('project api', e);
+    const credsSafe = (() => {
+      try {
+        const c = requireNcp();
+        return { bucket: c.bucket, accessKeyPrefix: c.accessKey.slice(0, 6) };
+      } catch {
+        return {};
+      }
+    })();
     json(res, 500, {
       error: 'server_error',
       detail: String(code).slice(0, 80),
+      hint: e && e.detail ? String(e.detail).slice(0, 200) : undefined,
+      style: e && e.style ? e.style : undefined,
+      bucket: credsSafe.bucket,
+      accessKeyPrefix: credsSafe.accessKeyPrefix,
     });
   }
 };

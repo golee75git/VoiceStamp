@@ -2,10 +2,10 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 갱신 | 2026-08-10 |
+| 문서 갱신 | 2026-08-11 |
 | 권장 APK | `releases/VoiceStamp_20260810_113846.apk` |
-| 기준 커밋 | `dda285a` (APK) · `086377c` (엑셀 800·글자) · 본 문서 동기화 커밋 |
-| 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) |
+| 기준 커밋 | `dda285a` (APK) · `086377c` (엑셀 800·글자) · Play Internal 준비 문서 |
+| 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
 앱 버전명(`app.json`)은 모두 **1.0.0**. 구분은 **APK 파일명(빌드 시각)** 기준입니다.  
 배포 채널(테스터 APK vs 스토어): [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md).
@@ -16,6 +16,7 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
+| **2026-08-11** | 사업 취합 API **S1/S2 하드닝**(`ncpProbe` 404 · PIN 6자리·실패 제한) · 도움말 · SECURITY | (보안) · APK 후속 |
 | **2026-08-10** | 취합전송 **사업명 배지**·탭으로 **참여 사업 전환** · 조인 QR **전체화면 Modal·스캔 게이트**(삼성 검화면) · 수신 **엑셀 미리보기 px**(120–800) · **800 칩 + 글자 작음/보통/큼** · 도움말·SECURITY · Vercel | `3e18bf3`~`dda285a` · `085356`→…→`113846` |
 | **2026-08-09** | 목록 선택 **썸네일·취소 스크롤** 안정화 · **만든 회사/사람**(로컬) · 저장 **취합전송 배지** · **보낸 사진**·전송분 숨기기 · 카메라 홈 **취합 아이콘** · 랜딩 UTF-8 복구 · 수신 **가져옴**(사업명 공백·점) · APK `085617`~`183720` | `1d49485`~`2ba4edf` |
 | **2026-08-08** | 인앱 조인 QR·구분표시·사업 목록·딥링크 · 전송/수신 배지 · **수신함 병합** · 선택 엑셀·참여 이력·종료 유지·초대 템플릿 · **NCP 직통 Put** · 엑셀 템플릿·촬영자 열 · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) | `85c9406`~`1f53a7d` · `081515`→…→`231815` |
