@@ -10,6 +10,9 @@
 |------|------|------|
 | [CHANGELOG.md](./CHANGELOG.md) | 전체 | **날짜별·APK별** 최근 변경 요약 (권장 APK 포함) |
 | [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) | 배포 | 테스터 APK vs Play 스토어 · 서명·버전 정책 |
+| [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) | 배포·QA | Play 본격 테스트·AAB·Internal 동등성 런북 |
+| [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md) | 배포·법무 | Play Console Data safety 초안 |
+| [LEG-05-STORE-LISTING.md](./LEG-05-STORE-LISTING.md) | 배포 | LEG-05 스크린샷·스토어 문구 초안 |
 | [HEALTHCHECK.md](./HEALTHCHECK.md) | 개발·QA | **성능·헬스체크 고정 기준** (번들 A/B/C 적용됨 · 다음 후보) |
 | [PRD.md](./PRD.md) | 기획·QA | 요구사항, 기능 ID, **§12 날짜별** · **§13 APK별** 요약 |
 | [PROJECT.md](./PROJECT.md) | 개발 | 구현 이력, **§7.4 APK 빌드별 상세**, **§12 날짜별 커밋** |
@@ -22,6 +25,7 @@
 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) | 기획·UI | **FEAT-NCP-PROJECT-01** 사업 QR·일시 취합 UI 스펙 |
 | [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 — **앱 연동됨**(2026-08-07~) |
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
+| [SECURITY-join-kakao-fallback-20260811.md](./SECURITY-join-kakao-fallback-20260811.md) | 보안·UX | 카톡 `/join` 자동 intent·메인 fallback 수정 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -40,14 +44,14 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-08-10)
+## 현재 상태 스냅샷 (2026-08-11)
 
-- **문서 갱신일:** 2026-08-10 — 날짜별·APK별 · [CHANGELOG.md](./CHANGELOG.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) (**소스 변경 없음**)
+- **문서 갱신일:** 2026-08-11 — Play Internal 준비 (`eas.json` production AAB · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) · LEG-05 초안)
 - **최신 기능 커밋:** `086377c` / APK `dda285a` — 엑셀 800칩·글자 · `113846`
-- **배포 단계:** 베타·테스터 APK — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 미완
+- **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
-- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md)
+- **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
 - **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260810_113846.apk` — 엑셀 800·글자 + 08-08~10 취합 누적
 - **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260810_113846.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260810_105750.apk` — 엑셀 미리보기 px
@@ -60,7 +64,7 @@
 - **사용 금지 APK:** `VoiceStamp_20260620_165718.apk` (`55c33df`, JSON seed — **부팅 멈춤**)
 - **APK 다운로드:** `/` · `/info` → GitHub `releases/`
 - **배포 금지 APK:** `VoiceStamp_20260609_173859.apk` (`6cf82f5` 크래시)
-- **개선 후보(미구현·확장):** F-QR-01 **워터마크/PDF** 확장 · **GS-UPLOAD-01** 설계만 · LEG-05 Play 스토어 · **AI-ML-02/03/01** ✅ MVP+
+- **개선 후보(미구현·확장):** F-QR-01 **워터마크/PDF** 확장 · **GS-UPLOAD-01** 설계만 · LEG-05 Play 콘솔 업로드 · **AI-ML-02/03/01** ✅ MVP+
 
 ### 날짜별 요약
 

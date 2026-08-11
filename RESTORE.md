@@ -4053,3 +4053,9 @@ restore-join-deeplink-ready.bat
 `
 
 Restores ProjectCollectScreen, MainScreen, help.html, join.html from *.pre-join-deeplink-ready/.
+
+## Join Kakao fallback restore (2026-08-11)
+
+`restore-join-kakao-fallback.bat`
+
+Restores `public/join.html` and `public/help.html` from `public.pre-join-kakao-fallback/`.
