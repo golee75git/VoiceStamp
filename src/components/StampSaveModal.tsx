@@ -2027,12 +2027,6 @@ export function StampSaveModal({
                     )}
                   </Pressable>
                 </View>
-                <Text style={styles.locationHint}>
-                  저장 JPEG 우하단에 QR이 들어갑니다. 「별도 영역」은 사진 안, 「워터마크」는
-                  글자 바 위에 붙습니다. http(s)만 허용. 칸에는 https:// 가 기본으로 들어 있으며,
-                  마이크 또는 키보드로 이어서 입력할 수 있습니다. 「연결확인」으로 접속 여부를
-                  미리 볼 수 있습니다. https:// 만 두면 QR 없이 저장됩니다.
-                </Text>
               </View>
             ) : null}
 
@@ -2583,13 +2577,13 @@ const styles = StyleSheet.create({
   collectTxBadge: {
     alignSelf: 'flex-start',
     maxWidth: '100%',
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '700',
     color: '#065f46',
     backgroundColor: '#d1fae5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
     overflow: 'hidden',
   },
   followLinkRow: {

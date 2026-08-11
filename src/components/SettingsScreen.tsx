@@ -1145,9 +1145,10 @@ export function SettingsScreen({
           <Text style={styles.hint}>
             사용: 저장 화면 QR URL 칸에 https:// 가 기본으로 들어가며 마이크·키보드로 이어서
             입력할 수 있습니다. 「연결확인」으로 접속 여부를 미리 볼 수 있습니다. 저장 JPEG
-            우하단에 QR을 넣습니다(별도 영역·워터마크 모두). 자동 찾기는 Android에서 사진
-            글자(OCR)로만 하며 서버로 보내지 않습니다. http(s)만 허용합니다. PDF/XLSX/HWPX에는
-            아직 적용되지 않습니다. 기본은 끔입니다.
+            우하단에 QR이 들어갑니다. 「별도 영역」은 사진 안, 「워터마크」는 글자 바 위에
+            붙습니다. http(s)만 허용. https:// 만 두면 QR 없이 저장됩니다. 자동 찾기는
+            Android에서 사진 글자(OCR)로만 하며 서버로 보내지 않습니다. PDF/XLSX/HWPX에는 아직
+            적용되지 않습니다. 기본은 끔입니다. (저장 화면에는 이 안내를 두지 않습니다.)
           </Text>
           <View style={styles.optionRow}>
             <Pressable

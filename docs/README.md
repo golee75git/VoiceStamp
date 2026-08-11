@@ -27,6 +27,7 @@
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
 | [SECURITY-join-kakao-fallback-20260811.md](./SECURITY-join-kakao-fallback-20260811.md) | 보안·UX | 카톡 `/join` 자동 intent·메인 fallback 수정 |
 | [SECURITY-mainint1-refresh-20260811.md](./SECURITY-mainint1-refresh-20260811.md) | 보안·에셋 | 왼손 홈 `mainint1.png` 교체 (로직 없음) |
+| [SECURITY-collect-tx-badge-20260811.md](./SECURITY-collect-tx-badge-20260811.md) | 보안·UX | 취합전송 칩 확대 · QR 안내를 설정으로 이동 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

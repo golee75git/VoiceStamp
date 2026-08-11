@@ -4065,3 +4065,9 @@ Restores `public/join.html` and `public/help.html` from `public.pre-join-kakao-f
 `restore-mainint1-refresh.bat`
 
 Restores `assets/mainint1.png`, landing/info/help, and `apkBuildLabel.ts` from `*.pre-mainint1-refresh/`.
+
+## Collect tx badge restore (2026-08-11)
+
+`restore-collect-tx-badge.bat`
+
+Restores StampSaveModal, SettingsScreen, help from `*.pre-collect-tx-badge/`.
