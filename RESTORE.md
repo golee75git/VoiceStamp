@@ -4037,3 +4037,11 @@ restore-security-hardening.bat
 `
 
 Restores pi/project.js, ProjectCollectScreen.tsx, projectCollectApi.ts, help.html, NCP-PROJECT-SETUP.md from *.pre-security-hardening/.
+
+## Photo sheet template restore (2026-08-11)
+
+`at
+restore-photo-sheet-template.bat
+`
+
+Restores stampFieldTemplates.ts and help.html from *.pre-photo-sheet-template/.

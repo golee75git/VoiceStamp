@@ -245,26 +245,6 @@ export const STAMP_FIELD_TEMPLATES: StampFieldTemplate[] = [
     },
   },
   {
-    id: 'photo-sheet',
-    name: '사진대지기록',
-    labels: {
-      titleFieldLabel: '촬영대상',
-      placeFieldLabel: '촬영위치',
-      memoFieldLabel: '사진설명',
-      extra1FieldLabel: '시설구분',
-      extra2FieldLabel: '확인사항',
-      extra3FieldLabel: '사진구분',
-    },
-    placeholders: {
-      title: '옥상 방수층',
-      place: '본관 옥상 동측',
-      memo: '도막 균열 및 물고임 확인',
-      extra1: '건축',
-      extra2: '누수 여부 재확인',
-      extra3: '현황',
-    },
-  },
-  {
     id: 'edu-activity',
     name: '교육활동기록',
     labels: {
