@@ -437,21 +437,7 @@ export function ProjectCollectScreen({
       // join still ok if template apply fails
     }
     await reload();
-    const tplHint =
-      fieldTemplate?.name ||
-      (link.templateId
-        ? STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name
-        : null);
-    if (openedFromLink) {
-      leaveAfterJoin();
-      return;
-    }
-    Alert.alert(
-      '연결되었습니다',
-      tplHint
-        ? `저장 템플릿 「${tplHint}」을 적용했습니다. 저장 시 자동으로 올라갑니다.`
-        : '저장 시 자동으로 올라갑니다. 촬영 화면으로 이동합니다.',
-    );
+    // One-path: go straight to camera (no success Alert). Template apply already ran above.
     leaveAfterJoin();
   };
 
@@ -479,11 +465,6 @@ export function ProjectCollectScreen({
       } catch {
         // still allow join; upload will validate code
       }
-      const tplLine = fieldTemplate?.name
-        ? `\n저장 템플릿: ${fieldTemplate.name}`
-        : link.templateId
-          ? `\n저장 템플릿: ${STAMP_FIELD_TEMPLATES.find((x) => x.id === link.templateId)?.name || link.templateId}`
-          : '';
 
       const runJoin = async () => {
         const existing = await getProjectJoin();
@@ -520,24 +501,8 @@ export function ProjectCollectScreen({
         );
       };
 
-      if (openedFromLink) {
-        await runJoin();
-        return;
-      }
-
-      Alert.alert(
-        `${projectName}에 참여할까요?`,
-        `구분 표시: ${mark}${tplLine}\n연결 후 새로 저장하는 사진·메모·위치가 일시 저장소(한국)로 전송됩니다. ZIP을 보낼 필요는 없습니다.`,
-        [
-          { text: '취소', style: 'cancel' },
-          {
-            text: '참여하고 자동으로 올리기',
-            onPress: () => {
-              void runJoin();
-            },
-          },
-        ],
-      );
+      // One-path: connect without an extra confirm (switch-project confirm stays in runJoin).
+      await runJoin();
     } finally {
       setBusy(false);
     }
@@ -1195,6 +1160,9 @@ export function ProjectCollectScreen({
           </Text>
         </View>
       ) : null}
+      <Text style={styles.hint}>
+        연결되면 촬영 화면으로 갑니다. 안 되면 「QR 찍기」또는 코드를 붙여 넣으세요.
+      </Text>
       <Text style={styles.label}>구분 표시 (필수)</Text>
       <Text style={styles.hint}>
         올리는 쪽을 구분할 짧은 글자. 별칭·번호 끝자리 등 원하는 형태로 적어 주세요. 비울 수 없습니다.

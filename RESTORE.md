@@ -4136,3 +4136,9 @@ Restores AndroidManifest, app.json, vercel.json, join/help from *.pre-join-app-l
 restore-ux-friendly-basics.bat
 
 Restores IntroScreen + SettingsScreen + help from *.pre-ux-friendly-basics/.
+
+## Collect join one-path + save feedback restore (2026-08-12)
+
+restore-collect-save-feedback.bat
+
+Restores ProjectCollectScreen, CameraScreen, projectUploadQueue, saveStamp, help/join from *.pre-collect-save-feedback/; removes projectUploadFeedback.ts.

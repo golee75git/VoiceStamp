@@ -33,6 +33,10 @@ import {
   ZOOM_PRESET_VALUES,
 } from './InAppCameraPreview';
 
+import {
+  subscribeProjectUploadFeedback,
+} from '../services/projectUploadFeedback';
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const listIcon = require('../../assets/list-icon.png');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -86,6 +90,8 @@ export function CameraScreen({
   const [modalVisible, setModalVisible] = useState(false);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [busyHint, setBusyHint] = useState<string | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<string | null>(null);
+  const saveFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
   const [autoLaunch, setAutoLaunch] = useState(false);
@@ -210,6 +216,52 @@ export function CameraScreen({
       );
     }
   }, [refreshKey]);
+
+
+  useEffect(() => {
+    const clearTimer = () => {
+      if (saveFeedbackTimerRef.current) {
+        clearTimeout(saveFeedbackTimerRef.current);
+        saveFeedbackTimerRef.current = null;
+      }
+    };
+    const unsub = subscribeProjectUploadFeedback((ev) => {
+      let text: string | null = null;
+      let holdMs = 2500;
+      switch (ev.type) {
+        case 'saved_local':
+          text = '저장됨';
+          holdMs = 2000;
+          break;
+        case 'upload_queued':
+        case 'uploading':
+          text = `올리는 중 · ${ev.projectName}`;
+          holdMs = 5000;
+          break;
+        case 'synced':
+          text = `전송 완료 · ${ev.projectName}`;
+          holdMs = 2500;
+          break;
+        case 'failed':
+          text = `전송 실패 · ${ev.projectName}`;
+          holdMs = 3500;
+          break;
+        default:
+          break;
+      }
+      if (!text) return;
+      clearTimer();
+      setSaveFeedback(text);
+      saveFeedbackTimerRef.current = setTimeout(() => {
+        setSaveFeedback(null);
+        saveFeedbackTimerRef.current = null;
+      }, holdMs);
+    });
+    return () => {
+      clearTimer();
+      unsub();
+    };
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -804,6 +856,20 @@ export function CameraScreen({
             accessibilityIgnoresInvertColors
           />
         </View>
+        {saveFeedback ? (
+          <View
+            style={[styles.saveFeedbackBanner, homeOnLight && styles.saveFeedbackBannerOnLight]}
+            pointerEvents="none"
+            accessibilityLiveRegion="polite"
+          >
+            <Text
+              style={[styles.saveFeedbackText, homeOnLight && styles.saveFeedbackTextOnLight]}
+              numberOfLines={1}
+            >
+              {saveFeedback}
+            </Text>
+          </View>
+        ) : null}
         {collectJoinName ? (
           <Pressable
             style={[styles.collectJoinBanner, homeOnLight && styles.collectJoinBannerOnLight]}
@@ -951,6 +1017,31 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: 100,
     gap: 12,
+  },
+  saveFeedbackBanner: {
+    alignSelf: 'center',
+    maxWidth: '88%',
+    marginHorizontal: 16,
+    marginBottom: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: 'rgba(15, 23, 42, 0.88)',
+    zIndex: 3,
+  },
+  saveFeedbackBannerOnLight: {
+    backgroundColor: '#e2e8f0',
+    borderWidth: 1,
+    borderColor: '#94a3b8',
+  },
+  saveFeedbackText: {
+    color: '#f8fafc',
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  saveFeedbackTextOnLight: {
+    color: '#0f172a',
   },
   collectJoinBanner: {
     alignSelf: 'center',

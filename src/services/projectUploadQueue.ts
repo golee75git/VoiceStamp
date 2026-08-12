@@ -13,6 +13,7 @@ import {
   getProjectJoin,
   setUploadStatus,
 } from './projectCollectSettings';
+import { emitProjectUploadFeedback } from './projectUploadFeedback';
 import type { Stamp } from '../types/stamp';
 
 let failStreak = 0;
@@ -36,6 +37,7 @@ export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void
     const auto = await getProjectAutoUpload();
     if (!auto) return;
     await setUploadStatus(stamp.id, 'pending', join.projectId);
+    emitProjectUploadFeedback({ type: 'upload_queued', projectName: join.name });
     enqueueProjectUpload(stamp.id);
   } catch {
     // non-fatal
@@ -103,6 +105,7 @@ async function uploadOne(stampId: string): Promise<void> {
   if (!join) return;
 
   await setUploadStatus(stampId, 'uploading', join.projectId);
+  emitProjectUploadFeedback({ type: 'uploading', projectName: join.name });
   const deviceId = await getOrCreateDeviceId();
   const dataUri = await readImageDataUriForPdf(stamp.imagePath, 'compressed');
   const prepared = await apiPrepareUpload({
@@ -151,6 +154,7 @@ async function uploadOne(stampId: string): Promise<void> {
     stampId: stamp.id,
   });
   await setUploadStatus(stampId, 'synced', join.projectId);
+  emitProjectUploadFeedback({ type: 'synced', projectName: join.name });
   failStreak = 0;
 }
 
@@ -166,6 +170,10 @@ export async function drainProjectUploadQueue(): Promise<void> {
       } catch (e) {
         const join = await getProjectJoin();
         await setUploadStatus(id, 'failed', join?.projectId ?? null);
+        emitProjectUploadFeedback({
+          type: 'failed',
+          projectName: join?.name || '사업',
+        });
         failStreak += 1;
         if (Platform.OS !== 'web' && failStreak <= 2) {
           const { Alert } = await import('react-native');

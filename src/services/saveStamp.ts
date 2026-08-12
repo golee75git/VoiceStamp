@@ -350,6 +350,12 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     scheduleNewStampGallerySave(stamp, groupName, galleryOriginalUri, input.captureForExport);
   }
 
+  void import('./projectUploadFeedback')
+    .then(({ emitProjectUploadFeedback }) => {
+      emitProjectUploadFeedback({ type: 'saved_local' });
+    })
+    .catch(() => {});
+
   void import('./projectUploadQueue')
     .then(({ scheduleProjectUploadAfterSave }) => scheduleProjectUploadAfterSave(stamp))
     .catch(() => {});
