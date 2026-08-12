@@ -4130,3 +4130,9 @@ Restores MainScreen (+ help if snapshotted) from *.pre-collect-link-flag/.
 restore-join-app-links.bat
 
 Restores AndroidManifest, app.json, vercel.json, join/help from *.pre-join-app-links / android.pre-join-app-links. Rebuild APK after restore.
+
+## UX friendly basics restore (2026-08-12)
+
+restore-ux-friendly-basics.bat
+
+Restores IntroScreen + SettingsScreen + help from *.pre-ux-friendly-basics/.

@@ -205,6 +205,7 @@ export function SettingsScreen({
   const [projectCollectEnabled, setProjectCollectEnabledState] = useState(false);
   const [hideProjectSyncedFromList, setHideProjectSyncedFromList] = useState(false);
   const [projectJoinSummary, setProjectJoinSummary] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [cameraHand, setCameraHandState] = useState<CameraHand>(DEFAULT_CAMERA_HAND);
   const [cameraHomeBg, setCameraHomeBgState] = useState<CameraHomeBg>(DEFAULT_CAMERA_HOME_BG);
   const [floorPickerMode, setFloorPickerModeState] = useState<FloorPickerMode>(
@@ -411,7 +412,26 @@ export function SettingsScreen({
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator
       >
-          <Text style={styles.label}>사진 저장 폴더 (앱 내부)</Text>
+          <Text style={styles.hint}>
+            손잡이·위치·촬영·갤러리·글자 크기·사업 취합은 아래에서 바로 바꿀 수 있습니다. PDF·OCR 등은
+            「고급 설정」을 펼치세요.
+          </Text>
+          <Pressable
+            style={[styles.optionButton, styles.advancedToggle, showAdvanced && styles.optionButtonSelected]}
+            onPress={() => setShowAdvanced((v) => !v)}
+            accessibilityRole="button"
+            accessibilityLabel={showAdvanced ? '고급 설정 접기' : '고급 설정 펼치기'}
+          >
+            <Text
+              style={[styles.optionButtonText, showAdvanced && styles.optionButtonTextSelected]}
+            >
+              {showAdvanced ? '고급 설정 접기' : '고급 설정 펼치기'}
+            </Text>
+          </Pressable>
+
+          {showAdvanced ? (
+          <>
+          <Text style={[styles.label, styles.sectionGap]}>사진 저장 폴더 (앱 내부)</Text>
           <Text style={styles.hint}>
             앱 데이터 안의 하위 폴더 이름입니다. 변경 후 새로 찍은 사진부터 적용됩니다. 기본값: {DEFAULT_STAMPS_FOLDER}
           </Text>
@@ -426,6 +446,9 @@ export function SettingsScreen({
             autoCapitalize="none"
             editable={!saving}
           />
+
+          </>
+          ) : null}
 
           <Text style={[styles.label, styles.sectionGap]}>위치 조회</Text>
           <Text style={styles.hint}>
@@ -451,6 +474,8 @@ export function SettingsScreen({
             })}
           </View>
 
+          {showAdvanced ? (
+          <>
           <Text style={[styles.label, styles.sectionGap]}>자동 제목</Text>
           <Text style={styles.hint}>
             새 사진 저장·수정 모달에 채워 넣을 제목 앞부분입니다. 위치 조회를 사용할 때는 장소 필드에 GPS·장소명이 따로 채워집니다.
@@ -474,6 +499,9 @@ export function SettingsScreen({
               );
             })}
           </View>
+
+          </>
+          ) : null}
 
           <Text style={[styles.label, styles.sectionGap]}>카메라 메뉴 위치 (손잡이)</Text>
           <Text style={styles.hint}>
@@ -504,6 +532,8 @@ export function SettingsScreen({
             </Pressable>
           </View>
 
+          {showAdvanced ? (
+          <>
           <Text style={[styles.label, styles.sectionGap]}>카메라 홈 배경</Text>
           <Text style={styles.hint}>
             촬영 전 화면 키비주얼입니다. 「기본」은 검정 뒤 배경, 「스타일 2」는 흰색 뒤 배경입니다. 앱에
@@ -902,6 +932,9 @@ export function SettingsScreen({
             })}
           </View>
 
+          </>
+          ) : null}
+
           <Text style={[styles.label, styles.sectionGap]}>일반 촬영 카메라</Text>
           <Text style={styles.hint}>
             홈에서 사진 1장을 찍을 때 사용합니다. 시스템은 화질·줌에 유리하고, 앱 내는 확인 화면 없이 빠르며 1x·3x·5x 배율과 핀치·더블탭으로 확대할 수 있습니다.
@@ -950,6 +983,8 @@ export function SettingsScreen({
             })}
           </View>
 
+          {showAdvanced ? (
+          <>
           <Text style={[styles.label, styles.sectionGap]}>연속 촬영 카메라</Text>
           <Text style={styles.hint}>
             연속 촬영 2장째부터 사용합니다. 1장은 일반 촬영 카메라 설정으로 찍은 뒤, 「앱 내」는 카메라를 다시 열지 않아 빠르며 1x·3x·5x 배율과 핀치·더블탭 확대를 지원합니다.
@@ -1003,6 +1038,9 @@ export function SettingsScreen({
             </Pressable>
           </View>
 
+          </>
+          ) : null}
+
           <Text style={[styles.label, styles.sectionGap]}>저장 시 갤러리</Text>
           <Text style={styles.hint}>
             스탬프는 항상 앱 목록에 저장됩니다. 기본 「앱만」은 갤러리에 넣지 않아 연속 촬영이 가장
@@ -1031,6 +1069,8 @@ export function SettingsScreen({
             )}
           </View>
 
+          {showAdvanced ? (
+          <>
           <Text style={[styles.label, styles.sectionGap]}>개인정보 가리기</Text>
           <Text style={styles.hint}>
             사용: 저장 화면에서 얼굴·숫자 영역을 폰 안에서만 흐리게 할 수 있습니다. 서버로 보내지 않습니다.
@@ -1284,6 +1324,9 @@ export function SettingsScreen({
             })}
           </View>
 
+          </>
+          ) : null}
+
           <Text style={[styles.label, styles.sectionGap]}>글자 크기</Text>
           <Text style={styles.hint}>
             저장·수정 입력칸과 미리보기·워터마크·PDF·갤러리 이미지 저장에 적용됩니다. 시스템 글꼴만 사용합니다.
@@ -1522,6 +1565,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111',
+  },
+  advancedToggle: {
+    marginTop: 8,
+    marginBottom: 4,
+    alignSelf: 'stretch',
   },
   sectionGap: {
     marginTop: 8,
