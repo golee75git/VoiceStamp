@@ -1424,7 +1424,6 @@ export function ProjectCollectScreen({
       ) : null}
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
-          <ActivityIndicator size="large" color="#111" />
           {importProgress ? (
             <View style={styles.importProgressBox}>
               <Text style={styles.importProgressText}>
@@ -1437,6 +1436,7 @@ export function ProjectCollectScreen({
               ) : null}
             </View>
           ) : null}
+          <ActivityIndicator size="large" color="#111" />
         </View>
       ) : null}
       <Modal
@@ -1796,6 +1796,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
+    // Keep spinner + progress above Android system navigation.
+    paddingBottom: Platform.OS === 'android' ? 72 : 24,
+    paddingTop: Platform.OS === 'android' ? 24 : 0,
   },
   importProgressBox: {
     maxWidth: '84%',

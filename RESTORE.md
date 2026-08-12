@@ -4106,3 +4106,9 @@ Restores ProjectCollectScreen, MainScreen, help from *.pre-collect-back-hit/.
 restore-inbox-import-progress.bat
 
 Restores ProjectCollectScreen + help from *.pre-inbox-import-progress/.
+
+## Import progress inset restore (2026-08-12)
+
+restore-import-progress-inset.bat
+
+Restores ProjectCollectScreen from *.pre-import-progress-inset/.
