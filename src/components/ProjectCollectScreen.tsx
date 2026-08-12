@@ -108,6 +108,13 @@ type Props = {
   onImported?: () => void;
 };
 
+
+function collectPressStyle(
+  ...parts: Array<object | false | null | undefined>
+): (state: { pressed: boolean }) => Array<object | false | null | undefined> {
+  return ({ pressed }) => [...parts, pressed ? styles.pressed : null];
+}
+
 /** RN has no canvas - draw qrcode.create() modules as Views (no toDataURL). */
 type QrGrid = { size: number; dark: boolean[][] };
 
@@ -891,11 +898,11 @@ export function ProjectCollectScreen({
 
   const renderHub = () => (
     <ScrollView contentContainerStyle={styles.body}>
-      <Pressable style={styles.row} onPress={() => setPhase('create')}>
+      <Pressable style={collectPressStyle(styles.row)} onPress={() => setPhase('create')}>
         <Text style={styles.rowTitle}>사업 만들기</Text>
         <Text style={styles.rowSub}>기존 사업은 유지 · 새 사업을 추가합니다 (최대 20)</Text>
       </Pressable>
-      <Pressable style={styles.row} onPress={() => setPhase('join')}>
+      <Pressable style={collectPressStyle(styles.row)} onPress={() => setPhase('join')}>
         <Text style={styles.rowTitle}>코드로 참여</Text>
         <Text style={styles.rowSub}>촬영자 · 이력에서 다시 연결 가능</Text>
       </Pressable>
@@ -906,6 +913,7 @@ export function ProjectCollectScreen({
             {join.mark ? ' · ' + join.mark : ''}
           </Text>
           <Pressable
+            style={collectPressStyle()}
             onPress={() => {
               Alert.alert(
                 '사업 연결을 끊을까요?',
@@ -947,7 +955,7 @@ export function ProjectCollectScreen({
               </Text>
               <View style={styles.ownedActions}>
                 <Pressable
-                  style={styles.ownedAction}
+                  style={collectPressStyle(styles.ownedAction)}
                   onPress={() => {
                     setSentFocus(item);
                     setPhase('sent');
@@ -957,7 +965,7 @@ export function ProjectCollectScreen({
                 </Pressable>
                 {!active ? (
                   <Pressable
-                    style={styles.ownedAction}
+                    style={collectPressStyle(styles.ownedAction)}
                     onPress={() => handleReconnectJoin(item)}
                     disabled={busy}
                   >
@@ -965,7 +973,7 @@ export function ProjectCollectScreen({
                   </Pressable>
                 ) : null}
                 <Pressable
-                  style={styles.ownedAction}
+                  style={collectPressStyle(styles.ownedAction)}
                   onPress={() => handleRemoveJoinHistory(item)}
                   disabled={busy}
                 >
@@ -1001,21 +1009,21 @@ export function ProjectCollectScreen({
               <View style={styles.ownedActions}>
                 {!closed ? (
                   <Pressable
-                    style={styles.ownedAction}
+                    style={collectPressStyle(styles.ownedAction)}
                     onPress={() => openInviteForProject(project)}
                   >
                     <Text style={styles.ownedActionText}>초대</Text>
                   </Pressable>
                 ) : null}
                 <Pressable
-                  style={styles.ownedAction}
+                  style={collectPressStyle(styles.ownedAction)}
                   onPress={() => void openInbox(project)}
                   disabled={busy}
                 >
                   <Text style={styles.ownedActionText}>수신</Text>
                 </Pressable>
                 <Pressable
-                  style={styles.ownedAction}
+                  style={collectPressStyle(styles.ownedAction)}
                   onPress={() => void handleExcelCollected(project)}
                   disabled={busy}
                 >
@@ -1023,7 +1031,7 @@ export function ProjectCollectScreen({
                 </Pressable>
                 {!closed ? (
                   <Pressable
-                    style={styles.ownedAction}
+                    style={collectPressStyle(styles.ownedAction)}
                     onPress={() => handleCloseOwnedProject(project)}
                     disabled={busy}
                   >
@@ -1058,7 +1066,7 @@ export function ProjectCollectScreen({
         {[3, 7, 14, 30].map((d) => (
           <Pressable
             key={d}
-            style={[styles.chip, ttlDays === d && styles.chipOn]}
+            style={collectPressStyle(styles.chip, ttlDays === d && styles.chipOn)}
             onPress={() => setTtlDays(d)}
           >
             <Text style={[styles.chipText, ttlDays === d && styles.chipTextOn]}>{d}일</Text>
@@ -1070,7 +1078,7 @@ export function ProjectCollectScreen({
       <Text style={styles.label}>취합 PIN 확인</Text>
       <TextInput style={styles.input} value={pin2} onChangeText={setPin2} keyboardType="number-pad" secureTextEntry maxLength={6} />
       <Text style={styles.hint}>PIN은 수신·삭제에만 씁니다. QR에는 들어가지 않습니다. 새 사업은 숫자 6자리입니다.</Text>
-      <Pressable style={styles.primary} onPress={() => void handleCreate()} disabled={busy}>
+      <Pressable style={collectPressStyle(styles.primary)} onPress={() => void handleCreate()} disabled={busy}>
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryText}>만들기</Text>}
       </Pressable>
     </ScrollView>
@@ -1113,19 +1121,19 @@ export function ProjectCollectScreen({
           지정하면 링크를 받은 사람이 참여·촬영할 때 칸 이름·저장 유형이 맞춰집니다. 공유·QR을 다시
           받으세요.
         </Text>
-        <Pressable style={styles.secondary} onPress={openTemplatePicker} disabled={busy}>
+        <Pressable style={collectPressStyle(styles.secondary)} onPress={openTemplatePicker} disabled={busy}>
           <Text style={styles.secondaryText}>
             {inviteTemplateName ? `템플릿: ${inviteTemplateName}` : '템플릿 고르기'}
           </Text>
         </Pressable>
         {inviteTemplateName ? (
-          <Pressable style={styles.secondary} onPress={clearInviteTemplate} disabled={busy}>
+          <Pressable style={collectPressStyle(styles.secondary)} onPress={clearInviteTemplate} disabled={busy}>
             <Text style={styles.secondaryText}>템플릿 빼기</Text>
           </Pressable>
         ) : null}
         <Text style={styles.hint}>이 QR은 올리기 전용입니다. PIN을 함께 보내지 마세요.</Text>
         <Pressable
-          style={styles.secondary}
+          style={collectPressStyle(styles.secondary)}
           onPress={() =>
             void Share.share({
               message: `VoiceStamp 사업 참여: ${active.name}\n${buildProjectJoinHttpsUrl(
@@ -1145,7 +1153,7 @@ export function ProjectCollectScreen({
           <Text style={styles.secondaryText}>공유</Text>
         </Pressable>
         <Pressable
-          style={styles.secondary}
+          style={collectPressStyle(styles.secondary)}
           onPress={() => {
             void (async () => {
               const p = (await getCollectorPin(active.projectId)) || '';
@@ -1167,7 +1175,7 @@ export function ProjectCollectScreen({
         >
           <Text style={styles.secondaryText}>코드 새로고침</Text>
         </Pressable>
-        <Pressable style={styles.primary} onPress={() => void openInbox(active)}>
+        <Pressable style={collectPressStyle(styles.primary)} onPress={() => void openInbox(active)}>
           <Text style={styles.primaryText}>수신 목록</Text>
         </Pressable>
         <Text style={styles.hint}>사업을 끝내려면 허브 목록의 「종료」를 사용하세요.</Text>
@@ -1216,11 +1224,11 @@ export function ProjectCollectScreen({
         editable={!openedFromLink}
       />
       {openedFromLink ? null : (
-        <Pressable style={styles.secondary} onPress={handleJoinScanPress} disabled={busy}>
+        <Pressable style={collectPressStyle(styles.secondary)} onPress={handleJoinScanPress} disabled={busy}>
           <Text style={styles.secondaryText}>QR 찍기</Text>
         </Pressable>
       )}
-      <Pressable style={styles.primary} onPress={handleJoinSubmit} disabled={busy}>
+      <Pressable style={collectPressStyle(styles.primary)} onPress={handleJoinSubmit} disabled={busy}>
         <Text style={styles.primaryText}>{openedFromLink ? '연결 후 촬영' : '연결'}</Text>
       </Pressable>
     </ScrollView>
@@ -1271,7 +1279,7 @@ export function ProjectCollectScreen({
         <Text style={styles.label}>저장 폴더</Text>
         <View style={styles.chips}>
           <Pressable
-            style={[styles.chip, folderMode === 'date_name' && styles.chipOn]}
+            style={collectPressStyle(styles.chip, folderMode === 'date_name' && styles.chipOn)}
             onPress={() => {
               setFolderMode('date_name');
               if (active) void openInbox(active);
@@ -1280,7 +1288,7 @@ export function ProjectCollectScreen({
             <Text style={[styles.chipText, folderMode === 'date_name' && styles.chipTextOn]}>날짜_사업명</Text>
           </Pressable>
           <Pressable
-            style={[styles.chip, folderMode === 'name_only' && styles.chipOn]}
+            style={collectPressStyle(styles.chip, folderMode === 'name_only' && styles.chipOn)}
             onPress={() => {
               setFolderMode('name_only');
               if (active) void openInbox(active);
@@ -1291,7 +1299,7 @@ export function ProjectCollectScreen({
         </View>
         <Text style={styles.hint}>미리보기: {folderPreview}</Text>
         <Pressable
-          style={styles.secondary}
+          style={collectPressStyle(styles.secondary)}
           onPress={() => {
             void setProjectDeleteAfterImport(!deleteAfter).then(() => setDeleteAfter(!deleteAfter));
           }}
@@ -1314,7 +1322,7 @@ export function ProjectCollectScreen({
           const got = !!item.localImagePath;
           return (
             <Pressable
-              style={[styles.inboxRow, on && styles.inboxRowOn]}
+              style={collectPressStyle(styles.inboxRow, on && styles.inboxRowOn)}
               onPress={() => {
                 setSelected((prev) => {
                   const next = new Set(prev);
@@ -1363,22 +1371,22 @@ export function ProjectCollectScreen({
       />
       <View style={styles.bar}>
         <Pressable
-          style={styles.barBtn}
+          style={collectPressStyle(styles.barBtn)}
           onPress={() => setSelected(new Set(inbox.filter((r) => r.onServer).map((r) => r.stampId)))}
         >
           <Text style={styles.barBtnText}>전체</Text>
         </Pressable>
-        <Pressable style={styles.barBtn} onPress={() => void handleImportSelected()} disabled={busy || selected.size === 0}>
+        <Pressable style={collectPressStyle(styles.barBtn)} onPress={() => void handleImportSelected()} disabled={busy || selected.size === 0}>
           <Text style={styles.barBtnText}>내 폰으로</Text>
         </Pressable>
         <Pressable
-          style={styles.barBtn}
+          style={collectPressStyle(styles.barBtn)}
           onPress={() => void handleInboxExcelSelected()}
           disabled={busy || selected.size === 0}
         >
           <Text style={styles.barBtnText}>엑셀</Text>
         </Pressable>
-        <Pressable style={styles.barBtn} onPress={handleTrashSelected} disabled={busy || selected.size === 0}>
+        <Pressable style={collectPressStyle(styles.barBtn)} onPress={handleTrashSelected} disabled={busy || selected.size === 0}>
           <Text style={[styles.barBtnText, styles.barBtnDanger]}>휴지통</Text>
         </Pressable>
       </View>
@@ -1402,7 +1410,7 @@ export function ProjectCollectScreen({
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable
-          style={styles.backBtn}
+          style={collectPressStyle(styles.backBtn)}
           onPress={handleHeaderBack}
           hitSlop={12}
           accessibilityRole="button"
@@ -1489,7 +1497,7 @@ export function ProjectCollectScreen({
             <View style={styles.scanBottom}>
               <Text style={styles.scanHint}>가운데 네모 안에 관리자 QR이 들어오게 맞춰 주세요</Text>
               <Pressable
-                style={styles.secondary}
+                style={collectPressStyle(styles.secondary)}
                 onPress={() => {
                   setJoinScanLocked(false);
                   closeJoinScan();
@@ -1517,7 +1525,7 @@ export function ProjectCollectScreen({
               style={styles.templatePickerList}
               renderItem={({ item }) => (
                 <Pressable
-                  style={styles.templatePickerRow}
+                  style={collectPressStyle(styles.templatePickerRow)}
                   onPress={() => void handlePickInviteTemplate(item)}
                 >
                   <Text style={styles.templatePickerName}>{item.name}</Text>
@@ -1525,7 +1533,7 @@ export function ProjectCollectScreen({
                 </Pressable>
               )}
             />
-            <Pressable style={styles.secondary} onPress={() => setTemplatePickerVisible(false)}>
+            <Pressable style={collectPressStyle(styles.secondary)} onPress={() => setTemplatePickerVisible(false)}>
               <Text style={styles.secondaryText}>닫기</Text>
             </Pressable>
           </View>
@@ -1559,7 +1567,7 @@ export function ProjectCollectScreen({
               {[180, 240, 320, 480, 800].map((n) => (
                 <Pressable
                   key={n}
-                  style={[styles.chip, excelPxText === String(n) && styles.chipOn]}
+                  style={collectPressStyle(styles.chip, excelPxText === String(n) && styles.chipOn)}
                   onPress={() => setExcelPxText(String(n))}
                 >
                   <Text style={[styles.chipText, excelPxText === String(n) && styles.chipTextOn]}>
@@ -1580,7 +1588,7 @@ export function ProjectCollectScreen({
               ).map((opt) => (
                 <Pressable
                   key={opt.id}
-                  style={[styles.chip, excelFontSize === opt.id && styles.chipOn]}
+                  style={collectPressStyle(styles.chip, excelFontSize === opt.id && styles.chipOn)}
                   onPress={() => setExcelFontSize(opt.id)}
                 >
                   <Text style={[styles.chipText, excelFontSize === opt.id && styles.chipTextOn]}>
@@ -1589,11 +1597,11 @@ export function ProjectCollectScreen({
                 </Pressable>
               ))}
             </View>
-            <Pressable style={styles.primary} onPress={confirmExcelPreviewWidth} disabled={busy}>
+            <Pressable style={collectPressStyle(styles.primary)} onPress={confirmExcelPreviewWidth} disabled={busy}>
               <Text style={styles.primaryText}>엑셀 만들기</Text>
             </Pressable>
             <Pressable
-              style={styles.secondary}
+              style={collectPressStyle(styles.secondary)}
               onPress={() => {
                 setExcelPxVisible(false);
                 setExcelPxPending(null);
@@ -1679,6 +1687,7 @@ const styles = StyleSheet.create({
   chipOn: { backgroundColor: '#111', borderColor: '#111' },
   chipText: { color: '#111', fontWeight: '600' },
   chipTextOn: { color: '#fff' },
+  pressed: { opacity: 0.72 },
   primary: {
     backgroundColor: '#111',
     borderRadius: 12,

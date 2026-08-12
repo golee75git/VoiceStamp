@@ -4112,3 +4112,9 @@ Restores ProjectCollectScreen + help from *.pre-inbox-import-progress/.
 restore-import-progress-inset.bat
 
 Restores ProjectCollectScreen from *.pre-import-progress-inset/.
+
+## Collect press feedback restore (2026-08-12)
+
+restore-collect-press-feedback.bat
+
+Restores ProjectCollectScreen + help from *.pre-collect-press-feedback/.
