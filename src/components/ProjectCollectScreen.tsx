@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  BackHandler,
   Dimensions,
   FlatList,
   Image,
@@ -216,6 +217,27 @@ export function ProjectCollectScreen({
     setJoinScanCameraMounted(false);
     setJoinScanCameraReady(false);
   }, []);
+
+  const handleHeaderBack = useCallback(() => {
+    if (joinScanning) {
+      closeJoinScan();
+      return;
+    }
+    if (phase === 'hub') {
+      onBack();
+      return;
+    }
+    setSentFocus(null);
+    setPhase('hub');
+  }, [closeJoinScan, joinScanning, onBack, phase]);
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleHeaderBack();
+      return true;
+    });
+    return () => sub.remove();
+  }, [handleHeaderBack]);
 
   useEffect(() => {
     const text = (initialJoinText || '').trim();
@@ -1366,15 +1388,13 @@ export function ProjectCollectScreen({
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable
-          onPress={() => {
-            if (phase === 'hub') onBack();
-            else {
-              setSentFocus(null);
-              setPhase('hub');
-            }
-          }}
+          style={styles.backBtn}
+          onPress={handleHeaderBack}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로"
         >
-          <Text style={styles.back}>← 뒤로</Text>
+          <Text style={styles.backText}>‹ 뒤로</Text>
         </Pressable>
         <Text style={styles.headerTitle}>
           {phase === 'sent' && sentFocus ? `보낸 사진 · ${sentFocus.name}` : '사업 취합'}
@@ -1567,14 +1587,23 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   header: {
     paddingTop: 52,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingBottom: 12,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
-    gap: 8,
+    gap: 4,
   },
-  back: { fontSize: 16, color: '#2563eb' },
+  backBtn: {
+    alignSelf: 'flex-start',
+    minHeight: 48,
+    minWidth: 96,
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    marginLeft: -4,
+  },
+  backText: { fontSize: 20, fontWeight: '700', color: '#2563eb' },
   headerTitle: { fontSize: 20, fontWeight: '700', color: '#111' },
   body: { padding: 20, gap: 12, paddingBottom: 40 },
   bodyPad: { paddingHorizontal: 20, paddingTop: 12, gap: 8 },

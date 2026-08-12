@@ -79,15 +79,8 @@ export function MainScreen() {
           setScreen(settingsReturn);
           return true;
         case 'projectCollect':
-          setJoinLaunchText(null);
-          if (collectOpenedFromLink) {
-            bumpRefresh();
-            setScreen('camera');
-          } else {
-            setScreen('settings');
-          }
-          setCollectOpenedFromLink(false);
-          return true;
+          // ProjectCollectScreen owns hardware back (scan → hub → leave).
+          return false;
         case 'ossLicenses':
           setScreen('settings');
           return true;

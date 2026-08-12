@@ -4094,3 +4094,9 @@ Restores CameraScreen + help from \*.pre-collect-banner-shutter/\.
 restore-collect-banner-copy.bat
 
 Restores CameraScreen + help from *.pre-collect-banner-copy/.
+
+## Collect back hit restore (2026-08-12)
+
+restore-collect-back-hit.bat
+
+Restores ProjectCollectScreen, MainScreen, help from *.pre-collect-back-hit/.
