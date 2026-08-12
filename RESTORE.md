@@ -4100,3 +4100,9 @@ Restores CameraScreen + help from *.pre-collect-banner-copy/.
 restore-collect-back-hit.bat
 
 Restores ProjectCollectScreen, MainScreen, help from *.pre-collect-back-hit/.
+
+## Inbox import progress restore (2026-08-12)
+
+restore-inbox-import-progress.bat
+
+Restores ProjectCollectScreen + help from *.pre-inbox-import-progress/.

@@ -33,6 +33,7 @@
 | [SECURITY-collect-banner-shutter-20260812.md](./SECURITY-collect-banner-shutter-20260812.md) | 보안·UX | 취합 중 배너를 촬영 버튼 위로 |
 | [SECURITY-collect-banner-copy-20260812.md](./SECURITY-collect-banner-copy-20260812.md) | 보안·UX | 카메라 홈 「이 사업으로 전송」 문구 |
 | [SECURITY-collect-back-hit-20260812.md](./SECURITY-collect-back-hit-20260812.md) | 보안·UX | 사업 취합 큰 뒤로 + 시스템 뒤로 |
+| [SECURITY-inbox-import-progress-20260812.md](./SECURITY-inbox-import-progress-20260812.md) | 보안·UX | 수신 가져오기 진행 n/전체 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

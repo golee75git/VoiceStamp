@@ -139,6 +139,11 @@ export function ProjectCollectScreen({
 }: Props) {
   const [phase, setPhase] = useState<ProjectCollectPhase>(initialPhase);
   const [busy, setBusy] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
+    current: number;
+    total: number;
+    title: string;
+  } | null>(null);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
   const [joinHistory, setJoinHistory] = useState<JoinedProjectHistory[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
@@ -636,14 +641,22 @@ export function ProjectCollectScreen({
     const ids = [...selected];
     if (ids.length === 0) return;
     setBusy(true);
+    setImportProgress({ current: 0, total: ids.length, title: '' });
     let ok = 0;
     let skipped = 0;
+    let step = 0;
     try {
       await setProjectImportFolderMode(folderMode);
       await setProjectDeleteAfterImport(deleteAfter);
       const byId = new Map(inbox.map((r) => [r.stampId, r]));
       for (const stampId of ids) {
+        step += 1;
         const row = byId.get(stampId);
+        setImportProgress({
+          current: step,
+          total: ids.length,
+          title: (row?.title || stampId).slice(0, 40),
+        });
         if (!row?.onServer) {
           skipped += 1;
           continue;
@@ -667,6 +680,7 @@ export function ProjectCollectScreen({
     } catch (e) {
       Alert.alert('가져오기', mapProjectApiError(e));
     } finally {
+      setImportProgress(null);
       setBusy(false);
     }
   };
@@ -1411,6 +1425,18 @@ export function ProjectCollectScreen({
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" color="#111" />
+          {importProgress ? (
+            <View style={styles.importProgressBox}>
+              <Text style={styles.importProgressText}>
+                {`앱으로 가져오는 중 ${importProgress.current} / ${importProgress.total}`}
+              </Text>
+              {importProgress.title ? (
+                <Text style={styles.importProgressTitle} numberOfLines={1}>
+                  {importProgress.title}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       ) : null}
       <Modal
@@ -1769,6 +1795,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.45)',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 12,
+  },
+  importProgressBox: {
+    maxWidth: '84%',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    alignItems: 'center',
+    gap: 4,
+  },
+  importProgressText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111',
+    textAlign: 'center',
+  },
+  importProgressTitle: {
+    fontSize: 13,
+    color: '#4b5563',
+    textAlign: 'center',
   },
   scanModalRoot: {
     flex: 1,
