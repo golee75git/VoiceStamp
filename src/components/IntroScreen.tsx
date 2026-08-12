@@ -21,8 +21,8 @@ const SLIDES: Slide[] = [
   {
     source: require('../../assets/onboarding/onboarding-1.png'),
     title: '말하기',
-    hint: '제목·메모는 마이크으로 말해도 됩니다.',
-    accessibilityLabel: '말하기. 제목과 메모는 마이크으로 말해도 됩니다.',
+    hint: '제목·메모는 마이크로 말해도 됩니다.',
+    accessibilityLabel: '말하기. 제목과 메모는 마이크로 말해도 됩니다.',
   },
   {
     source: require('../../assets/onboarding/onboarding-2.png'),
