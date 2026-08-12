@@ -21,4 +21,15 @@ if (!fs.existsSync(landingSrc)) {
 fs.mkdirSync(appDir, { recursive: true });
 fs.renameSync(expoIndex, path.join(appDir, 'index.html'));
 fs.copyFileSync(landingSrc, landingRoot);
+
+/** Ensure Digital Asset Links file is present for Android App Links verification. */
+const assetSrc = path.join(root, 'public', '.well-known', 'assetlinks.json');
+const assetDir = path.join(dist, '.well-known');
+const assetDest = path.join(assetDir, 'assetlinks.json');
+if (fs.existsSync(assetSrc)) {
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.copyFileSync(assetSrc, assetDest);
+  console.log('post-export-web-layout: copied .well-known/assetlinks.json');
+}
+
 console.log('post-export-web-layout: dist/index.html = landing, dist/app/index.html = expo app');
