@@ -4118,3 +4118,9 @@ Restores ProjectCollectScreen from *.pre-import-progress-inset/.
 restore-collect-press-feedback.bat
 
 Restores ProjectCollectScreen + help from *.pre-collect-press-feedback/.
+
+## Collect link flag restore (2026-08-12)
+
+restore-collect-link-flag.bat
+
+Restores MainScreen (+ help if snapshotted) from *.pre-collect-link-flag/.

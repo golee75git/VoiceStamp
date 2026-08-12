@@ -18,6 +18,8 @@ import {
 
 type Screen = 'camera' | 'list' | 'settings' | 'trash' | 'ossLicenses' | 'projectCollect';
 type SettingsReturn = 'camera' | 'list';
+/** Where hub 「뒤로」 returns after leaving project collect. */
+type CollectReturn = 'camera' | 'settings';
 
 export function MainScreen() {
   const [screen, setScreen] = useState<Screen>('camera');
@@ -25,7 +27,9 @@ export function MainScreen() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showIntroOverlay, setShowIntroOverlay] = useState(false);
   const [joinLaunchText, setJoinLaunchText] = useState<string | null>(null);
+  /** True only for https/voicestamp join deep links (share-link join UX). */
   const [collectOpenedFromLink, setCollectOpenedFromLink] = useState(false);
+  const [collectReturnTo, setCollectReturnTo] = useState<CollectReturn>('settings');
   const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
@@ -48,6 +52,7 @@ export function MainScreen() {
     takePendingJoinUrl();
     setJoinLaunchText(url);
     setCollectOpenedFromLink(true);
+    setCollectReturnTo('camera');
     setScreen('projectCollect');
   }, []);
 
@@ -108,7 +113,7 @@ export function MainScreen() {
     });
 
     return () => sub.remove();
-  }, [screen, settingsReturn, showIntroOverlay, collectOpenedFromLink]);
+  }, [screen, settingsReturn, showIntroOverlay]);
 
   if (showIntroOverlay) {
     return (
@@ -129,7 +134,8 @@ export function MainScreen() {
           onOpenSettings={() => openSettings('camera')}
           onOpenProjectCollect={() => {
             setJoinLaunchText(null);
-            setCollectOpenedFromLink(true);
+            setCollectOpenedFromLink(false);
+            setCollectReturnTo('camera');
             setScreen('projectCollect');
           }}
           onSaved={bumpRefresh}
@@ -149,6 +155,7 @@ export function MainScreen() {
           onOpenProjectCollect={() => {
             setJoinLaunchText(null);
             setCollectOpenedFromLink(false);
+            setCollectReturnTo('settings');
             setScreen('projectCollect');
           }}
         />
@@ -157,14 +164,15 @@ export function MainScreen() {
           key={joinLaunchText || 'collect-hub'}
           onBack={() => {
             setJoinLaunchText(null);
-            const next = collectOpenedFromLink ? 'camera' : 'settings';
             setCollectOpenedFromLink(false);
+            const next = collectReturnTo;
             if (next === 'camera') bumpRefresh();
             setScreen(next);
           }}
           onJoinedGoCamera={() => {
             setJoinLaunchText(null);
             setCollectOpenedFromLink(false);
+            setCollectReturnTo('camera');
             bumpRefresh();
             setScreen('camera');
           }}
