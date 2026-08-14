@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-10** — 08-08~10 취합·엑셀·QR · [CHANGELOG.md](./CHANGELOG.md) · **본 커밋 소스 없음** (권장 APK `113846`)
-최신 기능 커밋 기준: `54c93d2` / APK `89b643d` (`143848`)
+문서 동기화: **2026-08-14** — 수신함 고름 표시 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `171058`)
+최신 기능 커밋 기준: `e9f0bae` / APK `171058`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -668,6 +668,12 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-08-14
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **권장** — 수신함 고름 표시·엑셀 미선택 안내 · `restore-inbox-pick-mark.bat` | **GitHub `releases/`** |
 
 #### 2026-08-10
 

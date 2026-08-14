@@ -59,16 +59,16 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-08-11)
+## 현재 상태 스냅샷 (2026-08-14)
 
-- **문서 갱신일:** 2026-08-11 — Play Internal 준비 (`eas.json` production AAB · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) · LEG-05 초안)
-- **최신 기능 커밋:** `086377c` / APK `dda285a` — 엑셀 800칩·글자 · `113846`
+- **문서 갱신일:** 2026-08-14 — 수신함 고름 표시·엑셀 미선택 안내
+- **최신 기능 커밋:** `e9f0bae` / APK `171058` — 수신함 하단 단추 고름 표시
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260810_113846.apk` — 엑셀 800·글자 + 08-08~10 취합 누적
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260810_113846.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260814_171058.apk` — 수신함 고름 표시·엑셀 안내
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260814_171058.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260810_105750.apk` — 엑셀 미리보기 px
 - **이전 권장 APK:** `releases/VoiceStamp_20260810_102144.apk` — 조인 QR Modal
 - **이전 권장 APK:** `releases/VoiceStamp_20260809_183720.apk` — 수신 「가져옴」매칭
@@ -132,14 +132,16 @@
 | 08-08 | 조인·배지·**수신함 병합** · NCP 직통·초대·엑셀 · APK `081515`~`231815` · RELEASE-CHANNELS |
 | 08-09 | 목록 썸네일·취소 · 만든이 · 취합 배지·보낸 사진 · 홈 취합 · 가져옴 매칭 · APK `085617`~`183720` |
 | 08-10 | 취합 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` · **본 문서 동기화(소스 없음)** |
+| 08-14 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` |
 
 ### APK별 (권장·주요)
 
-> **2026-08-10:** 권장 파일은 **`VoiceStamp_20260810_113846.apk`** (`dda285a`). 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-14:** 권장 파일은 **`VoiceStamp_20260814_171058.apk`** (`e9f0bae`). 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **설치·GitHub 권장** — 엑셀 800칩·글자 작음/보통/큼 |
+| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **설치·GitHub 권장** — 수신함 고름 표시·엑셀 안내 |
+| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 |
 | `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 엑셀 미리보기 px |
 | `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal |
 | `releases/VoiceStamp_20260809_183720.apk` | `2ba4edf` | **이전** — 수신 「가져옴」매칭 |

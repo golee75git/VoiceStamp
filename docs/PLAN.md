@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.13 |
-| 작성일 | 2026-08-10 |
-| 기준 커밋 | `dda285a` — 권장 APK `113846` · 엑셀 800·글자·08-08~10 누적 |
+| 작성일 | 2026-08-14 |
+| 기준 커밋 | `e9f0bae` — 권장 APK `171058` · 수신함 고름 표시 |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -547,7 +547,7 @@
 | LEG-03 | [KAKAO-KEY-SECURITY.md](./KAKAO-KEY-SECURITY.md) | P1 | ✅ 커밋됨 |
 | LEG-04 | 버전·라이선스·개인정보·도움말 (설정 앱 정보 + 웹 `/privacy` 등) | P2 | ✅ `a4a55d2` |
 | LEG-06 | OSS 목록·앱 내 오픈소스 라이선스·[LICENSE-NOTICE.md](./LICENSE-NOTICE.md) dual-license 검토(MIT/BSD 확정) | P2 | ✅ 2026-06-19 |
-| LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 미구현 (정책 URL: `/privacy` 준비됨) |
+| LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 **초안·인프라** ([LEG-05-STORE-LISTING.md](./LEG-05-STORE-LISTING.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) · `eas.json` production AAB) — 콘솔 업로드·Production 미완 |
 | DEP-04 | `/info` GitHub Releases APK 다운로드 링크 | P2 | ✅ `3468630` |
 | DEP-05 | 랜딩 **QR·Web Share** (qrcodejs MIT) | P2 | ✅ `800971a` |
 
@@ -616,7 +616,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 | 순서 | 작업 | 이유 |
 |------|------|------|
-| 1 | LEG-05 Play 스토어 · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) | 정책 URL·채널 문서 준비됨 |
+| 1 | LEG-05 콘솔 반영 — keystore·Internal AAB·스크린샷 업로드 · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) | 인프라·초안 문서 완료, 운영자 실기기·콘솔 남음 |
 | 2 | F-QR-01 확장 — 워터마크 코너·PDF HTML QR | caption MVP 완료 |
 | 3 | UX-D2 위치 실패 안내 | 작은 diff, 체감 개선 |
 | 4 | FEAT-02 PDF 진행 표시 | 다장 PDF 시 UX |
@@ -739,6 +739,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-09 | 4·3 | 목록 썸네일·취소 · 만든이 라벨 · 취합 배지 · 보낸 사진 · 홈 취합 아이콘 · 가져옴 매칭 · APK `085617`~`183720` |
 | 2026-08-10 | 4·3 | 취합전송 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` |
 | 2026-08-10 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
+| 2026-08-14 | 4·3 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` · `restore-inbox-pick-mark.bat` |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -747,10 +748,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-10:** 권장 = `releases/VoiceStamp_20260810_113846.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-14:** 권장 = `releases/VoiceStamp_20260814_171058.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **설치·GitHub 권장** — 엑셀 800칩·글자 작음/보통/큼 |
+| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **설치·GitHub 권장** — 수신함 고름 표시·엑셀 안내 |
+| `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 |
 | `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 수신 엑셀 미리보기 px |
 | `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal |
 | `releases/VoiceStamp_20260810_091329.apk` | `48f9db6` | **이전** — 저장 배지 참여 전환 |

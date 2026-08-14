@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260808_143848.apk` (`89b643d`) — 수신함 병합 · 08-08 NCP 취합 누적 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260814_171058.apk` (`e9f0bae`) — 수신함 고름 표시·엑셀 안내 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
