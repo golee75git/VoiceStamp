@@ -4142,3 +4142,9 @@ Restores IntroScreen + SettingsScreen + help from *.pre-ux-friendly-basics/.
 restore-collect-save-feedback.bat
 
 Restores ProjectCollectScreen, CameraScreen, projectUploadQueue, saveStamp, help/join from *.pre-collect-save-feedback/; removes projectUploadFeedback.ts.
+
+## Inbox pick mark restore (2026-08-14)
+
+restore-inbox-pick-mark.bat
+
+Restores ProjectCollectScreen + help from *.pre-inbox-pick-mark/.

@@ -40,6 +40,7 @@
 | [SECURITY-join-app-links-20260812.md](./SECURITY-join-app-links-20260812.md) | 보안·딥링크 | App Links·매니페스트 join 필터 |
 | [SECURITY-ux-friendly-basics-20260812.md](./SECURITY-ux-friendly-basics-20260812.md) | 보안·UX | 온보딩 3컷·설정 고급 접기 |
 | [SECURITY-collect-save-feedback-20260812.md](./SECURITY-collect-save-feedback-20260812.md) | 보안·UX | 취합 연결 원패스·저장/업로드 피드백 |
+| [SECURITY-inbox-pick-mark-20260814.md](./SECURITY-inbox-pick-mark-20260814.md) | 보안·UX | 수신함 하단 고름 표시·엑셀 미선택 안내 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

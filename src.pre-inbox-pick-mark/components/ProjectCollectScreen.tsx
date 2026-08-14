@@ -169,7 +169,6 @@ export function ProjectCollectScreen({
   const [joinMarkText, setJoinMarkText] = useState('');
   const [inbox, setInbox] = useState<MergedInboxItem[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [barPick, setBarPick] = useState<'all' | 'phone' | 'xlsx' | 'bin' | null>(null);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
   const [folderMode, setFolderMode] = useState<ProjectImportFolderMode>('date_name');
   const [deleteAfter, setDeleteAfter] = useState(true);
@@ -596,7 +595,6 @@ export function ProjectCollectScreen({
       );
       setInbox(mergeInboxWithLocal(man.stamps || [], localImp));
       setSelected(new Set());
-      setBarPick(null);
       setPhase('inbox');
     } catch (e) {
       Alert.alert('수신', mapProjectApiError(e));
@@ -606,7 +604,6 @@ export function ProjectCollectScreen({
   };
 
   const handleImportSelected = async () => {
-    setBarPick('phone');
     if (!active) return;
     const pinLocal = (await getCollectorPin(active.projectId)) || collectorPinInput;
     if (!pinLocal) {
@@ -614,10 +611,7 @@ export function ProjectCollectScreen({
       return;
     }
     const ids = [...selected];
-    if (ids.length === 0) {
-      Alert.alert('내 폰으로', '사진을 선택한 뒤 다시 눌러 주세요.');
-      return;
-    }
+    if (ids.length === 0) return;
     setBusy(true);
     setImportProgress({ current: 0, total: ids.length, title: '' });
     let ok = 0;
@@ -714,13 +708,9 @@ export function ProjectCollectScreen({
   };
 
   const handleInboxExcelSelected = async () => {
-    setBarPick('xlsx');
     if (!active) return;
     const ids = [...selected];
-    if (ids.length === 0) {
-      Alert.alert('엑셀', '사진을 선택한 뒤 다시 눌러 주세요.');
-      return;
-    }
+    if (ids.length === 0) return;
     const localIds = ids.filter((id) => inbox.some((r) => r.stampId === id && r.localImagePath));
     if (localIds.length === 0) {
       Alert.alert(
@@ -1213,11 +1203,6 @@ export function ProjectCollectScreen({
   );
 
   const handleTrashSelected = () => {
-    setBarPick('bin');
-    if (selected.size === 0) {
-      Alert.alert('휴지통', '사진을 선택한 뒤 다시 눌러 주세요.');
-      return;
-    }
     const ids = [...selected].filter((id) => inbox.some((r) => r.stampId === id && r.localImagePath));
     if (ids.length === 0) {
       Alert.alert('휴지통', '내 폰에 가져온 항목만 휴지통으로 옮길 수 있습니다.');
@@ -1297,7 +1282,6 @@ export function ProjectCollectScreen({
       </View>
       <FlatList
         data={inbox}
-        extraData={`${selected.size}:${[...selected].join(',')}:${barPick || ''}`}
         keyExtractor={(item) => item.stampId}
         contentContainerStyle={styles.inboxListPad}
         ListEmptyComponent={<Text style={styles.hintPad}>아직 올라온 사진이 없습니다.</Text>}
@@ -1316,9 +1300,6 @@ export function ProjectCollectScreen({
                 });
               }}
             >
-              <View style={[styles.pickBox, on && styles.pickBoxOn]}>
-                {on ? <Text style={styles.pickGlyph}>✓</Text> : null}
-              </View>
               {got ? (
                 <Pressable
                   onPress={() => setPreviewUri(resolveImageUri(item.localImagePath!))}
@@ -1358,44 +1339,23 @@ export function ProjectCollectScreen({
       />
       <View style={styles.bar}>
         <Pressable
-          style={collectPressStyle(styles.barBtn, barPick === 'all' && styles.barBtnOn)}
-          onPress={() => {
-            setBarPick('all');
-            const ids = inbox.map((r) => r.stampId);
-            const allOn = ids.length > 0 && ids.every((id) => selected.has(id));
-            setSelected(allOn ? new Set() : new Set(ids));
-          }}
+          style={collectPressStyle(styles.barBtn)}
+          onPress={() => setSelected(new Set(inbox.filter((r) => r.onServer).map((r) => r.stampId)))}
         >
-          <Text style={[styles.barBtnText, barPick === 'all' && styles.barBtnTextOn]}>전체</Text>
+          <Text style={styles.barBtnText}>전체</Text>
+        </Pressable>
+        <Pressable style={collectPressStyle(styles.barBtn)} onPress={() => void handleImportSelected()} disabled={busy || selected.size === 0}>
+          <Text style={styles.barBtnText}>내 폰으로</Text>
         </Pressable>
         <Pressable
-          style={collectPressStyle(styles.barBtn, barPick === 'phone' && styles.barBtnOn)}
-          onPress={() => void handleImportSelected()}
-          disabled={busy}
-        >
-          <Text style={[styles.barBtnText, barPick === 'phone' && styles.barBtnTextOn]}>내 폰으로</Text>
-        </Pressable>
-        <Pressable
-          style={collectPressStyle(styles.barBtn, barPick === 'xlsx' && styles.barBtnOn)}
+          style={collectPressStyle(styles.barBtn)}
           onPress={() => void handleInboxExcelSelected()}
-          disabled={busy}
+          disabled={busy || selected.size === 0}
         >
-          <Text style={[styles.barBtnText, barPick === 'xlsx' && styles.barBtnTextOn]}>엑셀</Text>
+          <Text style={styles.barBtnText}>엑셀</Text>
         </Pressable>
-        <Pressable
-          style={collectPressStyle(styles.barBtn, barPick === 'bin' && styles.barBtnOn)}
-          onPress={handleTrashSelected}
-          disabled={busy}
-        >
-          <Text
-            style={[
-              styles.barBtnText,
-              styles.barBtnDanger,
-              barPick === 'bin' && styles.barBtnTextOn,
-            ]}
-          >
-            휴지통
-          </Text>
+        <Pressable style={collectPressStyle(styles.barBtn)} onPress={handleTrashSelected} disabled={busy || selected.size === 0}>
+          <Text style={[styles.barBtnText, styles.barBtnDanger]}>휴지통</Text>
         </Pressable>
       </View>
       <Modal
@@ -1796,20 +1756,7 @@ const styles = StyleSheet.create({
   },
   previewImg: { width: '100%', height: '80%' },
   previewHint: { color: '#fff', marginTop: 12, fontWeight: '600' },
-  inboxRowOn: { backgroundColor: '#eff6ff', borderColor: '#1e40af' },
-  pickBox: {
-    width: 22,
-    height: 22,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#9ca3af',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pickBoxOn: { borderColor: '#1e40af', backgroundColor: '#1e40af' },
-  pickGlyph: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  barBtnOn: { backgroundColor: '#111' },
-  barBtnTextOn: { color: '#fff' },
+  inboxRowOn: { backgroundColor: '#eff6ff' },
   bar: {
     flexDirection: 'row',
     borderTopWidth: 1,
