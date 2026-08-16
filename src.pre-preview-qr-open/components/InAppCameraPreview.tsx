@@ -28,9 +28,6 @@ type InAppCameraPreviewProps = {
   pictureSize?: string;
   onCameraReady: () => void;
   onZoomChange?: (zoom: number, preset: ZoomPreset | null) => void;
-  /** When true, QR in the preview is reported (http(s) filter is the parent's job). */
-  httpQrListen?: boolean;
-  onPreviewHttpQr?: (raw: string) => void;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -50,28 +47,14 @@ function nearestPreset(zoom: number): ZoomPreset | null {
 
 export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCameraPreviewProps>(
   function InAppCameraPreview(
-    {
-      cameraRef,
-      facing = 'back',
-      pictureSize,
-      onCameraReady,
-      onZoomChange,
-      httpQrListen = false,
-      onPreviewHttpQr,
-      style,
-    },
+    { cameraRef, facing = 'back', pictureSize, onCameraReady, onZoomChange, style },
     ref,
   ) {
     const [zoom, setZoom] = useState(0);
-    const [lensReady, setLensReady] = useState(false);
     const zoomShared = useSharedValue(0);
     const savedZoom = useSharedValue(0);
     const onZoomChangeRef = useRef(onZoomChange);
     onZoomChangeRef.current = onZoomChange;
-    const onPreviewHttpQrRef = useRef(onPreviewHttpQr);
-    onPreviewHttpQrRef.current = onPreviewHttpQr;
-    const onCameraReadyRef = useRef(onCameraReady);
-    onCameraReadyRef.current = onCameraReady;
 
     const applyZoom = useCallback(
       (value: number) => {
@@ -86,7 +69,6 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
     useEffect(() => {
       zoomShared.value = 0;
       setZoom(0);
-      setLensReady(false);
       onZoomChangeRef.current?.(0, 1);
     }, [zoomShared, facing]);
 
@@ -100,19 +82,6 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
       }),
       [applyZoom, zoomShared],
     );
-
-    const handleLensReady = useCallback(() => {
-      setLensReady(true);
-      onCameraReadyRef.current();
-    }, []);
-
-    const handlePreviewQr = useCallback((result: { data?: string }) => {
-      const raw = String(result?.data || '').trim();
-      if (!raw) {
-        return;
-      }
-      onPreviewHttpQrRef.current?.(raw);
-    }, []);
 
     const pinch = Gesture.Pinch()
       .onBegin(() => {
@@ -134,8 +103,6 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
 
     const gesture = Gesture.Simultaneous(pinch, doubleTap);
 
-    const listenQr = lensReady && httpQrListen;
-
     return (
       <GestureHandlerRootView style={[styles.root, style]}>
         <GestureDetector gesture={gesture}>
@@ -147,9 +114,7 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
               mirror={facing === 'front'}
               pictureSize={pictureSize}
               zoom={zoom}
-              barcodeScannerSettings={listenQr ? { barcodeTypes: ['qr'] } : undefined}
-              onBarcodeScanned={listenQr ? handlePreviewQr : undefined}
-              onCameraReady={handleLensReady}
+              onCameraReady={onCameraReady}
             />
           </View>
         </GestureDetector>

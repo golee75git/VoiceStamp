@@ -4184,3 +4184,9 @@ Restores projectCollectSettings, projectUploadQueue, saveStamp, joinStampSend, P
 restore-promo-log-template.bat
 
 Restores stampFieldTemplates.ts + help from *.pre-promo-log-template/.
+
+## Preview QR open restore (2026-08-16)
+
+restore-preview-qr-open.bat
+
+Restores InAppCameraPreview, CameraScreen + help from *.pre-preview-qr-open/.

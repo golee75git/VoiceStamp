@@ -5,7 +5,6 @@ import {
   AppState,
   BackHandler,
   Image,
-  Linking,
   Platform,
   Pressable,
   StyleSheet,
@@ -26,7 +25,6 @@ import type { CaptureStampForExport } from '../services/exportStampImage';
 import { STAMP_CAPTURE_JPEG_QUALITY } from '../constants/captureImageBudget';
 import { pickPreferredStampPictureSize } from '../utils/cameraPictureSize';
 import { loadStampSaveModalLayoutSettings } from '../services/stampSaveModalLayoutCache';
-import { normalizeHttpUrl } from '../services/qrUrlExtractService';
 import { StampSaveModal } from './StampSaveModal';
 import {
   InAppCameraPreview,
@@ -114,7 +112,6 @@ export function CameraScreen({
   const cameraRef = useRef<CameraView>(null);
   const previewRef = useRef<InAppCameraPreviewHandle>(null);
   const [zoomPreset, setZoomPreset] = useState<ZoomPreset | null>(1);
-  const [previewOpenHref, setPreviewOpenHref] = useState<string | null>(null);
   const reuseLocationRef = useRef<QuickCaptureLocation | null>(null);
   const prefetchedLocationRef = useRef<LocationSnapshot | null>(null);
   const locationPrefetchRunningRef = useRef(false);
@@ -417,7 +414,6 @@ export function CameraScreen({
     setCameraFacing('back');
     setInAppPictureSize(undefined);
     setInAppCapturing(false);
-    setPreviewOpenHref(null);
     reuseLocationRef.current = null;
     setAutoLaunch(false);
   }, []);
@@ -470,28 +466,8 @@ export function CameraScreen({
     setInAppCameraReady(false);
     setInAppPictureSize(undefined);
     setZoomPreset(1);
-    setPreviewOpenHref(null);
     setCameraFacing((prev) => (prev === 'back' ? 'front' : 'back'));
   }, [cameraBusy, inAppCapturing]);
-
-  const handlePreviewHttpQr = useCallback((raw: string) => {
-    const href = normalizeHttpUrl(raw);
-    if (!href) {
-      return;
-    }
-    setPreviewOpenHref((prev) => (prev === href ? prev : href));
-  }, []);
-
-  const openPreviewHref = useCallback(async () => {
-    if (!previewOpenHref) {
-      return;
-    }
-    try {
-      await Linking.openURL(previewOpenHref);
-    } catch {
-      Alert.alert('주소', '이 주소를 열 수 없습니다.');
-    }
-  }, [previewOpenHref]);
 
   const handleInAppShutter = useCallback(async () => {
     if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy || !inAppCameraMode) {
@@ -516,7 +492,6 @@ export function CameraScreen({
       if (inAppCameraMode === 'single') {
         setInAppCameraMode(null);
         setInAppCameraReady(false);
-        setPreviewOpenHref(null);
         await handleCapturedUri(photo.uri);
         return;
       }
@@ -772,8 +747,6 @@ export function CameraScreen({
           facing={cameraFacing}
           pictureSize={inAppPictureSize}
           style={styles.inAppCamera}
-          httpQrListen={inAppCameraReady && !inAppCapturing && !cameraBusy}
-          onPreviewHttpQr={handlePreviewHttpQr}
           onCameraReady={() => void handleInAppCameraReady()}
           onZoomChange={(_zoom, preset) => setZoomPreset(preset)}
         />
@@ -853,23 +826,6 @@ export function CameraScreen({
             <View style={styles.inAppFlipSpacer} />
           </View>
         </View>
-
-        {previewOpenHref ? (
-          <View style={styles.previewHrefBar} pointerEvents="box-none">
-            <Text style={styles.previewHrefText} numberOfLines={1}>
-              {previewOpenHref}
-            </Text>
-            <Pressable
-              style={styles.previewHrefBtn}
-              onPress={() => void openPreviewHref()}
-              disabled={cameraBusy || inAppCapturing}
-              accessibilityRole="button"
-              accessibilityLabel="주소 열기"
-            >
-              <Text style={styles.previewHrefBtnText}>열기</Text>
-            </Pressable>
-          </View>
-        ) : null}
 
         {cameraBusy ? (
           <View style={styles.busyOverlay}>
@@ -1281,36 +1237,6 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     gap: 14,
-  },
-  previewHrefBar: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 168,
-    zIndex: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.62)',
-  },
-  previewHrefText: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 13,
-  },
-  previewHrefBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-  },
-  previewHrefBtnText: {
-    color: '#111',
-    fontWeight: '700',
-    fontSize: 13,
   },
   zoomPresetRow: {
     flexDirection: 'row',
