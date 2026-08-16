@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-14 — 수신함 고름 표시 · APK `171058` |
-| 최신 반영 커밋 | `e9f0bae` — 권장 APK `171058` |
+| 문서 동기화 | 2026-08-16 — 엑셀 5장 이상 가로 막대 · APK `141835` |
+| 최신 반영 커밋 | `d521763` — 권장 APK `141835` |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -711,6 +711,7 @@
 | **2026-08-09** | 목록 선택 썸네일·취소 스크롤 · **만든 회사/사람** · 저장 취합 배지 · **보낸 사진** · 카메라 홈 취합 아이콘 · 랜딩 UTF-8 · 수신 「가져옴」매칭 · APK `085617`~`183720` | `1d49485`~`2ba4edf` |
 | **2026-08-10** | 취합전송 사업명·참여 전환 · QR Modal 스캔 · 엑셀 **미리보기 px·800칩·글자 작음/보통/큼** · 도움말·SECURITY · **본 문서 동기화(소스 없음)** | `3e18bf3`~`dda285a` |
 | **2026-08-14** | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · 도움말 · APK `171058` · `restore-inbox-pick-mark.bat` | `e9f0bae` |
+| **2026-08-16** | 엑셀 **5장 이상 가로 막대** · 도움말 · APK `141835` · `restore-xlsx-row-fill.bat` | `d521763` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 
@@ -718,11 +719,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-14:** 권장 파일은 **`VoiceStamp_20260814_171058.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_141835.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **설치·GitHub 권장** — 수신함 고름 표시·엑셀 미선택 안내 |
+| `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **설치·GitHub 권장** — 엑셀 5장 이상 가로 막대 |
+| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **이전** — 수신함 고름 표시·엑셀 미선택 안내 |
 | `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 (+08-10 누적) |
 | `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 수신 엑셀 미리보기 가로 px |
 | `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal·스캔 게이트 |

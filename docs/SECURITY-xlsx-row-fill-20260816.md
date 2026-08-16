@@ -35,3 +35,7 @@
 
 ## 롤백
 `restore-xlsx-row-fill.bat`
+
+## 배포
+- APK: `VoiceStamp_20260816_141835.apk` (`d521763`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_141835.apk

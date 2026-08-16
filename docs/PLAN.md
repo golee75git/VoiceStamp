@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 버전 | 3.13 |
-| 작성일 | 2026-08-14 |
-| 기준 커밋 | `e9f0bae` — 권장 APK `171058` · 수신함 고름 표시 |
+| 작성일 | 2026-08-16 |
+| 기준 커밋 | `d521763` — 권장 APK `141835` · 엑셀 5장 이상 가로 막대 |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -740,6 +740,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-10 | 4·3 | 취합전송 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` |
 | 2026-08-10 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
 | 2026-08-14 | 4·3 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` · `restore-inbox-pick-mark.bat` |
+| 2026-08-16 | 4·3 | 엑셀 **5장 이상 가로 막대** · APK `141835` · `restore-xlsx-row-fill.bat` |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -748,10 +749,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-14:** 권장 = `releases/VoiceStamp_20260814_171058.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-16:** 권장 = `releases/VoiceStamp_20260816_141835.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **설치·GitHub 권장** — 수신함 고름 표시·엑셀 안내 |
+| `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **설치·GitHub 권장** — 엑셀 5장 이상 가로 막대 |
+| `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **이전** — 수신함 고름 표시·엑셀 안내 |
 | `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 |
 | `releases/VoiceStamp_20260810_105750.apk` | `8c47b5d` | **이전** — 수신 엑셀 미리보기 px |
 | `releases/VoiceStamp_20260810_102144.apk` | `39cc93a` | **이전** — 조인 QR Modal |

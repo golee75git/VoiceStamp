@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260814_171058.apk` (`e9f0bae`) — 수신함 고름 표시·엑셀 안내 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_141835.apk` (`d521763`) — 엑셀 5장 이상 가로 막대 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
