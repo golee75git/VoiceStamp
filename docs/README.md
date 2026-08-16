@@ -46,6 +46,7 @@
 | [SECURITY-xlsx-keep-share-20260816.md](./SECURITY-xlsx-keep-share-20260816.md) | 보안·UX | 엑셀 앱 폴더 저장 후 공유 |
 | [SECURITY-join-album-send-20260816.md](./SECURITY-join-album-send-20260816.md) | 보안·UX | 참여 사업 갤러리·목록 보내기 |
 | [SECURITY-sent-way-label-20260816.md](./SECURITY-sent-way-label-20260816.md) | 보안·UX | 보낸 사진 갤러리·촬영 표시 |
+| [SECURITY-promo-log-template-20260816.md](./SECURITY-promo-log-template-20260816.md) | 보안·UX | 기본 템플릿 홍보기록 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -59,7 +60,7 @@
 | [../LICENSE](../LICENSE) | MIT (Copyright 2026 이형우) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | OSS·dual-license 검토 결론 |
 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) | OSS 목록 (앱 설정에서 열람) |
-| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~211) |
+| [../RESTORE.md](../RESTORE.md) | 기능별 되돌리기 (§1~212) |
 | [../BUILD-APK.md](../BUILD-APK.md) | Android APK 빌드 가이드 |
 
 ---

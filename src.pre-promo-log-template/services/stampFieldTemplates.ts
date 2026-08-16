@@ -384,26 +384,6 @@ export const STAMP_FIELD_TEMPLATES: StampFieldTemplate[] = [
       extra3: '조치 완료',
     },
   },
-  {
-    id: 'promo-log',
-    name: '홍보기록',
-    labels: {
-      titleFieldLabel: '홍보명',
-      placeFieldLabel: '장소',
-      memoFieldLabel: '홍보내용',
-      extra1FieldLabel: '채널',
-      extra2FieldLabel: '대상',
-      extra3FieldLabel: '단계',
-    },
-    placeholders: {
-      title: '여름방학 프로그램 안내',
-      place: '정문 게시판',
-      memo: '신청 기간·대상·문의처',
-      extra1: '홈페이지 / 밴드 / 현수막',
-      extra2: '학부모',
-      extra3: '게시',
-    },
-  },
 ];
 
 let activePlaceholders: FieldPlaceholders = { ...EMPTY_PLACEHOLDERS };

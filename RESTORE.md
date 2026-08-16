@@ -4178,3 +4178,9 @@ Restores pickStampImage, projectUploadQueue, ProjectCollectScreen, StampListScre
 restore-sent-way-label.bat
 
 Restores projectCollectSettings, projectUploadQueue, saveStamp, joinStampSend, ProjectSentList, StampSaveModal, StampListScreen + help from *.pre-sent-way-label/.
+
+## Promo log template restore (2026-08-16)
+
+restore-promo-log-template.bat
+
+Restores stampFieldTemplates.ts + help from *.pre-promo-log-template/.
