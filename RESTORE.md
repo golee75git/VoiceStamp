@@ -4148,3 +4148,9 @@ Restores ProjectCollectScreen, CameraScreen, projectUploadQueue, saveStamp, help
 restore-inbox-pick-mark.bat
 
 Restores ProjectCollectScreen + help from *.pre-inbox-pick-mark/.
+
+## Excel row fill bar restore (2026-08-16)
+
+restore-xlsx-row-fill.bat
+
+Restores exportXlsx, exportOnDemand, ProjectCollectScreen, StampListScreen + help from *.pre-xlsx-row-fill/.

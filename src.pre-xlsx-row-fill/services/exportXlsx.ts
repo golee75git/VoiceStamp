@@ -32,8 +32,6 @@ export type CreateStampsXlsxOptions = {
   previewWidthPx?: number;
   /** Cell font size in points (header stays bold). */
   fontSizePt?: number;
-  /** Called after each photo row so the screen can draw a fill bar. */
-  onRowFill?: (done: number, total: number) => void;
 };
 
 function resolvePreviewSize(previewWidthPx?: number): { width: number; height: number; rowHeight: number; colWidth: number } {
@@ -254,10 +252,6 @@ export async function createStampsXlsx(
       });
     } catch {
       sheet.getCell(rowIndex, 2).value = '(이미지 없음)';
-    }
-    if (options?.onRowFill) {
-      options.onRowFill(i + 1, stamps.length);
-      await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
   }
 

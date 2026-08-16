@@ -35,7 +35,6 @@ import {
   loadStampPdfExport,
   loadStampProjectExport,
   loadStampXlsxExport,
-  XLSX_ROW_FILL_MIN,
 } from '../services/exportOnDemand';
 import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabels';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
@@ -106,7 +105,6 @@ export function StampListScreen({
   const [imageBusy, setImageBusy] = useState(false);
   const [projectBusy, setProjectBusy] = useState(false);
   const [xlsxBusy, setXlsxBusy] = useState(false);
-  const [xlsxFill, setXlsxFill] = useState<{ current: number; total: number } | null>(null);
   const [hwpxBusy, setHwpxBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
@@ -630,17 +628,9 @@ export function StampListScreen({
     }
 
     setXlsxBusy(true);
-    const useFill = selected.length >= XLSX_ROW_FILL_MIN;
-    if (useFill) setXlsxFill({ current: 0, total: selected.length });
     try {
       const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
-      const result = await createStampsXlsx(selected, pdfFileName, {
-        onRowFill: useFill
-          ? (done, total) => {
-              setXlsxFill({ current: done, total });
-            }
-          : undefined,
-      });
+      const result = await createStampsXlsx(selected, pdfFileName);
       await shareStampsXlsx(result);
       Alert.alert(
         '엑셀 저장 완료',
@@ -654,7 +644,6 @@ export function StampListScreen({
         e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
       );
     } finally {
-      setXlsxFill(null);
       setXlsxBusy(false);
     }
   };
@@ -1467,28 +1456,6 @@ export function StampListScreen({
           load();
         }}
       />
-      {xlsxFill && xlsxFill.total >= XLSX_ROW_FILL_MIN ? (
-        <View style={styles.xlsxFillOverlay} pointerEvents="none">
-          <View style={styles.xlsxFillBox}>
-            <Text style={styles.xlsxFillText}>
-              {`엑셀 만드는 중 ${xlsxFill.current} / ${xlsxFill.total}`}
-            </Text>
-            <View style={styles.xlsxFillTrack}>
-              <View
-                style={[
-                  styles.xlsxFillInner,
-                  {
-                    width: `${Math.max(
-                      0,
-                      Math.min(100, Math.round((xlsxFill.current / xlsxFill.total) * 100)),
-                    )}%`,
-                  },
-                ]}
-              />
-            </View>
-          </View>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -2038,39 +2005,5 @@ const styles = StyleSheet.create({
   cardDate: {
     fontSize: 12,
     color: '#9ca3af',
-  },
-  xlsxFillOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: Platform.OS === 'android' ? 72 : 24,
-  },
-  xlsxFillBox: {
-    maxWidth: '84%',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    alignItems: 'center',
-  },
-  xlsxFillText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111',
-    textAlign: 'center',
-  },
-  xlsxFillTrack: {
-    marginTop: 8,
-    width: 220,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#e5e7eb',
-    overflow: 'hidden',
-  },
-  xlsxFillInner: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#2563eb',
   },
 });

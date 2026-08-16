@@ -84,7 +84,7 @@ import {
 } from '../services/projectCollectSettings';
 import { StampListThumb } from './StampListThumb';
 import { ProjectSentList } from './ProjectSentList';
-import { loadStampXlsxExport, XLSX_ROW_FILL_MIN } from '../services/exportOnDemand';
+import { loadStampXlsxExport } from '../services/exportOnDemand';
 import { resolveImageUri } from '../services/fileService';
 import {
   listImportedStampsForProject,
@@ -151,7 +151,6 @@ export function ProjectCollectScreen({
     total: number;
     title: string;
   } | null>(null);
-  const [xlsxFill, setXlsxFill] = useState<{ current: number; total: number } | null>(null);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
   const [joinHistory, setJoinHistory] = useState<JoinedProjectHistory[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
@@ -674,22 +673,11 @@ export function ProjectCollectScreen({
     const safeWidth = await setInboxExcelPreviewWidth(widthPx);
     const safeFont = await setInboxExcelFontSize(fontSize);
     const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
-    const useFill = stamps.length >= XLSX_ROW_FILL_MIN;
-    if (useFill) setXlsxFill({ current: 0, total: stamps.length });
-    try {
-      const result = await createStampsXlsx(stamps, fileBase, {
-        previewWidthPx: safeWidth,
-        fontSizePt: inboxExcelFontSizeToPt(safeFont),
-        onRowFill: useFill
-          ? (done, total) => {
-              setXlsxFill({ current: done, total });
-            }
-          : undefined,
-      });
-      await shareStampsXlsx(result);
-    } finally {
-      setXlsxFill(null);
-    }
+    const result = await createStampsXlsx(stamps, fileBase, {
+      previewWidthPx: safeWidth,
+      fontSizePt: inboxExcelFontSizeToPt(safeFont),
+    });
+    await shareStampsXlsx(result);
   };
 
   const openExcelPreviewWidthPrompt = async (stamps: Stamp[], fileBase: string) => {
@@ -1464,28 +1452,7 @@ export function ProjectCollectScreen({
               ) : null}
             </View>
           ) : null}
-          {xlsxFill && xlsxFill.total >= XLSX_ROW_FILL_MIN ? (
-            <View style={styles.importProgressBox}>
-              <Text style={styles.importProgressText}>
-                {`엑셀 만드는 중 ${xlsxFill.current} / ${xlsxFill.total}`}
-              </Text>
-              <View style={styles.xlsxFillTrack}>
-                <View
-                  style={[
-                    styles.xlsxFillInner,
-                    {
-                      width: `${Math.max(
-                        0,
-                        Math.min(100, Math.round((xlsxFill.current / xlsxFill.total) * 100)),
-                      )}%`,
-                    },
-                  ]}
-                />
-              </View>
-            </View>
-          ) : (
-            <ActivityIndicator size="large" color="#111" />
-          )}
+          <ActivityIndicator size="large" color="#111" />
         </View>
       ) : null}
       <Modal
@@ -1882,19 +1849,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#4b5563',
     textAlign: 'center',
-  },
-  xlsxFillTrack: {
-    marginTop: 8,
-    width: 220,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#e5e7eb',
-    overflow: 'hidden',
-  },
-  xlsxFillInner: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#111',
   },
   scanModalRoot: {
     flex: 1,

@@ -16,9 +16,6 @@ export function loadStampXlsxExport() {
   return import('./exportXlsx');
 }
 
-/** Fill bar instead of a spinner once this many photos go into the sheet. */
-export const XLSX_ROW_FILL_MIN = 5;
-
 export function loadStampHwpxExport() {
   return import('./exportHwpx');
 }
