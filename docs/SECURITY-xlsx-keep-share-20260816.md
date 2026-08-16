@@ -35,3 +35,7 @@
 
 ## 롤백
 `restore-xlsx-keep-share.bat`
+
+## 배포
+- APK: `VoiceStamp_20260816_154152.apk` (`6bee948`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_154152.apk

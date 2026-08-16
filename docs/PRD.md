@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-16 — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 · APK `150607` |
-| 최신 반영 커밋 | `8335301` — 권장 APK `150607` |
+| 문서 동기화 | 2026-08-16 — 엑셀 앱 폴더 저장 후 공유 · APK `154152` |
+| 최신 반영 커밋 | `6bee948` — 권장 APK `154152` |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -713,6 +713,7 @@
 | **2026-08-14** | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · 도움말 · APK `171058` · `restore-inbox-pick-mark.bat` | `e9f0bae` |
 | **2026-08-16** | 엑셀 **5장 이상 가로 막대** · 도움말 · APK `141835` · `restore-xlsx-row-fill.bat` | `d521763` |
 | **2026-08-16** | 엑셀 막대 **즉시 표시**·만든 사업 엑셀 제거 · 도움말 · APK `150607` · `restore-xlsx-fill-paint.bat` | `8335301` |
+| **2026-08-16** | 엑셀 **앱 폴더 저장 후 공유** · 도움말 · APK `154152` · `restore-xlsx-keep-share.bat` | `6bee948` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 
@@ -720,11 +721,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_150607.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_154152.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **설치·GitHub 권장** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
+| `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **설치·GitHub 권장** — 엑셀 앱 폴더 저장 후 공유 |
+| `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
 | `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **이전** — 엑셀 5장 이상 가로 막대 |
 | `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **이전** — 수신함 고름 표시·엑셀 미선택 안내 |
 | `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 (+08-10 누적) |

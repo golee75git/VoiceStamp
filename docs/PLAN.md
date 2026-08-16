@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.13 |
 | 작성일 | 2026-08-16 |
-| 기준 커밋 | `8335301` — 권장 APK `150607` · 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
+| 기준 커밋 | `6bee948` — 권장 APK `154152` · 엑셀 앱 폴더 저장 후 공유 |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -742,6 +742,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-14 | 4·3 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` · `restore-inbox-pick-mark.bat` |
 | 2026-08-16 | 4·3 | 엑셀 **5장 이상 가로 막대** · APK `141835` · `restore-xlsx-row-fill.bat` |
 | 2026-08-16 | 4·3 | 엑셀 막대 **즉시 표시**·만든 사업 엑셀 제거 · APK `150607` · `restore-xlsx-fill-paint.bat` |
+| 2026-08-16 | 4·3 | 엑셀 **앱 폴더 저장 후 공유** · APK `154152` · `restore-xlsx-keep-share.bat` |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -750,10 +751,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-16:** 권장 = `releases/VoiceStamp_20260816_150607.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-16:** 권장 = `releases/VoiceStamp_20260816_154152.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **설치·GitHub 권장** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
+| `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **설치·GitHub 권장** — 엑셀 앱 폴더 저장 후 공유 |
+| `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
 | `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **이전** — 엑셀 5장 이상 가로 막대 |
 | `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **이전** — 수신함 고름 표시·엑셀 안내 |
 | `releases/VoiceStamp_20260810_113846.apk` | `dda285a` | **이전** — 엑셀 800칩·글자 작음/보통/큼 |

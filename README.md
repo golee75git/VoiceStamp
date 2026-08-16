@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_150607.apk` (`8335301`) — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_154152.apk` (`6bee948`) — 엑셀 앱 폴더 저장 후 공유 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
