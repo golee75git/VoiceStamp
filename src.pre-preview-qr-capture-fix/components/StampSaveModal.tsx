@@ -8,7 +8,6 @@ import {
   Modal,
   Platform,
   Image,
-  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -255,8 +254,6 @@ type StampSaveModalProps = {
    * 앨범 사진 EXIF 좌표만 쓸 때 사용합니다. 기본 true.
    */
   allowLiveLocationFallback?: boolean;
-  /** 앱 내 미리보기에서 잠근 http(s) QR. 저장 칸 초안. */
-  capturedSourceUrl?: string | null;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -284,7 +281,6 @@ export function StampSaveModal({
   locationPrefetchLoading = false,
   locationPrefetchFinished = false,
   allowLiveLocationFallback = true,
-  capturedSourceUrl = null,
   onClose,
   onSaved,
   onTrashed,
@@ -774,17 +770,6 @@ export function StampSaveModal({
     setExtra2FieldLabel(labels.extra2FieldLabel);
     setExtra3FieldLabel(labels.extra3FieldLabel);
   }, [visible, isEdit, followUpParent?.id]);
-
-  useEffect(() => {
-    if (!visible || isEdit || followUpParent) {
-      return;
-    }
-    const draft = defaultSourceUrlDraft(capturedSourceUrl);
-    setSourceUrl(draft);
-    const draftPos = draft.length;
-    setSourceUrlSelection({ start: draftPos, end: draftPos });
-    sourceUrlSelectionRef.current = { start: draftPos, end: draftPos };
-  }, [visible, isEdit, followUpParent, capturedSourceUrl]);
 
   useEffect(() => {
     if (!slotSpeechOpen) {
@@ -1637,22 +1622,6 @@ export function StampSaveModal({
     }
   }, [sourceUrl, urlCheckBusy, saving]);
 
-  const handleOpenSourceUrl = useCallback(async () => {
-    if (saving) {
-      return;
-    }
-    const href = normalizeHttpUrl(sourceUrl);
-    if (!href) {
-      Alert.alert('열기', '열 수 있는 http(s) 주소가 아닙니다.');
-      return;
-    }
-    try {
-      await Linking.openURL(href);
-    } catch {
-      Alert.alert('열기', '이 주소를 열 수 없습니다.');
-    }
-  }, [saving, sourceUrl]);
-
   const handleSave = async () => {
     const photoUri = workingImageUri ?? imageUri;
     if (!photoUri || saving) {
@@ -2024,9 +1993,7 @@ export function StampSaveModal({
               </View>
             ) : null}
 
-            {qrCaptionEnabled ||
-            Boolean(capturedSourceUrl) ||
-            Boolean(normalizeHttpUrl(sourceUrl)) ? (
+            {qrCaptionEnabled ? (
               <View>
                 <VoiceInputField
                   label="QR URL"
@@ -2062,15 +2029,6 @@ export function StampSaveModal({
                     ) : (
                       <Text style={styles.ocrFillBtnText}>연결확인</Text>
                     )}
-                  </Pressable>
-                  <Pressable
-                    style={[styles.ocrFillBtn, saving ? { opacity: 0.5 } : null]}
-                    onPress={() => void handleOpenSourceUrl()}
-                    disabled={saving}
-                    accessibilityRole="button"
-                    accessibilityLabel="주소 열기"
-                  >
-                    <Text style={styles.ocrFillBtnText}>열기</Text>
                   </Pressable>
                 </View>
               </View>

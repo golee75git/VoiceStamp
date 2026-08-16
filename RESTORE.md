@@ -4190,3 +4190,9 @@ Restores stampFieldTemplates.ts + help from *.pre-promo-log-template/.
 restore-preview-qr-open.bat
 
 Restores InAppCameraPreview, CameraScreen + help from *.pre-preview-qr-open/.
+
+## Preview QR capture fix restore (2026-08-16)
+
+restore-preview-qr-capture-fix.bat
+
+Restores CameraScreen, StampSaveModal, quickCaptureSave, InAppCameraPreview + help from *.pre-preview-qr-capture-fix/.

@@ -48,6 +48,7 @@
 | [SECURITY-sent-way-label-20260816.md](./SECURITY-sent-way-label-20260816.md) | 보안·UX | 보낸 사진 갤러리·촬영 표시 |
 | [SECURITY-promo-log-template-20260816.md](./SECURITY-promo-log-template-20260816.md) | 보안·UX | 기본 템플릿 홍보기록 |
 | [SECURITY-preview-qr-open-20260816.md](./SECURITY-preview-qr-open-20260816.md) | 보안·UX | 앱 내 미리보기 http(s) QR 열기 |
+| [SECURITY-preview-qr-capture-fix-20260816.md](./SECURITY-preview-qr-capture-fix-20260816.md) | 보안·UX | 미리보기 QR 열기 중에도 셔터 촬영 유지 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

@@ -33,8 +33,6 @@ type QuickCaptureSaveInput = {
   captureForExport?: CaptureStampForExport;
   /** 연속 촬영 2장째부터 직전 저장 위치·장소를 그대로 씁니다. */
   reuseLocation?: QuickCaptureLocation;
-  /** 미리보기에서 잠근 http(s) QR. 없으면 비움. */
-  sourceUrl?: string | null;
 };
 
 async function resolveQuickCaptureLocation(reuseLocation?: QuickCaptureLocation): Promise<{
@@ -139,7 +137,6 @@ export async function saveQuickCapture(
     longitude,
     floor,
     placeLabel: placeLabel ?? null,
-    sourceUrl: input.sourceUrl?.trim() || null,
     captureForExport: input.captureForExport,
   });
 

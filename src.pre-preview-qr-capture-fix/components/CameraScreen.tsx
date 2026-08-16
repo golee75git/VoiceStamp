@@ -115,10 +115,6 @@ export function CameraScreen({
   const previewRef = useRef<InAppCameraPreviewHandle>(null);
   const [zoomPreset, setZoomPreset] = useState<ZoomPreset | null>(1);
   const [previewOpenHref, setPreviewOpenHref] = useState<string | null>(null);
-  const [hrefLocked, setHrefLocked] = useState(false);
-  const [saveSeedSourceUrl, setSaveSeedSourceUrl] = useState<string | null>(null);
-  const previewHrefRef = useRef<string | null>(null);
-  const lensReadyWaiterRef = useRef<(() => void) | null>(null);
   const reuseLocationRef = useRef<QuickCaptureLocation | null>(null);
   const prefetchedLocationRef = useRef<LocationSnapshot | null>(null);
   const locationPrefetchRunningRef = useRef(false);
@@ -312,8 +308,7 @@ export function CameraScreen({
     return () => sub.remove();
   }, [isWeb]);
 
-  const openSaveModal = useCallback((uri: string, seedSourceUrl?: string | null) => {
-    setSaveSeedSourceUrl(seedSourceUrl ?? null);
+  const openSaveModal = useCallback((uri: string) => {
     setCapturedUri(uri);
     setModalVisible(true);
   }, []);
@@ -340,15 +335,14 @@ export function CameraScreen({
   }, []);
 
   const handleCapturedUri = useCallback(
-    async (uri: string, seedSourceUrl?: string | null) => {
+    async (uri: string) => {
       setCameraBusy(true);
       setBusyHint('처리 중…');
-      setSaveSeedSourceUrl(seedSourceUrl ?? null);
       try {
         const mode = await getCaptureAfterMode();
         if (mode === 'save_modal') {
           startLocationPrefetch(uri);
-          openSaveModal(uri, seedSourceUrl);
+          openSaveModal(uri);
           return;
         }
         showCaptureActionSheet(uri);
@@ -424,8 +418,6 @@ export function CameraScreen({
     setInAppPictureSize(undefined);
     setInAppCapturing(false);
     setPreviewOpenHref(null);
-    setHrefLocked(false);
-    previewHrefRef.current = null;
     reuseLocationRef.current = null;
     setAutoLaunch(false);
   }, []);
@@ -460,16 +452,11 @@ export function CameraScreen({
 
   const handleInAppCameraReady = useCallback(async () => {
     setInAppCameraReady(true);
-    const waiter = lensReadyWaiterRef.current;
-    if (waiter) {
-      lensReadyWaiterRef.current = null;
-      waiter();
-    }
     try {
       const sizes = await cameraRef.current?.getAvailablePictureSizesAsync();
       const preferred = sizes?.length ? pickPreferredStampPictureSize(sizes) : undefined;
       if (preferred) {
-        setInAppPictureSize((prev) => prev || preferred);
+        setInAppPictureSize(preferred);
       }
     } catch {
       // Keep default picture size when sizes are unavailable.
@@ -484,8 +471,6 @@ export function CameraScreen({
     setInAppPictureSize(undefined);
     setZoomPreset(1);
     setPreviewOpenHref(null);
-    setHrefLocked(false);
-    previewHrefRef.current = null;
     setCameraFacing((prev) => (prev === 'back' ? 'front' : 'back'));
   }, [cameraBusy, inAppCapturing]);
 
@@ -494,9 +479,7 @@ export function CameraScreen({
     if (!href) {
       return;
     }
-    previewHrefRef.current = href;
     setPreviewOpenHref((prev) => (prev === href ? prev : href));
-    setHrefLocked(true);
   }, []);
 
   const openPreviewHref = useCallback(async () => {
@@ -510,43 +493,16 @@ export function CameraScreen({
     }
   }, [previewOpenHref]);
 
-  const waitLensReadyAfterUnbind = useCallback(() => {
-    return new Promise<void>((resolve) => {
-      let done = false;
-      const finish = () => {
-        if (done) {
-          return;
-        }
-        done = true;
-        if (lensReadyWaiterRef.current === finish) {
-          lensReadyWaiterRef.current = null;
-        }
-        resolve();
-      };
-      lensReadyWaiterRef.current = finish;
-      setTimeout(finish, 200);
-    });
-  }, []);
-
   const handleInAppShutter = useCallback(async () => {
     if (!cameraRef.current || inAppCapturing || !inAppCameraReady || cameraBusy || !inAppCameraMode) {
       return;
     }
-
-    const seedHref = previewOpenHref ?? previewHrefRef.current ?? null;
-    const needUnbind = !hrefLocked;
-    previewHrefRef.current = seedHref;
-    setHrefLocked(true);
-    setPreviewOpenHref(null);
 
     setInAppCapturing(true);
     setCameraBusy(true);
     setBusyHint(inAppCameraMode === 'continuous' ? '저장 중…' : '처리 중…');
     startLocationWarmup();
     try {
-      if (needUnbind) {
-        await waitLensReadyAfterUnbind();
-      }
       const shutterSound = await getShutterSoundEnabled();
       const photo = await cameraRef.current.takePictureAsync({
         quality: STAMP_CAPTURE_JPEG_QUALITY,
@@ -554,17 +510,14 @@ export function CameraScreen({
         shutterSound,
       });
       if (!photo?.uri) {
-        if (seedHref) {
-          setPreviewOpenHref(seedHref);
-        }
         return;
       }
 
       if (inAppCameraMode === 'single') {
         setInAppCameraMode(null);
         setInAppCameraReady(false);
-        previewHrefRef.current = null;
-        await handleCapturedUri(photo.uri, seedHref);
+        setPreviewOpenHref(null);
+        await handleCapturedUri(photo.uri);
         return;
       }
 
@@ -572,17 +525,12 @@ export function CameraScreen({
         tempImageUri: photo.uri,
         captureForExport: captureStampForExport,
         reuseLocation: reuseLocationRef.current ?? undefined,
-        sourceUrl: seedHref || undefined,
       });
-      previewHrefRef.current = null;
       if (savedLocation) {
         reuseLocationRef.current = savedLocation;
       }
       onSaved();
     } catch (error) {
-      if (seedHref) {
-        setPreviewOpenHref(seedHref);
-      }
       handleCameraError(error);
     } finally {
       setInAppCapturing(false);
@@ -594,14 +542,11 @@ export function CameraScreen({
     captureStampForExport,
     handleCameraError,
     handleCapturedUri,
-    hrefLocked,
     inAppCameraMode,
     inAppCameraReady,
     inAppCapturing,
     onSaved,
-    previewOpenHref,
     startLocationWarmup,
-    waitLensReadyAfterUnbind,
   ]);
 
   const openSystemCamera = useCallback(async () => {
@@ -692,12 +637,11 @@ export function CameraScreen({
 
   const handleActionSave = useCallback(() => {
     const uri = pendingCaptureUri;
-    const seed = saveSeedSourceUrl;
     clearCaptureActionSheet();
     if (uri) {
-      openSaveModal(uri, seed);
+      openSaveModal(uri);
     }
-  }, [clearCaptureActionSheet, openSaveModal, pendingCaptureUri, saveSeedSourceUrl]);
+  }, [clearCaptureActionSheet, openSaveModal, pendingCaptureUri]);
 
   const handleActionContinuous = useCallback(() => {
     const uri = pendingCaptureUri;
@@ -828,7 +772,7 @@ export function CameraScreen({
           facing={cameraFacing}
           pictureSize={inAppPictureSize}
           style={styles.inAppCamera}
-          httpQrListen={inAppCameraReady && !hrefLocked && !inAppCapturing && !cameraBusy}
+          httpQrListen={inAppCameraReady && !inAppCapturing && !cameraBusy}
           onPreviewHttpQr={handlePreviewHttpQr}
           onCameraReady={() => void handleInAppCameraReady()}
           onZoomChange={(_zoom, preset) => setZoomPreset(preset)}
@@ -859,7 +803,7 @@ export function CameraScreen({
           </Pressable>
         </View>
 
-        <View style={styles.inAppBottomBar} pointerEvents="box-none">
+        <View style={styles.inAppBottomBar}>
           <View style={styles.zoomPresetRow} accessibilityRole="adjustable" accessibilityLabel="배율">
             {(Object.keys(ZOOM_PRESET_VALUES).map(Number) as ZoomPreset[]).map((preset) => {
               const selected = zoomPreset === preset;
@@ -912,7 +856,7 @@ export function CameraScreen({
 
         {previewOpenHref ? (
           <View style={styles.previewHrefBar} pointerEvents="box-none">
-            <Text style={styles.previewHrefText} numberOfLines={1} pointerEvents="none">
+            <Text style={styles.previewHrefText} numberOfLines={1}>
               {previewOpenHref}
             </Text>
             <Pressable
@@ -1088,11 +1032,9 @@ export function CameraScreen({
         prefetchedLocationSnapshot={prefetchedLocation}
         locationPrefetchLoading={locationPrefetchLoading}
         locationPrefetchFinished={locationPrefetchFinished}
-        capturedSourceUrl={saveSeedSourceUrl}
         onClose={() => {
           setModalVisible(false);
           setCapturedUri(null);
-          setSaveSeedSourceUrl(null);
           cancelLocationPrefetch();
           savedAndClosingRef.current = false;
           setAutoLaunch(false);
@@ -1337,7 +1279,6 @@ const styles = StyleSheet.create({
     bottom: 36,
     left: 0,
     right: 0,
-    zIndex: 20,
     alignItems: 'center',
     gap: 14,
   },
