@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-16** — 앱 내 미리보기 QR 열기 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `190729`)
-최신 기능 커밋 기준: `5f9e722` / APK `190729`
+문서 동기화: **2026-08-16** — 미리보기 QR 열기 중에도 셔터 촬영 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `202344`)
+최신 기능 커밋 기준: `5ca954e` / APK `202344`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -673,7 +673,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260816_190729.apk` | `5f9e722` | **권장** — 앱 내 미리보기 QR 열기 · `restore-preview-qr-open.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260816_202344.apk` | `5ca954e` | **권장** — 미리보기 QR 열기 중에도 셔터 촬영 · `restore-preview-qr-capture-fix.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260816_190729.apk` | `5f9e722` | **이전** — 앱 내 미리보기 QR 열기 · `restore-preview-qr-open.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_181459.apk` | `3f157ef` | **이전** — 기본 템플릿 홍보기록 · `restore-promo-log-template.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **이전** — 보낸 사진 갤러리·촬영 표시 · `restore-sent-way-label.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **이전** — 참여 사업 갤러리·목록 보내기 · `restore-join-album-send.bat` | **GitHub `releases/`** |

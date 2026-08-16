@@ -51,4 +51,5 @@
 이전 기능(미리보기 QR 열기 자체)을 없애려면 `restore-preview-qr-open.bat`를 쓴다. 이 수정만 되돌릴 때는 본 BAT를 쓴다.
 
 ## 배포
-- APK·커밋은 빌드 후 CHANGELOG에 기록.
+- APK: `VoiceStamp_20260816_202344.apk` (`5ca954e`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_202344.apk

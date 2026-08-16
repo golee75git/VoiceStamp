@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_190729.apk` (`5f9e722`) — 앱 내 미리보기 QR 열기 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_202344.apk` (`5ca954e`) — 미리보기 QR 열기 중에도 셔터 촬영 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
