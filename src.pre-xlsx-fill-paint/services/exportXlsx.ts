@@ -36,17 +36,6 @@ export type CreateStampsXlsxOptions = {
   onRowFill?: (done: number, total: number) => void;
 };
 
-/** Let RN paint the fill bar before the next photo row. */
-function yieldXlsxRowPaint(): Promise<void> {
-  return new Promise((resolve) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setTimeout(resolve, 0);
-      });
-    });
-  });
-}
-
 function resolvePreviewSize(previewWidthPx?: number): { width: number; height: number; rowHeight: number; colWidth: number } {
   const raw =
     typeof previewWidthPx === 'number' && Number.isFinite(previewWidthPx)
@@ -268,7 +257,7 @@ export async function createStampsXlsx(
     }
     if (options?.onRowFill) {
       options.onRowFill(i + 1, stamps.length);
-      await yieldXlsxRowPaint();
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
     }
   }
 

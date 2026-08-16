@@ -714,9 +714,6 @@ export function ProjectCollectScreen({
     setExcelPxVisible(false);
     setExcelPxPending(null);
     setBusy(true);
-    if (pending.stamps.length >= XLSX_ROW_FILL_MIN) {
-      setXlsxFill({ current: 0, total: pending.stamps.length });
-    }
     void (async () => {
       try {
         await runExcelExportWithWidth(pending.stamps, pending.fileBase, widthPx, fontSize);
@@ -756,6 +753,37 @@ export function ProjectCollectScreen({
       await openExcelPreviewWidthPrompt(stamps, base);
     } catch (e) {
       Alert.alert('엑셀', e instanceof Error ? e.message : '실패');
+    }
+  };
+
+  const handleExcelCollected = async (project: OwnedProject) => {
+    setActive(project);
+    setBusy(true);
+    try {
+      const folder = buildImportGroupName(project.name, folderMode);
+      const all = await listStamps();
+      const matched = all.filter(
+        (s) =>
+          s.imagePath.includes('/' + folder + '/') ||
+          s.imagePath.includes('\\' + folder + '\\'),
+      );
+      // Also match by group folder segment
+      const stamps = matched.length
+        ? matched
+        : all.filter((s) =>
+            s.imagePath.split('/').some((seg) => seg.includes(sanitizeLoose(project.name))),
+          );
+      if (stamps.length === 0) {
+        Alert.alert('취합 엑셀', '아직 내 폰에 가져온 사진이 없습니다.');
+        return;
+      }
+      const base = sanitizeLoose(project.name) + '_취합_' + formatYmd(Date.now());
+      setBusy(false);
+      await openExcelPreviewWidthPrompt(stamps, base);
+    } catch (e) {
+      Alert.alert('취합 엑셀', e instanceof Error ? e.message : '실패');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -980,6 +1008,13 @@ export function ProjectCollectScreen({
                   disabled={busy}
                 >
                   <Text style={styles.ownedActionText}>수신</Text>
+                </Pressable>
+                <Pressable
+                  style={collectPressStyle(styles.ownedAction)}
+                  onPress={() => void handleExcelCollected(project)}
+                  disabled={busy}
+                >
+                  <Text style={styles.ownedActionText}>엑셀</Text>
                 </Pressable>
                 {!closed ? (
                   <Pressable
@@ -1439,13 +1474,10 @@ export function ProjectCollectScreen({
                   style={[
                     styles.xlsxFillInner,
                     {
-                      width: Math.max(
+                      width: `${Math.max(
                         0,
-                        Math.min(
-                          220,
-                          Math.round((xlsxFill.current / xlsxFill.total) * 220),
-                        ),
-                      ),
+                        Math.min(100, Math.round((xlsxFill.current / xlsxFill.total) * 100)),
+                      )}%`,
                     },
                   ]}
                 />

@@ -4154,3 +4154,9 @@ Restores ProjectCollectScreen + help from *.pre-inbox-pick-mark/.
 restore-xlsx-row-fill.bat
 
 Restores exportXlsx, exportOnDemand, ProjectCollectScreen, StampListScreen + help from *.pre-xlsx-row-fill/.
+
+## Excel fill bar paint + hub Excel remove (2026-08-16)
+
+restore-xlsx-fill-paint.bat
+
+Restores exportXlsx, ProjectCollectScreen + help from *.pre-xlsx-fill-paint/.
