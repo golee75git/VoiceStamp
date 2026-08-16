@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_141835.apk` (`d521763`) — 엑셀 5장 이상 가로 막대 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_150607.apk` (`8335301`) — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

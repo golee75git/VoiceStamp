@@ -37,3 +37,7 @@
 
 ## 롤백
 `restore-xlsx-fill-paint.bat`
+
+## 배포
+- APK: `VoiceStamp_20260816_150607.apk` (`8335301`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_150607.apk
