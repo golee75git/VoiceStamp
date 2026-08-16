@@ -152,10 +152,6 @@ export function ProjectCollectScreen({
     title: string;
   } | null>(null);
   const [xlsxFill, setXlsxFill] = useState<{ current: number; total: number } | null>(null);
-  const [albumSendProgress, setAlbumSendProgress] = useState<{
-    current: number;
-    total: number;
-  } | null>(null);
   const [owned, setOwned] = useState<OwnedProject[]>([]);
   const [joinHistory, setJoinHistory] = useState<JoinedProjectHistory[]>([]);
   const [join, setJoin] = useState<ProjectJoinState>(null);
@@ -799,82 +795,6 @@ export function ProjectCollectScreen({
     apply();
   };
 
-  const handleAlbumSend = (item: JoinedProjectHistory) => {
-    if (Platform.OS === 'web') {
-      Alert.alert('갤러리 보내기', 'Android 앱에서만 올릴 수 있습니다.');
-      return;
-    }
-    void (async () => {
-      try {
-        const { pickImagesFromLibrary } = await import('../services/pickStampImage');
-        const picked = await pickImagesFromLibrary();
-        if (!picked.length) {
-          return;
-        }
-        const { isProjectUploadQueueIdle, queueStampsToCurrentJoin } = await import(
-          '../services/projectUploadQueue'
-        );
-        const current = await getProjectJoin();
-        if (current && current.projectId !== item.projectId && !isProjectUploadQueueIdle()) {
-          Alert.alert('갤러리 보내기', '아직 올리는 중이니 잠시 후 다시 시도해 주세요.');
-          return;
-        }
-        const runSave = async () => {
-          setBusy(true);
-          setAlbumSendProgress({ current: 1, total: picked.length });
-          try {
-            const { connectJoinForSend, savePickedAlbumStamp, yieldAlbumSendPaint } = await import(
-              '../services/joinStampSend'
-            );
-            await connectJoinForSend(item);
-            if (item.mark) setJoinMarkText(item.mark);
-            const savedIds: string[] = [];
-            let fail = 0;
-            for (let i = 0; i < picked.length; i += 1) {
-              setAlbumSendProgress({ current: i + 1, total: picked.length });
-              await yieldAlbumSendPaint();
-              try {
-                const stamp = await savePickedAlbumStamp(picked[i], item.name);
-                savedIds.push(stamp.id);
-              } catch {
-                fail += 1;
-              }
-            }
-            if (savedIds.length) {
-              await queueStampsToCurrentJoin(savedIds);
-            }
-            await reload();
-            onImported?.();
-            const failPart = fail ? ` ${fail}장은 저장하지 못했습니다.` : '';
-            Alert.alert(
-              '갤러리 보내기',
-              `${savedIds.length}장을 「${item.name}」으로 올리는 중입니다.${failPart}`,
-            );
-          } catch (e) {
-            Alert.alert('갤러리 보내기', e instanceof Error ? e.message : '실패');
-          } finally {
-            setAlbumSendProgress(null);
-            setBusy(false);
-          }
-        };
-        if (current && current.projectId !== item.projectId) {
-          Alert.alert(
-            '사업 연결',
-            '지금 ' + current.name + '에 연결되어 있습니다. ' + item.name + '로 바꿀까요?',
-            [
-              { text: '유지', style: 'cancel' },
-              { text: '바꾸기', onPress: () => void runSave() },
-            ],
-          );
-          return;
-        }
-        await runSave();
-      } catch (e) {
-        Alert.alert('갤러리 보내기', e instanceof Error ? e.message : '실패');
-      }
-    })();
-  };
-
   const handleRemoveJoinHistory = (item: JoinedProjectHistory) => {
     Alert.alert(
       '이력에서 제거',
@@ -1001,13 +921,6 @@ export function ProjectCollectScreen({
                   }}
                 >
                   <Text style={styles.ownedActionText}>보낸 사진</Text>
-                </Pressable>
-                <Pressable
-                  style={collectPressStyle(styles.ownedAction)}
-                  onPress={() => handleAlbumSend(item)}
-                  disabled={busy}
-                >
-                  <Text style={styles.ownedActionText}>갤러리 보내기</Text>
                 </Pressable>
                 {!active ? (
                   <Pressable
@@ -1504,13 +1417,6 @@ export function ProjectCollectScreen({
       ) : null}
       {busy ? (
         <View style={styles.overlay} pointerEvents="none">
-          {albumSendProgress ? (
-            <View style={styles.importProgressBox}>
-              <Text style={styles.importProgressText}>
-                {`보내는 중 ${albumSendProgress.current} / ${albumSendProgress.total}`}
-              </Text>
-            </View>
-          ) : null}
           {importProgress ? (
             <View style={styles.importProgressBox}>
               <Text style={styles.importProgressText}>
@@ -1545,7 +1451,7 @@ export function ProjectCollectScreen({
                 />
               </View>
             </View>
-          ) : albumSendProgress ? null : (
+          ) : (
             <ActivityIndicator size="large" color="#111" />
           )}
         </View>

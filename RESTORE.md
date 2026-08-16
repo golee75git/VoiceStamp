@@ -4166,3 +4166,9 @@ Restores exportXlsx, ProjectCollectScreen + help from *.pre-xlsx-fill-paint/.
 restore-xlsx-keep-share.bat
 
 Restores exportXlsx, StampListScreen + help from *.pre-xlsx-keep-share/.
+
+## Join album send restore (2026-08-16)
+
+restore-join-album-send.bat
+
+Restores pickStampImage, projectUploadQueue, ProjectCollectScreen, StampListScreen + help from *.pre-join-album-send/; removes joinStampSend.ts.

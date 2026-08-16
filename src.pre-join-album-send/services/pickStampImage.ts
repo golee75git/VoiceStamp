@@ -9,9 +9,6 @@ const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   exif: true,
 };
 
-/** Cap for 갤러리 보내기 so one pick does not load hundreds of assets. */
-export const ALBUM_SEND_PICK_MAX = 20;
-
 export type PickedStampImage = {
   uri: string;
   latitude: number | null;
@@ -110,36 +107,6 @@ export async function pickImageFromLibrary(): Promise<PickedStampImage | null> {
     latitude: gps?.latitude ?? null,
     longitude: gps?.longitude ?? null,
   };
-}
-
-export async function pickImagesFromLibrary(): Promise<PickedStampImage[]> {
-  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (!permission.granted) {
-    throw new Error('앨범 접근 권한이 필요합니다.');
-  }
-
-  const result = await ImagePicker.launchImageLibraryAsync({
-    ...PICKER_OPTIONS,
-    allowsMultipleSelection: true,
-    selectionLimit: ALBUM_SEND_PICK_MAX,
-  });
-  if (result.canceled || !result.assets?.length) {
-    return [];
-  }
-
-  const out: PickedStampImage[] = [];
-  for (const asset of result.assets) {
-    if (!asset.uri || out.length >= ALBUM_SEND_PICK_MAX) {
-      continue;
-    }
-    const gps = readGpsFromExif(asset.exif as Record<string, unknown> | null | undefined);
-    out.push({
-      uri: asset.uri,
-      latitude: gps?.latitude ?? null,
-      longitude: gps?.longitude ?? null,
-    });
-  }
-  return out;
 }
 
 export async function takePhotoWithSystemCamera(): Promise<string | null> {

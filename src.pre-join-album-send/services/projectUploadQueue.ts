@@ -27,24 +27,6 @@ export function enqueueProjectUpload(stampId: string): void {
   void drainProjectUploadQueue();
 }
 
-export function isProjectUploadQueueIdle(): boolean {
-  return !draining && queue.length === 0;
-}
-
-/** Queue existing stamps to the current join even when auto-upload is off. */
-export async function queueStampsToCurrentJoin(stampIds: string[]): Promise<void> {
-  if (Platform.OS === 'web') return;
-  const enabled = await getProjectCollectEnabled();
-  if (!enabled) return;
-  const join = await getProjectJoin();
-  if (!join) return;
-  for (const stampId of stampIds) {
-    if (!stampId) continue;
-    await setUploadStatus(stampId, 'pending', join.projectId);
-    enqueueProjectUpload(stampId);
-  }
-}
-
 export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void> {
   try {
     if (Platform.OS === 'web') return;
