@@ -41,3 +41,7 @@
 
 ## 롤백
 `restore-promo-log-template.bat`
+
+## 배포
+- APK: `VoiceStamp_20260816_181459.apk` (`3f157ef`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_181459.apk

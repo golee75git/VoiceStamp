@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_171905.apk` (`cd575ce`) — 보낸 사진 갤러리·촬영 표시 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_181459.apk` (`3f157ef`) — 기본 템플릿 홍보기록 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

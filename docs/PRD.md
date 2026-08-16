@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-16 — 보낸 사진 갤러리·촬영 표시 · APK `171905` |
-| 최신 반영 커밋 | `cd575ce` — 권장 APK `171905` |
+| 문서 동기화 | 2026-08-16 — 기본 템플릿 홍보기록 · APK `181459` |
+| 최신 반영 커밋 | `3f157ef` — 권장 APK `181459` |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -716,6 +716,7 @@
 | **2026-08-16** | 엑셀 **앱 폴더 저장 후 공유** · 도움말 · APK `154152` · `restore-xlsx-keep-share.bat` | `6bee948` |
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
+| **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
 
 상세 커밋·되돌리기: [PROJECT.md](./PROJECT.md) §4·§12. **APK별 변경:** [PROJECT.md](./PROJECT.md) §7.4 · [CHANGELOG.md](./CHANGELOG.md).
 
@@ -723,11 +724,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_171905.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_181459.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **설치·GitHub 권장** — 보낸 사진 갤러리·촬영 표시 |
+| `releases/VoiceStamp_20260816_181459.apk` | `3f157ef` | **설치·GitHub 권장** — 기본 템플릿 홍보기록 |
+| `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **이전** — 보낸 사진 갤러리·촬영 표시 |
 | `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **이전** — 참여 사업 갤러리·목록 보내기 |
 | `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **이전** — 엑셀 앱 폴더 저장 후 공유 |
 | `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |

@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.13 |
 | 작성일 | 2026-08-16 |
-| 기준 커밋 | `cd575ce` — 권장 APK `171905` · 보낸 사진 갤러리·촬영 표시 |
+| 기준 커밋 | `3f157ef` — 권장 APK `181459` · 기본 템플릿 홍보기록 |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -745,6 +745,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 엑셀 **앱 폴더 저장 후 공유** · APK `154152` · `restore-xlsx-keep-share.bat` |
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
+| 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-03 | 2AW·3 | **F-Voice-11** 항목 말하기 유형·말하기 예 · APK `151943` · `restore-slot-speech-type-hint.bat` |
 | 2026-08-03 | 2AX·3 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 · APK `161016` · `restore-item-speak-label.bat` |
 | 2026-08-03 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG 동기화 (**소스 없음**) |
@@ -753,10 +754,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-16:** 권장 = `releases/VoiceStamp_20260816_171905.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-16:** 권장 = `releases/VoiceStamp_20260816_181459.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **설치·GitHub 권장** — 보낸 사진 갤러리·촬영 표시 |
+| `releases/VoiceStamp_20260816_181459.apk` | `3f157ef` | **설치·GitHub 권장** — 기본 템플릿 홍보기록 |
+| `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **이전** — 보낸 사진 갤러리·촬영 표시 |
 | `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **이전** — 참여 사업 갤러리·목록 보내기 |
 | `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **이전** — 엑셀 앱 폴더 저장 후 공유 |
 | `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
