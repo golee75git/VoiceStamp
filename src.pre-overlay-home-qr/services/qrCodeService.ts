@@ -173,19 +173,3 @@ export async function renderSourceUrlQrPngUri(
   const uri = dest.startsWith('file://') ? dest : `file://${dest}`;
   return { uri, size };
 }
-
-/** PNG data URI for PDF HTML. Same payload rules as renderSourceUrlQrPngUri. */
-export async function renderSourceUrlQrDataUri(
-  rawUrl: string,
-  pixelSize: number = 192,
-): Promise<{ dataUri: string; size: number } | null> {
-  const url = normalizeHttpUrl(rawUrl);
-  if (!url || url.length > SOURCE_URL_MAX_LEN) {
-    return null;
-  }
-  const built = buildQrPngBase64(url, pixelSize);
-  if (!built) {
-    return null;
-  }
-  return { dataUri: `data:image/png;base64,${built.base64}`, size: built.size };
-}

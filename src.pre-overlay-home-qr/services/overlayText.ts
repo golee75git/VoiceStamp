@@ -10,8 +10,6 @@ export const DEFAULT_OVERLAY_FOOTER_PHRASE = '';
 export const DEFAULT_OVERLAY_SHOW_ORG_NAME = true;
 export const DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE = true;
 export const DEFAULT_OVERLAY_SHOW_MARK = true;
-export const DEFAULT_OVERLAY_HOME_URL = '';
-export const DEFAULT_OVERLAY_SHOW_HOME_QR = false;
 
 export const OVERLAY_ORG_MAX_LENGTH = 80;
 export const OVERLAY_PHRASE_MAX_LENGTH = 120;

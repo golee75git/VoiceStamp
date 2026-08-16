@@ -21,7 +21,7 @@ import { stampTextSizeScale } from './settingsService';
 import { getOverlayShowMark } from './settingsService';
 import type { Stamp } from '../types/stamp';
 import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
-import { resolveComposeQrUrl } from './overlayHomeQr';
+import { normalizeHttpUrl } from './qrUrlExtractService';
 import {
   OVERLAY_MARK_MAX_EDGE,
   overlayMarkDrawSize,
@@ -177,10 +177,10 @@ export async function renderStampCaptionNative(
     },
   ];
 
-  const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
-  if (qrUrl) {
+  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
+  if (safeSourceUrl) {
     const qrTarget = qrPixelSizeForPhoto(Math.min(imgWidth, imgHeight));
-    const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
+    const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
     if (qr) {
       const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));
       overlayImages.push({

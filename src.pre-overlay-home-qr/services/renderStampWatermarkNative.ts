@@ -16,7 +16,7 @@ import { getWatermarkTheme } from './watermarkStyle';
 import { stampTextSizeScale, type TextAlign } from './settingsService';
 import { getOverlayShowMark } from './settingsService';
 import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
-import { resolveComposeQrUrl } from './overlayHomeQr';
+import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp } from '../types/stamp';
 import {
   OVERLAY_MARK_MAX_EDGE,
@@ -158,10 +158,10 @@ export async function renderStampWatermarkNative(
     });
   }
 
-  const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
-  if (qrUrl) {
+  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
+  if (safeSourceUrl) {
     const qrTarget = qrPixelSizeForPhoto(Math.min(prepared.width, prepared.height));
-    const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
+    const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
     if (qr) {
       const qrMargin = Math.max(8, Math.round(prepared.width * 0.02));
       const barHeight = estimateWatermarkBarHeight(overlayLines.length, titleSize, paddingY);

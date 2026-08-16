@@ -4202,3 +4202,9 @@ Restores CameraScreen, StampSaveModal, quickCaptureSave, InAppCameraPreview + he
 restore-overlay-mark.bat
 
 Restores settingsService, overlayText, renderStampCaptionNative, renderStampWatermarkNative, SettingsScreen + help from *.pre-overlay-mark/. Deletes src/services/overlayMark.ts.
+
+## Overlay home QR restore (2026-08-17)
+
+restore-overlay-home-qr.bat
+
+Restores settingsService, overlayText, qrCodeService, caption/watermark native, exportPdf, exportStampImage, SettingsScreen + help from *.pre-overlay-home-qr/. Deletes src/services/overlayHomeQr.ts.

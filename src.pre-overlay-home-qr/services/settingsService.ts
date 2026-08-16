@@ -17,10 +17,8 @@ import { sanitizeStampFloor } from './stampFloor';
 import type { StampFloor } from '../types/stamp';
 import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_HOME_URL,
   DEFAULT_OVERLAY_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_HOME_QR,
   DEFAULT_OVERLAY_SHOW_MARK,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   OVERLAY_ORG_MAX_LENGTH,
@@ -28,7 +26,6 @@ import {
   sanitizeOverlayShowFlag,
   sanitizeOverlayText,
 } from './overlayText';
-import { normalizeHttpUrl } from './qrUrlExtractService';
 import {
   DEFAULT_FIELD_EXTRA1_LABEL,
   DEFAULT_FIELD_EXTRA2_LABEL,
@@ -77,8 +74,6 @@ const OVERLAY_FOOTER_PHRASE_KEY = 'overlay_footer_phrase';
 const OVERLAY_SHOW_ORG_NAME_KEY = 'overlay_show_org_name';
 const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
 const OVERLAY_SHOW_MARK_KEY = 'overlay_show_mark';
-const OVERLAY_HOME_URL_KEY = 'overlay_home_url';
-const OVERLAY_SHOW_HOME_QR_KEY = 'overlay_show_home_qr';
 const FIELD_LABEL_TITLE_KEY = 'field_label_title';
 const FIELD_LABEL_PLACE_KEY = 'field_label_place';
 const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
@@ -136,10 +131,8 @@ export const DEFAULT_MLKIT_SCENE_LABEL_ENABLED = false;
 export const DEFAULT_SAVE_SLOT_SPEECH_ENABLED = false;
 export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_HOME_URL,
   DEFAULT_OVERLAY_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_HOME_QR,
   DEFAULT_OVERLAY_SHOW_MARK,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   OVERLAY_ORG_MAX_LENGTH,
@@ -505,8 +498,6 @@ export type SettingsScreenSnapshot = {
   overlayShowOrgName: boolean;
   overlayShowFooterPhrase: boolean;
   overlayShowMark: boolean;
-  overlayHomeUrl: string;
-  overlayShowHomeQr: boolean;
   titleFieldLabel: string;
   placeFieldLabel: string;
   memoFieldLabel: string;
@@ -664,14 +655,6 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       const raw = pickSetting(map, OVERLAY_SHOW_MARK_KEY);
       return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_MARK;
     })(),
-    overlayHomeUrl: (() => {
-      const raw = pickSetting(map, OVERLAY_HOME_URL_KEY);
-      return raw ? sanitizeOverlayHomeUrl(raw) : DEFAULT_OVERLAY_HOME_URL;
-    })(),
-    overlayShowHomeQr: (() => {
-      const raw = pickSetting(map, OVERLAY_SHOW_HOME_QR_KEY);
-      return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_HOME_QR;
-    })(),
     titleFieldLabel: (() => {
       const raw = pickSetting(map, FIELD_LABEL_TITLE_KEY);
       return raw
@@ -750,8 +733,6 @@ export function sanitizeSettingsScreenSnapshot(
     overlayShowOrgName: draft.overlayShowOrgName,
     overlayShowFooterPhrase: draft.overlayShowFooterPhrase,
     overlayShowMark: draft.overlayShowMark,
-    overlayHomeUrl: sanitizeOverlayHomeUrl(draft.overlayHomeUrl),
-    overlayShowHomeQr: draft.overlayShowHomeQr,
     titleFieldLabel: sanitizeFieldLabel(draft.titleFieldLabel, DEFAULT_FIELD_TITLE_LABEL),
     placeFieldLabel: sanitizeFieldLabel(draft.placeFieldLabel, DEFAULT_FIELD_PLACE_LABEL),
     memoFieldLabel: sanitizeFieldLabel(draft.memoFieldLabel, DEFAULT_FIELD_MEMO_LABEL),
@@ -797,8 +778,6 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [OVERLAY_SHOW_ORG_NAME_KEY, snapshot.overlayShowOrgName ? 'true' : 'false'],
     [OVERLAY_SHOW_FOOTER_PHRASE_KEY, snapshot.overlayShowFooterPhrase ? 'true' : 'false'],
     [OVERLAY_SHOW_MARK_KEY, snapshot.overlayShowMark ? 'true' : 'false'],
-    [OVERLAY_HOME_URL_KEY, snapshot.overlayHomeUrl],
-    [OVERLAY_SHOW_HOME_QR_KEY, snapshot.overlayShowHomeQr ? 'true' : 'false'],
     [FIELD_LABEL_TITLE_KEY, snapshot.titleFieldLabel],
     [FIELD_LABEL_PLACE_KEY, snapshot.placeFieldLabel],
     [FIELD_LABEL_MEMO_KEY, snapshot.memoFieldLabel],
@@ -1324,38 +1303,6 @@ export async function getOverlayShowMark(): Promise<boolean> {
 export async function setOverlayShowMark(show: boolean): Promise<boolean> {
   const safeShow = sanitizeOverlayShowFlag(show);
   await writeSetting(OVERLAY_SHOW_MARK_KEY, safeShow ? 'true' : 'false');
-  return safeShow;
-}
-
-function sanitizeOverlayHomeUrl(raw: string): string {
-  return normalizeHttpUrl(raw) ?? DEFAULT_OVERLAY_HOME_URL;
-}
-
-export async function getOverlayHomeUrl(): Promise<string> {
-  const value = await readSetting(OVERLAY_HOME_URL_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_HOME_URL;
-  }
-  return sanitizeOverlayHomeUrl(value);
-}
-
-export async function setOverlayHomeUrl(url: string): Promise<string> {
-  const safe = sanitizeOverlayHomeUrl(url);
-  await writeSetting(OVERLAY_HOME_URL_KEY, safe);
-  return safe;
-}
-
-export async function getOverlayShowHomeQr(): Promise<boolean> {
-  const value = await readSetting(OVERLAY_SHOW_HOME_QR_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_SHOW_HOME_QR;
-  }
-  return sanitizeOverlayShowFlag(value);
-}
-
-export async function setOverlayShowHomeQr(show: boolean): Promise<boolean> {
-  const safeShow = sanitizeOverlayShowFlag(show);
-  await writeSetting(OVERLAY_SHOW_HOME_QR_KEY, safeShow ? 'true' : 'false');
   return safeShow;
 }
 

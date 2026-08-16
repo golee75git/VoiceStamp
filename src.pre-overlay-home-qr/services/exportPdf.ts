@@ -56,8 +56,6 @@ import {
 import { buildCaptionTableRows } from './captionTable';
 import { watermarkBarCss, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
-import { resolveComposeQrUrl } from './overlayHomeQr';
-import { renderSourceUrlQrDataUri } from './qrCodeService';
 
 const WEB_PDF_URI = 'web:print-ready';
 
@@ -105,7 +103,6 @@ function buildStampItem(
   overlay: OverlayTextFields,
   fieldLabels: FieldLabels,
   textSizeScale = 1,
-  qrDataUri: string | null = null,
 ): string {
   const labels = resolveFieldLabels(fieldLabels);
   const titleRaw = stampDisplayTitle(stamp, showDatetime);
@@ -128,10 +125,7 @@ function buildStampItem(
     ? `<div class="stamp-coords" style="text-align: ${memoAlign};">${escapeHtml(coords)}</div>`
     : '';
   const slotHeight = photoSlotHeight(photosPerPage, shrinkForReportHeader);
-  const qrImg = qrDataUri
-    ? `<img class="qr-mark" src="${qrDataUri}" alt="" />`
-    : '';
-  const photoSlot = `<div class="photo-slot" style="height: ${slotHeight};"><img src="${imageDataUri}" alt="stamp" />${qrImg}</div>`;
+  const photoSlot = `<div class="photo-slot" style="height: ${slotHeight};"><img src="${imageDataUri}" alt="stamp" /></div>`;
 
   if (textLayout === 'watermark') {
     const theme = getWatermarkTheme(watermarkStyle);
@@ -166,7 +160,6 @@ function buildStampItem(
       <div class="item item-watermark">
         <div class="photo-slot photo-slot-watermark" style="height: ${slotHeight};">
           <img src="${imageDataUri}" alt="stamp" />
-          ${qrImg}
           <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
             ${orgBlock}
             ${titleBlock}
@@ -245,17 +238,12 @@ function buildHtml(
   overlay: OverlayTextFields,
   fieldLabels: FieldLabels,
   stampTextSize: StampTextSize = 'medium',
-  qrDataUris: Array<string | null> = [],
 ): string {
   const textSizeScale = stampTextSizeScale(stampTextSize);
   const fs = (n: number) => Math.max(10, Math.round(n * textSizeScale));
   const reportTitleTrimmed = reportTitle.trim();
   const stampPages = chunkStamps(
-    stamps.map((stamp, index) => ({
-      stamp,
-      imageDataUri: imageDataUris[index],
-      qrDataUri: qrDataUris[index] ?? null,
-    })),
+    stamps.map((stamp, index) => ({ stamp, imageDataUri: imageDataUris[index] })),
     photosPerPage,
   );
 
@@ -263,7 +251,7 @@ function buildHtml(
     .map((group, pageIndex) => {
       const shrinkImages = pageIndex === 0 && reportTitleTrimmed.length > 0;
       const items = group
-        .map(({ stamp, imageDataUri, qrDataUri }) =>
+        .map(({ stamp, imageDataUri }) =>
           buildStampItem(
             stamp,
             imageDataUri,
@@ -282,7 +270,6 @@ function buildHtml(
               ...fieldLabelsFromStamp(stamp),
             },
             textSizeScale,
-            qrDataUri,
           ),
         )
         .join('');
@@ -332,19 +319,6 @@ function buildHtml(
     width: auto;
     height: auto;
     object-fit: contain;
-  }
-  .photo-slot > img.qr-mark {
-    position: absolute;
-    right: 2%;
-    bottom: 2%;
-    width: 16%;
-    max-width: 16%;
-    max-height: 22%;
-    height: auto;
-    object-fit: contain;
-  }
-  .photo-slot-watermark > img.qr-mark {
-    bottom: 24%;
   }
   .item-caption .stamp-figure {
     width: 100%;
@@ -568,16 +542,6 @@ export async function createStampsPdf(
   const imageDataUris = await Promise.all(
     stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
   );
-  const qrDataUris = await Promise.all(
-    stamps.map(async (stamp) => {
-      const url = await resolveComposeQrUrl(stamp.sourceUrl);
-      if (!url) {
-        return null;
-      }
-      const qr = await renderSourceUrlQrDataUri(url, 160);
-      return qr?.dataUri ?? null;
-    }),
-  );
 
   const html = buildHtml(
     stamps,
@@ -595,7 +559,6 @@ export async function createStampsPdf(
     { orgName, footerPhrase, showOrgName, showFooterPhrase },
     { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel },
     stampTextSize,
-    qrDataUris,
   );
 
   if (Platform.OS === 'web') {

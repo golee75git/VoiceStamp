@@ -35,7 +35,7 @@ import { DEFAULT_STAMP_TEXT_SIZE, stampTextSizeScale } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
 import type { Stamp } from '../types/stamp';
 import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
-import { resolveComposeQrUrl } from './overlayHomeQr';
+import { normalizeHttpUrl } from './qrUrlExtractService';
 
 export const STAMP_JPEG_MAX_WIDTH = 2048;
 export const STAMP_JPEG_COMPRESS = 0.85;
@@ -438,11 +438,11 @@ async function renderStampJpegWatermarkOnWeb(
     );
   }
 
-  const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
-  if (qrUrl && Platform.OS === 'web') {
+  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
+  if (safeSourceUrl && Platform.OS === 'web') {
     try {
       const qrTarget = qrPixelSizeForPhoto(Math.min(imgWidth, imgHeight));
-      const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
+      const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
       if (qr) {
         const qrImg = await loadWebImage(qr.uri);
         const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));
@@ -530,11 +530,11 @@ async function renderStampJpegCaptionOnWeb(
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   ctx.drawImage(img, padding, padding, imgWidth, imgHeight);
 
-  const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
-  if (qrUrl && Platform.OS === 'web') {
+  const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
+  if (safeSourceUrl && Platform.OS === 'web') {
     try {
       const qrTarget = qrPixelSizeForPhoto(Math.min(imgWidth, imgHeight));
-      const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
+      const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
       if (qr) {
         const qrImg = await loadWebImage(qr.uri);
         const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));

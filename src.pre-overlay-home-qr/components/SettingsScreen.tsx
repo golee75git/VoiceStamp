@@ -55,8 +55,6 @@ import {
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_MARK,
-  DEFAULT_OVERLAY_HOME_URL,
-  DEFAULT_OVERLAY_SHOW_HOME_QR,
   DEFAULT_FIELD_TITLE_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
@@ -121,7 +119,6 @@ import {
   overlayMarkFileUri,
   pickAndInstallOverlayMark,
 } from '../services/overlayMark';
-import { SOURCE_URL_MAX_LEN } from '../services/qrUrlExtractService';
 
 const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
 const FLOOR_DISPLAY_OPTIONS: FloorDisplayMode[] = ['suffix', 'cursor'];
@@ -238,8 +235,6 @@ export function SettingsScreen({
     DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   );
   const [overlayShowMark, setOverlayShowMarkState] = useState(DEFAULT_OVERLAY_SHOW_MARK);
-  const [overlayHomeUrl, setOverlayHomeUrlState] = useState(DEFAULT_OVERLAY_HOME_URL);
-  const [overlayShowHomeQr, setOverlayShowHomeQrState] = useState(DEFAULT_OVERLAY_SHOW_HOME_QR);
   const [overlayMarkPreviewUri, setOverlayMarkPreviewUri] = useState<string | null>(null);
   const [overlayMarkRev, setOverlayMarkRev] = useState(0);
   const [overlayMarkBusy, setOverlayMarkBusy] = useState(false);
@@ -309,8 +304,6 @@ export function SettingsScreen({
       setOverlayShowOrgNameState(snapshot.overlayShowOrgName);
       setOverlayShowFooterPhraseState(snapshot.overlayShowFooterPhrase);
       setOverlayShowMarkState(snapshot.overlayShowMark);
-      setOverlayHomeUrlState(snapshot.overlayHomeUrl);
-      setOverlayShowHomeQrState(snapshot.overlayShowHomeQr);
       void overlayMarkExists().then((exists) => {
         if (cancelled) {
           return;
@@ -370,8 +363,6 @@ export function SettingsScreen({
         overlayShowOrgName,
         overlayShowFooterPhrase,
         overlayShowMark,
-        overlayHomeUrl,
-        overlayShowHomeQr,
         titleFieldLabel,
         placeFieldLabel,
         memoFieldLabel,
@@ -413,8 +404,6 @@ export function SettingsScreen({
       setOverlayShowOrgNameState(saved.overlayShowOrgName);
       setOverlayShowFooterPhraseState(saved.overlayShowFooterPhrase);
       setOverlayShowMarkState(saved.overlayShowMark);
-      setOverlayHomeUrlState(saved.overlayHomeUrl);
-      setOverlayShowHomeQrState(saved.overlayShowHomeQr);
       setTitleFieldLabelState(saved.titleFieldLabel);
       setPlaceFieldLabelState(saved.placeFieldLabel);
       setMemoFieldLabelState(saved.memoFieldLabel);
@@ -739,7 +728,6 @@ export function SettingsScreen({
           <Text style={styles.hint}>
             PDF·이미지·미리보기에 표시할 기관명(상단)과 하단 문구입니다. 저장 폴더명과 별도입니다.
             표시 그림은 갤러리·카카오 등 JPEG에만 붙고 PDF·한글·엑셀에는 넣지 않습니다.
-            기관 홈 QR은 JPEG·PDF 우하단에 넣으며, 사진에 QR URL이 있으면 사진 주소를 씁니다.
           </Text>
           <Text style={styles.label}>기관명</Text>
           <TextInput
@@ -879,52 +867,6 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_MARK)}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>기관 홈페이지</Text>
-          <Text style={styles.hint}>
-            http(s)만 저장됩니다. 표시이면 JPEG·PDF 우하단에 QR을 넣습니다. 사진 QR URL이 있으면 사진 주소를 씁니다. 한글·엑셀에는 넣지 않습니다.
-          </Text>
-          <TextInput
-            style={styles.input}
-            value={overlayHomeUrl}
-            onChangeText={setOverlayHomeUrlState}
-            placeholder="https://example.school.kr"
-            maxLength={SOURCE_URL_MAX_LEN}
-            editable={!saving}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-          />
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, overlayShowHomeQr && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowHomeQrState(true)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  overlayShowHomeQr && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_HOME_QR)}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, !overlayShowHomeQr && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowHomeQrState(false)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  !overlayShowHomeQr && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_HOME_QR)}
               </Text>
             </Pressable>
           </View>
