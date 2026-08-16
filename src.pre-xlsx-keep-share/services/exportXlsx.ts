@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
-import { ensureStampGroupDir, extractStampGroupFromImagePath, resolveImageUri } from './fileService';
+import { resolveImageUri } from './fileService';
 import { stampCoordinatesLine } from './stampCoords';
 import { getCoordsLabelMode } from './settingsService';
 import { writeUint8ArrayToCacheFile } from './writeCacheFile';
@@ -127,57 +127,6 @@ async function pickHeaderLabels(stamps: Stamp[]): Promise<FieldLabels> {
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
   return cleaned || 'VoiceStamp';
-}
-
-function pickXlsxKeepFolder(stamps: Stamp[]): string | null {
-  const counts = new Map<string, number>();
-  let best: string | null = null;
-  let bestCount = 0;
-  for (const stamp of stamps) {
-    const group = extractStampGroupFromImagePath(stamp.imagePath)?.trim();
-    if (!group) {
-      continue;
-    }
-    const next = (counts.get(group) ?? 0) + 1;
-    counts.set(group, next);
-    if (next > bestCount) {
-      best = group;
-      bestCount = next;
-    }
-  }
-  return best;
-}
-
-async function keepXlsxOnDevice(cacheUri: string, xlsxFileName: string, stamps: Stamp[]): Promise<string> {
-  if (!FileSystem.documentDirectory) {
-    return cacheUri;
-  }
-
-  let dir = `${FileSystem.documentDirectory}exports/`;
-  const folder = pickXlsxKeepFolder(stamps);
-  if (folder) {
-    try {
-      dir = await ensureStampGroupDir(folder);
-    } catch {
-      dir = `${FileSystem.documentDirectory}exports/`;
-    }
-  }
-
-  const info = await FileSystem.getInfoAsync(dir);
-  if (!info.exists) {
-    await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-  }
-
-  const dest = `${dir}${xlsxFileName}`;
-  if (cacheUri === dest) {
-    return dest;
-  }
-  const destInfo = await FileSystem.getInfoAsync(dest);
-  if (destInfo.exists) {
-    await FileSystem.deleteAsync(dest, { idempotent: true });
-  }
-  await FileSystem.copyAsync({ from: cacheUri, to: dest });
-  return dest;
 }
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -336,13 +285,7 @@ export async function createStampsXlsx(
   }
 
   const xlsxPath = writeUint8ArrayToCacheFile(bufferToUint8Array(buffer), xlsxFileName);
-  let keptUri = xlsxPath;
-  try {
-    keptUri = await keepXlsxOnDevice(xlsxPath, xlsxFileName, stamps);
-  } catch {
-    keptUri = xlsxPath;
-  }
-  return { uri: keptUri, fileName: xlsxFileName };
+  return { uri: xlsxPath, fileName: xlsxFileName };
 }
 
 export async function shareStampsXlsx(result: ExportFileResult): Promise<void> {

@@ -646,7 +646,7 @@ export function StampListScreen({
         '엑셀 저장 완료',
         Platform.OS === 'web'
           ? 'XLSX 파일을 다운로드했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.'
-          : '엑셀을 앱 폴더에 저장했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.',
+          : '엑셀 파일을 공유했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.',
       );
     } catch (e) {
       Alert.alert(

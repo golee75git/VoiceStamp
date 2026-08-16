@@ -43,6 +43,7 @@
 | [SECURITY-inbox-pick-mark-20260814.md](./SECURITY-inbox-pick-mark-20260814.md) | 보안·UX | 수신함 하단 고름 표시·엑셀 미선택 안내 |
 | [SECURITY-xlsx-row-fill-20260816.md](./SECURITY-xlsx-row-fill-20260816.md) | 보안·UX | 엑셀 5장 이상 가로 막대 |
 | [SECURITY-xlsx-fill-paint-20260816.md](./SECURITY-xlsx-fill-paint-20260816.md) | 보안·UX | 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
+| [SECURITY-xlsx-keep-share-20260816.md](./SECURITY-xlsx-keep-share-20260816.md) | 보안·UX | 엑셀 앱 폴더 저장 후 공유 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

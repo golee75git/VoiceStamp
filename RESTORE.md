@@ -4160,3 +4160,9 @@ Restores exportXlsx, exportOnDemand, ProjectCollectScreen, StampListScreen + hel
 restore-xlsx-fill-paint.bat
 
 Restores exportXlsx, ProjectCollectScreen + help from *.pre-xlsx-fill-paint/.
+
+## Excel keep on device then share (2026-08-16)
+
+restore-xlsx-keep-share.bat
+
+Restores exportXlsx, StampListScreen + help from *.pre-xlsx-keep-share/.
