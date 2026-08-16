@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-16** — 참여 사업 갤러리·목록 보내기 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `164812`)
-최신 기능 커밋 기준: `0601b0a` / APK `164812`
+문서 동기화: **2026-08-16** — 보낸 사진 갤러리·촬영 표시 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `171905`)
+최신 기능 커밋 기준: `cd575ce` / APK `171905`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -673,7 +673,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **권장** — 참여 사업 갤러리·목록 보내기 · `restore-join-album-send.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260816_171905.apk` | `cd575ce` | **권장** — 보낸 사진 갤러리·촬영 표시 · `restore-sent-way-label.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **이전** — 참여 사업 갤러리·목록 보내기 · `restore-join-album-send.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **이전** — 엑셀 앱 폴더 저장 후 공유 · `restore-xlsx-keep-share.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 · `restore-xlsx-fill-paint.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **이전** — 엑셀 5장 이상 가로 막대 · `restore-xlsx-row-fill.bat` | **GitHub `releases/`** |

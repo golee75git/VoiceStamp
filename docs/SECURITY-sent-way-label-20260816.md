@@ -38,5 +38,5 @@
 `restore-sent-way-label.bat`
 
 ## 배포
-- APK: (빌드 후 기입)
-- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/
+- APK: `VoiceStamp_20260816_171905.apk` (`cd575ce`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_171905.apk
