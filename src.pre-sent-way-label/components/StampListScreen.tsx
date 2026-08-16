@@ -142,7 +142,6 @@ export function StampListScreen({
     null,
   );
   const [importModalVisible, setImportModalVisible] = useState(false);
-  const [importJoinSendWay, setImportJoinSendWay] = useState<'album' | 'shot'>('album');
   const [followUpParent, setFollowUpParent] = useState<Stamp | null>(null);
   const [compareAnchor, setCompareAnchor] = useState<Stamp | null>(null);
   const [albumBusy, setAlbumBusy] = useState(false);
@@ -717,7 +716,6 @@ export function StampListScreen({
       }
 
       setFollowUpParent(null);
-      setImportJoinSendWay('album');
       setImportLocationSnapshot(snapshot);
       setImportUri(picked.uri);
       setImportModalVisible(true);
@@ -746,7 +744,6 @@ export function StampListScreen({
             return;
           }
           setFollowUpParent(rootParent);
-          setImportJoinSendWay('shot');
           setImportLocationSnapshot(null);
           setImportUri(uri);
           setImportModalVisible(true);
@@ -769,7 +766,6 @@ export function StampListScreen({
           }
         }
         setFollowUpParent(rootParent);
-        setImportJoinSendWay('album');
         setImportLocationSnapshot(snapshot);
         setImportUri(picked.uri);
         setImportModalVisible(true);
@@ -1545,7 +1541,6 @@ export function StampListScreen({
         prefetchedLocationSnapshot={importLocationSnapshot}
         locationPrefetchFinished
         allowLiveLocationFallback={followUpParent != null && importLocationSnapshot == null}
-        joinSendWay={importJoinSendWay}
         onClose={() => {
           setImportModalVisible(false);
           setImportUri(null);

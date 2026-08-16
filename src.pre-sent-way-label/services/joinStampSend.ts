@@ -52,6 +52,5 @@ export async function savePickedAlbumStamp(
     latitude: picked.latitude,
     longitude: picked.longitude,
     placeLabel,
-    joinSendWay: 'album',
   });
 }

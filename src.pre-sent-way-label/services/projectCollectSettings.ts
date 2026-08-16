@@ -408,37 +408,21 @@ export async function getCollectorPin(projectId: string): Promise<string | null>
   return getValue(`${KEYS.pinPrefix}${projectId}`);
 }
 
-export type JoinSendWay = 'album' | 'shot';
-
 export type ProjectUploadRecord = {
   status: ProjectUploadStatus;
   /** Join project id when known (older entries may omit). */
   projectId?: string | null;
-  /** How this device queued the send: album pick vs camera. Older rows omit. */
-  joinSendWay?: JoinSendWay | null;
 };
-
-function sanitizeJoinSendWay(value: unknown): JoinSendWay | null {
-  if (value === 'album' || value === 'shot') {
-    return value;
-  }
-  return null;
-}
 
 function normalizeUploadRecord(raw: unknown): ProjectUploadRecord | null {
   if (typeof raw === 'string') {
     return { status: raw as ProjectUploadStatus };
   }
   if (raw && typeof raw === 'object' && typeof (raw as { status?: unknown }).status === 'string') {
-    const row = raw as {
-      status: ProjectUploadStatus;
-      projectId?: string | null;
-      joinSendWay?: unknown;
-    };
+    const row = raw as { status: ProjectUploadStatus; projectId?: string | null };
     return {
       status: row.status,
       projectId: row.projectId ?? null,
-      joinSendWay: sanitizeJoinSendWay(row.joinSendWay),
     };
   }
   return null;
@@ -489,15 +473,12 @@ export async function setUploadStatus(
   stampId: string,
   status: ProjectUploadStatus,
   projectId?: string | null,
-  joinSendWay?: JoinSendWay | null,
 ): Promise<void> {
   const map = await readUploadRecordMap();
   const prev = map[stampId];
-  const way = sanitizeJoinSendWay(joinSendWay) ?? prev?.joinSendWay ?? null;
   map[stampId] = {
     status,
     projectId: projectId ?? prev?.projectId ?? null,
-    joinSendWay: way,
   };
   await writeUploadRecordMap(map);
 }

@@ -4172,3 +4172,9 @@ Restores exportXlsx, StampListScreen + help from *.pre-xlsx-keep-share/.
 restore-join-album-send.bat
 
 Restores pickStampImage, projectUploadQueue, ProjectCollectScreen, StampListScreen + help from *.pre-join-album-send/; removes joinStampSend.ts.
+
+## Sent way label restore (2026-08-16)
+
+restore-sent-way-label.bat
+
+Restores projectCollectSettings, projectUploadQueue, saveStamp, joinStampSend, ProjectSentList, StampSaveModal, StampListScreen + help from *.pre-sent-way-label/.

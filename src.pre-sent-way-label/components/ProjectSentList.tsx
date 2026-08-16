@@ -29,19 +29,13 @@ type Props = {
   onChanged?: () => void;
 };
 
-type SentRow = Stamp & { uploadStatus: ProjectUploadStatus; joinSendWay?: string | null };
+type SentRow = Stamp & { uploadStatus: ProjectUploadStatus };
 
 function statusLabel(status: ProjectUploadStatus): string {
   if (status === 'synced') return '전송됨';
   if (status === 'failed') return '전송 실패';
   if (status === 'pending' || status === 'uploading') return '전송 중';
   return status;
-}
-
-function joinSendWayLabel(way?: string | null): string {
-  if (way === 'album') return '갤러리';
-  if (way === 'shot') return '촬영';
-  return '';
 }
 
 export function ProjectSentList({ project, onChanged }: Props) {
@@ -62,7 +56,7 @@ export function ProjectSentList({ project, onChanged }: Props) {
       if (!idSet.has(stamp.id)) continue;
       const status = records[stamp.id]?.status;
       if (!status || status === 'received') continue;
-      next.push({ ...stamp, uploadStatus: status, joinSendWay: records[stamp.id]?.joinSendWay });
+      next.push({ ...stamp, uploadStatus: status });
     }
     next.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     setRows(next);
@@ -156,11 +150,7 @@ export function ProjectSentList({ project, onChanged }: Props) {
                   {item.title || item.id}
                 </Text>
                 <Text style={styles.sub}>
-                  {[
-                    joinSendWayLabel(item.joinSendWay),
-                    statusLabel(item.uploadStatus),
-                    item.createdAt ? new Date(item.createdAt).toLocaleString() : '',
-                  ]
+                  {[statusLabel(item.uploadStatus), item.createdAt ? new Date(item.createdAt).toLocaleString() : '']
                     .filter(Boolean)
                     .join(' · ')}
                 </Text>

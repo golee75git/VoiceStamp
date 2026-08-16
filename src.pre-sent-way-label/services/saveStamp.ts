@@ -78,8 +78,6 @@ type SaveStampInput = {
   templateId?: string | null;
   /** Follow-up root stamp id (null = standalone). */
   parentId?: string | null;
-  /** album = 갤러리 보내기/앨범 저장, shot = 촬영 저장. */
-  joinSendWay?: 'album' | 'shot';
   captureForExport?: (
     stamp: Stamp,
     options: StampImageExportOptions,
@@ -359,9 +357,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     .catch(() => {});
 
   void import('./projectUploadQueue')
-    .then(({ scheduleProjectUploadAfterSave }) =>
-      scheduleProjectUploadAfterSave(stamp, input.joinSendWay ?? 'shot'),
-    )
+    .then(({ scheduleProjectUploadAfterSave }) => scheduleProjectUploadAfterSave(stamp))
     .catch(() => {});
 
   return stamp;

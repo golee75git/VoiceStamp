@@ -259,8 +259,6 @@ type StampSaveModalProps = {
   onTrashed?: (id: string) => void;
   onRequestFollowUp?: (mode: 'camera' | 'album') => void;
   onRequestCompare?: () => void;
-  /** album = 갤러리, shot = 촬영. 기본 shot. */
-  joinSendWay?: 'album' | 'shot';
 };
 
 function followUpTitleFromParent(parentTitle: string): string {
@@ -286,7 +284,6 @@ export function StampSaveModal({
   onTrashed,
   onRequestFollowUp,
   onRequestCompare,
-  joinSendWay = 'shot',
 }: StampSaveModalProps) {
   const isEdit = stamp != null;
   const isFollowUpCreate = !isEdit && followUpParent != null;
@@ -1705,7 +1702,6 @@ export function StampSaveModal({
           captureForExport: captureStampForExport,
           templateId: selectedTemplateId,
           parentId: followUpParent ? followUpParent.id : null,
-          joinSendWay,
           fieldLabels: {
             titleFieldLabel,
             placeFieldLabel,

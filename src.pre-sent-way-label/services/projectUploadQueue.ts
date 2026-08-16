@@ -12,7 +12,6 @@ import {
   getProjectCollectEnabled,
   getProjectJoin,
   setUploadStatus,
-  type JoinSendWay,
 } from './projectCollectSettings';
 import { emitProjectUploadFeedback } from './projectUploadFeedback';
 import type { Stamp } from '../types/stamp';
@@ -33,10 +32,7 @@ export function isProjectUploadQueueIdle(): boolean {
 }
 
 /** Queue existing stamps to the current join even when auto-upload is off. */
-export async function queueStampsToCurrentJoin(
-  stampIds: string[],
-  joinSendWay: JoinSendWay = 'album',
-): Promise<void> {
+export async function queueStampsToCurrentJoin(stampIds: string[]): Promise<void> {
   if (Platform.OS === 'web') return;
   const enabled = await getProjectCollectEnabled();
   if (!enabled) return;
@@ -44,15 +40,12 @@ export async function queueStampsToCurrentJoin(
   if (!join) return;
   for (const stampId of stampIds) {
     if (!stampId) continue;
-    await setUploadStatus(stampId, 'pending', join.projectId, joinSendWay);
+    await setUploadStatus(stampId, 'pending', join.projectId);
     enqueueProjectUpload(stampId);
   }
 }
 
-export async function scheduleProjectUploadAfterSave(
-  stamp: Stamp,
-  joinSendWay: JoinSendWay = 'shot',
-): Promise<void> {
+export async function scheduleProjectUploadAfterSave(stamp: Stamp): Promise<void> {
   try {
     if (Platform.OS === 'web') return;
     const enabled = await getProjectCollectEnabled();
@@ -61,7 +54,7 @@ export async function scheduleProjectUploadAfterSave(
     if (!join) return;
     const auto = await getProjectAutoUpload();
     if (!auto) return;
-    await setUploadStatus(stamp.id, 'pending', join.projectId, joinSendWay);
+    await setUploadStatus(stamp.id, 'pending', join.projectId);
     emitProjectUploadFeedback({ type: 'upload_queued', projectName: join.name });
     enqueueProjectUpload(stamp.id);
   } catch {
