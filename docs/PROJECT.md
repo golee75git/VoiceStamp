@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-17** — 설정 표시 그림 JPEG 합성 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `074537`)
-최신 기능 커밋 기준: `5ca954e` / APK `202344`
+문서 동기화: **2026-08-17** — 설정 기관 홈 QR JPEG·PDF · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `082730`)
+최신 기능 커밋 기준: `32482e9` / APK `082730`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -673,7 +673,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **권장** — 설정 표시 그림을 캡션·워터마크 JPEG에 합성 · `restore-overlay-mark.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260817_082730.apk` | `32482e9` | **권장** — 설정 기관 홈 QR을 JPEG·PDF에 합성 · `restore-overlay-home-qr.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **이전** — 설정 표시 그림을 캡션·워터마크 JPEG에 합성 · `restore-overlay-mark.bat` | **GitHub `releases/`** |
 
 #### 2026-08-16
 

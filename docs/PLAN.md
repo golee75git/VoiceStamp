@@ -746,6 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
+| 2026-08-17 | 4·3 | 설정 **기관 홈페이지** QR JPEG·PDF · APK `082730` · `restore-overlay-home-qr.bat` |
 | 2026-08-17 | 4·3 | 설정 **표시 그림** JPEG 합성 · APK `074537` · `restore-overlay-mark.bat` |
 | 2026-08-16 | 4·3 | 미리보기 QR **열기 중에도 셔터 촬영** · APK `202344` · `restore-preview-qr-capture-fix.bat` |
 | 2026-08-16 | 4·3 | 앱 내 미리보기 **http(s) QR 열기** · APK `190729` · `restore-preview-qr-open.bat` |
@@ -757,10 +758,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-17:** 권장 = `releases/VoiceStamp_20260817_074537.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-17:** 권장 = `releases/VoiceStamp_20260817_082730.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **설치·GitHub 권장** — 설정 표시 그림 JPEG 합성 |
+| `releases/VoiceStamp_20260817_082730.apk` | `32482e9` | **설치·GitHub 권장** — 설정 기관 홈 QR JPEG·PDF |
+| `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **이전** — 설정 표시 그림 JPEG 합성 |
 | `releases/VoiceStamp_20260816_202344.apk` | `5ca954e` | **이전** — 미리보기 QR 열기 중에도 셔터 촬영 |
 | `releases/VoiceStamp_20260816_190729.apk` | `5f9e722` | **이전** — 앱 내 미리보기 QR 열기 |
 | `releases/VoiceStamp_20260816_181459.apk` | `3f157ef` | **이전** — 기본 템플릿 홍보기록 |

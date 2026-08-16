@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260817_074537.apk` — 설정 표시 그림을 캡션·워터마크 JPEG에 합성 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260817_082730.apk` — 설정 기관 홈 QR을 JPEG·PDF에 합성 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
