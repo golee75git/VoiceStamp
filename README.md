@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_154152.apk` (`6bee948`) — 엑셀 앱 폴더 저장 후 공유 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_164812.apk` (`0601b0a`) — 참여 사업 갤러리·목록 보내기 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

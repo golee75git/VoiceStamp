@@ -65,14 +65,15 @@
 
 ## 현재 상태 스냅샷 (2026-08-16)
 
-- **문서 갱신일:** 2026-08-16 — 엑셀 앱 폴더 저장 후 공유
-- **최신 기능 커밋:** `6bee948` / APK `154152` — 엑셀 앱 폴더 저장 후 공유
+- **문서 갱신일:** 2026-08-16 — 참여 사업 갤러리·목록 보내기
+- **최신 기능 커밋:** `0601b0a` / APK `164812` — 참여 사업 갤러리·목록 보내기
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260816_154152.apk` — 엑셀 앱 폴더 저장 후 공유
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_154152.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260816_164812.apk` — 참여 사업 갤러리·목록 보내기
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_164812.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260816_154152.apk` — 엑셀 앱 폴더 저장 후 공유
 - **이전 권장 APK:** `releases/VoiceStamp_20260816_150607.apk` — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거
 - **이전 권장 APK:** `releases/VoiceStamp_20260816_141835.apk` — 엑셀 5장 이상 가로 막대
 - **이전 권장 APK:** `releases/VoiceStamp_20260814_171058.apk` — 수신함 고름 표시·엑셀 안내
@@ -140,15 +141,16 @@
 | 08-09 | 목록 썸네일·취소 · 만든이 · 취합 배지·보낸 사진 · 홈 취합 · 가져옴 매칭 · APK `085617`~`183720` |
 | 08-10 | 취합 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` · **본 문서 동기화(소스 없음)** |
 | 08-14 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` |
-| 08-16 | 엑셀 **5장 이상 가로 막대** · APK `141835` · 막대 **즉시 표시**·만든 사업 엑셀 제거 · APK `150607` · **저장 후 공유** · APK `154152` |
+| 08-16 | 엑셀 **5장 이상 가로 막대** · APK `141835` · 막대 **즉시 표시**·만든 사업 엑셀 제거 · APK `150607` · **저장 후 공유** · APK `154152` · **갤러리·목록 보내기** · APK `164812` |
 
 ### APK별 (권장·주요)
 
-> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_154152.apk`** (`6bee948`). 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-16:** 권장 파일은 **`VoiceStamp_20260816_164812.apk`** (`0601b0a`). 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **설치·GitHub 권장** — 엑셀 앱 폴더 저장 후 공유 |
+| `releases/VoiceStamp_20260816_164812.apk` | `0601b0a` | **설치·GitHub 권장** — 참여 사업 갤러리·목록 보내기 |
+| `releases/VoiceStamp_20260816_154152.apk` | `6bee948` | **이전** — 엑셀 앱 폴더 저장 후 공유 |
 | `releases/VoiceStamp_20260816_150607.apk` | `8335301` | **이전** — 엑셀 막대 즉시 표시·만든 사업 엑셀 제거 |
 | `releases/VoiceStamp_20260816_141835.apk` | `d521763` | **이전** — 엑셀 5장 이상 가로 막대 |
 | `releases/VoiceStamp_20260814_171058.apk` | `e9f0bae` | **이전** — 수신함 고름 표시·엑셀 안내 |

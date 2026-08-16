@@ -40,5 +40,5 @@
 `restore-join-album-send.bat`
 
 ## 배포
-- APK: (빌드 후 기입)
-- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/
+- APK: `VoiceStamp_20260816_164812.apk` (`0601b0a`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_164812.apk
