@@ -50,5 +50,5 @@
 앱 문서 폴더의 `overlay/mark.jpg`는 코드 롤백과 별개로 기기에 남을 수 있다. 설정에서 「지우기」로 지운다.
 
 ## 배포
-- APK: `VoiceStamp_20260817_074537.apk`
+- APK: `VoiceStamp_20260817_074537.apk` (`2dadfea`)
 - 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260817_074537.apk
