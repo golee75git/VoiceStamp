@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260816_181459.apk` (`3f157ef`) — 기본 템플릿 홍보기록 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260816_190729.apk` (`5f9e722`) — 앱 내 미리보기 QR 열기 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)

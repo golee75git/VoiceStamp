@@ -41,3 +41,7 @@
 
 ## 롤백
 `restore-preview-qr-open.bat`
+
+## 배포
+- APK: `VoiceStamp_20260816_190729.apk` (`5f9e722`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260816_190729.apk
