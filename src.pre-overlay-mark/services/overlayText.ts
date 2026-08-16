@@ -9,7 +9,6 @@ export const DEFAULT_OVERLAY_ORG_NAME = '';
 export const DEFAULT_OVERLAY_FOOTER_PHRASE = '';
 export const DEFAULT_OVERLAY_SHOW_ORG_NAME = true;
 export const DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE = true;
-export const DEFAULT_OVERLAY_SHOW_MARK = true;
 
 export const OVERLAY_ORG_MAX_LENGTH = 80;
 export const OVERLAY_PHRASE_MAX_LENGTH = 120;

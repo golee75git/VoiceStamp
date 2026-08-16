@@ -18,15 +18,9 @@ import {
 import { resolveImageUri } from './fileService';
 import type { TextAlign } from './settingsService';
 import { stampTextSizeScale } from './settingsService';
-import { getOverlayShowMark } from './settingsService';
 import type { Stamp } from '../types/stamp';
 import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
 import { normalizeHttpUrl } from './qrUrlExtractService';
-import {
-  OVERLAY_MARK_MAX_EDGE,
-  overlayMarkDrawSize,
-  resolveOverlayMarkFileUri,
-} from './overlayMark';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
 const CAPTION_REFERENCE_PHOTO_WIDTH = 1032;
@@ -126,14 +120,8 @@ export async function renderStampCaptionNative(
   const tableHeight = rowHeights.reduce((sum, h) => sum + h, 0);
   const orgSize = Math.max(16, Math.round(28 * (imgWidth / CAPTION_REFERENCE_PHOTO_WIDTH) * textScale));
   const orgLineHeight = Math.max(22, Math.round(orgSize * 1.3));
-  const markUri =
-    (await getOverlayShowMark()) ? await resolveOverlayMarkFileUri() : null;
-  const markSize = markUri ? overlayMarkDrawSize(imgWidth) : 0;
-  const orgWrapWidth =
-    markUri && markSize > 0 ? Math.max(80, imgWidth - markSize - 12) : imgWidth;
-  const orgLines = orgName ? wrapTextLines(orgName, orgWrapWidth, orgSize) : [];
+  const orgLines = orgName ? wrapTextLines(orgName, imgWidth, orgSize) : [];
   const orgHeight = orgLines.length > 0 ? orgLines.length * orgLineHeight + 8 : 0;
-  const orgBandHeight = Math.max(orgHeight, markUri ? markSize + 8 : 0);
   const phraseSize = Math.max(12, fontSize - 2);
   const phraseLineHeight = Math.max(18, Math.round(phraseSize * 1.35));
   const phraseLines = footerPhrase ? wrapTextLines(footerPhrase, imgWidth, phraseSize) : [];
@@ -153,7 +141,7 @@ export async function renderStampCaptionNative(
     padding +
     imgHeight +
     16 +
-    orgBandHeight +
+    orgHeight +
     (tableHeight > 0 ? tableHeight + 8 : 0) +
     phraseHeight +
     dateHeight +
@@ -194,18 +182,7 @@ export async function renderStampCaptionNative(
     }
   }
 
-  if (markUri && markSize > 0) {
-    overlayImages.push({
-      src: markUri,
-      scale: markSize / OVERLAY_MARK_MAX_EDGE,
-      position: {
-        X: padding,
-        Y: padding + imgHeight + 16,
-      },
-    });
-  }
-
-  let cursorY = padding + imgHeight + 16 + orgBandHeight;
+  let cursorY = padding + imgHeight + 16 + orgHeight;
 
   for (let i = 0; i < rows.length; i += 1) {
     const rowH = rowHeights[i];
@@ -275,28 +252,17 @@ export async function renderStampCaptionNative(
 
   let textY = padding + imgHeight + 16;
   if (orgName && orgLines.length > 0) {
-    const orgX =
-      markUri && markSize > 0
-        ? padding + markSize + 12
-        : captionTextX(options.titleAlign, padding, canvasWidth);
     orgLines.forEach((line, lineIndex) => {
       watermarkTexts.push({
         text: line,
         positionOptions: {
-          X: orgX,
+          X: captionTextX(options.titleAlign, padding, canvasWidth),
           Y: textY + lineIndex * orgLineHeight,
         },
-        style: cellTextStyle(
-          '#111827',
-          orgSize,
-          markUri && markSize > 0 ? 'left' : options.titleAlign,
-          true,
-        ),
+        style: cellTextStyle('#111827', orgSize, options.titleAlign, true),
       });
     });
-    textY += orgBandHeight;
-  } else if (markUri && markSize > 0) {
-    textY += orgBandHeight;
+    textY += orgHeight;
   }
 
   let rowY = textY;

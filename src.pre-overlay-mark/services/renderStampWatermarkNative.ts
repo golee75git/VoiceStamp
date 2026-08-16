@@ -14,15 +14,9 @@ import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import { getWatermarkTheme } from './watermarkStyle';
 import { stampTextSizeScale, type TextAlign } from './settingsService';
-import { getOverlayShowMark } from './settingsService';
 import { qrPixelSizeForPhoto, renderSourceUrlQrPngUri } from './qrCodeService';
 import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp } from '../types/stamp';
-import {
-  OVERLAY_MARK_MAX_EDGE,
-  overlayMarkDrawSize,
-  resolveOverlayMarkFileUri,
-} from './overlayMark';
 
 const EXPORT_PHOTO_WIDTH = 1032;
 
@@ -140,52 +134,34 @@ export async function renderStampWatermarkNative(
   });
 
   const baseUri = normalizeMarkedUri(markedUri);
-  const extras: {
-    src: string;
-    scale: number;
-    position: { X: number; Y: number };
-  }[] = [];
-
-  const markUri =
-    (await getOverlayShowMark()) ? await resolveOverlayMarkFileUri() : null;
-  if (markUri) {
-    const markSize = overlayMarkDrawSize(prepared.width);
-    const markMargin = Math.max(8, Math.round(prepared.width * 0.02));
-    extras.push({
-      src: markUri,
-      scale: markSize / OVERLAY_MARK_MAX_EDGE,
-      position: { X: markMargin, Y: markMargin },
-    });
-  }
-
   const safeSourceUrl = normalizeHttpUrl(stamp.sourceUrl ?? '');
-  if (safeSourceUrl) {
-    const qrTarget = qrPixelSizeForPhoto(Math.min(prepared.width, prepared.height));
-    const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
-    if (qr) {
-      const qrMargin = Math.max(8, Math.round(prepared.width * 0.02));
-      const barHeight = estimateWatermarkBarHeight(overlayLines.length, titleSize, paddingY);
-      extras.push({
-        src: qr.uri,
-        scale: 1,
-        position: {
-          X: prepared.width - qr.size - qrMargin,
-          Y: Math.max(qrMargin, prepared.height - barHeight - qr.size - qrMargin),
-        },
-      });
-    }
-  }
-
-  if (extras.length === 0) {
+  if (!safeSourceUrl) {
     return baseUri;
   }
 
-  const withMarks = await Marker.markImage({
+  const qrTarget = qrPixelSizeForPhoto(Math.min(prepared.width, prepared.height));
+  const qr = await renderSourceUrlQrPngUri(safeSourceUrl, qrTarget);
+  if (!qr) {
+    return baseUri;
+  }
+
+  const qrMargin = Math.max(8, Math.round(prepared.width * 0.02));
+  const barHeight = estimateWatermarkBarHeight(overlayLines.length, titleSize, paddingY);
+  const qrX = prepared.width - qr.size - qrMargin;
+  const qrY = Math.max(qrMargin, prepared.height - barHeight - qr.size - qrMargin);
+
+  const withQr = await Marker.markImage({
     backgroundImage: { src: baseUri, scale: 1 },
-    watermarkImages: extras,
+    watermarkImages: [
+      {
+        src: qr.uri,
+        scale: 1,
+        position: { X: qrX, Y: qrY },
+      },
+    ],
     quality: Math.round(jpegCompress * 100),
     saveFormat: ImageFormat.jpg,
   });
 
-  return normalizeMarkedUri(withMarks);
+  return normalizeMarkedUri(withQr);
 }

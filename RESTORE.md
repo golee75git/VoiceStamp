@@ -4196,3 +4196,9 @@ Restores InAppCameraPreview, CameraScreen + help from *.pre-preview-qr-open/.
 restore-preview-qr-capture-fix.bat
 
 Restores CameraScreen, StampSaveModal, quickCaptureSave, InAppCameraPreview + help from *.pre-preview-qr-capture-fix/.
+
+## Overlay mark restore (2026-08-17)
+
+restore-overlay-mark.bat
+
+Restores settingsService, overlayText, renderStampCaptionNative, renderStampWatermarkNative, SettingsScreen + help from *.pre-overlay-mark/. Deletes src/services/overlayMark.ts.

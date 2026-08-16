@@ -54,7 +54,6 @@ import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_MARK,
   DEFAULT_FIELD_TITLE_LABEL,
   DEFAULT_FIELD_PLACE_LABEL,
   DEFAULT_FIELD_MEMO_LABEL,
@@ -113,12 +112,6 @@ import {
   type TextAlign,
   textAlignLabel,
 } from '../services/settingsService';
-import {
-  clearOverlayMark,
-  overlayMarkExists,
-  overlayMarkFileUri,
-  pickAndInstallOverlayMark,
-} from '../services/overlayMark';
 
 const FLOOR_PICKER_OPTIONS: FloorPickerMode[] = ['off', 'school_only', 'always'];
 const FLOOR_DISPLAY_OPTIONS: FloorDisplayMode[] = ['suffix', 'cursor'];
@@ -234,10 +227,6 @@ export function SettingsScreen({
   const [overlayShowFooterPhrase, setOverlayShowFooterPhraseState] = useState(
     DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
   );
-  const [overlayShowMark, setOverlayShowMarkState] = useState(DEFAULT_OVERLAY_SHOW_MARK);
-  const [overlayMarkPreviewUri, setOverlayMarkPreviewUri] = useState<string | null>(null);
-  const [overlayMarkRev, setOverlayMarkRev] = useState(0);
-  const [overlayMarkBusy, setOverlayMarkBusy] = useState(false);
   const [titleFieldLabel, setTitleFieldLabelState] = useState(DEFAULT_FIELD_TITLE_LABEL);
   const [placeFieldLabel, setPlaceFieldLabelState] = useState(DEFAULT_FIELD_PLACE_LABEL);
   const [memoFieldLabel, setMemoFieldLabelState] = useState(DEFAULT_FIELD_MEMO_LABEL);
@@ -303,16 +292,6 @@ export function SettingsScreen({
       setOverlayFooterPhraseState(snapshot.overlayFooterPhrase);
       setOverlayShowOrgNameState(snapshot.overlayShowOrgName);
       setOverlayShowFooterPhraseState(snapshot.overlayShowFooterPhrase);
-      setOverlayShowMarkState(snapshot.overlayShowMark);
-      void overlayMarkExists().then((exists) => {
-        if (cancelled) {
-          return;
-        }
-        setOverlayMarkPreviewUri(exists ? overlayMarkFileUri() : null);
-        if (exists) {
-          setOverlayMarkRev((n) => n + 1);
-        }
-      });
       setTitleFieldLabelState(snapshot.titleFieldLabel);
       setPlaceFieldLabelState(snapshot.placeFieldLabel);
       setMemoFieldLabelState(snapshot.memoFieldLabel);
@@ -362,7 +341,6 @@ export function SettingsScreen({
         overlayFooterPhrase,
         overlayShowOrgName,
         overlayShowFooterPhrase,
-        overlayShowMark,
         titleFieldLabel,
         placeFieldLabel,
         memoFieldLabel,
@@ -403,7 +381,6 @@ export function SettingsScreen({
       setOverlayFooterPhraseState(saved.overlayFooterPhrase);
       setOverlayShowOrgNameState(saved.overlayShowOrgName);
       setOverlayShowFooterPhraseState(saved.overlayShowFooterPhrase);
-      setOverlayShowMarkState(saved.overlayShowMark);
       setTitleFieldLabelState(saved.titleFieldLabel);
       setPlaceFieldLabelState(saved.placeFieldLabel);
       setMemoFieldLabelState(saved.memoFieldLabel);
@@ -727,7 +704,6 @@ export function SettingsScreen({
           <Text style={[styles.label, styles.sectionGap]}>사진 오버레이 문구</Text>
           <Text style={styles.hint}>
             PDF·이미지·미리보기에 표시할 기관명(상단)과 하단 문구입니다. 저장 폴더명과 별도입니다.
-            표시 그림은 갤러리·카카오 등 JPEG에만 붙고 PDF·한글·엑셀에는 넣지 않습니다.
           </Text>
           <Text style={styles.label}>기관명</Text>
           <TextInput
@@ -765,108 +741,6 @@ export function SettingsScreen({
                 ]}
               >
                 {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_ORG_NAME)}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={[styles.label, styles.sectionGap]}>표시 그림</Text>
-          <Text style={styles.hint}>
-            앨범에서 한 장 고르면 캡션·워터마크 JPEG에 붙습니다. 쓸 권한이 있는 그림만 고르세요.
-          </Text>
-          {overlayMarkPreviewUri ? (
-            <Image
-              key={overlayMarkRev}
-              source={{ uri: overlayMarkPreviewUri }}
-              style={styles.overlayMarkPreview}
-              resizeMode="contain"
-            />
-          ) : (
-            <Text style={styles.hint}>선택된 그림 없음</Text>
-          )}
-          <View style={styles.optionRow}>
-            <Pressable
-              style={styles.optionButton}
-              onPress={() => {
-                if (saving || overlayMarkBusy) {
-                  return;
-                }
-                setOverlayMarkBusy(true);
-                void pickAndInstallOverlayMark()
-                  .then((uri) => {
-                    if (uri) {
-                      setOverlayMarkPreviewUri(uri);
-                      setOverlayMarkRev((n) => n + 1);
-                    }
-                  })
-                  .catch((e) => {
-                    showAlert(
-                      '표시 그림',
-                      e instanceof Error ? e.message : '그림을 넣지 못했습니다.',
-                    );
-                  })
-                  .finally(() => {
-                    setOverlayMarkBusy(false);
-                  });
-              }}
-              disabled={saving || overlayMarkBusy}
-            >
-              <Text style={styles.optionButtonText}>
-                {overlayMarkBusy ? '처리 중' : '앨범에서 고르기'}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={styles.optionButton}
-              onPress={() => {
-                if (saving || overlayMarkBusy) {
-                  return;
-                }
-                setOverlayMarkBusy(true);
-                void clearOverlayMark()
-                  .then(() => {
-                    setOverlayMarkPreviewUri(null);
-                  })
-                  .catch((e) => {
-                    showAlert(
-                      '표시 그림',
-                      e instanceof Error ? e.message : '그림을 지우지 못했습니다.',
-                    );
-                  })
-                  .finally(() => {
-                    setOverlayMarkBusy(false);
-                  });
-              }}
-              disabled={saving || overlayMarkBusy}
-            >
-              <Text style={styles.optionButtonText}>지우기</Text>
-            </Pressable>
-          </View>
-          <View style={styles.optionRow}>
-            <Pressable
-              style={[styles.optionButton, overlayShowMark && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowMarkState(true)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  overlayShowMark && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel('표시', DEFAULT_OVERLAY_SHOW_MARK)}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, !overlayShowMark && styles.optionButtonSelected]}
-              onPress={() => setOverlayShowMarkState(false)}
-              disabled={saving}
-            >
-              <Text
-                style={[
-                  styles.optionButtonText,
-                  !overlayShowMark && styles.optionButtonTextSelected,
-                ]}
-              >
-                {chipLabel('숨김', !DEFAULT_OVERLAY_SHOW_MARK)}
               </Text>
             </Pressable>
           </View>
@@ -1704,14 +1578,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
     lineHeight: 20,
-  },
-  overlayMarkPreview: {
-    width: 72,
-    height: 72,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#fff',
   },
   webNote: {
     fontSize: 13,

@@ -19,7 +19,6 @@ import {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_MARK,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
@@ -73,7 +72,6 @@ const OVERLAY_ORG_NAME_KEY = 'overlay_org_name';
 const OVERLAY_FOOTER_PHRASE_KEY = 'overlay_footer_phrase';
 const OVERLAY_SHOW_ORG_NAME_KEY = 'overlay_show_org_name';
 const OVERLAY_SHOW_FOOTER_PHRASE_KEY = 'overlay_show_footer_phrase';
-const OVERLAY_SHOW_MARK_KEY = 'overlay_show_mark';
 const FIELD_LABEL_TITLE_KEY = 'field_label_title';
 const FIELD_LABEL_PLACE_KEY = 'field_label_place';
 const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
@@ -133,7 +131,6 @@ export {
   DEFAULT_OVERLAY_FOOTER_PHRASE,
   DEFAULT_OVERLAY_ORG_NAME,
   DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE,
-  DEFAULT_OVERLAY_SHOW_MARK,
   DEFAULT_OVERLAY_SHOW_ORG_NAME,
   OVERLAY_ORG_MAX_LENGTH,
   OVERLAY_PHRASE_MAX_LENGTH,
@@ -497,7 +494,6 @@ export type SettingsScreenSnapshot = {
   overlayFooterPhrase: string;
   overlayShowOrgName: boolean;
   overlayShowFooterPhrase: boolean;
-  overlayShowMark: boolean;
   titleFieldLabel: string;
   placeFieldLabel: string;
   memoFieldLabel: string;
@@ -651,10 +647,6 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       const raw = pickSetting(map, OVERLAY_SHOW_FOOTER_PHRASE_KEY);
       return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_FOOTER_PHRASE;
     })(),
-    overlayShowMark: (() => {
-      const raw = pickSetting(map, OVERLAY_SHOW_MARK_KEY);
-      return raw ? sanitizeOverlayShowFlag(raw) : DEFAULT_OVERLAY_SHOW_MARK;
-    })(),
     titleFieldLabel: (() => {
       const raw = pickSetting(map, FIELD_LABEL_TITLE_KEY);
       return raw
@@ -732,7 +724,6 @@ export function sanitizeSettingsScreenSnapshot(
     overlayFooterPhrase: sanitizeOverlayText(draft.overlayFooterPhrase, OVERLAY_PHRASE_MAX_LENGTH),
     overlayShowOrgName: draft.overlayShowOrgName,
     overlayShowFooterPhrase: draft.overlayShowFooterPhrase,
-    overlayShowMark: draft.overlayShowMark,
     titleFieldLabel: sanitizeFieldLabel(draft.titleFieldLabel, DEFAULT_FIELD_TITLE_LABEL),
     placeFieldLabel: sanitizeFieldLabel(draft.placeFieldLabel, DEFAULT_FIELD_PLACE_LABEL),
     memoFieldLabel: sanitizeFieldLabel(draft.memoFieldLabel, DEFAULT_FIELD_MEMO_LABEL),
@@ -777,7 +768,6 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [OVERLAY_FOOTER_PHRASE_KEY, snapshot.overlayFooterPhrase],
     [OVERLAY_SHOW_ORG_NAME_KEY, snapshot.overlayShowOrgName ? 'true' : 'false'],
     [OVERLAY_SHOW_FOOTER_PHRASE_KEY, snapshot.overlayShowFooterPhrase ? 'true' : 'false'],
-    [OVERLAY_SHOW_MARK_KEY, snapshot.overlayShowMark ? 'true' : 'false'],
     [FIELD_LABEL_TITLE_KEY, snapshot.titleFieldLabel],
     [FIELD_LABEL_PLACE_KEY, snapshot.placeFieldLabel],
     [FIELD_LABEL_MEMO_KEY, snapshot.memoFieldLabel],
@@ -1289,20 +1279,6 @@ export async function getOverlayShowFooterPhrase(): Promise<boolean> {
 export async function setOverlayShowFooterPhrase(show: boolean): Promise<boolean> {
   const safeShow = sanitizeOverlayShowFlag(show);
   await writeSetting(OVERLAY_SHOW_FOOTER_PHRASE_KEY, safeShow ? 'true' : 'false');
-  return safeShow;
-}
-
-export async function getOverlayShowMark(): Promise<boolean> {
-  const value = await readSetting(OVERLAY_SHOW_MARK_KEY);
-  if (!value) {
-    return DEFAULT_OVERLAY_SHOW_MARK;
-  }
-  return sanitizeOverlayShowFlag(value);
-}
-
-export async function setOverlayShowMark(show: boolean): Promise<boolean> {
-  const safeShow = sanitizeOverlayShowFlag(show);
-  await writeSetting(OVERLAY_SHOW_MARK_KEY, safeShow ? 'true' : 'false');
   return safeShow;
 }
 
