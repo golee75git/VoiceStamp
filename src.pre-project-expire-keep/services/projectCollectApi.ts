@@ -174,7 +174,7 @@ export function mapProjectApiError(e: unknown): string {
     case 'too_many_attempts':
       return '취합 PIN 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.';
     case 'project_expired':
-      return '이 사업은 종료되어 더 이상 올리지 않습니다. 사진은 이 기기에만 남습니다.';
+      return '이 사업은 종료되었습니다. 연결을 끊어 주세요.';
     case 'project_closed':
       return '종료된 사업에는 올리거나 초대할 수 없습니다.';
     case 'invalid_template':
@@ -189,7 +189,7 @@ export function mapProjectApiError(e: unknown): string {
     case 'put_failed':
       return '일시 저장소에 올리지 못했습니다. 네트워크를 확인한 뒤 다시 저장해 주세요.';
     case 'not_found':
-      return '없거나 종료된 사업입니다.';
+      return '사업을 찾을 수 없습니다.';
     default:
       return e instanceof Error ? e.message : '요청에 실패했습니다.';
   }

@@ -67,8 +67,6 @@ export function sanitizeJoinMark(raw: string): string {
 export type ProjectImportFolderMode = 'date_name' | 'name_only';
 export type ProjectUploadStatus = 'pending' | 'uploading' | 'synced' | 'failed' | 'received';
 
-export const MAX_OWNED_PROJECTS = 20;
-
 export type OwnedProject = {
   projectId: string;
   name: string;
@@ -357,27 +355,32 @@ async function readOwnedProjectRaw(): Promise<OwnedProject[]> {
 }
 
 async function writeOwnedProjects(list: OwnedProject[]): Promise<void> {
-  await setValue(KEYS.owned, JSON.stringify(list.slice(0, MAX_OWNED_PROJECTS)));
-}
-
-export function isOwnedExpired(project: Pick<OwnedProject, 'expiresAt'>, now = Date.now()): boolean {
-  return typeof project.expiresAt === 'number' && project.expiresAt <= now;
+  await setValue(KEYS.owned, JSON.stringify(list.slice(0, 20)));
 }
 
 export async function listOwnedProjects(): Promise<OwnedProject[]> {
-  return readOwnedProjectRaw();
+  const parsed = await readOwnedProjectRaw();
+  const now = Date.now();
+  const kept: OwnedProject[] = [];
+  const dropped: string[] = [];
+  for (const p of parsed) {
+    if (typeof p.expiresAt === 'number' && p.expiresAt <= now) {
+      dropped.push(p.projectId);
+    } else {
+      kept.push(p);
+    }
+  }
+  if (dropped.length > 0) {
+    await writeOwnedProjects(kept);
+    for (const id of dropped) {
+      await deleteValue(`${KEYS.pinPrefix}${id}`);
+    }
+  }
+  return kept;
 }
 
 export async function upsertOwnedProject(project: OwnedProject): Promise<void> {
   const list = await readOwnedProjectRaw();
-  if (
-    list.length >= MAX_OWNED_PROJECTS &&
-    !list.some((p) => p.projectId === project.projectId)
-  ) {
-    const err = new Error('owned_full');
-    (err as Error & { code?: string }).code = 'owned_full';
-    throw err;
-  }
   const next = [project, ...list.filter((p) => p.projectId !== project.projectId)];
   await writeOwnedProjects(next);
 }

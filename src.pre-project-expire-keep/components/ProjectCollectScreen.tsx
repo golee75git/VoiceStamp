@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -46,10 +46,6 @@ import {
 } from '../services/stampFieldTemplates';
 import { importProjectStampToPhone } from '../services/projectImportService';
 import {
-  noticeJoinEndedIfGone,
-  isProjectGoneApiError,
-} from '../services/joinEndedNotice';
-import {
   buildImportGroupName,
   clearProjectJoin,
   getCollectorPin,
@@ -60,11 +56,9 @@ import {
   getProjectImportFolderMode,
   getProjectJoin,
   inboxExcelFontSizeToPt,
-  isOwnedExpired,
   listJoinedProjectHistory,
   listOwnedProjects,
   markOwnedProjectClosed,
-  MAX_OWNED_PROJECTS,
   removeJoinedProjectHistory,
   removeOwnedProject,
   sanitizeInboxExcelFontSize,
@@ -203,7 +197,6 @@ export function ProjectCollectScreen({
     fileBase: string;
   } | null>(null);
   const [linkInviteHint, setLinkInviteHint] = useState<string | null>(null);
-  const remainPromptedRef = useRef<Set<string>>(new Set());
 
   const leaveAfterJoin = () => {
     if (onJoinedGoCamera) onJoinedGoCamera();
@@ -214,7 +207,6 @@ export function ProjectCollectScreen({
   const reload = useCallback(async () => {
     setOwned(await listOwnedProjects());
     setJoinHistory(await listJoinedProjectHistory());
-    await noticeJoinEndedIfGone();
     setJoin(await getProjectJoin());
     setFolderMode(await getProjectImportFolderMode());
     setDeleteAfter(await getProjectDeleteAfterImport());
@@ -397,13 +389,6 @@ export function ProjectCollectScreen({
       Alert.alert('사업 만들기', '취합 PIN 6자리를 확인하고 동일하게 입력하세요.');
       return;
     }
-    if (owned.length >= MAX_OWNED_PROJECTS) {
-      Alert.alert(
-        '사업 만들기',
-        '만든 사업이 20개입니다. 만료된 사업을 목록에서 뺀 뒤 만들어 주세요.',
-      );
-      return;
-    }
     setBusy(true);
     try {
       const created = await apiCreateProject({
@@ -428,15 +413,7 @@ export function ProjectCollectScreen({
       setPhase('qr');
       await reload();
     } catch (e) {
-      const code = e instanceof Error ? (e as Error & { code?: string }).code : '';
-      if (code === 'owned_full') {
-        Alert.alert(
-          '사업 만들기',
-          '만든 사업이 20개입니다. 만료된 사업을 목록에서 뺀 뒤 만들어 주세요.',
-        );
-      } else {
-        Alert.alert('사업 만들기', mapProjectApiError(e));
-      }
+      Alert.alert('사업 만들기', mapProjectApiError(e));
     } finally {
       setBusy(false);
     }
@@ -491,11 +468,8 @@ export function ProjectCollectScreen({
         const looked = await apiLookupProject(projectId, { inviteId: link.inviteId });
         projectName = looked.name;
         fieldTemplate = looked.fieldTemplate || null;
-      } catch (e) {
-        if (isProjectGoneApiError(e)) {
-          Alert.alert('참여', mapProjectApiError(e));
-          return;
-        }
+      } catch {
+        // still allow join; upload will validate code
       }
 
       const runJoin = async () => {
@@ -608,16 +582,16 @@ export function ProjectCollectScreen({
   const openInbox = async (project: OwnedProject) => {
     setActive(project);
     let pinLocal = (await getCollectorPin(project.projectId)) || collectorPinInput;
-    const expired = isOwnedExpired(project);
-    if (!pinLocal && !expired) {
+    if (!pinLocal) {
       Alert.alert('수신', '취합 PIN을 아래 칸에 입력한 뒤 다시 눌러 주세요.');
       setPhase('inbox');
       return;
     }
-    if (pinLocal) setCollectorPinInput(pinLocal);
+    setCollectorPinInput(pinLocal);
     setBusy(true);
     try {
-      if (pinLocal) await setCollectorPin(project.projectId, pinLocal);
+      await setCollectorPin(project.projectId, pinLocal);
+      const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
       const all = await listStamps();
       const localImp = await listImportedStampsForProject(
         all,
@@ -625,49 +599,6 @@ export function ProjectCollectScreen({
         project.name,
         folderMode,
       );
-      if (expired) {
-        setInbox(mergeInboxWithLocal([], localImp));
-        setSelected(new Set());
-        setBarPick(null);
-        setPhase('inbox');
-        if (pinLocal && !remainPromptedRef.current.has(project.projectId)) {
-          remainPromptedRef.current.add(project.projectId);
-          try {
-            const man = await apiManifest({
-              projectId: project.projectId,
-              collectorPin: pinLocal,
-            });
-            const have = new Set(localImp.map((s) => s.id));
-            const remain = (man.stamps || [])
-              .map((s) => s.stampId)
-              .filter((id) => id && !have.has(id));
-            if (remain.length) {
-              Alert.alert(
-                '남은 사진',
-                remain.length + '장을 이 기기로 받을까요? 클라우드에서는 지우지 않습니다.',
-                [
-                  { text: '나중에', style: 'cancel' },
-                  {
-                    text: '받기',
-                    onPress: () => {
-                      void importRemainToPhone(project, pinLocal, remain);
-                    },
-                  },
-                ],
-              );
-            }
-          } catch {
-            // keep local-only list
-          }
-        }
-        return;
-      }
-      if (!pinLocal) {
-        Alert.alert('수신', '취합 PIN을 아래 칸에 입력한 뒤 다시 눌러 주세요.');
-        setPhase('inbox');
-        return;
-      }
-      const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
       setInbox(mergeInboxWithLocal(man.stamps || [], localImp));
       setSelected(new Set());
       setBarPick(null);
@@ -679,59 +610,9 @@ export function ProjectCollectScreen({
     }
   };
 
-  const importRemainToPhone = async (
-    project: OwnedProject,
-    collectorPin: string,
-    ids: string[],
-  ) => {
-    setBusy(true);
-    setImportProgress({ current: 0, total: ids.length, title: '' });
-    let ok = 0;
-    let skipped = 0;
-    let step = 0;
-    try {
-      await setProjectImportFolderMode(folderMode);
-      const prevAck = await getProjectDeleteAfterImport();
-      await setProjectDeleteAfterImport(false);
-      try {
-        for (const stampId of ids) {
-          step += 1;
-          setImportProgress({ current: step, total: ids.length, title: stampId.slice(0, 40) });
-          const result = await importProjectStampToPhone({
-            project,
-            collectorPin,
-            stampId,
-          });
-          if (result.skipped) skipped += 1;
-          else ok += 1;
-        }
-      } finally {
-        await setProjectDeleteAfterImport(prevAck);
-        setDeleteAfter(prevAck);
-      }
-      onImported?.();
-      Alert.alert(
-        '가져오기 완료',
-        `${ok + skipped}장을 이 기기에 저장했습니다.${
-          skipped ? ` (이미 있는 항목 ${skipped}건 건너뜀)` : ''
-        }`,
-      );
-      await openInbox(project);
-    } catch (e) {
-      Alert.alert('가져오기', mapProjectApiError(e));
-    } finally {
-      setImportProgress(null);
-      setBusy(false);
-    }
-  };
-
   const handleImportSelected = async () => {
     setBarPick('phone');
     if (!active) return;
-    if (isOwnedExpired(active)) {
-      Alert.alert('내 폰으로', '보관이 끝난 사업은 이 기기로 가져온 사진만 보입니다.');
-      return;
-    }
     const pinLocal = (await getCollectorPin(active.projectId)) || collectorPinInput;
     if (!pinLocal) {
       Alert.alert('내 폰으로', '취합 PIN이 필요합니다.');
@@ -887,14 +768,6 @@ export function ProjectCollectScreen({
       void (async () => {
         setBusy(true);
         try {
-          try {
-            await apiLookupProject(item.projectId);
-          } catch (e) {
-            if (isProjectGoneApiError(e)) {
-              Alert.alert('다시 연결', mapProjectApiError(e));
-              return;
-            }
-          }
           await setProjectCollectEnabled(true);
           await setProjectJoin({
             projectId: item.projectId,
@@ -933,14 +806,6 @@ export function ProjectCollectScreen({
     }
     void (async () => {
       try {
-        try {
-          await apiLookupProject(item.projectId);
-        } catch (e) {
-          if (isProjectGoneApiError(e)) {
-            Alert.alert('갤러리 보내기', mapProjectApiError(e));
-            return;
-          }
-        }
         const { pickImagesFromLibrary } = await import('../services/pickStampImage');
         const picked = await pickImagesFromLibrary();
         if (!picked.length) {
@@ -1032,10 +897,7 @@ export function ProjectCollectScreen({
       Alert.alert('사업 종료', '이미 종료된 사업입니다.');
       return;
     }
-    Alert.alert(
-      '사업 종료',
-      '종료하면 더 이상 올릴 수 없습니다. 보관 만료일까지 목록에 「종료됨」으로 남습니다. 참여 기기는 앱을 열거나 저장할 때 안내됩니다.',
-      [
+    Alert.alert('사업 종료', '종료하면 더 이상 올릴 수 없습니다. 보관 만료일까지 목록에 「종료됨」으로 남습니다.', [
       { text: '취소', style: 'cancel' },
       {
         text: '종료',
@@ -1067,31 +929,6 @@ export function ProjectCollectScreen({
     ]);
   };
 
-  const handleRemoveOwnedProject = (project: OwnedProject) => {
-    Alert.alert(
-      '목록에서 빼기',
-      project.name +
-        '의 목록과 수신 PIN만 지웁니다. 이미 내 폰으로 가져온 사진은 남습니다.',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '빼기',
-          style: 'destructive',
-          onPress: () => {
-            void (async () => {
-              await removeOwnedProject(project.projectId);
-              if (active?.projectId === project.projectId) {
-                setActive(null);
-                setPhase('hub');
-              }
-              await reload();
-            })();
-          },
-        },
-      ],
-    );
-  };
-
   const sanitizeLoose = (n: string) => n.trim().replace(/[\\/:*?"<>|]/g, '_').slice(0, 40);
   const formatYmd = (t: number) => {
     const d = new Date(t);
@@ -1100,19 +937,7 @@ export function ProjectCollectScreen({
 
   const renderHub = () => (
     <ScrollView contentContainerStyle={styles.body}>
-      <Pressable
-        style={collectPressStyle(styles.row)}
-        onPress={() => {
-          if (owned.length >= MAX_OWNED_PROJECTS) {
-            Alert.alert(
-              '사업 만들기',
-              '만든 사업이 20개입니다. 만료된 사업을 목록에서 뺀 뒤 만들어 주세요.',
-            );
-            return;
-          }
-          setPhase('create');
-        }}
-      >
+      <Pressable style={collectPressStyle(styles.row)} onPress={() => setPhase('create')}>
         <Text style={styles.rowTitle}>사업 만들기</Text>
         <Text style={styles.rowSub}>기존 사업은 유지 · 새 사업을 추가합니다 (최대 20)</Text>
       </Pressable>
@@ -1212,7 +1037,6 @@ export function ProjectCollectScreen({
         </View>
       ) : (
         owned.map((project) => {
-          const expired = isOwnedExpired(project);
           const left = Math.max(0, Math.ceil((project.expiresAt - Date.now()) / 86400000));
           const closed = !!project.closedAt;
           return (
@@ -1222,14 +1046,14 @@ export function ProjectCollectScreen({
                 {[
                   project.creatorLabel?.trim() || '',
                   closed ? '종료됨' : '',
-                  expired ? '만료됨' : 'D-' + left,
+                  'D-' + left,
                   project.projectId,
                 ]
                   .filter(Boolean)
                   .join(' · ')}
               </Text>
               <View style={styles.ownedActions}>
-                {!closed && !expired ? (
+                {!closed ? (
                   <Pressable
                     style={collectPressStyle(styles.ownedAction)}
                     onPress={() => openInviteForProject(project)}
@@ -1244,7 +1068,7 @@ export function ProjectCollectScreen({
                 >
                   <Text style={styles.ownedActionText}>수신</Text>
                 </Pressable>
-                {!closed && !expired ? (
+                {!closed ? (
                   <Pressable
                     style={collectPressStyle(styles.ownedAction)}
                     onPress={() => handleCloseOwnedProject(project)}
@@ -1253,23 +1077,12 @@ export function ProjectCollectScreen({
                     <Text style={[styles.ownedActionText, styles.linkDanger]}>종료</Text>
                   </Pressable>
                 ) : null}
-                {expired ? (
-                  <Pressable
-                    style={collectPressStyle(styles.ownedAction)}
-                    onPress={() => handleRemoveOwnedProject(project)}
-                    disabled={busy}
-                  >
-                    <Text style={[styles.ownedActionText, styles.linkDanger]}>목록에서 빼기</Text>
-                  </Pressable>
-                ) : null}
               </View>
             </View>
           );
         })
       )}
-      <Text style={styles.hint}>
-        클라우드 일시 보관이 끝나면 올린 사진은 막히고, 이 기기 목록은 빼기 전까지 내 폰으로 받은 사진만 보입니다.
-      </Text>
+      <Text style={styles.hint}>일시 보관 후 삭제됩니다. 영구 저장소가 아닙니다.</Text>
     </ScrollView>
   );
 
@@ -1498,9 +1311,7 @@ export function ProjectCollectScreen({
     ]);
   };
 
-  const renderInbox = () => {
-    const expired = !!(active && isOwnedExpired(active));
-    return (
+  const renderInbox = () => (
     <View style={styles.flex}>
       <View style={styles.bodyPad}>
         <Text style={styles.label}>취합 PIN</Text>
@@ -1534,7 +1345,6 @@ export function ProjectCollectScreen({
           </Pressable>
         </View>
         <Text style={styles.hint}>미리보기: {folderPreview}</Text>
-        {expired ? null : (
         <Pressable
           style={collectPressStyle(styles.secondary)}
           onPress={() => {
@@ -1545,11 +1355,8 @@ export function ProjectCollectScreen({
             가져온 뒤 일시 저장소에서 삭제: {deleteAfter ? 'ON' : 'OFF'}
           </Text>
         </Pressable>
-        )}
         <Text style={styles.hint}>
-          {expired
-            ? '보관이 끝나 이 기기로 가져온 사진만 보입니다. 목록에서 빼야 사업 줄이 지워집니다.'
-            : '서버에 남은 사진과 내 폰으로 가져온 사진을 함께 봅니다. 썸네일을 누르면 크게 볼 수 있습니다.'}
+          서버에 남은 사진과 내 폰으로 가져온 사진을 함께 봅니다. 썸네일을 누르면 크게 볼 수 있습니다.
         </Text>
       </View>
       <FlatList
@@ -1557,11 +1364,7 @@ export function ProjectCollectScreen({
         extraData={`${selected.size}:${[...selected].join(',')}:${barPick || ''}`}
         keyExtractor={(item) => item.stampId}
         contentContainerStyle={styles.inboxListPad}
-        ListEmptyComponent={
-          <Text style={styles.hintPad}>
-            {expired ? '이 기기로 가져온 사진이 없습니다.' : '아직 올라온 사진이 없습니다.'}
-          </Text>
-        }
+        ListEmptyComponent={<Text style={styles.hintPad}>아직 올라온 사진이 없습니다.</Text>}
         renderItem={({ item }) => {
           const on = selected.has(item.stampId);
           const got = !!item.localImagePath;
@@ -1629,7 +1432,6 @@ export function ProjectCollectScreen({
         >
           <Text style={[styles.barBtnText, barPick === 'all' && styles.barBtnTextOn]}>전체</Text>
         </Pressable>
-        {expired ? null : (
         <Pressable
           style={collectPressStyle(styles.barBtn, barPick === 'phone' && styles.barBtnOn)}
           onPress={() => void handleImportSelected()}
@@ -1637,7 +1439,6 @@ export function ProjectCollectScreen({
         >
           <Text style={[styles.barBtnText, barPick === 'phone' && styles.barBtnTextOn]}>내 폰으로</Text>
         </Pressable>
-        )}
         <Pressable
           style={collectPressStyle(styles.barBtn, barPick === 'xlsx' && styles.barBtnOn)}
           onPress={() => void handleInboxExcelSelected()}
@@ -1675,8 +1476,7 @@ export function ProjectCollectScreen({
         </Pressable>
       </Modal>
     </View>
-    );
-  };
+  );
 
   return (
     <View style={styles.container}>

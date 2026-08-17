@@ -6,7 +6,6 @@ import {
   apiPrepareUpload,
   mapProjectApiError,
 } from './projectCollectApi';
-import { clearJoinIfProjectGone } from './joinEndedNotice';
 import {
   getOrCreateDeviceId,
   getProjectAutoUpload,
@@ -194,17 +193,12 @@ export async function drainProjectUploadQueue(): Promise<void> {
       try {
         await uploadOne(id);
       } catch (e) {
-        const ended = await clearJoinIfProjectGone(e);
         const join = await getProjectJoin();
         await setUploadStatus(id, 'failed', join?.projectId ?? null);
         emitProjectUploadFeedback({
           type: 'failed',
           projectName: join?.name || '사업',
         });
-        if (ended) {
-          queue.length = 0;
-          break;
-        }
         failStreak += 1;
         if (Platform.OS !== 'web' && failStreak <= 2) {
           const { Alert } = await import('react-native');

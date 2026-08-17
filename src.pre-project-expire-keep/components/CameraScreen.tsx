@@ -218,15 +218,7 @@ export function CameraScreen({
       void import('../services/projectCollectSettings').then(
         ({ getProjectCollectEnabled, getProjectJoin }) => {
           void getProjectCollectEnabled().then(setProjectCollectEnabled);
-          void getProjectJoin().then(async (join) => {
-            if (!join) {
-              setCollectJoinName(null);
-              return;
-            }
-            const { noticeJoinEndedIfGone } = await import('../services/joinEndedNotice');
-            const gone = await noticeJoinEndedIfGone();
-            setCollectJoinName(gone ? null : join.name);
-          });
+          void getProjectJoin().then((join) => setCollectJoinName(join?.name ?? null));
         },
       );
     }
@@ -286,15 +278,7 @@ export function CameraScreen({
       void import('../services/projectCollectSettings').then(
         ({ getProjectCollectEnabled, getProjectJoin }) => {
           void getProjectCollectEnabled().then(setProjectCollectEnabled);
-          void getProjectJoin().then(async (join) => {
-            if (!join) {
-              setCollectJoinName(null);
-              return;
-            }
-            const { noticeJoinEndedIfGone } = await import('../services/joinEndedNotice');
-            const gone = await noticeJoinEndedIfGone();
-            setCollectJoinName(gone ? null : join.name);
-          });
+          void getProjectJoin().then((join) => setCollectJoinName(join?.name ?? null));
         },
       );
     };

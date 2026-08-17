@@ -4208,3 +4208,9 @@ Restores settingsService, overlayText, renderStampCaptionNative, renderStampWate
 restore-overlay-home-qr.bat
 
 Restores settingsService, overlayText, qrCodeService, caption/watermark native, exportPdf, exportStampImage, SettingsScreen + help from *.pre-overlay-home-qr/. Deletes src/services/overlayHomeQr.ts.
+
+## Project expire keep restore (2026-08-17)
+
+restore-project-expire-keep.bat
+
+Restores projectCollectSettings, projectCollectApi, projectUploadQueue, ProjectCollectScreen, CameraScreen, help, PRIVACY from *.pre-project-expire-keep/. Deletes src/services/joinEndedNotice.ts.
