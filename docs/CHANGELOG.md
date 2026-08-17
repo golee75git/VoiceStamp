@@ -3,8 +3,8 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 갱신 | 2026-08-17 |
-| 권장 APK | `releases/VoiceStamp_20260817_082730.apk` |
-| 기준 커밋 | `32482e9` 기관 홈 QR JPEG·PDF · APK `082730` |
+| 권장 APK | `releases/VoiceStamp_20260817_094535.apk` |
+| 기준 커밋 | `5c32fb9` 만료 사업 유지·종료 안내 · APK `094535` |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
 앱 버전명(`app.json`)은 모두 **1.0.0**. 구분은 **APK 파일명(빌드 시각)** 기준입니다.  
@@ -16,6 +16,7 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
+| **2026-08-17** | 만료 사업 목록 유지·종료 참여 안내 · 도움말 · APK `094535` | `5c32fb9` · `094535` |
 | **2026-08-17** | 설정 **기관 홈페이지** QR을 JPEG·PDF에 합성 · 도움말 · APK `082730` | `32482e9` · `082730` |
 | **2026-08-17** | 설정 **표시 그림**을 캡션·워터마크 JPEG에 합성 · 도움말 · APK `074537` | `2dadfea` · `074537` |
 | **2026-08-16** | 미리보기 QR **열기 중에도 셔터 촬영** · 도움말 · APK `202344` | `5ca954e` · `202344` |
@@ -46,7 +47,8 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| **`VoiceStamp_20260817_082730.apk`** | `32482e9` | **설치·GitHub 권장** — 설정 기관 홈 QR을 JPEG·PDF에 합성 |
+| **`VoiceStamp_20260817_094535.apk`** | `5c32fb9` | **설치·GitHub 권장** — 만료 사업 목록 유지·종료 참여 안내 |
+| **`VoiceStamp_20260817_082730.apk`** | `32482e9` | **이전** — 설정 기관 홈 QR을 JPEG·PDF에 합성 |
 | **`VoiceStamp_20260817_074537.apk`** | `2dadfea` | **이전** — 설정 표시 그림을 캡션·워터마크 JPEG에 합성 |
 | **`VoiceStamp_20260816_202344.apk`** | `5ca954e` | **이전** — 미리보기 QR 열기 중에도 셔터 촬영 |
 | **`VoiceStamp_20260816_190729.apk`** | `5f9e722` | **이전** — 앱 내 미리보기 QR 열기 |
@@ -75,7 +77,7 @@
 | `VoiceStamp_20260808_143848.apk` | `89b643d` | **이전** — 수신함 서버+로컬 병합·썸네일 |
 | `VoiceStamp_20260801_193317.apk` | `073c8bf` | **이전** — 성능 번들 C (헬스체크 기준선) |
 
-다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260817_082730.apk
+다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260817_094535.apk
 
 ---
 

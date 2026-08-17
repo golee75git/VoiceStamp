@@ -717,6 +717,7 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
+| **2026-08-17** | 만료 사업 목록 유지·종료 참여 안내 · 도움말 · APK `094535` · `restore-project-expire-keep.bat` | `5c32fb9` |
 | **2026-08-17** | 설정 **기관 홈페이지** QR을 JPEG·PDF에 합성 · 도움말 · APK `082730` · `restore-overlay-home-qr.bat` | `32482e9` |
 | **2026-08-17** | 설정 **표시 그림**을 캡션·워터마크 JPEG에 합성 · 도움말 · APK `074537` · `restore-overlay-mark.bat` | `2dadfea` |
 | **2026-08-16** | 미리보기 QR **열기 중에도 셔터 촬영** · 도움말 · APK `202344` · `restore-preview-qr-capture-fix.bat` | `5ca954e` |
@@ -728,11 +729,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-17:** 권장 파일은 **`VoiceStamp_20260817_082730.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-17:** 권장 파일은 **`VoiceStamp_20260817_094535.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260817_082730.apk` | `32482e9` | **설치·GitHub 권장** — 설정 기관 홈 QR JPEG·PDF |
+| `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **설치·GitHub 권장** — 만료 사업 목록 유지·종료 참여 안내 |
+| `releases/VoiceStamp_20260817_082730.apk` | `32482e9` | **이전** — 설정 기관 홈 QR JPEG·PDF |
 | `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **이전** — 설정 표시 그림 JPEG 합성 |
 | `releases/VoiceStamp_20260816_202344.apk` | `5ca954e` | **이전** — 미리보기 QR 열기 중에도 셔터 촬영 |
 | `releases/VoiceStamp_20260816_190729.apk` | `5f9e722` | **이전** — 앱 내 미리보기 QR 열기 |

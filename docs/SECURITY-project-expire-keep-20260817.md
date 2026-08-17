@@ -43,5 +43,5 @@
 `restore-project-expire-keep.bat`
 
 ## 배포
-- APK: (빌드 후 기입)
-- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/
+- APK: `VoiceStamp_20260817_094535.apk` (`5c32fb9`)
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260817_094535.apk
