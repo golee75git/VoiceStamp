@@ -4,6 +4,8 @@ import { apiLookupProject } from './projectCollectApi';
 import { clearProjectJoin, getProjectJoin } from './projectCollectSettings';
 
 const JOIN_ENDED_TITLE = '사업 종료';
+const JOIN_ENDED_BODY =
+  '이 사업은 종료되어 더 이상 올리지 않습니다. 사진은 이 기기에만 남습니다.';
 
 const NOTICE_GAP_MS = 60_000;
 let lastNoticeProjectId = '';
@@ -19,16 +21,7 @@ export function isProjectGoneApiError(e: unknown): boolean {
   return code === 'not_found' || code === 'project_expired' || code === 'project_closed';
 }
 
-function joinEndedBody(name: string | null | undefined): string {
-  const label = String(name || '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .slice(0, 40);
-  const who = label || '이 사업';
-  return who + '은 종료되어 더 이상 올리지 않습니다. 사진은 이 기기에만 남습니다.';
-}
-
-function showJoinEndedAlert(projectId: string, name: string | null | undefined): void {
+function showJoinEndedAlert(projectId: string): void {
   if (Platform.OS === 'web') return;
   const now = Date.now();
   if (lastNoticeProjectId === projectId && now - lastNoticeAt < NOTICE_GAP_MS) {
@@ -36,7 +29,7 @@ function showJoinEndedAlert(projectId: string, name: string | null | undefined):
   }
   lastNoticeProjectId = projectId;
   lastNoticeAt = now;
-  Alert.alert(JOIN_ENDED_TITLE, joinEndedBody(name));
+  Alert.alert(JOIN_ENDED_TITLE, JOIN_ENDED_BODY);
 }
 
 /** Clear local join when lookup says the project is gone (closed and missing share 404). */
@@ -49,7 +42,7 @@ export async function noticeJoinEndedIfGone(): Promise<boolean> {
   } catch (e) {
     if (!isProjectGoneApiError(e)) return false;
     await clearProjectJoin();
-    showJoinEndedAlert(join.projectId, join.name);
+    showJoinEndedAlert(join.projectId);
     return true;
   }
 }
@@ -59,6 +52,6 @@ export async function clearJoinIfProjectGone(e: unknown): Promise<boolean> {
   if (!isProjectGoneApiError(e)) return false;
   const join = await getProjectJoin();
   await clearProjectJoin();
-  showJoinEndedAlert(join?.projectId || 'gone', join?.name);
+  showJoinEndedAlert(join?.projectId || 'gone');
   return true;
 }

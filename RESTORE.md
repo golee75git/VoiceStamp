@@ -4214,3 +4214,9 @@ Restores settingsService, overlayText, qrCodeService, caption/watermark native, 
 restore-project-expire-keep.bat
 
 Restores projectCollectSettings, projectCollectApi, projectUploadQueue, ProjectCollectScreen, CameraScreen, help, PRIVACY from *.pre-project-expire-keep/. Deletes src/services/joinEndedNotice.ts.
+
+## Join ended name restore (2026-08-17)
+
+restore-join-ended-name.bat
+
+Restores joinEndedNotice + help from *.pre-join-ended-name/.
