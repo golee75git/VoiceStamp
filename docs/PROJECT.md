@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-17** — 만료 사업 유지·종료 안내 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `094535`)
-최신 기능 커밋 기준: `5c32fb9` / APK `094535`
+문서 동기화: **2026-08-17** — 종료 안내 사업명 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `101059`)
+최신 기능 커밋 기준: `1730c0f` / APK `101059`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -673,7 +673,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **권장** — 만료 사업 목록 유지·종료 참여 안내 · `restore-project-expire-keep.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260817_101059.apk` | `1730c0f` | **권장** — 종료 안내에 사업 이름 · `restore-join-ended-name.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **이전** — 만료 사업 목록 유지·종료 참여 안내 · `restore-project-expire-keep.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260817_082730.apk` | `32482e9` | **이전** — 설정 기관 홈 QR을 JPEG·PDF에 합성 · `restore-overlay-home-qr.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260817_074537.apk` | `2dadfea` | **이전** — 설정 표시 그림을 캡션·워터마크 JPEG에 합성 · `restore-overlay-mark.bat` | **GitHub `releases/`** |
 

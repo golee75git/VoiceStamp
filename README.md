@@ -43,4 +43,4 @@ build-apk.bat
 
 ## 최신 APK
 
-권장: `releases/VoiceStamp_20260817_094535.apk` — 만료 사업 목록 유지·종료 참여 안내 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+권장: `releases/VoiceStamp_20260817_101059.apk` — 종료 안내에 사업 이름 · 상세는 [docs/CHANGELOG.md](./docs/CHANGELOG.md)
