@@ -4244,3 +4244,9 @@ Restores InAppCameraPreview from *.pre-inapp-preview-surface/.
 restore-inapp-shutter-keep.bat
 
 Restores CameraScreen, InAppCameraPreview + help from *.pre-inapp-shutter-keep/.
+
+## Hub card status restore (2026-08-18)
+
+restore-hub-card-status.bat
+
+Restores ProjectCollectScreen + help from *.pre-hub-card-status/.

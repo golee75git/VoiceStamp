@@ -1164,7 +1164,7 @@ export function ProjectCollectScreen({
           const active = join?.projectId === item.projectId;
           const flags = joinHistoryUploadBlocked(item, owned);
           return (
-            <View key={item.projectId} style={styles.row}>
+            <View key={item.projectId} style={[styles.row, active && styles.rowJoinLive]}>
               <Text style={styles.rowTitle}>{item.name}</Text>
               <Text style={styles.rowSub}>
                 {[
@@ -1228,7 +1228,7 @@ export function ProjectCollectScreen({
           const left = Math.max(0, Math.ceil((project.expiresAt - Date.now()) / 86400000));
           const closed = !!project.closedAt;
           return (
-            <View key={project.projectId} style={styles.row}>
+            <View key={project.projectId} style={[styles.row, (closed || expired) && styles.rowOwnedEnded]}>
               <Text style={styles.rowTitle}>{project.name}</Text>
               <Text style={styles.rowSub}>
                 {[
@@ -1975,6 +1975,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
     gap: 4,
+  },
+  rowJoinLive: {
+    backgroundColor: '#ecfdf5',
+    borderColor: '#a7f3d0',
+  },
+  rowOwnedEnded: {
+    backgroundColor: '#f3f4f6',
+    borderColor: '#d1d5db',
   },
   rowTitle: { fontSize: 16, fontWeight: '700', color: '#111' },
   rowSub: { fontSize: 13, color: '#6b7280' },
