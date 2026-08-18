@@ -174,29 +174,25 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
 
     return (
       <GestureHandlerRootView style={[styles.root, style]} onLayout={handleRootLayout}>
-        <GestureDetector gesture={gesture}>
-          <View
-            style={[
-              styles.previewSlot,
-              hasFrame ? { width: frame.width, height: frame.height } : styles.previewSlotGuess,
-            ]}
-            collapsable={false}
-          >
-            <CameraView
-              ref={cameraRef}
-              style={styles.camera}
-              facing={facing}
-              mirror={facing === 'front'}
-              pictureSize={pictureSize}
-              ratio={Platform.OS === 'android' ? '4:3' : undefined}
-              animateShutter={false}
-              zoom={zoom}
-              barcodeScannerSettings={listenQr ? { barcodeTypes: ['qr'] } : undefined}
-              onBarcodeScanned={listenQr ? handlePreviewQr : undefined}
-              onCameraReady={handleLensReady}
-            />
-          </View>
-        </GestureDetector>
+        {hasFrame ? (
+          <GestureDetector gesture={gesture}>
+            <View style={{ width: frame.width, height: frame.height }} collapsable={false}>
+              <CameraView
+                ref={cameraRef}
+                style={styles.camera}
+                facing={facing}
+                mirror={facing === 'front'}
+                pictureSize={pictureSize}
+                ratio={Platform.OS === 'android' ? '4:3' : undefined}
+                animateShutter={false}
+                zoom={zoom}
+                barcodeScannerSettings={listenQr ? { barcodeTypes: ['qr'] } : undefined}
+                onBarcodeScanned={listenQr ? handlePreviewQr : undefined}
+                onCameraReady={handleLensReady}
+              />
+            </View>
+          </GestureDetector>
+        ) : null}
       </GestureHandlerRootView>
     );
   },
@@ -208,17 +204,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  previewSlot: {
-    overflow: 'hidden',
-    backgroundColor: '#000',
-  },
-  previewSlotGuess: {
-    width: '100%',
-    aspectRatio: STILL_FRAME_RATIO,
   },
   camera: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
 });

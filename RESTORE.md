@@ -4232,3 +4232,9 @@ Restores ProjectSentList + help from *.pre-sent-bar-inset/.
 restore-inapp-preview-fit.bat
 
 Restores InAppCameraPreview, cameraPictureSize + help from *.pre-inapp-preview-fit/.
+
+## In-app preview surface restore (2026-08-18)
+
+restore-inapp-preview-surface.bat
+
+Restores InAppCameraPreview from *.pre-inapp-preview-surface/.
