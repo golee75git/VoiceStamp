@@ -717,7 +717,8 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
-| **2026-08-18** | 앱 내 미리보기 **검정 화면 수정** · APK `105424` · `restore-inapp-preview-surface.bat` | (푸시 후) |
+| **2026-08-18** | 셔터 시 **미리보기 유지**·3:4 위쪽 고정 · APK `112120` · `restore-inapp-shutter-keep.bat` | (푸시 후) |
+| **2026-08-18** | 앱 내 미리보기 **검정 화면 수정** · APK `105424` · `restore-inapp-preview-surface.bat` | `2491781` |
 | **2026-08-18** | 앱 내 미리보기 **3:4 비율 맞춤**(자르기 없음) · 도움말 · APK `103007` · `restore-inapp-preview-fit.bat` | `8037079` |
 | **2026-08-18** | 보낸 사진 하단 **실패 재전송·휴지통** 시스템 내비 여백 · 도움말 · APK `094501` · `restore-sent-bar-inset.bat` | (푸시 후) |
 | **2026-08-18** | 참여 목록 **종료됨** 표시·올리기 단추 숨김 · 도움말 · APK `091805` · `restore-join-ended-hub.bat` | `5b4ca53` |
@@ -734,11 +735,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_105424.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_112120.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260818_105424.apk` | (푸시 후) | **설치·GitHub 권장** — 앱 내 미리보기 검정 화면 수정 |
+| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **설치·GitHub 권장** — 셔터 시 미리보기 유지 |
+| `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 |
 | `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 |

@@ -4238,3 +4238,9 @@ Restores InAppCameraPreview, cameraPictureSize + help from *.pre-inapp-preview-f
 restore-inapp-preview-surface.bat
 
 Restores InAppCameraPreview from *.pre-inapp-preview-surface/.
+
+## In-app shutter keep restore (2026-08-18)
+
+restore-inapp-shutter-keep.bat
+
+Restores CameraScreen, InAppCameraPreview + help from *.pre-inapp-shutter-keep/.
