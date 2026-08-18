@@ -344,7 +344,7 @@
 |----|----------|------|
 | F-EXP-01 | 선택 스탬프 → **프로젝트 ZIP** (이미지·메타; PDF는 미포함·속도 우선; **바이너리/청크 저장**으로 OOM 완화) | ✅ |
 | F-EXP-02 | 선택 스탬프 → **XLSX** (제목·메모·층·썸네일 A열; **바이너리 저장**) | ✅ |
-| F-EXP-03 | 선택 스탬프 → **HWPX** (앱 자체 서식 `vs-form.hwpx`; **바이너리 저장**) | ✅ |
+| F-EXP-03 | 선택 스탬프 → **HWPX** (한글 저장 서식 `report.hwpx`+자리 표시; **바이너리 저장**) | ✅ |
 | F-EXP-04 | 웹 `/report` 썸네일 **라이트박스 확대** | ✅ |
 | F-EXP-05 | 웹 `/report` **클라이언트 JPEG ZIP** (서버 업로드 없음, manifest 기반) | ✅ |
 | F-EXP-06 | `/report` JPEG **글자 크기 프리셋** 75·100·125·150% | ✅ |
@@ -717,6 +717,9 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
+| **2026-08-18** | **HWPX 한글 저장 서식**+자리 표시 · 도움말 · `restore-hwpx-han-mark.bat` | (푸시 후) |
+| **2026-08-18** | **HWPX 자체 서식**(외부 예제 제거) · 도움말 · APK `151153` · `restore-hwpx-own-form.bat` | (푸시 후) |
+| **2026-08-18** | 사업취합 허브 **연결·종료 카드 배경** · 도움말 · APK `140815` · `restore-hub-card-status.bat` | (푸시 후) |
 | **2026-08-18** | 셔터 시 **미리보기 유지**·3:4 위쪽 고정 · APK `112120` · `restore-inapp-shutter-keep.bat` | (푸시 후) |
 | **2026-08-18** | 앱 내 미리보기 **검정 화면 수정** · APK `105424` · `restore-inapp-preview-surface.bat` | `2491781` |
 | **2026-08-18** | 앱 내 미리보기 **3:4 비율 맞춤**(자르기 없음) · 도움말 · APK `103007` · `restore-inapp-preview-fit.bat` | `8037079` |
@@ -735,7 +738,7 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_112120.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-18:** 권장 파일은 빌드 후 기입. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|

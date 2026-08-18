@@ -12,7 +12,7 @@ import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const reportTemplateAsset = require('../../assets/templates/report.hwpx');
+const reportTemplateAsset = require('../../assets/templates/vs-form.hwpx');
 
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');

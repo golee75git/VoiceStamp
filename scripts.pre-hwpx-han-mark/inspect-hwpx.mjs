@@ -1,7 +1,7 @@
 import fs from 'fs';
 import JSZip from 'jszip';
 
-const z = await JSZip.loadAsync(fs.readFileSync('assets/templates/report.hwpx'));
+const z = await JSZip.loadAsync(fs.readFileSync('assets/templates/vs-form.hwpx'));
 const s = await z.file('Contents/section0.xml').async('string');
 const start = s.indexOf('{{STAMP_BLOCK_START}}');
 const end = s.indexOf('{{STAMP_BLOCK_END}}');
@@ -33,11 +33,8 @@ const imgMatch = IMG_BINARY_REF_RE.exec(expanded.slice(tokenIndex + '{{@img1}}'.
 if (!imgMatch || imgMatch[2] !== 'image1') {
   throw new Error('image binary ref missing');
 }
-const binName = Object.keys(z.files).find(
-  (n) => n.startsWith('BinData/image1.') && !z.files[n].dir,
-);
-if (!binName) {
-  throw new Error('BinData/image1 missing');
+if (!z.file('BinData/image1.png')) {
+  throw new Error('BinData/image1.png missing');
 }
 console.log('section bytes', s.length);
-console.log('fill-path ok', imgMatch[2], binName);
+console.log('fill-path ok', imgMatch[2]);

@@ -4251,6 +4251,12 @@ restore-hub-card-status.bat
 
 Restores ProjectCollectScreen + help from *.pre-hub-card-status/.
 
+## HWPX hangul-mark restore (2026-08-18)
+
+restore-hwpx-han-mark.bat
+
+Restores exportHwpx require, hangul report.hwpx (pre pic-move), vs-form.hwpx, scripts, help, LICENSE-NOTICE.
+
 ## HWPX own form restore (2026-08-18)
 
 restore-hwpx-own-form.bat

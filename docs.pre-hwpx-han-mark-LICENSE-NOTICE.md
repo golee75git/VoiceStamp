@@ -108,7 +108,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 - 앱 아이콘 (`assets/icon.png` 등)
 - 온보딩·UI PNG (`img/`, `assets/`)
 - 스탬프 미리보기 확대/수정 배지 (`assets/zoom.png`) — VoiceStamp UI용, Copyright © 2026 이형우
-- HWPX 서식 (`assets/templates/report.hwpx`, 웹 `public/templates/report.hwpx`) — 운영자가 한글에서 저장한 문서에 VoiceStamp 자리 표시를 넣음. 제3자 한글 양식·외부 저장소 파일을 쓰지 않음. 글꼴 파일은 넣지 않으며 한글이 설치한 화면 글자 이름만 가리킴. Copyright © 2026 이형우
+- HWPX 서식 (`assets/templates/vs-form.hwpx`, 웹 `public/templates/report.hwpx`) — VoiceStamp가 `scripts/build-report-template.mjs`로 생성. 제3자 한글 양식·외부 저장소 파일을 쓰지 않음. 글꼴 파일은 넣지 않으며 한글이 설치한 화면 글자 이름만 가리킴. Copyright © 2026 이형우
 
 ---
 
@@ -142,7 +142,6 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-07-25 | **AI-ML-01** 장면 키워드: `com.google.mlkit:image-labeling` 온디바이스. GPL·생성형 AI 없음. 설정 opt-in |
 | 2026-08-11 | Play Internal 준비 문서 연계. 배포 단계는 베타 유지. Production 당일 §9 적용 |
 | 2026-08-18 | HWPX 서식을 앱 자체 생성 파일로 교체. 외부 예제 `report-source.hwpx` 제거 |
-| 2026-08-18 | HWPX 서식을 한글 저장 문서+자리 표시로 교체(열기 실패 수정) |
 
 ---
 

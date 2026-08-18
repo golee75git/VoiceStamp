@@ -678,7 +678,10 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **권장** — 셔터 시 미리보기 유지 · `restore-inapp-shutter-keep.bat` | **GitHub `releases/`** |
+| (빌드 후 기입) | (푸시 후) | **권장** — HWPX 한글 저장 서식 · `restore-hwpx-han-mark.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 · `restore-hwpx-own-form.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 · `restore-hub-card-status.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 · `restore-inapp-shutter-keep.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 · `restore-inapp-preview-surface.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 · `restore-inapp-preview-fit.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
