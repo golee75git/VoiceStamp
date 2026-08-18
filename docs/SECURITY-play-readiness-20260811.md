@@ -81,7 +81,7 @@
 | 앱 아이콘 | `assets/icon.png`, `assets/android-icon-*.png` | 제작 경위(직접 제작/외주/AI 생성 도구 이용약관) |
 | 온보딩·UI PNG | `img/`, `assets/` 하위 다수 | 각 이미지 출처 |
 | 확대/수정 배지 | `assets/zoom.png` | LICENSE-NOTICE에 "VoiceStamp UI용, Copyright © 2026 이형우"로 이미 기재되어 있으나 원본 제작 도구·소스 확인 권장 |
-| HWPX 리포트 템플릿 | `public/templates/report.hwpx` | 한글(HWP) 서식 템플릿의 원출처(자체 제작/공공 서식/타사 템플릿 기반 여부) |
+| HWPX 리포트 템플릿 | ~~`public/templates/report.hwpx` 출처 미확인~~ → **자체 생성** `vs-form.hwpx` (2026-08-18) | VoiceStamp 스크립트가 자리 표시만 넣은 껍데기. 외부 예제 미사용 |
 
 **Play 스토어 게시 자체에는 앱 아이콘 등이 필수이므로 게시를 막지는 않지만**, 저작권 분쟁 리스크를 낮추려면 Production 전환 전에 각 파일에 대해 "내가 직접 만들었다 / 어디서 가져왔다"를 확인해 `docs/LICENSE-NOTICE.md` §6에 결론을 기록하는 것을 권장합니다. (MIT 소프트웨어 라이선스·OSS dual-license 검토는 이미 §3에서 확정되어 있어 문제 없음.)
 
@@ -112,7 +112,8 @@
 
 ### 신규 — 이번 점검에서 추가된 항목 (Production 전 처리 권장)
 - [ ] S1~S5 보안 취약점 수정 (§2) — 특히 S1, S2는 Production 전 필수 권장
-- [ ] C1~C3 저작권 출처 확인 (§3) 후 `LICENSE-NOTICE.md` §6 갱신
+- [x] C3 HWPX 서식 — 2026-08-18 자체 생성으로 정리 (`vs-form.hwpx`)
+- [ ] C1~C2 아이콘·온보딩 PNG 출처 확인 후 `LICENSE-NOTICE.md` §6 갱신
 
 ---
 

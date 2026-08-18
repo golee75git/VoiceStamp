@@ -55,6 +55,7 @@
 | [SECURITY-inapp-preview-surface-20260818.md](./SECURITY-inapp-preview-surface-20260818.md) | 보안·UX | 앱 내 미리보기 검정 화면 수정 |
 | [SECURITY-inapp-shutter-keep-20260818.md](./SECURITY-inapp-shutter-keep-20260818.md) | 보안·UX | 셔터 시 미리보기 유지·3:4 위쪽 고정 |
 | [SECURITY-hub-card-status-20260818.md](./SECURITY-hub-card-status-20260818.md) | 보안·UX | 사업취합 허브 연결·종료 카드 배경 |
+| [SECURITY-hwpx-own-form-20260818.md](./SECURITY-hwpx-own-form-20260818.md) | 보안·UX | HWPX 자체 서식(외부 예제 제거) |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -75,15 +76,15 @@
 
 ## 현재 상태 스냅샷 (2026-08-18)
 
-- **문서 갱신일:** 2026-08-18 — 사업취합 허브 연결·종료 카드 배경
-- **최신 기능 커밋:** APK `140815` — 참여 연결 녹색·만든 사업 종료/만료 회색
+- **문서 갱신일:** 2026-08-18 — HWPX 자체 서식
+- **최신 기능 커밋:** APK `151153` — 외부 한글 예제 제거, `vs-form.hwpx`
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260818_140815.apk` — 사업취합 허브 카드 상태 색
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_140815.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260818_112120.apk` — 셔터 시 미리보기 유지
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260818_151153.apk` — HWPX 자체 서식
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_151153.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260818_140815.apk` — 사업취합 허브 카드 상태 색
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_101059.apk` — 종료 안내에 사업 이름
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_094535.apk` — 만료 사업 목록 유지·종료 참여 안내
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_082730.apk` — 설정 기관 홈 QR을 JPEG·PDF에 합성

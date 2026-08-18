@@ -9,9 +9,10 @@
 | OSS 목록 데이터 | [../assets/open_source_licenses.json](../assets/open_source_licenses.json) |
 | 앱 내 열람 | 설정 → **오픈소스 라이선스** |
 | 웹 | https://voicestamp-gilt.vercel.app/license |
-| **배포 단계** | **베타·내부 테스트** (정식 스토어 출시 전) |
+| **배포 단계** | **베타·내부 테스트** (Play Internal 준비 · Production 전) |
 
-> **안내:** 내부·테스터 배포용 컴플라이언스 정리입니다. Google Play 등 **정식 상용 스토어 등록** 시 범위·문구를 갱신하고 별도 법무 검토를 권장합니다.
+> **안내:** 내부·테스터 배포용 컴플라이언스 정리입니다. Google Play **Production** 당일에 아래 §9를 적용해 배포 단계를 「Play」로 바꾸고, 콘솔 OSS·Data safety와 문구를 맞춘 뒤 별도 법무 검토를 권장합니다.  
+> Play QA·리스팅: [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) · [LEG-05-STORE-LISTING.md](./LEG-05-STORE-LISTING.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
 
 ---
 
@@ -27,9 +28,9 @@
 
 | 출처 | 수량 | 생성 기준 |
 |------|------|-----------|
-| npm (`package-lock.json`) | 625 | 직·간접 JavaScript 의존성 |
-| Android Gradle (`releaseRuntimeClasspath`) | 192 | APK 네이티브·Maven 의존성 |
-| **합계** | **817** | `assets/open_source_licenses.json` |
+| npm (`package-lock.json`) | 666 | 직·간접 JavaScript 의존성 |
+| Android Gradle (`releaseRuntimeClasspath`) | 202 | APK 네이티브·Maven 의존성 |
+| **합계** | **868** | `assets/open_source_licenses.json` (재생성: 2026-08-18) |
 
 재생성:
 
@@ -107,7 +108,7 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 - 앱 아이콘 (`assets/icon.png` 등)
 - 온보딩·UI PNG (`img/`, `assets/`)
 - 스탬프 미리보기 확대/수정 배지 (`assets/zoom.png`) — VoiceStamp UI용, Copyright © 2026 이형우
-- HWPX 템플릿 (`public/templates/report.hwpx`)
+- HWPX 서식 (`assets/templates/vs-form.hwpx`, 웹 `public/templates/report.hwpx`) — VoiceStamp가 `scripts/build-report-template.mjs`로 생성. 제3자 한글 양식·외부 저장소 파일을 쓰지 않음. 글꼴 파일은 넣지 않으며 한글이 설치한 화면 글자 이름만 가리킴. Copyright © 2026 이형우
 
 ---
 
@@ -116,6 +117,9 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 문서 | 내용 |
 |------|------|
 | [PLAN.md](./PLAN.md) §3 | LEG-01~05 법무 로드맵 |
+| [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) | Play 테스트·AAB·Internal |
+| [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md) | Data safety 초안 |
+| [LEG-05-STORE-LISTING.md](./LEG-05-STORE-LISTING.md) | 스크린샷·스토어 문구 |
 | [DESIGN-INFO-PAGES.md](./DESIGN-INFO-PAGES.md) | `/license` 웹 페이지 |
 | [PRIVACY.md](./PRIVACY.md) | 개인정보 (라이선스와 별도) |
 | [../LICENSE](../LICENSE) | VoiceStamp MIT |
@@ -136,3 +140,16 @@ SPDX 표현에 GPL 계열이 **포함**된 dual-license 패키지는 자동으�
 | 2026-07-25 | 개인정보 가리기: 하단 버튼 여백 + 탭 수동 영역(기존 모자이크만). 신규 의존성·생성형 AI 없음. GPL 없음 |
 | 2026-07-25 | **AI-ML-03** OCR→제목·메모: 기존 Korean Text Recognition 재사용. 신규 의존성·생성형 AI·GPL 없음. 설정 opt-in |
 | 2026-07-25 | **AI-ML-01** 장면 키워드: `com.google.mlkit:image-labeling` 온디바이스. GPL·생성형 AI 없음. 설정 opt-in |
+| 2026-08-11 | Play Internal 준비 문서 연계. 배포 단계는 베타 유지. Production 당일 §9 적용 |
+| 2026-08-18 | HWPX 서식을 앱 자체 생성 파일로 교체. 외부 예제 `report-source.hwpx` 제거 |
+
+---
+
+## 9. Production 전환 시 (LEG-05)
+
+Production 트랙 공개 **당일**에만 수행:
+
+1. 본 문서 표의 **배포 단계**를 **`Play 스토어`** 로 변경.
+2. 상단 안내 문구에서 「출시 전」표현을 Production 기준으로 갱신.
+3. Play Console OSS/라이선스 고지와 §3 dual-license 결론(MIT/BSD) 일치 확인.
+4. [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) §5 · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) Phase 3 체크리스트 완료.

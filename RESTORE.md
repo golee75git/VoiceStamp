@@ -4250,3 +4250,9 @@ Restores CameraScreen, InAppCameraPreview + help from *.pre-inapp-shutter-keep/.
 restore-hub-card-status.bat
 
 Restores ProjectCollectScreen + help from *.pre-hub-card-status/.
+
+## HWPX own form restore (2026-08-18)
+
+restore-hwpx-own-form.bat
+
+Restores HWPX build script, exportHwpx require, help, LICENSE-NOTICE. Does not re-commit third-party .hwpx binaries.
