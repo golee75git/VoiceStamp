@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -192,7 +193,7 @@ export function ProjectSentList({ project, onChanged }: Props) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   hint: { fontSize: 13, color: '#6b7280', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
-  listPad: { paddingHorizontal: 12, paddingBottom: 80 },
+  listPad: { paddingHorizontal: 12, paddingBottom: 12 },
   empty: { color: '#9ca3af', textAlign: 'center', marginTop: 40 },
   row: {
     flexDirection: 'row',
@@ -212,13 +213,11 @@ const styles = StyleSheet.create({
   title: { fontSize: 14, fontWeight: '600', color: '#111827' },
   sub: { fontSize: 12, color: '#6b7280' },
   bar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
     flexDirection: 'row',
     gap: 8,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'android' ? 56 : 28,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',

@@ -471,7 +471,8 @@ VoiceStamp/
 | 368 | GitHub APK `releases/20260803_151943` · 랜딩·`/info` | `114b3dc` | — |
 | 369 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 | `6cd1dc4` | `restore-item-speak-label.bat` §219 |
 | 370 | GitHub APK `releases/20260803_161016` · 랜딩·`/info` | `6cd1dc4` | — |
-| 371 | 참여 목록 **종료됨** 표시·갤러리보내기/다시연결 숨김 | (빌드 후) | `restore-join-ended-hub.bat` |
+| 371 | 참여 목록 **종료됨** 표시·갤러리보내기/다시연결 숨김 | `5b4ca53` | `restore-join-ended-hub.bat` |
+| 372 | 보낸 사진 하단 **실패 재전송·휴지통** 시스템 내비 여백 | (빌드 후) | `restore-sent-bar-inset.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260808_143848.apk`
 
@@ -674,7 +675,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260818_091805.apk` | (푸시 후) | **권장** — 참여 목록 종료됨 표시 · `restore-join-ended-hub.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **권장** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 · `restore-join-ended-hub.bat` | **GitHub `releases/`** |
 
 #### 2026-08-17
 

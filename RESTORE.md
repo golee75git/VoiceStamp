@@ -4220,3 +4220,9 @@ Restores projectCollectSettings, projectCollectApi, projectUploadQueue, ProjectC
 restore-join-ended-hub.bat
 
 Restores ProjectCollectScreen, projectCollectSettings, joinEndedNotice + help from *.pre-join-ended-hub/.
+
+## Sent bar inset restore (2026-08-18)
+
+restore-sent-bar-inset.bat
+
+Restores ProjectSentList + help from *.pre-sent-bar-inset/.
