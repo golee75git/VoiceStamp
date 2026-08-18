@@ -4226,3 +4226,9 @@ Restores ProjectCollectScreen, projectCollectSettings, joinEndedNotice + help fr
 restore-sent-bar-inset.bat
 
 Restores ProjectSentList + help from *.pre-sent-bar-inset/.
+
+## In-app preview fit restore (2026-08-18)
+
+restore-inapp-preview-fit.bat
+
+Restores InAppCameraPreview, cameraPictureSize + help from *.pre-inapp-preview-fit/.

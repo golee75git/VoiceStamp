@@ -1,5 +1,12 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { CameraView, type CameraType } from 'expo-camera';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue } from 'react-native-reanimated';
@@ -7,6 +14,9 @@ import { runOnJS, useSharedValue } from 'react-native-reanimated';
 const MAX_ZOOM = 1;
 const DOUBLE_TAP_ZOOM = 0.45;
 const PINCH_SENSITIVITY = 0.4;
+
+/** Portrait still frame (width / height) matching typical 4:3 capture. */
+const STILL_FRAME_RATIO = 3 / 4;
 
 /** Relative presets mapped onto expo-camera zoom 0..1 (device max zoom). */
 export const ZOOM_PRESET_VALUES = {
@@ -48,6 +58,16 @@ function nearestPreset(zoom: number): ZoomPreset | null {
   return best;
 }
 
+function fitStillFrame(maxWidth: number, maxHeight: number): { width: number; height: number } {
+  let width = maxWidth;
+  let height = width / STILL_FRAME_RATIO;
+  if (height > maxHeight) {
+    height = maxHeight;
+    width = height * STILL_FRAME_RATIO;
+  }
+  return { width, height };
+}
+
 export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCameraPreviewProps>(
   function InAppCameraPreview(
     {
@@ -64,6 +84,7 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
   ) {
     const [zoom, setZoom] = useState(0);
     const [lensReady, setLensReady] = useState(false);
+    const [frame, setFrame] = useState({ width: 0, height: 0 });
     const zoomShared = useSharedValue(0);
     const savedZoom = useSharedValue(0);
     const onZoomChangeRef = useRef(onZoomChange);
@@ -114,6 +135,20 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
       onPreviewHttpQrRef.current?.(raw);
     }, []);
 
+    const handleRootLayout = useCallback((event: LayoutChangeEvent) => {
+      const { width, height } = event.nativeEvent.layout;
+      if (!(width > 0) || !(height > 0)) {
+        return;
+      }
+      const next = fitStillFrame(width, height);
+      setFrame((prev) => {
+        if (Math.abs(prev.width - next.width) < 0.5 && Math.abs(prev.height - next.height) < 0.5) {
+          return prev;
+        }
+        return next;
+      });
+    }, []);
+
     const pinch = Gesture.Pinch()
       .onBegin(() => {
         savedZoom.value = zoomShared.value;
@@ -135,17 +170,26 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
     const gesture = Gesture.Simultaneous(pinch, doubleTap);
 
     const listenQr = lensReady && httpQrListen;
+    const hasFrame = frame.width > 0 && frame.height > 0;
 
     return (
-      <GestureHandlerRootView style={[styles.root, style]}>
+      <GestureHandlerRootView style={[styles.root, style]} onLayout={handleRootLayout}>
         <GestureDetector gesture={gesture}>
-          <View style={styles.previewSlot} collapsable={false}>
+          <View
+            style={[
+              styles.previewSlot,
+              hasFrame ? { width: frame.width, height: frame.height } : styles.previewSlotGuess,
+            ]}
+            collapsable={false}
+          >
             <CameraView
               ref={cameraRef}
               style={styles.camera}
               facing={facing}
               mirror={facing === 'front'}
               pictureSize={pictureSize}
+              ratio={Platform.OS === 'android' ? '4:3' : undefined}
+              animateShutter={false}
               zoom={zoom}
               barcodeScannerSettings={listenQr ? { barcodeTypes: ['qr'] } : undefined}
               onBarcodeScanned={listenQr ? handlePreviewQr : undefined}
@@ -161,11 +205,20 @@ export const InAppCameraPreview = forwardRef<InAppCameraPreviewHandle, InAppCame
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   previewSlot: {
-    flex: 1,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+  },
+  previewSlotGuess: {
+    width: '100%',
+    aspectRatio: STILL_FRAME_RATIO,
   },
   camera: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
   },
 });

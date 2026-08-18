@@ -473,6 +473,7 @@ VoiceStamp/
 | 370 | GitHub APK `releases/20260803_161016` · 랜딩·`/info` | `6cd1dc4` | — |
 | 371 | 참여 목록 **종료됨** 표시·갤러리보내기/다시연결 숨김 | `5b4ca53` | `restore-join-ended-hub.bat` |
 | 372 | 보낸 사진 하단 **실패 재전송·휴지통** 시스템 내비 여백 | (빌드 후) | `restore-sent-bar-inset.bat` |
+| 373 | 앱 내 미리보기 **3:4 비율 맞춤**(자르기 없음) | (빌드 후) | `restore-inapp-preview-fit.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260808_143848.apk`
 
@@ -675,7 +676,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **권장** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_103007.apk` | (푸시 후) | **권장** — 앱 내 미리보기 3:4 비율 맞춤 · `restore-inapp-preview-fit.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 · `restore-join-ended-hub.bat` | **GitHub `releases/`** |
 
 #### 2026-08-17

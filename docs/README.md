@@ -51,6 +51,7 @@
 | [SECURITY-preview-qr-capture-fix-20260816.md](./SECURITY-preview-qr-capture-fix-20260816.md) | 보안·UX | 미리보기 QR 열기 중에도 셔터 촬영 유지 |
 | [SECURITY-join-ended-hub-20260818.md](./SECURITY-join-ended-hub-20260818.md) | 보안·UX | 참여 목록 종료됨 표시·올리기 단추 숨김 |
 | [SECURITY-sent-bar-inset-20260818.md](./SECURITY-sent-bar-inset-20260818.md) | 보안·UX | 보낸 사진 하단 바 시스템 내비 여백 |
+| [SECURITY-inapp-preview-fit-20260818.md](./SECURITY-inapp-preview-fit-20260818.md) | 보안·UX | 앱 내 미리보기 3:4 비율 맞춤 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -71,15 +72,15 @@
 
 ## 현재 상태 스냅샷 (2026-08-18)
 
-- **문서 갱신일:** 2026-08-18 — 보낸 사진 하단 바 여백
-- **최신 기능 커밋:** APK `094501` — 보낸 사진 하단 바 여백
+- **문서 갱신일:** 2026-08-18 — 앱 내 미리보기 3:4 비율 맞춤
+- **최신 기능 커밋:** APK `103007` — 앱 내 미리보기 3:4 비율 맞춤
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260818_094501.apk` — 보낸 사진 하단 바 여백
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_094501.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260818_091805.apk` — 참여 목록 종료됨 표시
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260818_103007.apk` — 앱 내 미리보기 3:4 비율 맞춤
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_103007.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260818_094501.apk` — 보낸 사진 하단 바 여백
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_101059.apk` — 종료 안내에 사업 이름
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_094535.apk` — 만료 사업 목록 유지·종료 참여 안내
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_082730.apk` — 설정 기관 홈 QR을 JPEG·PDF에 합성
@@ -157,17 +158,18 @@
 | 08-09 | 목록 썸네일·취소 · 만든이 · 취합 배지·보낸 사진 · 홈 취합 · 가져옴 매칭 · APK `085617`~`183720` |
 | 08-10 | 취합 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` · **본 문서 동기화(소스 없음)** |
 | 08-14 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` |
-| 08-18 | 참여 목록 **종료됨** 표시 · APK `091805` · 보낸 사진 하단 바 여백 · APK `094501` |
+| 08-18 | 앱 내 미리보기 **3:4 비율 맞춤** · APK `103007` · 참여 목록 **종료됨** 표시 · APK `091805` · 보낸 사진 하단 바 여백 · APK `094501` |
 | 08-17 | 설정 **표시 그림** JPEG 합성 · APK `074537` · 설정 **기관 홈 QR** JPEG·PDF · APK `082730` · 만료 사업 유지·종료 안내 · APK `094535` · 종료 안내 사업명 · APK `101059` |
 | 08-16 | 엑셀 **5장 이상 가로 막대** · APK `141835` · 막대 **즉시 표시**·만든 사업 엑셀 제거 · APK `150607` · **저장 후 공유** · APK `154152` · **갤러리·목록 보내기** · APK `164812` · **보낸 사진 갤러리·촬영** · APK `171905` · **홍보기록** · APK `181459` · **미리보기 QR 열기** · APK `190729` · **QR 열기 중 셔터 촬영** · APK `202344` |
 
 ### APK별 (권장·주요)
 
-> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_094501.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_103007.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **설치·GitHub 권장** — 보낸 사진 하단 바 여백 |
+| `releases/VoiceStamp_20260818_103007.apk` | (푸시 후) | **설치·GitHub 권장** — 앱 내 미리보기 3:4 비율 맞춤 |
+| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 |
 | `releases/VoiceStamp_20260817_101059.apk` | `1730c0f` | **이전** — 종료 안내에 사업 이름 |
 | `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **이전** — 만료 사업 목록 유지·종료 참여 안내 |

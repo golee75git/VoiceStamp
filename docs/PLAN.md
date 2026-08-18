@@ -746,6 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
+| 2026-08-18 | 4·3 | 앱 내 미리보기 **3:4 비율 맞춤**(자르기 없음) · APK `103007` · `restore-inapp-preview-fit.bat` |
 | 2026-08-18 | 4·3 | 보낸 사진 하단 **실패 재전송·휴지통** 시스템 내비 여백 · APK `094501` · `restore-sent-bar-inset.bat` |
 | 2026-08-18 | 4·3 | 참여 목록 **종료됨** 표시·올리기 단추 숨김 · APK `091805` · `restore-join-ended-hub.bat` |
 | 2026-08-17 | 4·3 | 종료 안내에 사업 이름 · APK `101059` · `restore-join-ended-name.bat` |
@@ -762,10 +763,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-18:** 권장 = `releases/VoiceStamp_20260818_094501.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-18:** 권장 = `releases/VoiceStamp_20260818_103007.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **설치·GitHub 권장** — 보낸 사진 하단 바 여백 |
+| `releases/VoiceStamp_20260818_103007.apk` | (푸시 후) | **설치·GitHub 권장** — 앱 내 미리보기 3:4 비율 맞춤 |
+| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 |
 | `releases/VoiceStamp_20260817_101059.apk` | `1730c0f` | **이전** — 종료 안내에 사업 이름 |
 | `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **이전** — 만료 사업 목록 유지·종료 참여 안내 |
