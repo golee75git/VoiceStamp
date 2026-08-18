@@ -39,5 +39,5 @@
 `restore-hwpx-han-mark.bat`
 
 ## 배포
-- APK: (빌드 후 기입)
-- 다운로드: (빌드 후 기입)
+- APK: `VoiceStamp_20260818_162611.apk`
+- 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_162611.apk

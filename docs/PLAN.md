@@ -746,7 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
-| 2026-08-18 | 4·3 | **HWPX 한글 저장 서식**+자리 표시 · `restore-hwpx-han-mark.bat` |
+| 2026-08-18 | 4·3 | **HWPX 한글 저장 서식**+자리 표시 · APK `162611` · `restore-hwpx-han-mark.bat` |
 | 2026-08-18 | 4·3 | **HWPX 자체 서식**(외부 예제 제거) · APK `151153` · `restore-hwpx-own-form.bat` |
 | 2026-08-18 | 4·3 | 사업취합 허브 **연결·종료 카드 배경** · APK `140815` · `restore-hub-card-status.bat` |
 | 2026-08-18 | 4·3 | 셔터 시 **미리보기 유지**·3:4 위쪽 고정 · APK `112120` · `restore-inapp-shutter-keep.bat` |
@@ -768,10 +768,10 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-18:** 권장 = (빌드 후 기입). 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-18:** 권장 = `releases/VoiceStamp_20260818_162611.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| (빌드 후 기입) | (푸시 후) | **설치·GitHub 권장** — HWPX 한글 저장 서식 |
+| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **설치·GitHub 권장** — HWPX 한글 저장 서식 |
 | `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 |
 | `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 |
 | `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 |

@@ -717,7 +717,7 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
-| **2026-08-18** | **HWPX 한글 저장 서식**+자리 표시 · 도움말 · `restore-hwpx-han-mark.bat` | (푸시 후) |
+| **2026-08-18** | **HWPX 한글 저장 서식**+자리 표시 · 도움말 · APK `162611` · `restore-hwpx-han-mark.bat` | `149db9e` |
 | **2026-08-18** | **HWPX 자체 서식**(외부 예제 제거) · 도움말 · APK `151153` · `restore-hwpx-own-form.bat` | (푸시 후) |
 | **2026-08-18** | 사업취합 허브 **연결·종료 카드 배경** · 도움말 · APK `140815` · `restore-hub-card-status.bat` | (푸시 후) |
 | **2026-08-18** | 셔터 시 **미리보기 유지**·3:4 위쪽 고정 · APK `112120` · `restore-inapp-shutter-keep.bat` | (푸시 후) |
@@ -738,11 +738,11 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-18:** 권장 파일은 빌드 후 기입. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_162611.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **설치·GitHub 권장** — 셔터 시 미리보기 유지 |
+| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **설치·GitHub 권장** — HWPX 한글 저장 서식 |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 |
 | `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |

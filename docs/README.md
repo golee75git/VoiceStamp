@@ -78,13 +78,13 @@
 ## 현재 상태 스냅샷 (2026-08-18)
 
 - **문서 갱신일:** 2026-08-18 — HWPX 한글 저장 서식
-- **최신 기능 커밋:** HWPX 한글 저장 `report.hwpx` + 자리 표시
+- **최신 기능 커밋:** APK `162611` — 한글 저장 `report.hwpx` + 자리 표시
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** (빌드 후 기입) — HWPX 한글 저장 서식
-- **APK raw URL (GitHub):** (빌드 후 기입)
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260818_162611.apk` — HWPX 한글 저장 서식
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260818_162611.apk
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_151153.apk` — HWPX 자체 서식
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_140815.apk` — 사업취합 허브 카드 상태 색
 - **이전 권장 APK:** `releases/VoiceStamp_20260817_101059.apk` — 종료 안내에 사업 이름
