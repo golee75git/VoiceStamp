@@ -4215,8 +4215,8 @@ restore-project-expire-keep.bat
 
 Restores projectCollectSettings, projectCollectApi, projectUploadQueue, ProjectCollectScreen, CameraScreen, help, PRIVACY from *.pre-project-expire-keep/. Deletes src/services/joinEndedNotice.ts.
 
-## Join ended name restore (2026-08-17)
+## Join ended hub restore (2026-08-18)
 
-restore-join-ended-name.bat
+restore-join-ended-hub.bat
 
-Restores joinEndedNotice + help from *.pre-join-ended-name/.
+Restores ProjectCollectScreen, projectCollectSettings, joinEndedNotice + help from *.pre-join-ended-hub/.

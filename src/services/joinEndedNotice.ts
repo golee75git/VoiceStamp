@@ -1,7 +1,11 @@
 import { Alert, Platform } from 'react-native';
 
 import { apiLookupProject } from './projectCollectApi';
-import { clearProjectJoin, getProjectJoin } from './projectCollectSettings';
+import {
+  clearProjectJoin,
+  getProjectJoin,
+  markJoinedProjectEnded,
+} from './projectCollectSettings';
 
 const JOIN_ENDED_TITLE = '사업 종료';
 
@@ -48,6 +52,7 @@ export async function noticeJoinEndedIfGone(): Promise<boolean> {
     return false;
   } catch (e) {
     if (!isProjectGoneApiError(e)) return false;
+    await markJoinedProjectEnded(join.projectId);
     await clearProjectJoin();
     showJoinEndedAlert(join.projectId, join.name);
     return true;
@@ -58,6 +63,9 @@ export async function noticeJoinEndedIfGone(): Promise<boolean> {
 export async function clearJoinIfProjectGone(e: unknown): Promise<boolean> {
   if (!isProjectGoneApiError(e)) return false;
   const join = await getProjectJoin();
+  if (join?.projectId) {
+    await markJoinedProjectEnded(join.projectId);
+  }
   await clearProjectJoin();
   showJoinEndedAlert(join?.projectId || 'gone', join?.name);
   return true;

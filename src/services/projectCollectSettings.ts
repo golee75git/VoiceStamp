@@ -97,6 +97,8 @@ export type JoinedProjectHistory = {
   uploadCode: string;
   mark: string;
   joinedAt: number;
+  /** Set when this device learned the project is closed or gone. */
+  endedAt?: number | null;
 };
 
 async function getValue(key: string): Promise<string | null> {
@@ -324,9 +326,41 @@ export async function upsertJoinedProjectHistory(entry: JoinedProjectHistory): P
     uploadCode: entry.uploadCode,
     mark: sanitizeJoinMark(entry.mark || ''),
     joinedAt: entry.joinedAt || Date.now(),
+    endedAt: entry.endedAt ?? null,
   };
   const merged = [next, ...list.filter((p) => p.projectId !== next.projectId)].slice(0, 20);
   await setValue(KEYS.joinHistory, JSON.stringify(merged));
+}
+
+export async function markJoinedProjectEnded(projectId: string): Promise<void> {
+  const id = String(projectId || '').trim();
+  if (!id) return;
+  const raw = await getValue(KEYS.joinHistory);
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw) as JoinedProjectHistory[];
+    if (!Array.isArray(parsed)) return;
+    const now = Date.now();
+    await setValue(
+      KEYS.joinHistory,
+      JSON.stringify(
+        parsed.map((p) => (p.projectId === id ? { ...p, endedAt: now } : p)),
+      ),
+    );
+  } catch {
+    // ignore
+  }
+}
+
+export function joinHistoryUploadBlocked(
+  item: JoinedProjectHistory,
+  ownedList: OwnedProject[],
+  now = Date.now(),
+): { closed: boolean; expired: boolean; blocked: boolean } {
+  const mine = ownedList.find((p) => p.projectId === item.projectId);
+  const expired = !!(mine && isOwnedExpired(mine, now));
+  const closed = !!item.endedAt || !!(mine && mine.closedAt);
+  return { closed, expired, blocked: closed || expired };
 }
 
 export async function removeJoinedProjectHistory(projectId: string): Promise<void> {

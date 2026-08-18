@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-17** — 종료 안내 사업명 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `101059`)
-최신 기능 커밋 기준: `1730c0f` / APK `101059`
+문서 동기화: **2026-08-18** — 참여 목록 종료됨 표시 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `091805`)
+최신 기능 커밋 기준: APK `091805`
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -471,6 +471,7 @@ VoiceStamp/
 | 368 | GitHub APK `releases/20260803_151943` · 랜딩·`/info` | `114b3dc` | — |
 | 369 | **표시명** 「항목 말하기」/「저장 직후 음성으로 항목 채우기」 | `6cd1dc4` | `restore-item-speak-label.bat` §219 |
 | 370 | GitHub APK `releases/20260803_161016` · 랜딩·`/info` | `6cd1dc4` | — |
+| 371 | 참여 목록 **종료됨** 표시·갤러리보내기/다시연결 숨김 | (빌드 후) | `restore-join-ended-hub.bat` |
 
 > **권장 APK:** `releases/VoiceStamp_20260808_143848.apk`
 
@@ -668,6 +669,12 @@ build-apk.bat
 ### 7.4 APK 빌드별 수정 사항 (전체)
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
+
+#### 2026-08-18
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260818_091805.apk` | (푸시 후) | **권장** — 참여 목록 종료됨 표시 · `restore-join-ended-hub.bat` | **GitHub `releases/`** |
 
 #### 2026-08-17
 

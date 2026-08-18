@@ -61,8 +61,10 @@ import {
   getProjectJoin,
   inboxExcelFontSizeToPt,
   isOwnedExpired,
+  joinHistoryUploadBlocked,
   listJoinedProjectHistory,
   listOwnedProjects,
+  markJoinedProjectEnded,
   markOwnedProjectClosed,
   MAX_OWNED_PROJECTS,
   removeJoinedProjectHistory,
@@ -891,6 +893,8 @@ export function ProjectCollectScreen({
             await apiLookupProject(item.projectId);
           } catch (e) {
             if (isProjectGoneApiError(e)) {
+              await markJoinedProjectEnded(item.projectId);
+              await reload();
               Alert.alert('다시 연결', mapProjectApiError(e));
               return;
             }
@@ -937,6 +941,8 @@ export function ProjectCollectScreen({
           await apiLookupProject(item.projectId);
         } catch (e) {
           if (isProjectGoneApiError(e)) {
+            await markJoinedProjectEnded(item.projectId);
+            await reload();
             Alert.alert('갤러리 보내기', mapProjectApiError(e));
             return;
           }
@@ -1051,6 +1057,7 @@ export function ProjectCollectScreen({
                 // still mark local closed
               }
               await markOwnedProjectClosed(project.projectId);
+              await markJoinedProjectEnded(project.projectId);
               if (active?.projectId === project.projectId) {
                 setActive(null);
                 setPhase('hub');
@@ -1155,12 +1162,15 @@ export function ProjectCollectScreen({
       ) : (
         joinHistory.map((item) => {
           const active = join?.projectId === item.projectId;
+          const flags = joinHistoryUploadBlocked(item, owned);
           return (
             <View key={item.projectId} style={styles.row}>
               <Text style={styles.rowTitle}>{item.name}</Text>
               <Text style={styles.rowSub}>
                 {[
                   active ? '연결됨' : '',
+                  flags.closed ? '종료됨' : '',
+                  flags.expired ? '만료됨' : '',
                   item.mark || '',
                   item.joinedAt ? new Date(item.joinedAt).toLocaleDateString() : '',
                 ]
@@ -1177,14 +1187,16 @@ export function ProjectCollectScreen({
                 >
                   <Text style={styles.ownedActionText}>보낸 사진</Text>
                 </Pressable>
-                <Pressable
-                  style={collectPressStyle(styles.ownedAction)}
-                  onPress={() => handleAlbumSend(item)}
-                  disabled={busy}
-                >
-                  <Text style={styles.ownedActionText}>갤러리 보내기</Text>
-                </Pressable>
-                {!active ? (
+                {!flags.blocked ? (
+                  <Pressable
+                    style={collectPressStyle(styles.ownedAction)}
+                    onPress={() => handleAlbumSend(item)}
+                    disabled={busy}
+                  >
+                    <Text style={styles.ownedActionText}>갤러리 보내기</Text>
+                  </Pressable>
+                ) : null}
+                {!active && !flags.blocked ? (
                   <Pressable
                     style={collectPressStyle(styles.ownedAction)}
                     onPress={() => handleReconnectJoin(item)}
