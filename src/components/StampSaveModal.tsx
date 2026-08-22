@@ -60,7 +60,12 @@ import {
   type FieldPlaceholders,
 } from '../services/stampFieldTemplates';
 import { fieldLabelsFromStamp } from '../services/fieldLabels';
-import { prepareStampPreviewThumb, normalizeDisplayUri, type CaptureStampForExport } from '../services/exportStampImage';
+import {
+  prepareStampPreviewThumb,
+  normalizeDisplayUri,
+  saveStampsAsJpegToGallery,
+  type CaptureStampForExport,
+} from '../services/exportStampImage';
 import { saveStamp, updateStamp } from '../services/saveStamp';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
@@ -303,6 +308,7 @@ export function StampSaveModal({
   const [extra3, setExtra3] = useState('');
   const [sourceUrl, setSourceUrl] = useState(SOURCE_URL_PREFIX);
   const [saving, setSaving] = useState(false);
+  const [saveIntent, setSaveIntent] = useState<'app' | 'image'>('app');
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechTarget, setSpeechTarget] = useState<SpeechTarget>(null);
@@ -1653,110 +1659,206 @@ export function StampSaveModal({
     }
   }, [saving, sourceUrl]);
 
-  const handleSave = async () => {
+  const persistCurrentStamp = async (options: {
+    skipIdleCaptionGallery: boolean;
+  }): Promise<Stamp | null> => {
     const photoUri = workingImageUri ?? imageUri;
-    if (!photoUri || saving) {
-      if (!photoUri && !saving) {
-        const msg = '저장할 사진이 없습니다. 다시 촬영하거나 앨범에서 선택해 주세요.';
-        setError(msg);
-        showAlert('저장', msg);
-      }
+    if (!photoUri) {
+      const msg = '저장할 사진이 없습니다. 다시 촬영하거나 앨범에서 선택해 주세요.';
+      setError(msg);
+      showAlert('저장', msg);
+      return null;
+    }
+
+    const trimmedSource = sourceUrl.trim();
+    const bareSource = isBareSourceUrlPrefix(trimmedSource);
+    const resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
+    if (!bareSource && !resolvedSourceUrl) {
+      const msg = 'QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.';
+      setError(msg);
+      showAlert('저장', msg);
+      return null;
+    }
+    const folderLabel = isEdit ? groupName : siteName;
+    const effectiveFloor = resolveStampFloor(
+      floorPickerMode,
+      floor,
+      placeLabel,
+      folderLabel,
+    );
+    if (isEdit && stamp) {
+      const croppedImageUri = photoUri !== imageUri ? photoUri : undefined;
+      return updateStamp({
+        id: stamp.id,
+        title,
+        memo,
+        extra1,
+        extra2,
+        extra3,
+        sourceUrl: resolvedSourceUrl,
+        groupName,
+        floor: effectiveFloor,
+        placeLabel,
+        croppedImageUri,
+        captureForExport: captureStampForExport,
+        templateId: selectedTemplateId,
+        skipIdleCaptionGallery: options.skipIdleCaptionGallery,
+        fieldLabels: {
+          titleFieldLabel,
+          placeFieldLabel,
+          memoFieldLabel,
+          extra1FieldLabel,
+          extra2FieldLabel,
+          extra3FieldLabel,
+        },
+      });
+    }
+
+    await setCurrentSiteName(siteName);
+    if (effectiveFloor) {
+      await setLastFloor(effectiveFloor);
+    }
+    const originalTempUri =
+      originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
+        ? originalCameraUriRef.current
+        : undefined;
+    const created = await saveStamp({
+      tempImageUri: photoUri,
+      originalTempUri,
+      title,
+      memo,
+      extra1,
+      extra2,
+      extra3,
+      sourceUrl: resolvedSourceUrl,
+      groupName: siteName,
+      latitude: captureCoordsRef.current?.latitude ?? null,
+      longitude: captureCoordsRef.current?.longitude ?? null,
+      floor: effectiveFloor,
+      placeLabel,
+      captureForExport: captureStampForExport,
+      templateId: selectedTemplateId,
+      parentId: followUpParent ? followUpParent.id : null,
+      joinSendWay,
+      skipIdleCaptionGallery: options.skipIdleCaptionGallery,
+      fieldLabels: {
+        titleFieldLabel,
+        placeFieldLabel,
+        memoFieldLabel,
+        extra1FieldLabel,
+        extra2FieldLabel,
+        extra3FieldLabel,
+      },
+    });
+    if (placeLabel?.trim()) {
+      await setLastPlaceLabel(placeLabel);
+    }
+    const coords = captureCoordsRef.current;
+    if (coords && placeLabel) {
+      await setLastCapturePlaceCache({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        placeLabel,
+      });
+    }
+    return created;
+  };
+
+  const handleSave = async () => {
+    if (!imageUri && !workingImageUri) {
+      const msg = '저장할 사진이 없습니다. 다시 촬영하거나 앨범에서 선택해 주세요.';
+      setError(msg);
+      showAlert('저장', msg);
+      return;
+    }
+    if (saving) {
       return;
     }
 
     setSaving(true);
+    setSaveIntent('app');
     setError(null);
 
     try {
-      const trimmedSource = sourceUrl.trim();
-      const bareSource = isBareSourceUrlPrefix(trimmedSource);
-      const resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
-      if (!bareSource && !resolvedSourceUrl) {
-        const msg = 'QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.';
-        setError(msg);
-        showAlert('저장', msg);
-        setSaving(false);
+      const persisted = await persistCurrentStamp({ skipIdleCaptionGallery: false });
+      if (!persisted) {
         return;
       }
-      const folderLabel = isEdit ? groupName : siteName;
-      const effectiveFloor = resolveStampFloor(
-        floorPickerMode,
-        floor,
-        placeLabel,
-        folderLabel,
+      onSaved();
+      onClose();
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : isEdit
+            ? '수정에 실패했습니다.'
+            : '저장에 실패했습니다.';
+      setError(msg);
+      showAlert(isEdit ? '수정' : '저장', msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePreviewJpegGallerySave = async () => {
+    if (!imageUri && !workingImageUri) {
+      const msg = '저장할 사진이 없습니다. 다시 촬영하거나 앨범에서 선택해 주세요.';
+      setError(msg);
+      showAlert('저장', msg);
+      return;
+    }
+    if (saving) {
+      return;
+    }
+
+    setSaving(true);
+    setSaveIntent('image');
+    setError(null);
+
+    try {
+      const persisted = await persistCurrentStamp({ skipIdleCaptionGallery: true });
+      if (!persisted) {
+        return;
+      }
+      const { saved } = await saveStampsAsJpegToGallery(
+        [persisted],
+        {
+          titleAlign: titleTextAlign,
+          memoAlign: memoTextAlign,
+          showDatetime,
+          showFooterDatetime,
+          textLayout: stampTextLayout,
+          stampTextSize,
+          watermarkStyle,
+          coordsLabel,
+          orgName: overlayOrgName,
+          footerPhrase: overlayFooterPhrase,
+          showOrgName: overlayShowOrgName,
+          showFooterPhrase: overlayShowFooterPhrase,
+          titleFieldLabel,
+          placeFieldLabel,
+          memoFieldLabel,
+          extra1FieldLabel,
+          extra2FieldLabel,
+          extra3FieldLabel,
+        },
+        persisted.title,
+        captureStampForExport,
       );
-      if (isEdit && stamp) {
-        const croppedImageUri = photoUri !== imageUri ? photoUri : undefined;
-        await updateStamp({
-          id: stamp.id,
-          title,
-          memo,
-          extra1,
-          extra2,
-          extra3,
-          sourceUrl: resolvedSourceUrl,
-          groupName,
-          floor: effectiveFloor,
-          placeLabel,
-          croppedImageUri,
-          captureForExport: captureStampForExport,
-          templateId: selectedTemplateId,
-          fieldLabels: {
-            titleFieldLabel,
-            placeFieldLabel,
-            memoFieldLabel,
-            extra1FieldLabel,
-            extra2FieldLabel,
-            extra3FieldLabel,
-          },
-        });
+      if (saved === 0) {
+        showAlert(
+          '이미지 저장',
+          Platform.OS === 'web'
+            ? '앱 목록에는 저장했습니다. 다운로드는 실패했습니다.'
+            : '앱 목록에는 저장했습니다. 갤러리는 실패했습니다.',
+        );
       } else {
-        await setCurrentSiteName(siteName);
-        if (effectiveFloor) {
-          await setLastFloor(effectiveFloor);
-        }
-        const originalTempUri =
-          originalCameraUriRef.current && photoUri !== originalCameraUriRef.current
-            ? originalCameraUriRef.current
-            : undefined;
-        await saveStamp({
-          tempImageUri: photoUri,
-          originalTempUri,
-          title,
-          memo,
-          extra1,
-          extra2,
-          extra3,
-          sourceUrl: resolvedSourceUrl,
-          groupName: siteName,
-          latitude: captureCoordsRef.current?.latitude ?? null,
-          longitude: captureCoordsRef.current?.longitude ?? null,
-          floor: effectiveFloor,
-          placeLabel,
-          captureForExport: captureStampForExport,
-          templateId: selectedTemplateId,
-          parentId: followUpParent ? followUpParent.id : null,
-          joinSendWay,
-          fieldLabels: {
-            titleFieldLabel,
-            placeFieldLabel,
-            memoFieldLabel,
-            extra1FieldLabel,
-            extra2FieldLabel,
-            extra3FieldLabel,
-          },
-        });
-        if (placeLabel?.trim()) {
-          await setLastPlaceLabel(placeLabel);
-        }
-        const coords = captureCoordsRef.current;
-        if (coords && placeLabel) {
-          await setLastCapturePlaceCache({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            placeLabel,
-          });
-        }
+        showAlert(
+          '이미지 저장 완료',
+          Platform.OS === 'web'
+            ? '이미지를 다운로드했습니다.'
+            : '갤러리에 저장했습니다.',
+        );
       }
       onSaved();
       onClose();
@@ -1959,12 +2061,22 @@ export function StampSaveModal({
               </Pressable>
             ) : null}
 
-            {photoUri &&
-            ((privacyBlurEnabled && isPrivacyBlurSupported()) ||
-              (ocrTitleMemoEnabled && isOcrTitleMemoSupported()) ||
-              qrCaptionEnabled ||
-              (mlkitSceneLabelEnabled && isSceneLabelSupported())) ? (
+            {photoUri ? (
               <View style={styles.photoActionRow}>
+                <Pressable
+                  style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
+                  onPress={() => void handlePreviewJpegGallerySave()}
+                  disabled={saving}
+                  accessibilityRole="button"
+                  accessibilityLabel="이미지 저장"
+                  accessibilityHint="제목과 메모가 입혀진 사진을 갤러리에 넣습니다"
+                >
+                  {saving && saveIntent === 'image' ? (
+                    <ActivityIndicator color="#1d4ed8" />
+                  ) : (
+                    <Text style={styles.privacyBlurBtnText}>이미지 저장</Text>
+                  )}
+                </Pressable>
                 {privacyBlurEnabled && isPrivacyBlurSupported() ? (
                   <Pressable
                     style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
@@ -2314,7 +2426,7 @@ export function StampSaveModal({
                 <Text style={styles.cancelText}>취소</Text>
               </Pressable>
               <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
-                {saving ? (
+                {saving && saveIntent === 'app' ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text style={styles.saveText}>{isEdit ? '수정' : '저장'}</Text>
@@ -2718,6 +2830,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#eff6ff',
     borderWidth: 1,
     borderColor: '#bfdbfe',
+    minHeight: 36,
+    justifyContent: 'center',
   },
   privacyBlurBtnText: {
     color: '#1d4ed8',

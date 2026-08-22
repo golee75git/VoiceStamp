@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-18** — 참여 목록 종료됨 표시 · [CHANGELOG.md](./CHANGELOG.md) (권장 APK `091805`)
-최신 기능 커밋 기준: APK `091805`
+문서 동기화: **2026-08-22** — 저장·수정 화면 이미지 저장 · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: 저장·수정 미리보기 **이미지 저장**
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -674,11 +674,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-08-22
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **권장** — 저장·수정 미리보기 이미지 저장 · `restore-save-modal-image.bat` | **GitHub `releases/`** |
+
 #### 2026-08-18
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **권장** — HWPX 한글 저장 서식 · `restore-hwpx-han-mark.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 · `restore-hwpx-han-mark.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 · `restore-hwpx-own-form.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 · `restore-hub-card-status.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 · `restore-inapp-shutter-keep.bat` | **GitHub `releases/`** |
@@ -1282,6 +1288,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-08-22
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장·수정 미리보기 **이미지 저장** |
+| APK | **권장** `releases/VoiceStamp_20260822_225901.apk` — [CHANGELOG.md](./CHANGELOG.md) |
+| 롤백 | `restore-save-modal-image.bat` |
+| 문서 | DESIGN-save-modal-image-20260822 · SECURITY-save-modal-image-20260822 |
 
 ### 2026-08-10
 

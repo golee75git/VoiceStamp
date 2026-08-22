@@ -84,6 +84,8 @@ type SaveStampInput = {
     stamp: Stamp,
     options: StampImageExportOptions,
   ) => Promise<string>;
+  /** 저장 화면에서 캡션 JPEG를 바로 넣은 뒤 idle 캡션 중복을 건너뜁니다. */
+  skipIdleCaptionGallery?: boolean;
 };
 
 function resolveStampTitle(title: string, fallbackTimestamp: number): string {
@@ -208,10 +210,17 @@ function scheduleNewStampGallerySave(
   groupName: string,
   galleryOriginalUri: string,
   captureForExport?: SaveStampInput['captureForExport'],
+  skipIdleCaptionGallery?: boolean,
 ): void {
   enqueueGallerySaveIdle(async () => {
     try {
-      const mode = await getGallerySaveMode();
+      let mode = await getGallerySaveMode();
+      if (skipIdleCaptionGallery) {
+        if (mode === 'app_only' || mode === 'caption_only') {
+          return;
+        }
+        mode = 'original_only';
+      }
       if (mode === 'app_only') {
         return;
       }
@@ -349,7 +358,13 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       input.originalTempUri && input.originalTempUri !== input.tempImageUri
         ? input.originalTempUri
         : resolveImageUri(imagePath);
-    scheduleNewStampGallerySave(stamp, groupName, galleryOriginalUri, input.captureForExport);
+    scheduleNewStampGallerySave(
+      stamp,
+      groupName,
+      galleryOriginalUri,
+      input.captureForExport,
+      input.skipIdleCaptionGallery,
+    );
   }
 
   void import('./projectUploadFeedback')
@@ -382,7 +397,8 @@ export async function updateStamp(input: {
   croppedImageUri?: string;
   templateId?: string | null;
   captureForExport?: SaveStampInput['captureForExport'];
-}): Promise<void> {
+  skipIdleCaptionGallery?: boolean;
+}): Promise<Stamp> {
   const stamp = await getStampById(input.id);
   if (!stamp) {
     throw new Error('스탬프를 찾을 수 없습니다.');
@@ -511,33 +527,38 @@ export async function updateStamp(input: {
     );
   }
 
+  const updatedStamp: Stamp = {
+    ...stamp,
+    title,
+    memo,
+    imagePath,
+    galleryAssetId,
+    floor: input.floor ?? null,
+    placeLabel,
+    extra1,
+    extra2,
+    extra3,
+    sourceUrl,
+    templateId,
+    titleFieldLabel: fieldLabels.titleFieldLabel,
+    placeFieldLabel: fieldLabels.placeFieldLabel,
+    memoFieldLabel: fieldLabels.memoFieldLabel,
+    extra1FieldLabel: fieldLabels.extra1FieldLabel,
+    extra2FieldLabel: fieldLabels.extra2FieldLabel,
+    extra3FieldLabel: fieldLabels.extra3FieldLabel,
+    updatedAt: Date.now(),
+  };
+
   if ((imageCropped || sourceUrl !== (stamp.sourceUrl?.trim() || null)) && Platform.OS !== 'web') {
     void ensureStampThumb(stamp.id, resolveImageUri(imagePath), { force: true }).catch(() => {});
-    const updatedStamp: Stamp = {
-      ...stamp,
-      title,
-      memo,
-      imagePath,
-      galleryAssetId,
-      floor: input.floor ?? null,
-      placeLabel,
-      extra1,
-      extra2,
-      extra3,
-      sourceUrl,
-      templateId,
-      titleFieldLabel: fieldLabels.titleFieldLabel,
-      placeFieldLabel: fieldLabels.placeFieldLabel,
-      memoFieldLabel: fieldLabels.memoFieldLabel,
-      extra1FieldLabel: fieldLabels.extra1FieldLabel,
-      extra2FieldLabel: fieldLabels.extra2FieldLabel,
-      extra3FieldLabel: fieldLabels.extra3FieldLabel,
-      updatedAt: Date.now(),
-    };
-    scheduleEditStampCaptionGallerySave(
-      updatedStamp,
-      nextGroup || currentGroup,
-      input.captureForExport,
-    );
+    if (!input.skipIdleCaptionGallery) {
+      scheduleEditStampCaptionGallerySave(
+        updatedStamp,
+        nextGroup || currentGroup,
+        input.captureForExport,
+      );
+    }
   }
+
+  return updatedStamp;
 }

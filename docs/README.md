@@ -23,6 +23,7 @@
 | [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md) | 기획·AI | **AI-ML-03** OCR→제목·메모 초안 (**MVP** `8b74ccf` / `104328`) |
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) | 기획·UI | **FEAT-NCP-PROJECT-01** 사업 QR·일시 취합 UI 스펙 |
+| [DESIGN-save-modal-image-20260822.md](./DESIGN-save-modal-image-20260822.md) | 기획·UI | 저장·수정 미리보기 **이미지 저장** |
 | [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 — **앱 연동됨**(2026-08-07~) |
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
 | [SECURITY-join-kakao-fallback-20260811.md](./SECURITY-join-kakao-fallback-20260811.md) | 보안·UX | 카톡 `/join` 자동 intent·메인 fallback 수정 |
@@ -57,6 +58,7 @@
 | [SECURITY-hub-card-status-20260818.md](./SECURITY-hub-card-status-20260818.md) | 보안·UX | 사업취합 허브 연결·종료 카드 배경 |
 | [SECURITY-hwpx-han-mark-20260818.md](./SECURITY-hwpx-han-mark-20260818.md) | 보안·UX | HWPX 한글 저장 서식+자리 표시 |
 | [SECURITY-hwpx-own-form-20260818.md](./SECURITY-hwpx-own-form-20260818.md) | 보안·UX | HWPX 자체 서식(외부 예제 제거) |
+| [SECURITY-save-modal-image-20260822.md](./SECURITY-save-modal-image-20260822.md) | 보안·UX | 저장·수정 미리보기 이미지 저장 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |

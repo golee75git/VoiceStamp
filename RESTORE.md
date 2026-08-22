@@ -4262,3 +4262,9 @@ Restores exportHwpx require, hangul report.hwpx (pre pic-move), vs-form.hwpx, sc
 restore-hwpx-own-form.bat
 
 Restores HWPX build script, exportHwpx require, help, LICENSE-NOTICE. Does not re-commit third-party .hwpx binaries.
+
+## Save modal image restore (2026-08-22)
+
+restore-save-modal-image.bat
+
+Restores StampSaveModal, saveStamp + help from *.pre-save-modal-image/.

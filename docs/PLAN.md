@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.13 |
-| 작성일 | 2026-08-16 |
-| 기준 커밋 | `5ca954e` — 권장 APK `202344` · 미리보기 QR 열기 중에도 셔터 촬영 |
+| 문서 버전 | 3.14 |
+| 작성일 | 2026-08-22 |
+| 기준 커밋 | 저장·수정 미리보기 **이미지 저장** |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -746,6 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
+| 2026-08-22 | 2AP·3 | 저장·수정 미리보기 **이미지 저장** · `restore-save-modal-image.bat` |
 | 2026-08-18 | 4·3 | **HWPX 한글 저장 서식**+자리 표시 · APK `162611` · `restore-hwpx-han-mark.bat` |
 | 2026-08-18 | 4·3 | **HWPX 자체 서식**(외부 예제 제거) · APK `151153` · `restore-hwpx-own-form.bat` |
 | 2026-08-18 | 4·3 | 사업취합 허브 **연결·종료 카드 배경** · APK `140815` · `restore-hub-card-status.bat` |
@@ -768,10 +769,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-18:** 권장 = `releases/VoiceStamp_20260818_162611.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-22:** 권장 = `releases/VoiceStamp_20260822_225901.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **설치·GitHub 권장** — HWPX 한글 저장 서식 |
+| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **설치·GitHub 권장** — 저장·수정 미리보기 이미지 저장 |
+| `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 |
 | `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 |
 | `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 |
 | `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 |
