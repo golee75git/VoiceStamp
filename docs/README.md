@@ -86,7 +86,7 @@
 ## 현재 상태 스냅샷 (2026-08-23)
 
 - **문서 갱신일:** 2026-08-23 — 저장 목록 엑셀 사진 가로
-- **최신 기능 커밋:** APK `173038` — 저장 목록 엑셀 사진 가로
+- **최신 기능 커밋:** `a5f627a` · APK `173038` — 저장 목록 엑셀 사진 가로
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
@@ -189,7 +189,7 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260823_173038.apk` | (푸시 후) | **설치·GitHub 권장** — 저장 목록 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **설치·GitHub 권장** — 저장 목록 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
 | `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 |
