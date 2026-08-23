@@ -41,5 +41,6 @@
 
 ## 배포
 - APK: `VoiceStamp_20260823_143912.apk`
+- 커밋: `a1f418f`
 - 다운로드: https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260823_143912.apk
 - 사이트: https://voicestamp-gilt.vercel.app/

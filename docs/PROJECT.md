@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-23** — 이음 제목 번호 · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: 이음 제목 **번호**
+문서 동기화: **2026-08-23** — 날짜별·APK별 정리 (소스 없음) · 권장 `143912` (`a1f418f`) · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: `a1f418f` 이음 제목 **번호**
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -678,26 +678,26 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260823_143912.apk` | (푸시 후) | **권장** — 이음 제목 번호 · `restore-follow-title-seq.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **권장** — 이음 제목 번호 · `restore-follow-title-seq.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 · `restore-save-viewer-caption.bat` | **GitHub `releases/`** |
 
 #### 2026-08-22
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **이전** — 저장·수정 미리보기 이미지 저장 · `restore-save-modal-image.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 · `restore-save-modal-image.bat` | **GitHub `releases/`** |
 
 #### 2026-08-18
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
 | `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 · `restore-hwpx-han-mark.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 · `restore-hwpx-own-form.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 · `restore-hub-card-status.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 · `restore-inapp-shutter-keep.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_151153.apk` | `097d331` | **이전** — HWPX 자체 서식 · `restore-hwpx-own-form.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_140815.apk` | `82cfb76` | **이전** — 허브 연결·종료 카드 배경 · `restore-hub-card-status.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_112120.apk` | `d08a24d` | **이전** — 셔터 시 미리보기 유지 · `restore-inapp-shutter-keep.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 · `restore-inapp-preview-surface.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 · `restore-inapp-preview-fit.bat` | **GitHub `releases/`** |
-| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260818_094501.apk` | `06ef0cd` | **이전** — 보낸 사진 하단 바 여백 · `restore-sent-bar-inset.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 · `restore-join-ended-hub.bat` | **GitHub `releases/`** |
 
 #### 2026-08-17
@@ -1301,6 +1301,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 항목 | 내용 |
 |------|------|
 | 분류 | 이음 제목 **번호**(처음 제목 유지) |
+| 커밋 | `a1f418f` |
 | APK | **권장** `releases/VoiceStamp_20260823_143912.apk` — [CHANGELOG.md](./CHANGELOG.md) |
 | 롤백 | `restore-follow-title-seq.bat` |
 | 문서 | DESIGN-follow-title-seq-20260823 · SECURITY-follow-title-seq-20260823 |
@@ -1310,6 +1311,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 항목 | 내용 |
 |------|------|
 | 분류 | 저장·수정 탭 화면 **표시 글** |
+| 커밋 | `5b3512f` |
 | APK | `releases/VoiceStamp_20260823_135535.apk` — [CHANGELOG.md](./CHANGELOG.md) |
 | 롤백 | `restore-save-viewer-caption.bat` |
 | 문서 | DESIGN-save-viewer-caption-20260823 · SECURITY-save-viewer-caption-20260823 |
@@ -1319,7 +1321,8 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 항목 | 내용 |
 |------|------|
 | 분류 | 저장·수정 미리보기 **이미지 저장** |
-| APK | **권장** `releases/VoiceStamp_20260822_225901.apk` — [CHANGELOG.md](./CHANGELOG.md) |
+| 커밋 | `b77613d` |
+| APK | `releases/VoiceStamp_20260822_225901.apk` — [CHANGELOG.md](./CHANGELOG.md) |
 | 롤백 | `restore-save-modal-image.bat` |
 | 문서 | DESIGN-save-modal-image-20260822 · SECURITY-save-modal-image-20260822 |
 

@@ -2,9 +2,9 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 버전 | 3.15 |
+| 문서 버전 | 3.16 |
 | 작성일 | 2026-08-23 |
-| 기준 커밋 | 이음 제목 **번호** |
+| 기준 커밋 | `a1f418f` 이음 제목 **번호** |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -746,6 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
+| 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
 | 2026-08-23 | 2AR·3 | 이음 제목 **번호**(처음 제목 유지) · `restore-follow-title-seq.bat` |
 | 2026-08-23 | 2AQ·3 | 저장·수정 탭 화면 **표시 글** · `restore-save-viewer-caption.bat` |
 | 2026-08-22 | 2AP·3 | 저장·수정 미리보기 **이미지 저장** · `restore-save-modal-image.bat` |
@@ -774,16 +775,16 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 > **2026-08-23:** 권장 = `releases/VoiceStamp_20260823_143912.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260823_143912.apk` | (푸시 후) | **설치·GitHub 권장** — 이음 제목 번호 |
+| `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **설치·GitHub 권장** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
-| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **이전** — 저장·수정 미리보기 이미지 저장 |
+| `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 |
 | `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 |
-| `releases/VoiceStamp_20260818_151153.apk` | (푸시 후) | **이전** — HWPX 자체 서식 |
-| `releases/VoiceStamp_20260818_140815.apk` | (푸시 후) | **이전** — 허브 연결·종료 카드 배경 |
-| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 |
+| `releases/VoiceStamp_20260818_151153.apk` | `097d331` | **이전** — HWPX 자체 서식 |
+| `releases/VoiceStamp_20260818_140815.apk` | `82cfb76` | **이전** — 허브 연결·종료 카드 배경 |
+| `releases/VoiceStamp_20260818_112120.apk` | `d08a24d` | **이전** — 셔터 시 미리보기 유지 |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 |
-| `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |
+| `releases/VoiceStamp_20260818_094501.apk` | `06ef0cd` | **이전** — 보낸 사진 하단 바 여백 |
 | `releases/VoiceStamp_20260818_091805.apk` | `5b4ca53` | **이전** — 참여 목록 종료됨 표시 |
 | `releases/VoiceStamp_20260817_101059.apk` | `1730c0f` | **이전** — 종료 안내에 사업 이름 |
 | `releases/VoiceStamp_20260817_094535.apk` | `5c32fb9` | **이전** — 만료 사업 목록 유지·종료 참여 안내 |
