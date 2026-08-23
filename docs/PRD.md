@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-22 — 저장·수정 화면 이미지 저장 · APK `225901` |
-| 최신 반영 커밋 | 저장·수정 미리보기 **이미지 저장** |
+| 문서 동기화 | 2026-08-23 — 저장·수정 탭 화면 표시 글 |
+| 최신 반영 커밋 | 저장·수정 탭 화면 **표시 글** |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -340,6 +340,7 @@
 | F-IMG-07 | 워터마크 APK: `prepareExportPhoto` + `react-native-image-marker` 네이티브 텍스트 합성 (ViewShot 재캡처 없음) | ✅ |
 | F-IMG-08 | 워터마크 JPEG 비율 보존 (`Image.getSize`·`prepareExportPhoto` 리사이즈) | ✅ |
 | F-IMG-09 | 저장·수정 미리보기 아래 **이미지 저장** (앱 persist + 목록과 동일 캡션 JPEG, idle 캡션 중복 생략) | ✅ |
+| F-IMG-10 | 저장·수정 미리보기 탭 → 전체 화면에서 사진+표시 글 (`StampSavePreview` fullscreen, JPEG·QR 재생성 없음) | ✅ |
 
 ### 3.6.2 PC 보고서 내보내기 (P1)
 
@@ -720,6 +721,7 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
+| **2026-08-23** | 저장·수정 탭 화면 **표시 글** · 도움말 · `restore-save-viewer-caption.bat` | (푸시 후) |
 | **2026-08-22** | 저장·수정 미리보기 **이미지 저장** · 도움말 · `restore-save-modal-image.bat` | (푸시 후) |
 | **2026-08-18** | **HWPX 한글 저장 서식**+자리 표시 · 도움말 · APK `162611` · `restore-hwpx-han-mark.bat` | `149db9e` |
 | **2026-08-18** | **HWPX 자체 서식**(외부 예제 제거) · 도움말 · APK `151153` · `restore-hwpx-own-form.bat` | (푸시 후) |
@@ -742,11 +744,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-22:** 권장 파일은 **`VoiceStamp_20260822_225901.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_135535.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **설치·GitHub 권장** — 저장·수정 미리보기 이미지 저장 |
+| `releases/VoiceStamp_20260823_135535.apk` | (푸시 후) | **설치·GitHub 권장** — 저장·수정 탭 화면 표시 글 |
+| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **이전** — 저장·수정 미리보기 이미지 저장 |
 | `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 |

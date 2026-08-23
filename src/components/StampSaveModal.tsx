@@ -2009,8 +2009,8 @@ export function StampSaveModal({
               <Pressable
                 onPress={handleOpenViewer}
                 disabled={saving}
-                accessibilityLabel="사진 크게 보기"
-                accessibilityHint="탭하면 확대 화면이 열립니다. 자르기는 지원하지 않습니다."
+                accessibilityLabel="사진과 표시 글 크게 보기"
+                accessibilityHint="탭하면 사진과 제목·메모를 크게 봅니다."
               >
                 <View style={styles.previewWrap}>
                   <StampSavePreview
@@ -2448,9 +2448,41 @@ export function StampSaveModal({
         <View style={styles.imageViewerOverlay}>
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                imageUri={workingImageUri ?? imageUri!}
-              />
+              <StampSaveZoomViewer>
+                <StampSavePreview
+                  imageUri={normalizeDisplayUri(workingImageUri ?? imageUri!)}
+                  imageLoading={false}
+                  title={title}
+                  memo={memo}
+                  extra1={extra1}
+                  extra2={extra2}
+                  extra3={extra3}
+                  placeLabel={placeLabel}
+                  titleAlign={titleTextAlign}
+                  memoAlign={memoTextAlign}
+                  textLayout={stampTextLayout}
+                  stampTextSize={stampTextSize}
+                  watermarkStyle={watermarkStyle}
+                  coordsLabel={coordsLabel}
+                  showDatetime={showDatetime}
+                  showFooterDatetime={showFooterDatetime}
+                  createdAt={isEdit && stamp ? stamp.createdAt : Date.now()}
+                  orgName={overlayOrgName}
+                  footerPhrase={overlayFooterPhrase}
+                  showOrgName={overlayShowOrgName}
+                  showFooterPhrase={overlayShowFooterPhrase}
+                  titleFieldLabel={titleFieldLabel}
+                  placeFieldLabel={placeFieldLabel}
+                  memoFieldLabel={memoFieldLabel}
+                  extra1FieldLabel={extra1FieldLabel}
+                  extra2FieldLabel={extra2FieldLabel}
+                  extra3FieldLabel={extra3FieldLabel}
+                  floor={floor}
+                  latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
+                  longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
+                  variant="fullscreen"
+                />
+              </StampSaveZoomViewer>
             </View>
           ) : null}
           {/* VIEWER_ACTION_HAND: 닫기를 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 자르기 적용은 비활성(A). */}

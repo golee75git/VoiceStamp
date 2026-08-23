@@ -24,6 +24,7 @@
 | [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) | 기획·연동 | **GS-UPLOAD-01** 공용 시트 원클릭·압축 업로드 **초안** (앱 미연동) |
 | [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md) | 기획·UI | **FEAT-NCP-PROJECT-01** 사업 QR·일시 취합 UI 스펙 |
 | [DESIGN-save-modal-image-20260822.md](./DESIGN-save-modal-image-20260822.md) | 기획·UI | 저장·수정 미리보기 **이미지 저장** |
+| [DESIGN-save-viewer-caption-20260823.md](./DESIGN-save-viewer-caption-20260823.md) | 기획·UI | 저장·수정 탭 화면 **표시 글** |
 | [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 — **앱 연동됨**(2026-08-07~) |
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
 | [SECURITY-join-kakao-fallback-20260811.md](./SECURITY-join-kakao-fallback-20260811.md) | 보안·UX | 카톡 `/join` 자동 intent·메인 fallback 수정 |
@@ -59,6 +60,7 @@
 | [SECURITY-hwpx-han-mark-20260818.md](./SECURITY-hwpx-han-mark-20260818.md) | 보안·UX | HWPX 한글 저장 서식+자리 표시 |
 | [SECURITY-hwpx-own-form-20260818.md](./SECURITY-hwpx-own-form-20260818.md) | 보안·UX | HWPX 자체 서식(외부 예제 제거) |
 | [SECURITY-save-modal-image-20260822.md](./SECURITY-save-modal-image-20260822.md) | 보안·UX | 저장·수정 미리보기 이미지 저장 |
+| [SECURITY-save-viewer-caption-20260823.md](./SECURITY-save-viewer-caption-20260823.md) | 보안·UX | 저장·수정 탭 화면 표시 글 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -77,9 +79,9 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-08-18)
+## 현재 상태 스냅샷 (2026-08-23)
 
-- **문서 갱신일:** 2026-08-18 — HWPX 한글 저장 서식
+- **문서 갱신일:** 2026-08-23 — 저장·수정 탭 화면 표시 글
 - **최신 기능 커밋:** APK `162611` — 한글 저장 `report.hwpx` + 자리 표시
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
@@ -166,17 +168,21 @@
 | 08-09 | 목록 썸네일·취소 · 만든이 · 취합 배지·보낸 사진 · 홈 취합 · 가져옴 매칭 · APK `085617`~`183720` |
 | 08-10 | 취합 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` · **본 문서 동기화(소스 없음)** |
 | 08-14 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` |
+| 08-23 | 저장·수정 탭 화면 **표시 글** · APK `135535` |
+| 08-22 | 저장·수정 미리보기 **이미지 저장** · APK `225901` |
 | 08-18 | 셔터 시 **미리보기 유지** · APK `112120` · 미리보기 **검정 화면 수정** · APK `105424` · **3:4 비율 맞춤** · APK `103007` · 참여 목록 **종료됨** 표시 · APK `091805` · 보낸 사진 하단 바 여백 · APK `094501` |
 | 08-17 | 설정 **표시 그림** JPEG 합성 · APK `074537` · 설정 **기관 홈 QR** JPEG·PDF · APK `082730` · 만료 사업 유지·종료 안내 · APK `094535` · 종료 안내 사업명 · APK `101059` |
 | 08-16 | 엑셀 **5장 이상 가로 막대** · APK `141835` · 막대 **즉시 표시**·만든 사업 엑셀 제거 · APK `150607` · **저장 후 공유** · APK `154152` · **갤러리·목록 보내기** · APK `164812` · **보낸 사진 갤러리·촬영** · APK `171905` · **홍보기록** · APK `181459` · **미리보기 QR 열기** · APK `190729` · **QR 열기 중 셔터 촬영** · APK `202344` |
 
 ### APK별 (권장·주요)
 
-> **2026-08-18:** 권장 파일은 **`VoiceStamp_20260818_112120.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_135535.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **설치·GitHub 권장** — 셔터 시 미리보기 유지 |
+| `releases/VoiceStamp_20260823_135535.apk` | (푸시 후) | **설치·GitHub 권장** — 저장·수정 탭 화면 표시 글 |
+| `releases/VoiceStamp_20260822_225901.apk` | (푸시 후) | **이전** — 저장·수정 미리보기 이미지 저장 |
+| `releases/VoiceStamp_20260818_112120.apk` | (푸시 후) | **이전** — 셔터 시 미리보기 유지 |
 | `releases/VoiceStamp_20260818_105424.apk` | `2491781` | **이전** — 앱 내 미리보기 검정 화면 수정 |
 | `releases/VoiceStamp_20260818_103007.apk` | `8037079` | **이전** — 앱 내 미리보기 3:4 비율 맞춤 |
 | `releases/VoiceStamp_20260818_094501.apk` | (푸시 후) | **이전** — 보낸 사진 하단 바 여백 |

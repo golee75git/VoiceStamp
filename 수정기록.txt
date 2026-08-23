@@ -1,32 +1,32 @@
-2026-08-22 저장·수정 화면 이미지 저장
+2026-08-23 저장·수정 탭 화면 표시 글
 
 변경
-- 저장·수정 미리보기 아래 「이미지 저장」추가
-- 앱 목록 저장(수정) 후 기존 목록 JPEG 합성을 한 장 갤러리(웹 다운로드)에 넣음
-- 하단 「저장」은 앱 목록만 유지 (연속 촬영 속도)
-- 설정 캡션 idle과 캡션 JPEG 중복을 피함 (skipIdleCaptionGallery)
+- 저장·수정에서 사진을 탭하면 전체 화면에서 사진과 제목·메모 표시 글을 함께 봄
+- 별도 영역: 사진 아래 표 / 워터마크: 사진 위 바 (기존 StampSavePreview fullscreen)
+- 핀치 확대·JPEG 재합성·QR 생성 없음 (속도·저작권 범위 유지)
 - 도움말 갱신
 
 신규 파일
-- restore-save-modal-image.bat
-- docs/DESIGN-save-modal-image-20260822.md
-- docs/SECURITY-save-modal-image-20260822.md
-- src.pre-save-modal-image/ (스냅샷)
-- public.pre-save-modal-image/help.html
+- restore-save-viewer-caption.bat
+- docs/DESIGN-save-viewer-caption-20260823.md
+- docs/SECURITY-save-viewer-caption-20260823.md
+- src.pre-save-viewer-caption/ (스냅샷)
+- public.pre-save-viewer-caption/help.html
 
 재사용·수정
 - src/components/StampSaveModal.tsx
-- src/services/saveStamp.ts
+- src/components/StampSaveZoomViewer.tsx
+- src/components/StampSavePreview.tsx
 - public/help.html
 - RESTORE.md, PRD, PLAN, PROJECT, CHANGELOG, README, LICENSE-NOTICE
 
 재사용 무수정
-- src/services/exportStampImage.ts (saveStampsAsJpegToGallery)
-- src/services/galleryService.ts
+- src/services/captionTable.ts
+- src/services/exportStampImage.ts
 - src/constants/apkBuildLabel.ts (빌드 시 파일명만 갱신, 기존 앱 정보 표시)
 
 되돌리기
-- restore-save-modal-image.bat
+- restore-save-viewer-caption.bat
 
 npm 추가 없음. 폰트 파일 추가 없음(시스템 글자). GPL 경로 신규 채택 없음.
-설정 → 앱 정보에 APK 파일명 표시는 기존 APK_BUILD_FILENAME 유지 (`VoiceStamp_20260822_225901.apk`).
+설정 → 앱 정보에 APK 파일명 표시는 기존 APK_BUILD_FILENAME 경로 유지 (`VoiceStamp_20260823_135535.apk`).

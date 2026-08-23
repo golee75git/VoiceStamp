@@ -4268,3 +4268,9 @@ Restores HWPX build script, exportHwpx require, help, LICENSE-NOTICE. Does not r
 restore-save-modal-image.bat
 
 Restores StampSaveModal, saveStamp + help from *.pre-save-modal-image/.
+
+## Save viewer caption restore (2026-08-23)
+
+restore-save-viewer-caption.bat
+
+Restores StampSaveModal, StampSaveZoomViewer, StampSavePreview + help from *.pre-save-viewer-caption/.

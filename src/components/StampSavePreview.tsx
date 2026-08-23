@@ -376,7 +376,7 @@ export function StampSavePreview({
           <PreviewPhoto
             uri={imageUri}
             style={[styles.fullscreenPhoto, { aspectRatio }]}
-            resizeMode={imageResizeMode}
+            resizeMode="contain"
           />
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
@@ -714,8 +714,6 @@ const styles = StyleSheet.create({
     lineHeight: 13,
   },
   fullscreenWrap: {
-    flex: 1,
-    justifyContent: 'center',
     width: '100%',
   },
   fullscreenPhotoWrap: {
@@ -775,9 +773,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   fullscreenCaptionCard: {
-    flex: 1,
     width: '100%',
-    justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   fullscreenCaptionText: {
     backgroundColor: '#fff',
