@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-08-23 — 날짜별·APK별 정리 (소스 없음) · 권장 `143912` |
-| 최신 반영 커밋 | `a1f418f` 이음 제목 **번호** |
+| 문서 동기화 | 2026-08-23 — 저장 목록 엑셀 사진 가로 · 권장 `173038` |
+| 최신 반영 커밋 | 저장 목록 엑셀 **사진 가로** |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -293,6 +293,7 @@
 | F-LIST-16 | 수정 모달 전체 보기 휴지통 이동 후 목록 스크롤 위치 유지 (`onTrashed`) | ✅ |
 | F-LIST-17 | 목록 헤더 「설정」 — 진입 시 뒤로는 목록, 카메라 설정은 뒤로 카메라 | ✅ |
 | F-LIST-18 | 선택 모드 **프로젝트 ZIP**·**엑셀(XLSX)**·**HWPX** 내보내기 | ✅ |
+| F-LIST-25 | 저장 목록 엑셀: 만들기 전 **사진 가로 px**·글자 크기 지정 (수신 엑셀과 동일 기억값) | ✅ |
 | F-LIST-19 | 목록 UI: 마이크+제목 헤더, ⋮ 메뉴(휴지통·설정·도움말), 전체 N개, 하단 **첨부·촬영** 바 | ✅ |
 | F-LIST-20 | 갤러리 가져오기 버튼 **첨부(클립) 아이콘** | ✅ |
 | F-LIST-21 | 목록 상단 **제목·메모 검색** (클라이언트 필터, `stampListSearch`) | ✅ `eaa17e4` |
@@ -722,7 +723,8 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
-| **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `143912` | `a1f418f` |
+| **2026-08-23** | 저장 목록 엑셀 **사진 가로 px**·글자 크기 · 도움말 · `restore-list-xlsx-photo-px.bat` | (푸시 후) |
+| **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `143912` | `e49957b` |
 | **2026-08-23** | 이음 제목 **번호**(처음 제목 유지) · 도움말 · `restore-follow-title-seq.bat` | `a1f418f` |
 | **2026-08-23** | 저장·수정 탭 화면 **표시 글** · 도움말 · `restore-save-viewer-caption.bat` | `5b3512f` |
 | **2026-08-22** | 저장·수정 미리보기 **이미지 저장** · 도움말 · `restore-save-modal-image.bat` | `b77613d` |
@@ -747,11 +749,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_143912.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_173038.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **설치·GitHub 권장** — 이음 제목 번호 |
+| `releases/VoiceStamp_20260823_173038.apk` | (푸시 후) | **설치·GitHub 권장** — 저장 목록 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
 | `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 |
 | `releases/VoiceStamp_20260818_162611.apk` | `149db9e` | **이전** — HWPX 한글 저장 서식 |

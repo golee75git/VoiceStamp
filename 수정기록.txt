@@ -1,30 +1,30 @@
-2026-08-23 이음 제목 번호
+2026-08-23 저장 목록 엑셀 사진 가로
 
 변경
-- 이음 저장 초안: 처음 제목 유지, (이음 n)만 증가
-- 제목 칸 수정 허용. 저장 버튼은 칸 값을 다시 쓰지 않음
+- 저장 목록 「엑셀」: 만들기 전 사진 가로 px·글자 크기 지정
+- 취합 수신 엑셀과 마지막 값 공유
 - 도움말 갱신
 
 신규 파일
-- restore-follow-title-seq.bat
-- docs/DESIGN-follow-title-seq-20260823.md
-- docs/SECURITY-follow-title-seq-20260823.md
-- src.pre-follow-title-seq/
-- public.pre-follow-title-seq/help.html
+- restore-list-xlsx-photo-px.bat
+- docs/DESIGN-list-xlsx-photo-px-20260823.md
+- docs/SECURITY-list-xlsx-photo-px-20260823.md
+- src.pre-list-xlsx-photo-px/
+- public.pre-list-xlsx-photo-px/help.html
 
 재사용·수정
-- src/components/StampSaveModal.tsx
-- src/services/stampRepository.ts
+- src/components/StampListScreen.tsx
 - public/help.html
 - RESTORE.md, PRD, PLAN, PROJECT, CHANGELOG, README, LICENSE-NOTICE
 
 재사용 무수정
-- src/services/saveStamp.ts
+- src/services/exportXlsx.ts
+- src/services/projectCollectSettings.ts
 - src/constants/apkBuildLabel.ts (빌드 시 파일명만 갱신)
 
 되돌리기
-- restore-follow-title-seq.bat
+- restore-list-xlsx-photo-px.bat
 
 npm 추가 없음. 폰트 파일 추가 없음(시스템 글자). GPL 경로 신규 채택 없음.
 설정 → 앱 정보에 APK 파일명 표시는 기존 APK_BUILD_FILENAME 경로 유지.
-APK: VoiceStamp_20260823_143912.apk
+APK: VoiceStamp_20260823_173038.apk

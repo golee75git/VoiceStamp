@@ -4280,3 +4280,9 @@ Restores StampSaveModal, StampSaveZoomViewer, StampSavePreview + help from *.pre
 restore-follow-title-seq.bat
 
 Restores StampSaveModal, stampRepository + help from *.pre-follow-title-seq/.
+
+## List xlsx photo px restore (2026-08-23)
+
+restore-list-xlsx-photo-px.bat
+
+Restores StampListScreen + help from *.pre-list-xlsx-photo-px/.

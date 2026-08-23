@@ -19,7 +19,22 @@ import { openInfoPage } from '../constants/infoUrls';
 import { useSpeechInput } from '../hooks/useSpeechInput';
 import { confirmAlert } from '../utils/confirmAlert';
 import type { CaptureStampForExport } from '../services/exportStampImage';
-import type { JoinedProjectHistory, ProjectUploadStatus } from '../services/projectCollectSettings';
+import {
+  DEFAULT_INBOX_EXCEL_FONT_SIZE,
+  DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH,
+  MAX_INBOX_EXCEL_PREVIEW_WIDTH,
+  MIN_INBOX_EXCEL_PREVIEW_WIDTH,
+  getInboxExcelFontSize,
+  getInboxExcelPreviewWidth,
+  inboxExcelFontSizeToPt,
+  sanitizeInboxExcelFontSize,
+  sanitizeInboxExcelPreviewWidth,
+  setInboxExcelFontSize,
+  setInboxExcelPreviewWidth,
+  type InboxExcelFontSize,
+  type JoinedProjectHistory,
+  type ProjectUploadStatus,
+} from '../services/projectCollectSettings';
 import { StampSaveModal } from './StampSaveModal';
 import { FollowLinkCompareSheet } from './FollowLinkCompareSheet';
 import { ExportNameModal } from './ExportNameModal';
@@ -83,6 +98,8 @@ const PLACE_FILTER_NONE = '__unplaced__';
 /** 'all' | unplaced sentinel | exact placeLabel */
 type PlaceListFilter = 'all' | typeof PLACE_FILTER_NONE | string;
 const MAX_PLACE_FILTER_CHIPS = 24;
+/** Same px chips as inbox Excel. LIST_XLSX_PHOTO_PX */
+const LIST_XLSX_PX_PRESETS = [180, 240, 320, 480, 800] as const;
 
 export function StampListScreen({
   onBack,
@@ -108,6 +125,11 @@ export function StampListScreen({
   const [projectBusy, setProjectBusy] = useState(false);
   const [xlsxBusy, setXlsxBusy] = useState(false);
   const [xlsxFill, setXlsxFill] = useState<{ current: number; total: number } | null>(null);
+  const [listXlsxPxVisible, setListXlsxPxVisible] = useState(false);
+  const [listXlsxPxText, setListXlsxPxText] = useState(String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH));
+  const [listXlsxFontSize, setListXlsxFontSize] = useState<InboxExcelFontSize>(
+    DEFAULT_INBOX_EXCEL_FONT_SIZE,
+  );
   const [hwpxBusy, setHwpxBusy] = useState(false);
   const [joinSendBusy, setJoinSendBusy] = useState(false);
   const [joinSendPickerVisible, setJoinSendPickerVisible] = useState(false);
@@ -634,6 +656,27 @@ export function StampListScreen({
     if (selected.length === 0) {
       return;
     }
+    const [lastWidth, lastFont] = await Promise.all([
+      getInboxExcelPreviewWidth(),
+      getInboxExcelFontSize(),
+    ]);
+    setListXlsxPxText(String(lastWidth));
+    setListXlsxFontSize(lastFont);
+    setListXlsxPxVisible(true);
+  };
+
+  const closeListXlsxPxSheet = () => {
+    if (xlsxBusy) {
+      return;
+    }
+    setListXlsxPxVisible(false);
+  };
+
+  const runShareXlsxWithPx = async (widthPx: number, fontSize: InboxExcelFontSize) => {
+    const selected = getSelectedStamps();
+    if (selected.length === 0) {
+      return;
+    }
 
     setXlsxBusy(true);
     const useFill = selected.length >= XLSX_ROW_FILL_MIN;
@@ -641,6 +684,8 @@ export function StampListScreen({
     try {
       const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
       const result = await createStampsXlsx(selected, pdfFileName, {
+        previewWidthPx: widthPx,
+        fontSizePt: inboxExcelFontSizeToPt(fontSize),
         onRowFill: useFill
           ? (done, total) => {
               setXlsxFill({ current: done, total });
@@ -663,6 +708,17 @@ export function StampListScreen({
       setXlsxFill(null);
       setXlsxBusy(false);
     }
+  };
+
+  const confirmListXlsxPxSheet = () => {
+    const widthPx = sanitizeInboxExcelPreviewWidth(listXlsxPxText);
+    const fontSize = sanitizeInboxExcelFontSize(listXlsxFontSize);
+    setListXlsxPxVisible(false);
+    void (async () => {
+      await setInboxExcelPreviewWidth(widthPx);
+      await setInboxExcelFontSize(fontSize);
+      await runShareXlsxWithPx(widthPx, fontSize);
+    })();
   };
 
   const handleShareHwpx = async () => {
@@ -1626,6 +1682,97 @@ export function StampListScreen({
           </View>
         </Pressable>
       </Modal>
+      <Modal
+        visible={listXlsxPxVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeListXlsxPxSheet}
+      >
+        <View style={styles.listXlsxPxBg}>
+          <View style={styles.listXlsxPxCard}>
+            <Text style={styles.listXlsxPxTitle}>엑셀 사진 가로 크기 (px)</Text>
+            <Text style={styles.listXlsxPxHint}>
+              {MIN_INBOX_EXCEL_PREVIEW_WIDTH}–{MAX_INBOX_EXCEL_PREVIEW_WIDTH} · 기본{' '}
+              {DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH} · 세로는 비율 유지
+            </Text>
+            <TextInput
+              style={styles.listXlsxPxInput}
+              value={listXlsxPxText}
+              onChangeText={setListXlsxPxText}
+              keyboardType="number-pad"
+              maxLength={3}
+              placeholder={String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH)}
+              editable={!xlsxBusy}
+            />
+            <View style={styles.listXlsxPxChips}>
+              {LIST_XLSX_PX_PRESETS.map((n) => (
+                <Pressable
+                  key={n}
+                  style={[
+                    styles.listXlsxPxChip,
+                    listXlsxPxText === String(n) && styles.listXlsxPxChipOn,
+                  ]}
+                  onPress={() => setListXlsxPxText(String(n))}
+                  disabled={xlsxBusy}
+                >
+                  <Text
+                    style={[
+                      styles.listXlsxPxChipText,
+                      listXlsxPxText === String(n) && styles.listXlsxPxChipTextOn,
+                    ]}
+                  >
+                    {n}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <Text style={styles.listXlsxPxTitle}>글자 크기</Text>
+            <Text style={styles.listXlsxPxHint}>작음 10 · 보통 11 · 큼 14 (머리글은 굵게)</Text>
+            <View style={styles.listXlsxPxChips}>
+              {(
+                [
+                  { id: 'small' as const, label: '작음' },
+                  { id: 'normal' as const, label: '보통' },
+                  { id: 'large' as const, label: '큼' },
+                ] as const
+              ).map((opt) => (
+                <Pressable
+                  key={opt.id}
+                  style={[
+                    styles.listXlsxPxChip,
+                    listXlsxFontSize === opt.id && styles.listXlsxPxChipOn,
+                  ]}
+                  onPress={() => setListXlsxFontSize(opt.id)}
+                  disabled={xlsxBusy}
+                >
+                  <Text
+                    style={[
+                      styles.listXlsxPxChipText,
+                      listXlsxFontSize === opt.id && styles.listXlsxPxChipTextOn,
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <Pressable
+              style={[styles.listXlsxPxPrimary, xlsxBusy && styles.pdfBarButtonDisabled]}
+              onPress={confirmListXlsxPxSheet}
+              disabled={xlsxBusy}
+            >
+              <Text style={styles.listXlsxPxPrimaryText}>엑셀 만들기</Text>
+            </Pressable>
+            <Pressable
+              style={styles.listXlsxPxSecondary}
+              onPress={closeListXlsxPxSheet}
+              disabled={xlsxBusy}
+            >
+              <Text style={styles.listXlsxPxSecondaryText}>취소</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -2260,6 +2407,86 @@ const styles = StyleSheet.create({
   },
   joinSendCloseText: {
     color: '#2563eb',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  listXlsxPxBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  listXlsxPxCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    gap: 12,
+  },
+  listXlsxPxTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginTop: 4,
+  },
+  listXlsxPxHint: {
+    fontSize: 12,
+    color: '#6b7280',
+    lineHeight: 18,
+  },
+  listXlsxPxInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: '#111',
+  },
+  listXlsxPxChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  listXlsxPxChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#fff',
+  },
+  listXlsxPxChipOn: {
+    backgroundColor: '#111',
+    borderColor: '#111',
+  },
+  listXlsxPxChipText: {
+    color: '#111',
+    fontWeight: '600',
+  },
+  listXlsxPxChipTextOn: {
+    color: '#fff',
+  },
+  listXlsxPxPrimary: {
+    backgroundColor: '#111',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  listXlsxPxPrimaryText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  listXlsxPxSecondary: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  listXlsxPxSecondaryText: {
+    color: '#111',
     fontWeight: '600',
     fontSize: 15,
   },
