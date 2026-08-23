@@ -1303,6 +1303,7 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 | 항목 | 내용 |
 |------|------|
 | 분류 | 날짜별·APK별 문서 정리 (**소스 변경 없음**) |
+| 커밋 | `4f27cd0` |
 | 권장 APK | `releases/VoiceStamp_20260823_181951.apk` |
 | 문서 | PRD · PLAN · PROJECT · CHANGELOG · README |
 
