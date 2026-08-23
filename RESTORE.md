@@ -4274,3 +4274,9 @@ Restores StampSaveModal, saveStamp + help from *.pre-save-modal-image/.
 restore-save-viewer-caption.bat
 
 Restores StampSaveModal, StampSaveZoomViewer, StampSavePreview + help from *.pre-save-viewer-caption/.
+
+## Follow title seq restore (2026-08-23)
+
+restore-follow-title-seq.bat
+
+Restores StampSaveModal, stampRepository + help from *.pre-follow-title-seq/.

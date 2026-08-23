@@ -67,6 +67,7 @@ import {
   type CaptureStampForExport,
 } from '../services/exportStampImage';
 import { saveStamp, updateStamp } from '../services/saveStamp';
+import { countFollowLinkChildren, resolveFollowRootId } from '../services/stampRepository';
 import { listKnownStampGroupFolders } from '../services/stampFolderService';
 import { moveStampsToTrash } from '../services/stampTrash';
 import {
@@ -271,12 +272,14 @@ type StampSaveModalProps = {
   joinSendWay?: 'album' | 'shot';
 };
 
-function followUpTitleFromParent(parentTitle: string): string {
-  const base = parentTitle.trim() || '스탬프';
-  if (/\((이음|후속)\)\s*$/.test(base)) {
-    return base.replace(/\((이음|후속)\)\s*$/, '(이음)');
-  }
-  return `${base} (이음)`;
+/* FOLLOW_TITLE_SEQ: 이음 초안은 처음 제목 유지·(이음 n)만 증가. 칸 수정 허용. 저장 시 재작성 없음. 되돌리: restore-follow-title-seq.bat */
+const FOLLOW_TITLE_TAIL = /\s*\((이음|후속)(?:\s+\d+)?\)\s*$/;
+
+function followUpTitleFromParent(parentTitle: string, seq: number): string {
+  const n = Number.isFinite(seq) && seq >= 1 ? Math.floor(seq) : 1;
+  const stripped = parentTitle.trim().replace(FOLLOW_TITLE_TAIL, '').trim();
+  const base = stripped || '스탬프';
+  return `${base} (이음 ${n})`;
 }
 
 export function StampSaveModal({
@@ -758,10 +761,13 @@ export function StampSaveModal({
     if (!visible || !followUpParent || isEdit) {
       return;
     }
+    let cancelled = false;
+    const parentTitle = followUpParent.title;
     titleTouchedRef.current = true;
     placeTouchedRef.current = true;
     floorTouchedRef.current = Boolean(followUpParent.floor);
-    setTitle(followUpTitleFromParent(followUpParent.title));
+    const titleSeed = followUpTitleFromParent(parentTitle, 1);
+    setTitle(titleSeed);
     setMemo('');
     setExtra1(followUpParent.extra1 ?? '');
     setExtra2(followUpParent.extra2 ?? '');
@@ -779,6 +785,27 @@ export function StampSaveModal({
     setExtra1FieldLabel(labels.extra1FieldLabel);
     setExtra2FieldLabel(labels.extra2FieldLabel);
     setExtra3FieldLabel(labels.extra3FieldLabel);
+    void (async () => {
+      try {
+        const childCount = await countFollowLinkChildren(resolveFollowRootId(followUpParent));
+        if (cancelled) {
+          return;
+        }
+        setTitle((current) => {
+          const next = followUpTitleFromParent(parentTitle, childCount + 1);
+          return current === titleSeed || current === next ? next : current;
+        });
+      } catch {
+        if (!cancelled) {
+          setTitle((current) =>
+            current === titleSeed ? followUpTitleFromParent(parentTitle, 1) : current,
+          );
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [visible, isEdit, followUpParent?.id]);
 
   useEffect(() => {

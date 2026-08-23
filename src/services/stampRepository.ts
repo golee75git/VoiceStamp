@@ -182,6 +182,21 @@ export async function listFollowLinkChain(anchor: Stamp): Promise<Stamp[]> {
   return [mapRow(rootRow), ...childRows.map(mapRow)];
 }
 
+/** Live follow-up count for a root (trashed rows omitted). Uses parent_id index. */
+export async function countFollowLinkChildren(rootId: string): Promise<number> {
+  const id = normalizeParentId(rootId) ?? rootId.trim();
+  if (!id) {
+    return 0;
+  }
+  const db = await getDatabase();
+  const row = await db.getFirstAsync<{ c: number }>(
+    'SELECT COUNT(*) as c FROM stamps WHERE parent_id = ? AND deleted_at IS NULL',
+    id,
+  );
+  const n = Number(row?.c);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
 export async function softDeleteStamps(ids: string[]): Promise<number> {
   if (ids.length === 0) {
     return 0;
