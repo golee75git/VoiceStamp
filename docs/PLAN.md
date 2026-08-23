@@ -4,7 +4,7 @@
 |------|------|
 | 문서 버전 | 3.17 |
 | 작성일 | 2026-08-23 |
-| 기준 커밋 | `a5f627a` 저장 목록 엑셀 **사진 가로** |
+| 기준 커밋 | 연결 비교 엑셀 **사진 가로** |
 | 관련 문서 | [PRD.md](./PRD.md), [PROJECT.md](./PROJECT.md), [CHANGELOG.md](./CHANGELOG.md), [HEALTHCHECK.md](./HEALTHCHECK.md), [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md), [DESIGN-NCP-PROJECT-QR-UI-20260807.md](./DESIGN-NCP-PROJECT-QR-UI-20260807.md), [DESIGN-save-slot-speech.md](./DESIGN-save-slot-speech.md), [DESIGN-PRIVACY-BLUR.md](./DESIGN-PRIVACY-BLUR.md), [DESIGN-ML-KIT-OCR-TITLE.md](./DESIGN-ML-KIT-OCR-TITLE.md), [DESIGN-GOOGLE-SHEETS-UPLOAD.md](./DESIGN-GOOGLE-SHEETS-UPLOAD.md) |
 
 ---
@@ -746,6 +746,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 참여 사업 **갤러리·목록 보내기** · APK `164812` · `restore-join-album-send.bat` |
 | 2026-08-16 | 4·3 | 보낸 사진 **갤러리·촬영** 표시 · APK `171905` · `restore-sent-way-label.bat` |
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
+| 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
 | 2026-08-23 | 2AS·3 | 저장 목록 엑셀 **사진 가로 px**(수신과 동일 기억값) · `restore-list-xlsx-photo-px.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG (**소스 없음**) |
 | 2026-08-23 | 2AR·3 | 이음 제목 **번호**(처음 제목 유지) · `restore-follow-title-seq.bat` |
@@ -773,10 +774,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-08-23:** 권장 = `releases/VoiceStamp_20260823_173038.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-08-23:** 권장 = `releases/VoiceStamp_20260823_181951.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **설치·GitHub 권장** — 저장 목록 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_181951.apk` | (푸시 후) | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
 | `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 |

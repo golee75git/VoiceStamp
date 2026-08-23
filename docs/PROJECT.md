@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-23** — 저장 목록 엑셀 사진 가로 · 권장 `173038` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: `a5f627a` 저장 목록 엑셀 **사진 가로**
+문서 동기화: **2026-08-23** — 연결 비교 엑셀 사진 가로 · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: 연결 비교 엑셀 **사진 가로**
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **권장** — 저장 목록 엑셀 사진 가로 · `restore-list-xlsx-photo-px.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260823_181951.apk` | (푸시 후) | **권장** — 연결 비교 엑셀 사진 가로 · `restore-follow-xlsx-photo-px.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 · `restore-list-xlsx-photo-px.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 · `restore-follow-title-seq.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 · `restore-save-viewer-caption.bat` | **GitHub `releases/`** |
 
@@ -1301,8 +1302,17 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 항목 | 내용 |
 |------|------|
+| 분류 | 연결 비교 엑셀 **사진 가로**(수신·목록과 동일 기억값) |
+| APK | VoiceStamp_20260823_181951.apk — [CHANGELOG.md](./CHANGELOG.md) |
+| 롤백 | `restore-follow-xlsx-photo-px.bat` |
+| 문서 | DESIGN-follow-xlsx-photo-px-20260823 · SECURITY-follow-xlsx-photo-px-20260823 |
+
+### 2026-08-23 (저장 목록 엑셀 사진 가로)
+
+| 항목 | 내용 |
+|------|------|
 | 분류 | 저장 목록 엑셀 **사진 가로**(수신과 동일 기억값) |
-| APK | **권장** `releases/VoiceStamp_20260823_173038.apk` — [CHANGELOG.md](./CHANGELOG.md) |
+| APK | `releases/VoiceStamp_20260823_173038.apk` — [CHANGELOG.md](./CHANGELOG.md) |
 | 롤백 | `restore-list-xlsx-photo-px.bat` |
 | 문서 | DESIGN-list-xlsx-photo-px-20260823 · SECURITY-list-xlsx-photo-px-20260823 |
 

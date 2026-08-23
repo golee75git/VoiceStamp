@@ -26,6 +26,7 @@
 | [DESIGN-save-modal-image-20260822.md](./DESIGN-save-modal-image-20260822.md) | 기획·UI | 저장·수정 미리보기 **이미지 저장** |
 | [DESIGN-save-viewer-caption-20260823.md](./DESIGN-save-viewer-caption-20260823.md) | 기획·UI | 저장·수정 탭 화면 **표시 글** |
 | [DESIGN-follow-title-seq-20260823.md](./DESIGN-follow-title-seq-20260823.md) | 기획·UI | 이음 제목 **번호** |
+| [DESIGN-follow-xlsx-photo-px-20260823.md](./DESIGN-follow-xlsx-photo-px-20260823.md) | 기획·UI | 연결 비교 엑셀 **사진 가로** |
 | [DESIGN-list-xlsx-photo-px-20260823.md](./DESIGN-list-xlsx-photo-px-20260823.md) | 기획·UI | 저장 목록 엑셀 **사진 가로** |
 | [PLAN-NCP-PROJECT-IMPLEMENTATION.md](./PLAN-NCP-PROJECT-IMPLEMENTATION.md) | 계획 | **FEAT-NCP-PROJECT-01** 구현 단계 — **앱 연동됨**(2026-08-07~) |
 | [SECURITY-ncp-project-qr-20260807.md](./SECURITY-ncp-project-qr-20260807.md) | 보안·법무 | **FEAT-NCP-PROJECT-01** OFL·GPL·취약점·Play·특허 메모 (문서만) |
@@ -64,6 +65,7 @@
 | [SECURITY-save-modal-image-20260822.md](./SECURITY-save-modal-image-20260822.md) | 보안·UX | 저장·수정 미리보기 이미지 저장 |
 | [SECURITY-save-viewer-caption-20260823.md](./SECURITY-save-viewer-caption-20260823.md) | 보안·UX | 저장·수정 탭 화면 표시 글 |
 | [SECURITY-follow-title-seq-20260823.md](./SECURITY-follow-title-seq-20260823.md) | 보안·UX | 이음 제목 번호 |
+| [SECURITY-follow-xlsx-photo-px-20260823.md](./SECURITY-follow-xlsx-photo-px-20260823.md) | 보안·UX | 연결 비교 엑셀 사진 가로 |
 | [SECURITY-list-xlsx-photo-px-20260823.md](./SECURITY-list-xlsx-photo-px-20260823.md) | 보안·UX | 저장 목록 엑셀 사진 가로 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
@@ -85,15 +87,15 @@
 
 ## 현재 상태 스냅샷 (2026-08-23)
 
-- **문서 갱신일:** 2026-08-23 — 저장 목록 엑셀 사진 가로
-- **최신 기능 커밋:** `a5f627a` · APK `173038` — 저장 목록 엑셀 사진 가로
+- **문서 갱신일:** 2026-08-23 — 연결 비교 엑셀 사진 가로
+- **최신 기능 커밋:** 연결 비교 엑셀 사진 가로
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260823_173038.apk` — 저장 목록 엑셀 사진 가로
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260823_173038.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260823_143912.apk` — 이음 제목 번호
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260823_181951.apk` — 연결 비교 엑셀 사진 가로
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260823_181951.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260823_173038.apk` — 저장 목록 엑셀 사진 가로
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_162611.apk` — HWPX 한글 저장 서식
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_151153.apk` — HWPX 자체 서식
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_140815.apk` — 사업취합 허브 카드 상태 색
@@ -174,6 +176,7 @@
 | 08-09 | 목록 썸네일·취소 · 만든이 · 취합 배지·보낸 사진 · 홈 취합 · 가져옴 매칭 · APK `085617`~`183720` |
 | 08-10 | 취합 사업명·전환 · QR Modal · 엑셀 px·800·글자 · APK `085356`~`113846` · **본 문서 동기화(소스 없음)** |
 | 08-14 | 수신함 하단 **고름 표시**·엑셀 미선택 안내 · APK `171058` |
+| 08-23 | 연결 비교 엑셀 **사진 가로** |
 | 08-23 | 저장 목록 엑셀 **사진 가로** · APK `173038` |
 | 08-23 | 날짜별·APK별 문서 정리 (소스 없음) · 권장 `143912` (`e49957b`) |
 | 08-23 | 이음 제목 **번호** · APK `143912` |
@@ -185,11 +188,12 @@
 
 ### APK별 (권장·주요)
 
-> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_173038.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
+> **2026-08-23:** 권장 파일은 **`VoiceStamp_20260823_181951.apk`**. 요약: [CHANGELOG.md](./CHANGELOG.md).
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **설치·GitHub 권장** — 저장 목록 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_181951.apk` | (푸시 후) | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
 | `releases/VoiceStamp_20260822_225901.apk` | `b77613d` | **이전** — 저장·수정 미리보기 이미지 저장 |

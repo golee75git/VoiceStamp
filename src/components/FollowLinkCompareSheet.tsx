@@ -9,16 +9,34 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 
 import { confirmAlert } from '../utils/confirmAlert';
 import { resolveImageUri } from '../services/fileService';
-import { loadStampPdfExport } from '../services/exportOnDemand';
+import { loadStampPdfExport, loadStampXlsxExport } from '../services/exportOnDemand';
 import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
+import {
+  DEFAULT_INBOX_EXCEL_FONT_SIZE,
+  DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH,
+  MAX_INBOX_EXCEL_PREVIEW_WIDTH,
+  MIN_INBOX_EXCEL_PREVIEW_WIDTH,
+  getInboxExcelFontSize,
+  getInboxExcelPreviewWidth,
+  inboxExcelFontSizeToPt,
+  sanitizeInboxExcelFontSize,
+  sanitizeInboxExcelPreviewWidth,
+  setInboxExcelFontSize,
+  setInboxExcelPreviewWidth,
+  type InboxExcelFontSize,
+} from '../services/projectCollectSettings';
 import { listFollowLinkChain, resolveFollowRootId } from '../services/stampRepository';
 import { moveStampsToTrash } from '../services/stampTrash';
 import type { Stamp } from '../types/stamp';
+
+/** Same chips as list/inbox Excel. FOLLOW_XLSX_PHOTO_PX */
+const FOLLOW_XLSX_PX_PRESETS = [180, 240, 320, 480, 800] as const;
 
 type FollowLinkCompareSheetProps = {
   visible: boolean;
@@ -42,6 +60,12 @@ export function FollowLinkCompareSheet({
   const [pdfFileName, setPdfFileName] = useState('VoiceStamp');
   const [pdfBusy, setPdfBusy] = useState(false);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [xlsxBusy, setXlsxBusy] = useState(false);
+  const [xlsxPxVisible, setXlsxPxVisible] = useState(false);
+  const [xlsxPxText, setXlsxPxText] = useState(String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH));
+  const [xlsxFontSize, setXlsxFontSize] = useState<InboxExcelFontSize>(
+    DEFAULT_INBOX_EXCEL_FONT_SIZE,
+  );
 
   const reloadChain = useCallback(async (source: Stamp) => {
     const rows = await listFollowLinkChain(source);
@@ -63,6 +87,8 @@ export function FollowLinkCompareSheet({
       setPdfUri(null);
       setPdfBusy(false);
       setDeleteBusy(false);
+      setXlsxBusy(false);
+      setXlsxPxVisible(false);
       return;
     }
 
@@ -93,7 +119,7 @@ export function FollowLinkCompareSheet({
     () => chain.filter((item) => selectedIds.has(item.id)),
     [chain, selectedIds],
   );
-  const exportBusy = pdfBusy || deleteBusy;
+  const exportBusy = pdfBusy || deleteBusy || xlsxBusy;
 
   const toggleSelect = (id: string) => {
     setPdfUri(null);
@@ -166,6 +192,65 @@ export function FollowLinkCompareSheet({
     }
   };
 
+  const handleOpenXlsxPx = async () => {
+    if (selectedStamps.length === 0 || exportBusy) {
+      return;
+    }
+    const [lastWidth, lastFont] = await Promise.all([
+      getInboxExcelPreviewWidth(),
+      getInboxExcelFontSize(),
+    ]);
+    setXlsxPxText(String(lastWidth));
+    setXlsxFontSize(lastFont);
+    setXlsxPxVisible(true);
+  };
+
+  const closeXlsxPxSheet = () => {
+    if (xlsxBusy) {
+      return;
+    }
+    setXlsxPxVisible(false);
+  };
+
+  const runShareXlsxWithPx = async (widthPx: number, fontSize: InboxExcelFontSize) => {
+    if (selectedStamps.length === 0) {
+      return;
+    }
+    setXlsxBusy(true);
+    try {
+      const { createStampsXlsx, shareStampsXlsx } = await loadStampXlsxExport();
+      const result = await createStampsXlsx(selectedStamps, pdfFileName, {
+        previewWidthPx: widthPx,
+        fontSizePt: inboxExcelFontSizeToPt(fontSize),
+      });
+      await shareStampsXlsx(result);
+      Alert.alert(
+        '엑셀 저장 완료',
+        Platform.OS === 'web'
+          ? 'XLSX 파일을 다운로드했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.'
+          : '엑셀을 앱 폴더에 저장했습니다. PC Excel에서 제목·메모·층을 편집할 수 있습니다.',
+      );
+    } catch (e) {
+      Alert.alert(
+        '엑셀 저장 실패',
+        e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.',
+      );
+    } finally {
+      setXlsxBusy(false);
+    }
+  };
+
+  const confirmXlsxPxSheet = () => {
+    const widthPx = sanitizeInboxExcelPreviewWidth(xlsxPxText);
+    const fontSize = sanitizeInboxExcelFontSize(xlsxFontSize);
+    setXlsxPxVisible(false);
+    void (async () => {
+      await setInboxExcelPreviewWidth(widthPx);
+      await setInboxExcelFontSize(fontSize);
+      await runShareXlsxWithPx(widthPx, fontSize);
+    })();
+  };
+
   const handleTrash = () => {
     void (async () => {
       if (selectedStamps.length === 0 || exportBusy) {
@@ -213,12 +298,13 @@ export function FollowLinkCompareSheet({
   };
 
   return (
+    <>
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <Text style={styles.title}>연결 비교</Text>
           <Text style={styles.hint}>
-            처음과 이음 스탬프를 나란히 봅니다. 카드를 눌러 선택한 뒤 PDF·휴지통을 쓸 수 있습니다.
+            처음과 이음 스탬프를 나란히 봅니다. 카드를 눌러 선택한 뒤 PDF·엑셀·휴지통을 쓸 수 있습니다.
           </Text>
           {loading ? (
             <View style={styles.centered}>
@@ -325,6 +411,29 @@ export function FollowLinkCompareSheet({
                 PDF 공유
               </Text>
             </Pressable>
+            <Pressable
+              style={[
+                styles.actionButton,
+                styles.actionSecondary,
+                (selectedCount === 0 || exportBusy) && styles.actionDisabled,
+              ]}
+              onPress={() => void handleOpenXlsxPx()}
+              disabled={selectedCount === 0 || exportBusy}
+              accessibilityLabel="선택 항목 엑셀 만들기"
+            >
+              {xlsxBusy ? (
+                <ActivityIndicator color="#2563eb" />
+              ) : (
+                <Text
+                  style={[
+                    styles.actionSecondaryText,
+                    (selectedCount === 0 || exportBusy) && styles.actionTextDisabled,
+                  ]}
+                >
+                  엑셀 ({selectedCount})
+                </Text>
+              )}
+            </Pressable>
           </View>
           <Pressable
             style={[
@@ -352,6 +461,98 @@ export function FollowLinkCompareSheet({
         </View>
       </View>
     </Modal>
+      <Modal
+        visible={xlsxPxVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeXlsxPxSheet}
+      >
+        <View style={styles.xlsxPxBg}>
+          <View style={styles.xlsxPxCard}>
+            <Text style={styles.xlsxPxTitle}>엑셀 사진 가로 크기 (px)</Text>
+            <Text style={styles.xlsxPxHint}>
+              {MIN_INBOX_EXCEL_PREVIEW_WIDTH}–{MAX_INBOX_EXCEL_PREVIEW_WIDTH} · 기본{' '}
+              {DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH} · 세로는 비율 유지
+            </Text>
+            <TextInput
+              style={styles.xlsxPxInput}
+              value={xlsxPxText}
+              onChangeText={setXlsxPxText}
+              keyboardType="number-pad"
+              maxLength={3}
+              placeholder={String(DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH)}
+              editable={!xlsxBusy}
+            />
+            <View style={styles.xlsxPxChips}>
+              {FOLLOW_XLSX_PX_PRESETS.map((n) => (
+                <Pressable
+                  key={n}
+                  style={[
+                    styles.xlsxPxChip,
+                    xlsxPxText === String(n) && styles.xlsxPxChipOn,
+                  ]}
+                  onPress={() => setXlsxPxText(String(n))}
+                  disabled={xlsxBusy}
+                >
+                  <Text
+                    style={[
+                      styles.xlsxPxChipText,
+                      xlsxPxText === String(n) && styles.xlsxPxChipTextOn,
+                    ]}
+                  >
+                    {n}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <Text style={styles.xlsxPxTitle}>글자 크기</Text>
+            <Text style={styles.xlsxPxHint}>작음 10 · 보통 11 · 큼 14 (머리글은 굵게)</Text>
+            <View style={styles.xlsxPxChips}>
+              {(
+                [
+                  { id: 'small' as const, label: '작음' },
+                  { id: 'normal' as const, label: '보통' },
+                  { id: 'large' as const, label: '큼' },
+                ] as const
+              ).map((opt) => (
+                <Pressable
+                  key={opt.id}
+                  style={[
+                    styles.xlsxPxChip,
+                    xlsxFontSize === opt.id && styles.xlsxPxChipOn,
+                  ]}
+                  onPress={() => setXlsxFontSize(opt.id)}
+                  disabled={xlsxBusy}
+                >
+                  <Text
+                    style={[
+                      styles.xlsxPxChipText,
+                      xlsxFontSize === opt.id && styles.xlsxPxChipTextOn,
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <Pressable
+              style={[styles.xlsxPxPrimary, xlsxBusy && styles.actionDisabled]}
+              onPress={confirmXlsxPxSheet}
+              disabled={xlsxBusy}
+            >
+              <Text style={styles.xlsxPxPrimaryText}>엑셀 만들기</Text>
+            </Pressable>
+            <Pressable
+              style={styles.xlsxPxSecondary}
+              onPress={closeXlsxPxSheet}
+              disabled={xlsxBusy}
+            >
+              <Text style={styles.xlsxPxSecondaryText}>취소</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -512,6 +713,85 @@ const styles = StyleSheet.create({
   closeText: {
     color: '#fff',
     fontWeight: '700',
+    fontSize: 15,
+  },
+  xlsxPxBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  xlsxPxCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    gap: 12,
+  },
+  xlsxPxTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  xlsxPxHint: {
+    fontSize: 12,
+    color: '#6b7280',
+    lineHeight: 18,
+  },
+  xlsxPxInput: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: '#111',
+  },
+  xlsxPxChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  xlsxPxChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#fff',
+  },
+  xlsxPxChipOn: {
+    backgroundColor: '#111',
+    borderColor: '#111',
+  },
+  xlsxPxChipText: {
+    color: '#111',
+    fontWeight: '600',
+  },
+  xlsxPxChipTextOn: {
+    color: '#fff',
+  },
+  xlsxPxPrimary: {
+    backgroundColor: '#111',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  xlsxPxPrimaryText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  xlsxPxSecondary: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  xlsxPxSecondaryText: {
+    color: '#111',
+    fontWeight: '600',
     fontSize: 15,
   },
 });

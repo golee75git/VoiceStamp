@@ -4286,3 +4286,9 @@ Restores StampSaveModal, stampRepository + help from *.pre-follow-title-seq/.
 restore-list-xlsx-photo-px.bat
 
 Restores StampListScreen + help from *.pre-list-xlsx-photo-px/.
+
+## Follow xlsx photo px restore (2026-08-23)
+
+restore-follow-xlsx-photo-px.bat
+
+Restores FollowLinkCompareSheet + help from *.pre-follow-xlsx-photo-px/.
