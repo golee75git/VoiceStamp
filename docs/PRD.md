@@ -9,7 +9,7 @@
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
 | 문서 동기화 | 2026-08-23 — 연결 비교 엑셀 사진 가로 · 권장 VoiceStamp_20260823_181951.apk |
-| 최신 반영 커밋 | 연결 비교 엑셀 **사진 가로** |
+| 최신 반영 커밋 | `bba7014` 연결 비교 엑셀 **사진 가로** |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -724,7 +724,7 @@
 | **2026-08-16** | 참여 사업 **갤러리 보내기**·목록 **사업으로 보내기** · 도움말 · APK `164812` · `restore-join-album-send.bat` | `0601b0a` |
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
-| **2026-08-23** | 연결 비교 엑셀 **사진 가로 px**·글자 크기 · 도움말 · `restore-follow-xlsx-photo-px.bat` | (푸시 후) |
+| **2026-08-23** | 연결 비교 엑셀 **사진 가로 px**·글자 크기 · 도움말 · `restore-follow-xlsx-photo-px.bat` | `bba7014` |
 | **2026-08-23** | 저장 목록 엑셀 **사진 가로 px**·글자 크기 · 도움말 · `restore-list-xlsx-photo-px.bat` | `a5f627a` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `143912` | `e49957b` |
 | **2026-08-23** | 이음 제목 **번호**(처음 제목 유지) · 도움말 · `restore-follow-title-seq.bat` | `a1f418f` |
@@ -755,7 +755,7 @@
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260823_181951.apk` | (푸시 후) | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
+| `releases/VoiceStamp_20260823_181951.apk` | `bba7014` | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_143912.apk` | `a1f418f` | **이전** — 이음 제목 번호 |
 | `releases/VoiceStamp_20260823_135535.apk` | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |

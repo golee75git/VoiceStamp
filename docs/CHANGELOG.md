@@ -4,7 +4,7 @@
 |------|------|
 | 문서 갱신 | 2026-08-23 |
 | 권장 APK | `releases/VoiceStamp_20260823_181951.apk` |
-| 기준 커밋 | 연결 비교 엑셀 사진 가로 |
+| 기준 커밋 | `bba7014` 연결 비교 엑셀 사진 가로 |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
 앱 버전명(`app.json`)은 모두 **1.0.0**. 구분은 **APK 파일명(빌드 시각)** 기준입니다.  
@@ -62,7 +62,7 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| **`VoiceStamp_20260823_181951.apk`** | (푸시 후) | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
+| **`VoiceStamp_20260823_181951.apk`** | `bba7014` | **설치·GitHub 권장** — 연결 비교 엑셀 사진 가로 |
 | **`VoiceStamp_20260823_173038.apk`** | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |
 | **`VoiceStamp_20260823_143912.apk`** | `a1f418f` | **이전** — 이음 제목 번호 |
 | **`VoiceStamp_20260823_135535.apk`** | `5b3512f` | **이전** — 저장·수정 탭 화면 표시 글 |
