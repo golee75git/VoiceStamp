@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 갱신 | 2026-08-23 |
+| 문서 갱신 | 2026-08-23 — 날짜별·APK별 정리 |
 | 권장 APK | `releases/VoiceStamp_20260823_181951.apk` |
 | 기준 커밋 | `bba7014` 연결 비교 엑셀 사진 가로 |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
@@ -16,8 +16,9 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
-| **2026-08-23** | 연결 비교 엑셀 **사진 가로 px**·글자 크기 · 도움말 · APK VoiceStamp_20260823_181951.apk | `restore-follow-xlsx-photo-px.bat` |
-| **2026-08-23** | 저장 목록 엑셀 **사진 가로 px**·글자 크기 · 도움말 · APK `173038` | `restore-list-xlsx-photo-px.bat` · `173038` |
+| **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 없음**) · 권장 `181951` | (푸시 후) |
+| **2026-08-23** | 연결 비교 엑셀 **사진 가로 px**·글자 크기 · 도움말 · APK `181951` | `bba7014` · `restore-follow-xlsx-photo-px.bat` · `181951` |
+| **2026-08-23** | 저장 목록 엑셀 **사진 가로 px**·글자 크기 · 도움말 · APK `173038` | `a5f627a` · `restore-list-xlsx-photo-px.bat` · `173038` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 없음**) · 권장 `143912` | `e49957b` |
 | **2026-08-23** | 이음 제목 **번호**(처음 제목 유지) · 도움말 · APK `143912` | `a1f418f` · `restore-follow-title-seq.bat` · `143912` |
 | **2026-08-23** | 저장·수정 탭 화면 **표시 글** · 도움말 · APK `135535` | `restore-save-viewer-caption.bat` · `135535` |

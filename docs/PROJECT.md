@@ -1,7 +1,7 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-08-23** — 연결 비교 엑셀 사진 가로 · [CHANGELOG.md](./CHANGELOG.md)
+문서 동기화: **2026-08-23** — 날짜별·APK별 정리 · 권장 `181951` (`bba7014`) · [CHANGELOG.md](./CHANGELOG.md)
 최신 기능 커밋 기준: `bba7014` 연결 비교 엑셀 **사진 가로**
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
@@ -1302,8 +1302,17 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 | 항목 | 내용 |
 |------|------|
+| 분류 | 날짜별·APK별 문서 정리 (**소스 변경 없음**) |
+| 권장 APK | `releases/VoiceStamp_20260823_181951.apk` |
+| 문서 | PRD · PLAN · PROJECT · CHANGELOG · README |
+
+### 2026-08-23 (연결 비교 엑셀 사진 가로)
+
+| 항목 | 내용 |
+|------|------|
 | 분류 | 연결 비교 엑셀 **사진 가로**(수신·목록과 동일 기억값) |
-| APK | VoiceStamp_20260823_181951.apk — [CHANGELOG.md](./CHANGELOG.md) |
+| 커밋 | `bba7014` |
+| APK | `releases/VoiceStamp_20260823_181951.apk` — [CHANGELOG.md](./CHANGELOG.md) |
 | 롤백 | `restore-follow-xlsx-photo-px.bat` |
 | 문서 | DESIGN-follow-xlsx-photo-px-20260823 · SECURITY-follow-xlsx-photo-px-20260823 |
 
