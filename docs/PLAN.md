@@ -16,7 +16,7 @@
 | **Phase 0** | MVP — 촬영·음성·저장·목록·PDF | ✅ 완료 |
 | **Phase 1** | 설정·위치 제목·휴지통·갤러리·웹 배포 | ✅ 완료 |
 | **Phase 2** | PDF 고도화·UI/UX·손잡이·내보내기 확장 | ✅ 완료 |
-| **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 (LEG-04 ✅ LEG-06 ✅) |
+| **Phase 3** | 배포·법무 문서·앱 내 정책 표시 | 🔄 진행 중 (LEG-04 ✅ LEG-06 ✅ LEG-07 📋 검토 필요) |
 | **Phase 4** | 목적별 UX·보고서 서식·데이터 백업 · **NCP 사업 취합(일시)** | 🔄 진행 중 (FEAT-NCP ✅ 앱 연동) |
 
 ---
@@ -548,6 +548,7 @@
 | LEG-04 | 버전·라이선스·개인정보·도움말 (설정 앱 정보 + 웹 `/privacy` 등) | P2 | ✅ `a4a55d2` |
 | LEG-06 | OSS 목록·앱 내 오픈소스 라이선스·[LICENSE-NOTICE.md](./LICENSE-NOTICE.md) dual-license 검토(MIT/BSD 확정) | P2 | ✅ 2026-06-19 |
 | LEG-05 | Play 스토어 등록용 스크린샷·스토어 문구 | P3 | 📋 **초안·인프라** ([LEG-05-STORE-LISTING.md](./LEG-05-STORE-LISTING.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) · `eas.json` production AAB) — 콘솔 업로드·Production 미완 |
+| LEG-07 | [위치기반서비스사업자 신고 검토](./LEG-07-LOCATION-SERVICE-REGISTRATION.md) — 카카오 로컬 API 좌표→주소 변환 기능 | P2 | 📋 **검토 필요** — 위치정보지원센터/법률 전문가 정식 확인 전, Production 출시 보류 사유는 아님 |
 | DEP-04 | `/info` GitHub Releases APK 다운로드 링크 | P2 | ✅ `3468630` |
 | DEP-05 | 랜딩 **QR·Web Share** (qrcodejs MIT) | P2 | ✅ `800971a` |
 
