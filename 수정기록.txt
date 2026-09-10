@@ -46,7 +46,8 @@ restore-hwpx-caption-below.bat
 ```
 
 ## 검증 체크
-- [ ] Git diff: exportHwpx / help / restore bat 위주
-- [ ] GitHub 검색: `buildCaptionBelowFill` — 외부 동일 구현 없음(자체 명명)
-- [ ] 패키지 추가 없음 → license 자동검사 대상 신규 항목 없음
-- [ ] Play: 로컬 처리·권한 모델 변경 없음
+- [x] Git diff: exportHwpx / help / restore bat 위주 — 커밋 `20bf846`
+- [x] GitHub 검색: `buildCaptionBelowFill` — 외부 동일 구현 없음(자체 명명)
+- [x] 패키지 추가 없음 → license 자동검사 대상 신규 항목 없음 (기존 tree MIT 위주, dual-license는 MIT/BSD 선택 가능)
+- [x] Play: 로컬 처리·권한 모델 변경 없음
+- [x] APK `VoiceStamp_20260910_163646.apk` · Vercel `/` 다운로드 문구 갱신
