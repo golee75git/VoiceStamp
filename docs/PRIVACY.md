@@ -47,6 +47,8 @@ VoiceStamp는 사용자가 **사진과 제목·메모**를 기기에 저장·관
 
 좌표 자체는 SQLite에 저장하지 않으며, 변환된 **장소 문자열**만 제목에 포함될 수 있습니다.
 
+> **위치기반서비스사업자 신고 관련 안내:** 위 카카오 로컬 API 좌표→주소 변환 기능이 「위치정보의 보호 및 이용 등에 관한 법률」상 위치기반서비스사업자 신고 대상인지 검토 중입니다. 상세·문의 항목: [LEG-07-LOCATION-SERVICE-REGISTRATION.md](./LEG-07-LOCATION-SERVICE-REGISTRATION.md)
+
 ### 2.4 선택 기능: 개인정보 가리기 (Android, 온디바이스)
 
 설정에서 「개인정보 가리기」를 **사용**으로 두고 저장 화면의 버튼을 누르면, 촬영 사진을 **기기 안에서만** 분석해 얼굴·숫자가 포함된 글자 영역을 모자이크로 흐리게 할 수 있습니다.
@@ -135,3 +137,4 @@ VoiceStamp는 만 14세 미만을 대상으로 하지 않으며, 아동의 개�
 - [PROJECT.md](./PROJECT.md) §6 — 환경 변수
 - [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md) — Play Data safety 초안
 - [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) — Play 테스트·게시 QA
+- [LEG-07-LOCATION-SERVICE-REGISTRATION.md](./LEG-07-LOCATION-SERVICE-REGISTRATION.md) — 위치기반서비스사업자 신고 검토
