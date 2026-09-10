@@ -4298,3 +4298,11 @@ Restores FollowLinkCompareSheet + help from *.pre-follow-xlsx-photo-px/.
 restore-hwpx-caption-below.bat
 
 Restores exportHwpx (+ help / landing / info / apkBuildLabel if present) from src.pre-hwpx-caption-below/.
+
+## HWPX caption one-line restore (2026-09-10)
+
+```bat
+restore-hwpx-caption-oneline.bat
+```
+
+Restores `exportHwpx.ts` and `help.html` from `src.pre-hwpx-caption-oneline/` (before ` · ` one-line join for memo/meta).

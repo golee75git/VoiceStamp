@@ -132,7 +132,8 @@ function buildCaptionBelowFill(
     coordsLabel: options.coordsLabel,
     includeCoords: true,
   });
-  const memo = formatCaptionTablePlainLines(rows).join('\n');
+  // HWPX 자리 표시는 한 런 텍스트라 개행이 안 보이거나 칸이 비어 보임 → 예전 meta처럼 한 줄 구분자.
+  const memo = formatCaptionTablePlainLines(rows).join(' · ');
 
   const phrase =
     resolveOverlayFooterPhrase({
@@ -144,7 +145,7 @@ function buildCaptionBelowFill(
   const footerDate = options.showFooterDatetime
     ? formatStampFooterDatetime(stamp.createdAt)
     : '';
-  const meta = [phrase, footerDate].filter(Boolean).join('\n');
+  const meta = [phrase, footerDate].filter(Boolean).join(' · ');
 
   return { title: org, memo, meta };
 }

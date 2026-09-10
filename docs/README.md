@@ -93,8 +93,9 @@
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260910_163646.apk` — HWPX 별도 영역형 캡션
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260910_163646.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260910_184615.apk` — HWPX 캡션 한 줄(·) 표시
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260910_184615.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260910_163646.apk` — HWPX 별도 영역형 캡션
 - **이전 권장 APK:** `releases/VoiceStamp_20260823_181951.apk` — 연결 비교 엑셀 사진 가로
 - **이전 권장 APK:** `releases/VoiceStamp_20260823_173038.apk` — 저장 목록 엑셀 사진 가로
 - **이전 권장 APK:** `releases/VoiceStamp_20260818_162611.apk` — HWPX 한글 저장 서식
