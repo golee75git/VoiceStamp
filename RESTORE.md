@@ -3925,11 +3925,11 @@ src.pre-camera-collect-icon/ · public.pre-camera-collect-icon/ 스냅샷으로 
 
 랜딩 페이지 UTF-8 복구 후 문제가 생기면:
 
-`at
+```bat
 restore-landing-utf8-fix.bat
-`
+```
 
-public.pre-landing-utf8-fix/ 스냅샷으로 landing.html을 되돌립니다.
+`public.pre-landing-utf8-fix/` 스냅샷으로 `landing.html`·`info.html`을 되돌립니다(복구 전 깨진 상태).
 
 ## 273. 수신 가져옴 매칭 되돌리기 (선택)
 

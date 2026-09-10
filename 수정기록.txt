@@ -1,3 +1,59 @@
+# 수정기록 — 랜딩 UTF-8 복구 (2026-09-10)
+
+## 목적
+https://voicestamp-gilt.vercel.app/ 가 열리지 않던 원인(`public/landing.html` UTF-8 깨짐으로 `</title>` 손상)을 최소 수정으로 복구. APK 재빌드 없음(앱 소스 변경 없음). 배포 APK는 기존 `VoiceStamp_20260910_163646.apk` 유지.
+
+## 원인
+PowerShell `Get-Content` / `Set-Content` 로 APK 파일명만 바꿀 때 인코딩이 깨져 `<title>` 종료 태그와 한글이 손상됨. 브라우저는 title이 닫히지 않은 것으로 보고 페이지가 비정상 표시됨.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **재사용·수정** | `public/landing.html` (UTF-8 복구 + APK `…163646`) |
+| **재사용·수정** | `public/info.html` (UTF-8 재정렬 + APK·날짜) |
+| **신규** | `restore-landing-utf8-fix.bat` |
+| **신규(스냅샷)** | `public.pre-landing-utf8-fix/` (복구 전 HEAD 사본) |
+| **재사용·수정** | `RESTORE.md` (§272 정리) |
+| **신규/갱신** | `수정기록.txt` (본 파일) |
+| 미변경 | `src/constants/apkBuildLabel.ts` (이미 `VoiceStamp_20260910_163646.apk`) |
+| 미변경 | 도움말(`public/help.html`) — 기능 변경 없음 |
+| 미변경 | APK 바이너리 — 재빌드하지 않음 |
+
+## 글꼴
+- 랜딩/정보 페이지는 기존과 같이 시스템 글꼴 스택만 사용. OFL 글꼴 파일 추가 없음.
+- 앱 번들 글꼴 정책은 `docs/LICENSE-NOTICE.md` 기준 유지.
+
+## 라이선스·의존성
+- 외부 라이브러리 추가 없음. GPL 신규 도입 없음.
+- HTML만 복구·문자열 치환(UTF-8 파이썬 경로).
+
+## 보안
+- 정적 HTML·기존 GitHub raw APK 링크만 수정. 새 네트워크 엔드포인트·스크립트 없음.
+- APK 다운로드 URL은 기존 releases 경로 유지.
+
+## 특허
+- 정적 페이지 인코딩 복구이며 **특허 비침해를 보장한다고 주장하지 않음**. 특허 검토 대상 신규 기술 구성 없음.
+
+## Play 스토어
+- 패키지/권한/서명 변경 없음. 스토어 AAB와 무관한 랜딩(테스터 채널) 수정.
+
+## 되돌리기
+```bat
+restore-landing-utf8-fix.bat
+```
+(복구 전 깨진 파일로 되돌림 — 사이트 장애 재현용. 정상 운영에는 사용하지 말 것.)
+
+## 배포 메모
+- 이후 APK 파일명 HTML 갱신은 PowerShell `Set-Content` 금지. Python `Path.write_text(..., encoding='utf-8')` 또는 `write_bytes`만 사용.
+
+## 검증 체크
+- [x] Git diff: landing/info UTF-8 + APK 링크
+- [x] `</title>` 및 한글 제목 정상
+- [x] 패키지 추가 없음
+- [x] APK 재빌드 생략(동일 `VoiceStamp_20260910_163646.apk`)
+
+---
+
 # 수정기록 — HWPX 별도 영역형 캡션 (2026-09-10)
 
 ## 목적
