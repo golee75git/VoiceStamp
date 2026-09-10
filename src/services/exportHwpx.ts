@@ -5,8 +5,31 @@ import { Platform } from 'react-native';
 
 import { resolveImageUri } from './fileService';
 import { renderHwpxFromTemplate } from './hwpxTemplate';
-import { stampCoordinatesLine } from './stampCoords';
-import { getCoordsLabelMode } from './settingsService';
+import {
+  buildCaptionTableRows,
+  formatCaptionTablePlainLines,
+} from './captionTable';
+import { resolveFieldLabels } from './fieldLabels';
+import {
+  resolveOverlayFooterPhrase,
+  resolveOverlayOrgName,
+} from './overlayText';
+import { formatStampFooterDatetime } from './pdfTitleFormat';
+import {
+  getCoordsLabelMode,
+  getExportFooterDatetime,
+  getExtra1FieldLabel,
+  getExtra2FieldLabel,
+  getExtra3FieldLabel,
+  getMemoFieldLabel,
+  getOverlayFooterPhrase,
+  getOverlayOrgName,
+  getOverlayShowFooterPhrase,
+  getOverlayShowOrgName,
+  getPdfShowDatetime,
+  getPlaceFieldLabel,
+  getTitleFieldLabel,
+} from './settingsService';
 import { writeUint8ArrayToCacheFile } from './writeCacheFile';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
@@ -79,34 +102,112 @@ async function readImageBytes(
   return { data: base64ToUint8Array(base64), format };
 }
 
-function formatFloor(floor: string | null | undefined): string {
-  if (!floor) {
-    return '';
-  }
-  return `${floor}층`;
+/**
+ * Map one stamp to HWPX text slots under the photo (PDF 「별도 영역」과 같은 정보).
+ * title ← 기관명, memo ← 캡션 표 줄글, meta ← 하단 문구·촬영일시.
+ */
+function buildCaptionBelowFill(
+  stamp: Stamp,
+  options: {
+    showDatetime: boolean;
+    showFooterDatetime: boolean;
+    coordsLabel: Awaited<ReturnType<typeof getCoordsLabelMode>>;
+    fieldLabels: ReturnType<typeof resolveFieldLabels>;
+    orgName: string;
+    footerPhrase: string;
+    showOrgName: boolean;
+    showFooterPhrase: boolean;
+  },
+): { title: string; memo: string; meta: string } {
+  const org =
+    resolveOverlayOrgName({
+      orgName: options.orgName,
+      footerPhrase: options.footerPhrase,
+      showOrgName: options.showOrgName,
+      showFooterPhrase: options.showFooterPhrase,
+    }) ?? '';
+
+  const rows = buildCaptionTableRows(stamp, options.fieldLabels, {
+    showDatetime: options.showDatetime,
+    coordsLabel: options.coordsLabel,
+    includeCoords: true,
+  });
+  const memo = formatCaptionTablePlainLines(rows).join('\n');
+
+  const phrase =
+    resolveOverlayFooterPhrase({
+      orgName: options.orgName,
+      footerPhrase: options.footerPhrase,
+      showOrgName: options.showOrgName,
+      showFooterPhrase: options.showFooterPhrase,
+    }) ?? '';
+  const footerDate = options.showFooterDatetime
+    ? formatStampFooterDatetime(stamp.createdAt)
+    : '';
+  const meta = [phrase, footerDate].filter(Boolean).join('\n');
+
+  return { title: org, memo, meta };
 }
 
 async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uint8Array> {
-  const coordsLabel = await getCoordsLabelMode();
+  const [
+    coordsLabel,
+    showDatetime,
+    showFooterDatetime,
+    orgName,
+    footerPhrase,
+    showOrgName,
+    showFooterPhrase,
+    titleFieldLabel,
+    placeFieldLabel,
+    memoFieldLabel,
+    extra1FieldLabel,
+    extra2FieldLabel,
+    extra3FieldLabel,
+  ] = await Promise.all([
+    getCoordsLabelMode(),
+    getPdfShowDatetime(),
+    getExportFooterDatetime(),
+    getOverlayOrgName(),
+    getOverlayFooterPhrase(),
+    getOverlayShowOrgName(),
+    getOverlayShowFooterPhrase(),
+    getTitleFieldLabel(),
+    getPlaceFieldLabel(),
+    getMemoFieldLabel(),
+    getExtra1FieldLabel(),
+    getExtra2FieldLabel(),
+    getExtra3FieldLabel(),
+  ]);
+
+  const fieldLabels = resolveFieldLabels({
+    titleFieldLabel,
+    placeFieldLabel,
+    memoFieldLabel,
+    extra1FieldLabel,
+    extra2FieldLabel,
+    extra3FieldLabel,
+  });
+
   const templateBytes = await loadReportTemplateBytes();
   const stampFills: import('./hwpxTemplate').HwpxStampFill[] = [];
 
   for (const stamp of stamps) {
-    const coords = stampCoordinatesLine(stamp, coordsLabel) ?? '';
-    const floorText = formatFloor(stamp.floor);
-    const placeText = stamp.placeLabel?.trim() ?? '';
-    const metaParts = [
-      placeText,
-      floorText,
-      coords,
-      new Date(stamp.createdAt).toLocaleString('ko-KR'),
-    ].filter(Boolean);
-
+    const caption = buildCaptionBelowFill(stamp, {
+      showDatetime,
+      showFooterDatetime,
+      coordsLabel,
+      fieldLabels,
+      orgName,
+      footerPhrase,
+      showOrgName,
+      showFooterPhrase,
+    });
     const { data, format } = await readImageBytes(stamp.imagePath);
     stampFills.push({
-      title: stamp.title,
-      memo: stamp.memo,
-      meta: metaParts.join(' · '),
+      title: caption.title,
+      memo: caption.memo,
+      meta: caption.meta,
       imageBytes: data,
       imageExt: format,
     });

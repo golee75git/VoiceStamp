@@ -1,31 +1,52 @@
-2026-08-23 연결 비교 엑셀 사진 가로
+# 수정기록 — HWPX 별도 영역형 캡션 (2026-09-10)
 
-변경
-- 연결 비교 「엑셀」: 만들기 전 사진 가로 px·글자 크기 지정
-- 취합 수신·저장 목록 엑셀과 마지막 값 공유
-- 도움말 갱신
+## 목적
+목록에서 HWPX(한글)로 보낼 때, PDF 「별도 영역」과 같이 **사진 아래**에 캡션 내용(기관명·표 줄글·하단 문구·촬영일시)이 들어가도록 함.
 
-신규 파일
-- restore-follow-xlsx-photo-px.bat
-- docs/DESIGN-follow-xlsx-photo-px-20260823.md
-- docs/SECURITY-follow-xlsx-photo-px-20260823.md
-- src.pre-follow-xlsx-photo-px/
-- public.pre-follow-xlsx-photo-px/help.html
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **재사용·수정** | `src/services/exportHwpx.ts` |
+| **재사용·수정** | `public/help.html` |
+| **신규** | `restore-hwpx-caption-below.bat` |
+| **신규(스냅샷)** | `src.pre-hwpx-caption-below/` |
+| **재사용·수정** | `RESTORE.md` |
+| **신규/갱신** | `수정기록.txt` (본 파일) |
+| 배포 시 갱신 | `src/constants/apkBuildLabel.ts`, `public/landing.html`, `public/info.html`, `releases/*.apk`, `docs/README.md` |
 
-재사용·수정
-- src/components/FollowLinkCompareSheet.tsx
-- public/help.html
-- RESTORE.md, PRD, PLAN, PROJECT, CHANGELOG, README, LICENSE-NOTICE
+## 설계 요약
+- 원본 사진은 그대로 삽입 (합성 JPEG·워터마크 오버레이 없음).
+- 기존 템플릿 토큰 `stampTitle` / `stampMemo` / `stampMeta`에 PDF와 동일 소스의 캡션 정보를 매핑:
+  - title ← 기관명(표시 설정 시)
+  - memo ← `buildCaptionTableRows` + `formatCaptionTablePlainLines` 줄글
+  - meta ← 하단 문구 + (설정 시) 촬영일시
+- 신규 npm 패키지 없음. HWPX on-demand 로드 경로 유지(헬스체크 번들 A/B/C 회귀 없음).
 
-재사용 무수정
-- src/services/exportXlsx.ts
-- src/services/projectCollectSettings.ts
-- src/services/exportOnDemand.ts
-- src/constants/apkBuildLabel.ts (빌드 시 파일명만 갱신)
+## 글꼴
+- APK/웹에 새 글꼴 파일을 넣지 않음.
+- HWPX는 기존과 같이 한글 앱이 쓰는 화면 글자 이름만 가리킴 (`docs/LICENSE-NOTICE.md`). OFL 번들 글꼴 추가는 없음.
 
-되돌리기
-- restore-follow-xlsx-photo-px.bat
+## 라이선스·의존성
+- 외부 라이브러리 추가 없음.
+- 기존 `expo-asset` / `expo-file-system` / `expo-sharing` / `jszip`(템플릿 파이프라인)만 사용 — GPL 신규 도입 없음.
+- 자체 템플릿 `assets/templates/report.hwpx`만 사용.
 
-npm 추가 없음. 폰트 파일 추가 없음(시스템 글자). GPL 경로 신규 채택 없음.
-설정 → 앱 정보에 APK 파일명 표시는 기존 APK_BUILD_FILENAME 경로 유지.
-APK: VoiceStamp_20260823_181951.apk
+## 보안
+- 사용자 스탬프 텍스트·이미지 경로만 처리. 네트워크로 본문 업로드하지 않음.
+- XML 이스케이프는 기존 `hwpxTemplate.escapeXmlText` 경로 유지.
+- QR·표시 그림·기관 홈 URL은 HWPX에 넣지 않음(기존 정책 유지).
+
+## 특허
+- 본 변경은 기존 자리표시 채우기 + 앱 내 캡션 표 데이터 재사용이며, **특허 비침해를 보장한다고 주장하지 않음**.
+- 별도 청구항 대비가 필요한 신규 영상·인식 파이프라인은 추가하지 않음.
+
+## 되돌리기
+```bat
+restore-hwpx-caption-below.bat
+```
+
+## 검증 체크
+- [ ] Git diff: exportHwpx / help / restore bat 위주
+- [ ] GitHub 검색: `buildCaptionBelowFill` — 외부 동일 구현 없음(자체 명명)
+- [ ] 패키지 추가 없음 → license 자동검사 대상 신규 항목 없음
+- [ ] Play: 로컬 처리·권한 모델 변경 없음

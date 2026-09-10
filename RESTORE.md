@@ -4292,3 +4292,9 @@ Restores StampListScreen + help from *.pre-list-xlsx-photo-px/.
 restore-follow-xlsx-photo-px.bat
 
 Restores FollowLinkCompareSheet + help from *.pre-follow-xlsx-photo-px/.
+
+## HWPX caption-below restore (2026-09-10)
+
+restore-hwpx-caption-below.bat
+
+Restores exportHwpx (+ help / landing / info / apkBuildLabel if present) from src.pre-hwpx-caption-below/.
