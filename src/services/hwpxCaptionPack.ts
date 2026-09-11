@@ -28,6 +28,10 @@ const COL_GAP = 1134;
 const TEXT_ROW_H = 1400;
 const MIN_PIC_H = 4800;
 
+/** Full Hancom HWPML namespace set (matches what Hancom Office itself emits in section/head/content.hpf root elements). */
+const HWPML_NAMESPACES =
+  'xmlns:ha="http://www.hancom.co.kr/hwpml/2011/app" xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hp10="http://www.hancom.co.kr/hwpml/2016/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:hhs="http://www.hancom.co.kr/hwpml/2011/history" xmlns:hm="http://www.hancom.co.kr/hwpml/2011/master-page" xmlns:hpf="http://www.hancom.co.kr/schema/2011/hpf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf/" xmlns:ooxmlchart="http://www.hancom.co.kr/hwpml/2016/ooxmlchart" xmlns:hwpunitchar="http://www.hancom.co.kr/hwpml/2016/HwpUnitChar" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0"';
+
 function xmlText(text: string): string {
   return text
     .replaceAll('&', '&amp;')
@@ -193,7 +197,7 @@ function sectionXml(
     .join('');
 
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<hs:sec xmlns:ha="http://www.hancom.co.kr/hwpml/2011/app" xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph" xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0">
+<hs:sec ${HWPML_NAMESPACES}>
 <hp:p paraPrIDRef="0" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:secPr><hp:grid lineGrid="0" charGrid="0" wonggojiFormat="0"/><hp:startNum pageStartsOn="BOTH" page="1" pic="0" tbl="0" equation="0"/><hp:visibility hideFirstHeader="0" hideFirstFooter="0" hideFirstMasterPage="0" border="SHOW_ALL" fill="SHOW_ALL" hideFirstPageNum="0" hideFirstEmptyLine="0" showLineNumber="0"/><hp:pagePr landscape="WIDELY" width="${PAGE_W}" height="${PAGE_H}" gutterType="LEFT_ONLY"><hp:margin header="2834" footer="2834" gutter="0" left="${MARGIN_L}" right="${MARGIN_R}" top="${MARGIN_T}" bottom="${MARGIN_B}"/></hp:pagePr><hp:colPr type="NEWSPAPER" layout="LEFT" colCount="${shape.columns}" sameSz="1" sameGap="${COL_GAP}"/></hp:secPr><hp:t>${xmlText(reportTitle)}</hp:t></hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="0" vertsize="1200" textheight="1200" baseline="1000" spacing="200" horzpos="0" horzsize="${CONTENT_W}" flags="393216"/></hp:linesegarray></hp:p>
 ${paragraph(exportedAt, CONTENT_W, '0', '0')}
 ${body}
@@ -209,7 +213,7 @@ function headerXml(): string {
     .map(fontFace)
     .join('');
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<hh:head xmlns:hh="http://www.hancom.co.kr/hwpml/2011/head" xmlns:hc="http://www.hancom.co.kr/hwpml/2011/core" version="1.2" secCnt="1">
+<hh:head ${HWPML_NAMESPACES} version="1.5" secCnt="1">
 <hh:beginNum page="1" footnote="1" endnote="1" pic="1" tbl="1" equation="1"/>
 <hh:refList>
 <hh:fontfaces itemCnt="7">${faces}</hh:fontfaces>
@@ -241,27 +245,37 @@ function contentHpf(stamps: HwpxCaptionStamp[]): string {
     })
     .join('');
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<opf:package xmlns:opf="http://www.idpf.org/2007/opf/" version="1.0" unique-identifier="" id="">
+<opf:package ${HWPML_NAMESPACES} version="" unique-identifier="" id="">
 <opf:metadata><opf:title>VoiceStamp</opf:title><opf:language>ko</opf:language></opf:metadata>
 <opf:manifest>
 <opf:item id="header" href="Contents/header.xml" media-type="application/xml"/>
 <opf:item id="section0" href="Contents/section0.xml" media-type="application/xml"/>
 ${images}
 </opf:manifest>
-<opf:spine><opf:itemref idref="section0" linear="yes"/></opf:spine>
+<opf:spine><opf:itemref idref="header" linear="yes"/><opf:itemref idref="section0" linear="yes"/></opf:spine>
 </opf:package>`;
 }
 
+/** OCF/ODF-style rootfile manifest. Hancom readers treat this as part of package validity, not just content.hpf. */
 function containerXml(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ocf:container xmlns:ocf="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:hpf="http://www.hancom.co.kr/schema/2011/hpf">
-<ocf:rootfiles><ocf:rootfile full-path="Contents/content.hpf" media-type="application/hwpml-package+xml"/></ocf:rootfiles>
+<ocf:rootfiles><ocf:rootfile full-path="Contents/content.hpf" media-type="application/hwpml-package+xml"/><ocf:rootfile full-path="Preview/PrvText.txt" media-type="text/plain"/><ocf:rootfile full-path="META-INF/container.rdf" media-type="application/rdf+xml"/></ocf:rootfiles>
 </ocf:container>`;
+}
+
+/** Required empty ODF manifest marker file — its absence, not just its content, breaks package validity for some readers. */
+function manifestXml(): string {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><odf:manifest xmlns:odf="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"/>`;
+}
+
+function containerRdfXml(): string {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about=""><ns0:hasPart xmlns:ns0="http://www.hancom.co.kr/hwpml/2016/meta/pkg#" rdf:resource="Contents/header.xml"/></rdf:Description><rdf:Description rdf:about="Contents/header.xml"><rdf:type rdf:resource="http://www.hancom.co.kr/hwpml/2016/meta/pkg#HeaderFile"/></rdf:Description><rdf:Description rdf:about=""><ns0:hasPart xmlns:ns0="http://www.hancom.co.kr/hwpml/2016/meta/pkg#" rdf:resource="Contents/section0.xml"/></rdf:Description><rdf:Description rdf:about="Contents/section0.xml"><rdf:type rdf:resource="http://www.hancom.co.kr/hwpml/2016/meta/pkg#SectionFile"/></rdf:Description><rdf:Description rdf:about=""><rdf:type rdf:resource="http://www.hancom.co.kr/hwpml/2016/meta/pkg#Document"/></rdf:Description></rdf:RDF>`;
 }
 
 function versionXml(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<hv:HCFVersion xmlns:hv="http://www.hancom.co.kr/hwpml/2011/version" tagetApplication="WORDPROCESSOR" major="5" minor="1" micro="1" buildNumber="0" os="1" xmlVersion="1.4" application="VoiceStamp" appVersion="1.0"/>`;
+<hv:HCFVersion xmlns:hv="http://www.hancom.co.kr/hwpml/2011/version" tagetApplication="WORDPROCESSOR" major="5" minor="1" micro="1" buildNumber="0" os="1" xmlVersion="1.5" application="VoiceStamp" appVersion="1.0"/>`;
 }
 
 export async function buildHwpxCaptionPack(
@@ -278,6 +292,8 @@ export async function buildHwpxCaptionPack(
   zip.file('mimetype', 'application/hwp+zip', { compression: 'STORE' });
   zip.file('version.xml', versionXml());
   zip.file('META-INF/container.xml', containerXml());
+  zip.file('META-INF/manifest.xml', manifestXml());
+  zip.file('META-INF/container.rdf', containerRdfXml());
   zip.file('Contents/content.hpf', contentHpf(stamps));
   zip.file('Contents/header.xml', headerXml());
   zip.file(
