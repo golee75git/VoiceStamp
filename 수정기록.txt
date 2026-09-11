@@ -1,3 +1,28 @@
+# 수정기록 — HWPX를 110523으로 되돌림 (2026-09-11)
+
+## 목적
+한글 저장을 `VoiceStamp_20260911_110523.apk`와 같게 되돌린다. 서식 자리 표시를 채우고, 페이지당 장수는 PDF 설정과 같다. 표로 넣는 이후 변경은 설치본에 넣지 않는다.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **재사용·복원** | `src/services/exportHwpx.ts`, `src/services/hwpxTemplate.ts`, `public/help.html`, `src/constants/apkBuildLabel.ts` (`70f73bf`) |
+| **삭제** | `src/services/hwpxCaptionPack.ts` |
+| **재사용·수정** | `public/landing.html`, `public/info.html`, `docs/README.md`, `docs/LICENSE-NOTICE.md` |
+| **신규/갱신** | `수정기록.txt` |
+
+## 배포
+- 새 APK를 만들지 않음. 기존 `releases/VoiceStamp_20260911_110523.apk`를 다시 권장 설치 파일로 둠.
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 패키지 추가 없음. GPL 신규 없음.
+- 로컬 스탬프와 기존 서식만 사용.
+
+## 특허
+- 페이지당 장수에 맞춘 배치를 유지한다. **특허 비침해를 보장하지 않음**.
+
+---
+
 # 수정기록 — HWPX 별도영역 표 (2026-09-11)
 
 ## 목적
