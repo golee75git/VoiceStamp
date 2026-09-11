@@ -1,3 +1,34 @@
+# 수정기록 — HWPX 자체 생성 방식 폐기, 실제 서식 재사용 표 방식으로 전환 (2026-09-11)
+
+## 목적
+`VoiceStamp_20260911_164421.apk`(패키지 구성요소 보강판)로도 HWPX 파일이 한글에서 열리지 않는다는 재확인을 받음. 자체 생성 패키지(`hwpxCaptionPack.ts`)의 `<hp:tbl>` 표 XML 자체가 검증할 실제 한글 예시 없이 작성된 추정 코드였다는 근본 한계를 인정하고, 방식을 전환한다.
+
+## 방식 전환
+- **폐기**: `src/services/hwpxCaptionPack.ts`(완전 자체 생성 zip/XML) — 삭제.
+- **채택**: 오늘 가장 먼저 표를 시도했던 커밋 `597758a`(APK `131258`, 50분간 유지됐던 버전)의 `hwpxTemplate.ts`를 복원. 실제 `report.hwpx` 템플릿을 열어, 그 안의 진짜 `<hp:pic>` 사진 요소와 진짜 테두리 정의(`borderFill id="2"`를 복제해 `id="3"` 생성)를 재사용해 `<hp:tbl>` 표를 만든다. 패키지 껍데기(mimetype·META-INF/*·header.xml·content.hpf)는 실제 한글이 저장한 바이트 그대로 유지되므로 스키마 추정 위험이 없다.
+- `src/services/exportHwpx.ts`도 같은 커밋의 버전(`renderHwpxFromTemplate` 호출)으로 복원.
+
+## 검증
+- `hwpxTemplate.ts`를 임시 컴파일해 실제 `assets/templates/report.hwpx` 바이트를 읽어 샘플 3장으로 렌더링. 결과 zip이 실제 템플릿과 동일한 파일 구성(mimetype·version.xml·META-INF/*·Preview/*·settings.xml 등)을 그대로 유지하는지, 모든 XML이 well-formed인지, 스탬프별 `binaryItemIDRef`(image1/2/3)가 올바르게 매핑되는지, 남은 `{{...}}` 플레이스홀더가 없는지 확인.
+- 다만 한글 프로그램으로 직접 열어보는 최종 검증은 이 환경에서 할 수 없어, 사용자 확인이 필요함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **삭제** | `src/services/hwpxCaptionPack.ts` |
+| **복원(597758a)** | `src/services/hwpxTemplate.ts`, `src/services/exportHwpx.ts` |
+
+## 배포
+- `VoiceStamp_20260911_170631.apk` 빌드 완료(크기 99,978,793바이트 — 원래 `131258` 빌드와 동일). `releases/`에 추가, 다운로드 링크·문서 갱신.
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 패키지 추가 없음. GPL 신규 없음.
+
+## 특허
+- 페이지당 장수에 맞춘 배치를 유지한다. **특허 비침해를 보장하지 않음**.
+
+---
+
 # 수정기록 — HWPX 파일이 열리지 않던 문제 수정 (2026-09-11)
 
 ## 목적
