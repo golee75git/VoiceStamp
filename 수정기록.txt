@@ -1,3 +1,29 @@
+# 수정기록 — HWPX 저장을 표 형식(자체 생성)으로 재적용 (2026-09-11)
+
+## 목적
+`VoiceStamp_20260911_110523.apk`를 기준선으로 두고, HWPX 저장 시 `report.hwpx` 서식을 읽어 자리 표시를 채우는 대신 PDF 저장처럼 사진·제목·메모 등 내용을 직접 만든 표(`<hp:tbl>`) 안에 넣어 저장하도록 되돌린다. 사진은 표 첫 행, 아래 행에 캡션(표시명|내용)을 담는다. 페이지당 장수 배치(1/2/3/4장)는 그대로 유지한다.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **복원(a3b6c22)** | `src/services/hwpxCaptionPack.ts` (신규) |
+| **복원(a3b6c22) 적용** | `src/services/exportHwpx.ts` |
+| **변경 없음** | `src/services/hwpxTemplate.ts` (더 이상 HWPX 경로에서 사용하지 않음, PDF 쪽 미사용 코드 정리는 별도) |
+| **신규** | `restore-hwpx-table-reapply.bat`, `src.pre-hwpx-table-restore/services/exportHwpx.ts` |
+| **신규/갱신** | `수정기록.txt` |
+
+## 배포
+- `VoiceStamp_20260911_162242.apk` 빌드 완료. `releases/`에 추가하고 `landing.html`·`info.html` 다운로드 링크, `docs/README.md`·`docs/CHANGELOG.md` 권장 APK를 갱신.
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 패키지 추가 없음. GPL 신규 없음.
+- 로컬 스탬프와 자체 생성 HWPX 셸만 사용 (Hancom 서식 파일 읽기 없음).
+
+## 특허
+- 페이지당 장수에 맞춘 배치를 유지한다. **특허 비침해를 보장하지 않음**.
+
+---
+
 # 수정기록 — HWPX를 110523으로 되돌림 (2026-09-11)
 
 ## 목적
