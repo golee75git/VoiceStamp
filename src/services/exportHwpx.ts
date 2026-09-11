@@ -1,15 +1,11 @@
-import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
+import { buildCaptionTableRows } from './captionTable';
 import { resolveImageUri } from './fileService';
-import { renderHwpxFromTemplate } from './hwpxTemplate';
-import {
-  buildCaptionTableRows,
-  formatCaptionTablePlainLines,
-} from './captionTable';
 import { resolveFieldLabels } from './fieldLabels';
+import { buildHwpxCaptionPack } from './hwpxCaptionPack';
 import {
   resolveOverlayFooterPhrase,
   resolveOverlayOrgName,
@@ -35,9 +31,6 @@ import { writeUint8ArrayToCacheFile } from './writeCacheFile';
 import type { ExportFileResult } from './exportProject';
 import type { Stamp } from '../types/stamp';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const reportTemplateAsset = require('../../assets/templates/report.hwpx');
-
 function sanitizeExportBaseName(name: string): string {
   const cleaned = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ');
   return cleaned || 'VoiceStamp';
@@ -61,29 +54,6 @@ function downloadBlobOnWeb(blob: Blob, fileName: string): void {
   URL.revokeObjectURL(url);
 }
 
-async function loadReportTemplateBytes(): Promise<ArrayBuffer> {
-  if (Platform.OS === 'web') {
-    const response = await fetch('/templates/report.hwpx');
-    if (!response.ok) {
-      throw new Error('HWPX 템플릿을 불러오지 못했습니다.');
-    }
-    return response.arrayBuffer();
-  }
-
-  const asset = Asset.fromModule(reportTemplateAsset);
-  await asset.downloadAsync();
-  const uri = asset.localUri;
-  if (!uri) {
-    throw new Error('HWPX 템플릿 경로를 찾지 못했습니다.');
-  }
-
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-  const bytes = base64ToUint8Array(base64);
-  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-}
-
 async function readImageBytes(
   imagePath: string,
 ): Promise<{ data: Uint8Array; format: 'jpg' | 'png' }> {
@@ -104,11 +74,10 @@ async function readImageBytes(
 }
 
 /**
- * Map one stamp to HWPX text slots under the photo (PDF 「별도 영역」과 같은 정보).
- * title ← 기관명, memo ← 캡션 표 각 줄, meta ← 하단 문구·촬영일시.
- * hwpxTemplate.ts가 맨 위 행에 사진, 아래 행에 위 줄을 표로 넣는다.
+ * PDF 별도 영역과 같은 정보를 표로 만든다.
+ * 첫 행은 사진, 아래는 표시명|내용, 기관명·하단 문구·촬영일시는 값이 있을 때만 가로 한 줄.
  */
-function buildCaptionBelowFill(
+function buildCaptionStamp(
   stamp: Stamp,
   options: {
     showDatetime: boolean;
@@ -120,7 +89,7 @@ function buildCaptionBelowFill(
     showOrgName: boolean;
     showFooterPhrase: boolean;
   },
-): { title: string; memoLines: string[]; metaLines: string[] } {
+): { orgName: string; rows: { label: string; value: string }[]; footerPhrase: string; footerDate: string } {
   const org =
     resolveOverlayOrgName({
       orgName: options.orgName,
@@ -134,7 +103,6 @@ function buildCaptionBelowFill(
     coordsLabel: options.coordsLabel,
     includeCoords: true,
   });
-  const memoLines = formatCaptionTablePlainLines(rows);
 
   const phrase =
     resolveOverlayFooterPhrase({
@@ -146,9 +114,13 @@ function buildCaptionBelowFill(
   const footerDate = options.showFooterDatetime
     ? formatStampFooterDatetime(stamp.createdAt)
     : '';
-  const metaLines = [phrase, footerDate].filter(Boolean);
 
-  return { title: org, memoLines, metaLines };
+  return {
+    orgName: org,
+    rows,
+    footerPhrase: phrase,
+    footerDate,
+  };
 }
 
 async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uint8Array> {
@@ -193,11 +165,10 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
     extra3FieldLabel,
   });
 
-  const templateBytes = await loadReportTemplateBytes();
-  const stampFills: import('./hwpxTemplate').HwpxStampFill[] = [];
+  const captionStamps = [];
 
   for (const stamp of stamps) {
-    const caption = buildCaptionBelowFill(stamp, {
+    const caption = buildCaptionStamp(stamp, {
       showDatetime,
       showFooterDatetime,
       coordsLabel,
@@ -208,20 +179,17 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
       showFooterPhrase,
     });
     const { data, format } = await readImageBytes(stamp.imagePath);
-    stampFills.push({
-      title: caption.title,
-      memoLines: caption.memoLines,
-      metaLines: caption.metaLines,
+    captionStamps.push({
+      ...caption,
       imageBytes: data,
       imageExt: format,
     });
   }
 
-  return renderHwpxFromTemplate(
-    templateBytes,
+  return buildHwpxCaptionPack(
     reportTitle.trim() || 'VoiceStamp 보고서',
     new Date().toLocaleString('ko-KR'),
-    stampFills,
+    captionStamps,
     photosPerPage,
   );
 }

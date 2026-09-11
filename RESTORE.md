@@ -4322,3 +4322,11 @@ restore-hwpx-table.bat
 ```
 
 Restores `exportHwpx.ts`, `hwpxTemplate.ts`, and `help.html` from `src.pre-hwpx-table/` (before the photo-on-top table).
+
+## HWPX own caption table restore (2026-09-11)
+
+```bat
+restore-hwpx-own-table.bat
+```
+
+Restores `exportHwpx.ts` and `help.html` from `src.pre-hwpx-own-table/` and removes `hwpxCaptionPack.ts` (before the app-built photo + caption table).

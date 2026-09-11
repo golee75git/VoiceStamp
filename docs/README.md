@@ -87,14 +87,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-10)
 
-- **문서 갱신일:** 2026-09-10 — **HWPX 사진 아래 캡션(별도 영역형)** · APK `163646`
-- **최신 기능 커밋:** (본 배포) · APK `163646` — HWPX에 PDF 별도 영역형 캡션 줄글
+- **문서 갱신일:** 2026-09-11 — **HWPX 별도영역 표** · APK `140507`
+- **최신 기능 커밋:** (본 배포) · APK `140507` — HWPX 서식 없이 사진·별도영역 표
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260911_131258.apk` — HWPX 사진 위 표
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260911_131258.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260911_140507.apk` — HWPX 별도영역 표
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260911_140507.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260911_131258.apk` — HWPX 사진 위 표
 - **이전 권장 APK:** `releases/VoiceStamp_20260911_110523.apk` — HWPX 페이지당 장수(PDF와 동일)
 - **이전 권장 APK:** `releases/VoiceStamp_20260910_184615.apk` — HWPX 캡션 한 줄(·) 표시
 - **이전 권장 APK:** `releases/VoiceStamp_20260910_163646.apk` — HWPX 별도 영역형 캡션
