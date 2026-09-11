@@ -4314,3 +4314,11 @@ restore-hwpx-page-count.bat
 ```
 
 Restores HWPX fill, template fill, settings hint, and help from `src.pre-hwpx-page-count/` (before following PDF photos-per-page).
+
+## HWPX photo table restore (2026-09-11)
+
+```bat
+restore-hwpx-table.bat
+```
+
+Restores `exportHwpx.ts`, `hwpxTemplate.ts`, and `help.html` from `src.pre-hwpx-table/` (before the photo-on-top table).

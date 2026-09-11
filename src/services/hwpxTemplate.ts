@@ -267,14 +267,73 @@ function reflowBlockLines(block: string, width: number): string {
   });
 }
 
+function bodyLinesOf(stamp: HwpxStampFill): string[] {
+  return [stamp.title, ...stamp.memoLines, ...stamp.metaLines]
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 function pictureBudget(stamp: HwpxStampFill, rows: number): number {
-  const textLines =
-    1 +
-    Math.max(stamp.memoLines.length, 1) +
-    Math.max(stamp.metaLines.length, 1) +
-    1;
-  const room = slotHeight(rows) - textLines * LINE_VERT_STEP - 800;
+  const textRows = bodyLinesOf(stamp).length;
+  const room = slotHeight(rows) - textRows * LINE_VERT_STEP - 1200;
   return Math.max(MIN_PIC_HWP, room);
+}
+
+function extractPicXml(block: string): string | null {
+  const picStart = block.indexOf('<hp:pic');
+  const picEnd = block.indexOf('</hp:pic>');
+  if (picStart < 0 || picEnd < 0) {
+    return null;
+  }
+  return block.slice(picStart, picEnd + '</hp:pic>'.length);
+}
+
+function textCellParagraph(text: string, width: number): string {
+  return `<hp:p id="0" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${escapeXmlText(text)}</hp:t></hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="0" vertsize="1000" textheight="1000" baseline="850" spacing="200" horzpos="0" horzsize="${width}" flags="393216"/></hp:linesegarray></hp:p>`;
+}
+
+function photoCellParagraph(picXml: string, imageToken: string, picHeight: number, width: number): string {
+  return `<hp:p id="0" paraPrIDRef="20" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${tokenSafe(imageToken)}</hp:t></hp:run><hp:run charPrIDRef="0">${picXml}</hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="0" vertsize="${picHeight}" textheight="${picHeight}" baseline="${Math.round(picHeight * 0.85)}" spacing="200" horzpos="0" horzsize="${width}" flags="393216"/></hp:linesegarray></hp:p>`;
+}
+
+function tokenSafe(token: string): string {
+  return token;
+}
+
+function tableCell(rowAddr: number, width: number, height: number, inner: string): string {
+  return `<hp:tc name="" header="0" hasMargin="1" protect="0" editable="0" dirty="0" borderFillIDRef="3"><hp:subList id="" textDirection="HORIZONTAL" lineWrap="BREAK" vertAlign="CENTER" linkListIDRef="0" linkListNextIDRef="0" textWidth="0" textHeight="0" hasTextRef="0" hasNumRef="0" metaTag="">${inner}</hp:subList><hp:cellAddr colAddr="0" rowAddr="${rowAddr}"/><hp:cellSpan colSpan="1" rowSpan="1"/><hp:cellSz width="${width}" height="${height}"/><hp:cellMargin left="180" right="180" top="120" bottom="120"/></hp:tc>`;
+}
+
+function stampTableParagraph(params: {
+  tableId: number;
+  width: number;
+  picXml: string;
+  imageToken: string;
+  picHeight: number;
+  lines: string[];
+  pageBreak: '0' | '1';
+  columnBreak: '0' | '1';
+  vertpos: number;
+}): string {
+  const textRowH = LINE_VERT_STEP;
+  const photoH = params.picHeight + 400;
+  const rows = [
+    `<hp:tr>${tableCell(0, params.width, photoH, photoCellParagraph(params.picXml, params.imageToken, params.picHeight, params.width))}</hp:tr>`,
+    ...params.lines.map(
+      (line, index) =>
+        `<hp:tr>${tableCell(index + 1, params.width, textRowH, textCellParagraph(line, params.width))}</hp:tr>`,
+    ),
+  ];
+  const totalH = photoH + params.lines.length * textRowH;
+  return `<hp:p id="0" paraPrIDRef="20" styleIDRef="0" pageBreak="${params.pageBreak}" columnBreak="${params.columnBreak}" merged="0"><hp:run charPrIDRef="0"><hp:tbl id="${params.tableId}" zOrder="0" numberingType="TABLE" textWrap="TOP_AND_BOTTOM" textFlow="BOTH_SIDES" lock="0" dropcapstyle="None" pageBreak="CELL" repeatHeader="0" rowCnt="${rows.length}" colCnt="1" cellSpacing="0" borderFillIDRef="3" noAdjust="0"><hp:sz width="${params.width}" widthRelTo="ABSOLUTE" height="${totalH}" heightRelTo="ABSOLUTE" protect="0"/><hp:pos treatAsChar="1" affectLSpacing="0" flowWithText="1" allowOverlap="0" holdAnchorAndSO="0" vertRelTo="PARA" horzRelTo="PARA" vertAlign="TOP" horzAlign="CENTER" vertOffset="0" horzOffset="0"/><hp:outMargin left="0" right="0" top="200" bottom="280"/>${rows.join('')}</hp:tbl><hp:t/></hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="${params.vertpos}" vertsize="${totalH}" textheight="${totalH}" baseline="${Math.round(totalH * 0.85)}" spacing="240" horzpos="0" horzsize="${params.width}" flags="393216"/></hp:linesegarray></hp:p>`;
+}
+
+function tableExtent(picHeight: number, lineCount: number): number {
+  return paramsPicHeight(picHeight) + lineCount * LINE_VERT_STEP + 480;
+}
+
+function paramsPicHeight(picHeight: number): number {
+  return picHeight + 400;
 }
 
 function placeKind(
@@ -340,17 +399,29 @@ function buildStampBlocks(
     block = expandParagraphForLines(block, 'stampMemo', stamp.memoLines);
     block = expandParagraphForLines(block, 'stampMeta', stamp.metaLines);
     block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
-    block = reflowBlockLines(block, width);
-
+    const picXml = extractPicXml(block);
+    if (!picXml) {
+      throw new Error('HWPX 템플릿에서 그림 칸을 찾지 못했습니다.');
+    }
+    const picSize = picXml.match(/<hp:sz width="\d+"[^>]*height="(\d+)"/);
+    const picHeight = picSize ? Number(picSize[1]) : pictureBudget(stamp, layout.rows);
     const kind = placeKind(index, photosPerPage);
     if (kind === 'page' || kind === 'column') {
       columnCursor = 0;
-      block = markPageOrColumnBreak(block, kind);
-    } else if (columnCursor > 0) {
-      block = bumpVertpos(block, columnCursor);
     }
-    columnCursor = blockExtent(block);
-    parts.push(block);
+    const tablePara = stampTableParagraph({
+      tableId: 1700000000 + index,
+      width,
+      picXml,
+      imageToken: `{{${imageKey}}}`,
+      picHeight,
+      lines: bodyLinesOf(stamp),
+      pageBreak: kind === 'page' ? '1' : '0',
+      columnBreak: kind === 'column' ? '1' : '0',
+      vertpos: columnCursor,
+    });
+    columnCursor += tableExtent(picHeight, bodyLinesOf(stamp).length);
+    parts.push(tablePara);
   }
 
   return parts.join('');
@@ -387,6 +458,27 @@ function ensureHpfImageItem(
   return hpfXml.replace('</opf:manifest>', `${item}</opf:manifest>`);
 }
 
+function ensureSolidCellBorder(headerXml: string): string {
+  if (headerXml.includes('id="3"')) {
+    return headerXml;
+  }
+  const start = headerXml.indexOf('<hh:borderFill id="2"');
+  const end = headerXml.indexOf('</hh:borderFill>', start);
+  if (start < 0 || end < 0) {
+    return headerXml;
+  }
+  const source = headerXml.slice(start, end + '</hh:borderFill>'.length);
+  const solid = source
+    .replace('id="2"', 'id="3"')
+    .replace('<hh:leftBorder type="NONE"', '<hh:leftBorder type="SOLID"')
+    .replace('<hh:rightBorder type="NONE"', '<hh:rightBorder type="SOLID"')
+    .replace('<hh:topBorder type="NONE"', '<hh:topBorder type="SOLID"')
+    .replace('<hh:bottomBorder type="NONE"', '<hh:bottomBorder type="SOLID"');
+  return headerXml
+    .replace('itemCnt="2"', 'itemCnt="3"')
+    .replace('</hh:borderFills>', `${solid}</hh:borderFills>`);
+}
+
 function removeUnusedBinData(zip: JSZip, keepImageIds: Set<string>): void {
   for (const fileName of Object.keys(zip.files)) {
     if (!fileName.startsWith('BinData/') || fileName.endsWith('/')) {
@@ -420,6 +512,12 @@ export async function renderHwpxFromTemplate(
   let sectionXml = await sectionEntry.async('string');
   sectionXml = expandStampBlocks(sectionXml, stamps, photosPerPage);
   zip.file('Contents/section0.xml', sectionXml);
+
+  const headerEntry = zip.file('Contents/header.xml');
+  if (headerEntry) {
+    const headerXml = await headerEntry.async('string');
+    zip.file('Contents/header.xml', ensureSolidCellBorder(headerXml));
+  }
 
   const textValues: Record<string, string> = {
     reportTitle: reportTitle.trim() || 'VoiceStamp 보고서',
