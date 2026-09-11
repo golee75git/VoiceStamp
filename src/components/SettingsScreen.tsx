@@ -597,8 +597,8 @@ export function SettingsScreen({
             })}
           </View>
 
-          <Text style={[styles.label, styles.sectionGap]}>PDF 페이지당 사진 수</Text>
-          <Text style={styles.hint}>PDF보내기 시 한 페이지에 배치할 사진 개수입니다.</Text>
+          <Text style={[styles.label, styles.sectionGap]}>페이지당 사진 수</Text>
+          <Text style={styles.hint}>PDF·한글(HWPX) 보내기 시 한 페이지에 배치할 사진 개수입니다. 1·2·3은 가로로, 4는 2×2입니다.</Text>
           <View style={styles.optionRow}>
             {PDF_OPTIONS.map((option) => {
               const selected = pdfPhotosPerPage === option;

@@ -26,6 +26,7 @@ import {
   getOverlayOrgName,
   getOverlayShowFooterPhrase,
   getOverlayShowOrgName,
+  getPdfPhotosPerPage,
   getPdfShowDatetime,
   getPlaceFieldLabel,
   getTitleFieldLabel,
@@ -104,7 +105,8 @@ async function readImageBytes(
 
 /**
  * Map one stamp to HWPX text slots under the photo (PDF 「별도 영역」과 같은 정보).
- * title ← 기관명, memo ← 캡션 표 줄글, meta ← 하단 문구·촬영일시.
+ * title ← 기관명, memo ← 캡션 표 각 줄, meta ← 하단 문구·촬영일시 각 줄.
+ * 각 줄은 hwpxTemplate.ts에서 문단(<hp:p>)을 줄 수만큼 복제해 표시한다.
  */
 function buildCaptionBelowFill(
   stamp: Stamp,
@@ -118,7 +120,7 @@ function buildCaptionBelowFill(
     showOrgName: boolean;
     showFooterPhrase: boolean;
   },
-): { title: string; memo: string; meta: string } {
+): { title: string; memoLines: string[]; metaLines: string[] } {
   const org =
     resolveOverlayOrgName({
       orgName: options.orgName,
@@ -132,8 +134,7 @@ function buildCaptionBelowFill(
     coordsLabel: options.coordsLabel,
     includeCoords: true,
   });
-  // HWPX 자리 표시는 한 런 텍스트라 개행이 안 보이거나 칸이 비어 보임 → 예전 meta처럼 한 줄 구분자.
-  const memo = formatCaptionTablePlainLines(rows).join(' · ');
+  const memoLines = formatCaptionTablePlainLines(rows);
 
   const phrase =
     resolveOverlayFooterPhrase({
@@ -145,13 +146,14 @@ function buildCaptionBelowFill(
   const footerDate = options.showFooterDatetime
     ? formatStampFooterDatetime(stamp.createdAt)
     : '';
-  const meta = [phrase, footerDate].filter(Boolean).join(' · ');
+  const metaLines = [phrase, footerDate].filter(Boolean);
 
-  return { title: org, memo, meta };
+  return { title: org, memoLines, metaLines };
 }
 
 async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uint8Array> {
   const [
+    photosPerPage,
     coordsLabel,
     showDatetime,
     showFooterDatetime,
@@ -166,6 +168,7 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
     extra2FieldLabel,
     extra3FieldLabel,
   ] = await Promise.all([
+    getPdfPhotosPerPage(),
     getCoordsLabelMode(),
     getPdfShowDatetime(),
     getExportFooterDatetime(),
@@ -207,8 +210,8 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
     const { data, format } = await readImageBytes(stamp.imagePath);
     stampFills.push({
       title: caption.title,
-      memo: caption.memo,
-      meta: caption.meta,
+      memoLines: caption.memoLines,
+      metaLines: caption.metaLines,
       imageBytes: data,
       imageExt: format,
     });
@@ -219,6 +222,7 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
     reportTitle.trim() || 'VoiceStamp 보고서',
     new Date().toLocaleString('ko-KR'),
     stampFills,
+    photosPerPage,
   );
 }
 

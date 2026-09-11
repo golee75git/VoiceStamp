@@ -1,3 +1,52 @@
+# 수정기록 — HWPX 페이지당 장수 (2026-09-11)
+
+## 목적
+한글(HWPX) 보내기가 설정의 PDF 페이지당 사진 수(1~4)와 같게 한 페이지에 사진·캡션을 넣도록 함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **재사용·수정** | `src/services/hwpxTemplate.ts` |
+| **재사용·수정** | `src/services/exportHwpx.ts` |
+| **재사용·수정** | `src/components/SettingsScreen.tsx` (안내 문구) |
+| **재사용·수정** | `public/help.html` |
+| **신규** | `restore-hwpx-page-count.bat` |
+| **신규(스냅샷)** | `src.pre-hwpx-page-count/` |
+| **재사용·수정** | `RESTORE.md` |
+| **신규/갱신** | `수정기록.txt` |
+
+## 설계 요약
+- 기존 `getPdfPhotosPerPage`만 읽음. 새 설정 키 없음.
+- 1·2·3: 단을 나란히. 4: 2열×2행.
+- 장 수가 바뀌는 칸은 페이지 나눔, 같은 페이지의 다음 열은 단 나눔.
+- 사진 표시 크기는 칸 너비·캡션 줄 수에 맞춰 줄임. 원본 파일은 그대로.
+
+## 글꼴
+- 새 글꼴 없음. OFL 파일 추가 없음.
+
+## 라이선스
+- 패키지 추가 없음. GPL 신규 없음.
+
+## 보안
+- 로컬 스탬프와 기존 설정만 사용. 네트워크 없음.
+
+## 특허
+- 기존 보내기 서식에 페이지·단 나눔과 표시 크기 조정. **특허 비침해를 보장한다고 주장하지 않음**.
+
+## 되돌리기
+```bat
+restore-hwpx-page-count.bat
+```
+
+## 검증 체크
+- [x] Git diff: hwpxTemplate / exportHwpx / 설정 안내 / help
+- [x] 패키지 추가 없음 (license 신규 항목 없음)
+- [x] GitHub 검색: `placeKind` / `HwpxPhotosPerPage` — 외부 동일 구현 없음. pageBreak·columnBreak 속성명은 한글 서식 관용
+- [x] Play: 권한·패키지·서명 변경 없음. 로컬 보내기만
+- [x] APK `VoiceStamp_20260911_110523.apk`
+
+---
+
 # 수정기록 — HWPX 캡션 한 줄 표시 (2026-09-10)
 
 ## 목적

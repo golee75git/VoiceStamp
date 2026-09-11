@@ -7,8 +7,8 @@ const BLOCK_END = '{{STAMP_BLOCK_END}}';
 
 export type HwpxStampFill = {
   title: string;
-  memo: string;
-  meta: string;
+  memoLines: string[];
+  metaLines: string[];
   imageBytes: Uint8Array;
   imageExt: 'jpg' | 'png';
 };
@@ -135,28 +135,239 @@ function extractStampBlock(sectionXml: string): string {
   return sectionXml.slice(startIdx + BLOCK_START.length, endIdx);
 }
 
-function buildStampBlocks(blockTemplate: string, stamps: HwpxStampFill[]): string {
-  return stamps
-    .map((stamp, index) => {
-      const imageId = `image${index + 1}`;
-      const imageKey = `@img${index + 1}`;
-      return blockTemplate
-        .replaceAll('{{stampIndex}}', String(index + 1))
-        .replaceAll('{{stampTitle}}', escapeXmlText(stamp.title))
-        .replaceAll('{{stampMemo}}', escapeXmlText(stamp.memo))
-        .replaceAll('{{stampMeta}}', escapeXmlText(stamp.meta))
-        .replaceAll('{{@stampImage}}', `{{${imageKey}}}`)
-        .replaceAll('binaryItemIDRef="image1"', `binaryItemIDRef="${imageId}"`);
-    })
-    .join('');
+const LINE_VERT_STEP = 1600;
+/** A4 세로 본문 칸(서식 pagePr·여백에서 계산). PDF 페이지당 장수와 같은 칸을 맞출 때 쓴다. */
+const PAGE_BODY_HWP = 74266;
+const CONTENT_WIDTH_HWP = 42520;
+const COLUMN_GAP_HWP = 1134;
+const HEADER_RESERVE_HWP = 3600;
+const MIN_PIC_HWP = 4800;
+
+export type HwpxPhotosPerPage = 1 | 2 | 3 | 4;
+
+function pageLayout(photosPerPage: HwpxPhotosPerPage): { columns: number; rows: number } {
+  if (photosPerPage === 4) {
+    return { columns: 2, rows: 2 };
+  }
+  return { columns: photosPerPage, rows: 1 };
 }
 
-function expandStampBlocks(sectionXml: string, stamps: HwpxStampFill[]): string {
-  const blockTemplate = extractStampBlock(sectionXml);
-  const blocks = buildStampBlocks(blockTemplate, stamps);
-  const startIdx = sectionXml.indexOf(BLOCK_START);
-  const endIdx = sectionXml.indexOf(BLOCK_END) + BLOCK_END.length;
-  return sectionXml.slice(0, startIdx) + blocks + sectionXml.slice(endIdx);
+function columnWidth(columns: number): number {
+  if (columns <= 1) {
+    return CONTENT_WIDTH_HWP;
+  }
+  return Math.floor((CONTENT_WIDTH_HWP - (columns - 1) * COLUMN_GAP_HWP) / columns);
+}
+
+function slotHeight(rows: number): number {
+  return Math.floor((PAGE_BODY_HWP - HEADER_RESERVE_HWP) / Math.max(1, rows));
+}
+
+/**
+ * A {{token}} placeholder in HWPX sits inside one <hp:t> in one <hp:p>; text runs
+ * can't hold newlines, so multi-line content needs one cloned <hp:p> per line.
+ */
+function expandParagraphForLines(template: string, token: string, lines: string[]): string {
+  const marker = `{{${token}}}`;
+  const tokenIdx = template.indexOf(marker);
+  if (tokenIdx < 0) {
+    return template;
+  }
+
+  const pStart = template.lastIndexOf('<hp:p ', tokenIdx);
+  const pEndTagIdx = template.indexOf('</hp:p>', tokenIdx);
+  if (pStart < 0 || pEndTagIdx < 0) {
+    return template;
+  }
+  const pEnd = pEndTagIdx + '</hp:p>'.length;
+  const paraTemplate = template.slice(pStart, pEnd);
+
+  const vertposMatch = paraTemplate.match(/vertpos="(\d+)"/);
+  const baseVertpos = vertposMatch ? Number(vertposMatch[1]) : 0;
+
+  const effectiveLines = lines.length > 0 ? lines : [''];
+  const paragraphs = effectiveLines
+    .map((line, i) => {
+      const vertpos = baseVertpos + i * LINE_VERT_STEP;
+      return paraTemplate
+        .replace(marker, escapeXmlText(line))
+        .replace(/vertpos="\d+"/, `vertpos="${vertpos}"`);
+    })
+    .join('');
+
+  return template.slice(0, pStart) + paragraphs + template.slice(pEnd);
+}
+
+function applyColumnCount(sectionXml: string, columns: number): string {
+  return sectionXml.replace(
+    /<hp:colPr id="" type="NEWSPAPER" layout="LEFT" colCount="\d+" sameSz="1" sameGap="0"\/>/,
+    `<hp:colPr id="" type="NEWSPAPER" layout="LEFT" colCount="${columns}" sameSz="1" sameGap="0"/>`,
+  );
+}
+
+function markPageOrColumnBreak(block: string, kind: 'page' | 'column'): string {
+  if (kind === 'page') {
+    return block.replace('pageBreak="0"', 'pageBreak="1"');
+  }
+  return block.replace('columnBreak="0"', 'columnBreak="1"');
+}
+
+function scalePictureToSlot(block: string, maxWidth: number, maxHeight: number): string {
+  const picStart = block.indexOf('<hp:pic');
+  const picEnd = block.indexOf('</hp:pic>');
+  if (picStart < 0 || picEnd < 0) {
+    return block;
+  }
+  const picEndExclusive = picEnd + '</hp:pic>'.length;
+  const pic = block.slice(picStart, picEndExclusive);
+  const sizeMatch = pic.match(/<hp:sz width="(\d+)"[^>]*height="(\d+)"/);
+  if (!sizeMatch) {
+    return block;
+  }
+  const srcW = Number(sizeMatch[1]);
+  const srcH = Number(sizeMatch[2]);
+  if (srcW <= 0 || srcH <= 0) {
+    return block;
+  }
+  const scale = Math.min(maxWidth / srcW, maxHeight / srcH);
+  const width = Math.max(1, Math.round(srcW * scale));
+  const height = Math.max(1, Math.round(srcH * scale));
+  let next = pic
+    .replaceAll(`width="${srcW}"`, `width="${width}"`)
+    .replaceAll(`height="${srcH}"`, `height="${height}"`)
+    .replaceAll(`x="${srcW}"`, `x="${width}"`)
+    .replaceAll(`y="${srcH}"`, `y="${height}"`)
+    .replaceAll(`centerX="${Math.round(srcW / 2)}"`, `centerX="${Math.round(width / 2)}"`)
+    .replaceAll(`centerY="${Math.round(srcH / 2)}"`, `centerY="${Math.round(height / 2)}"`);
+  const paraEnd = block.indexOf('</hp:p>', picEndExclusive);
+  let tail = block.slice(picEndExclusive, paraEnd < 0 ? block.length : paraEnd);
+  tail = tail
+    .replace(/vertsize="\d+"/, `vertsize="${height}"`)
+    .replace(/textheight="\d+"/, `textheight="${height}"`)
+    .replace(/baseline="\d+"/, `baseline="${Math.round(height * 0.85)}"`);
+  const after = paraEnd < 0 ? '' : block.slice(paraEnd);
+  return block.slice(0, picStart) + next + tail + after;
+}
+
+function reflowBlockLines(block: string, width: number): string {
+  let cursor = 0;
+  return block.replace(/<hp:lineseg\b[^>]*\/>/g, (segment, offset: number) => {
+    const paraStart = block.lastIndexOf('<hp:p ', offset);
+    const paraEnd = block.indexOf('</hp:p>', offset);
+    const para = paraStart >= 0 && paraEnd > paraStart ? block.slice(paraStart, paraEnd) : '';
+    const pic = para.includes('<hp:pic');
+    const sizeMatch = pic ? para.match(/<hp:sz width="\d+"[^>]*height="(\d+)"/) : null;
+    const height = sizeMatch ? Number(sizeMatch[1]) : LINE_VERT_STEP;
+    const vertpos = cursor;
+    cursor += height + 400;
+    return segment
+      .replace(/vertpos="\d+"/, `vertpos="${vertpos}"`)
+      .replace(/vertsize="\d+"/, `vertsize="${pic ? height : Math.min(height, 1200)}"`)
+      .replace(/horzsize="\d+"/, `horzsize="${width}"`);
+  });
+}
+
+function pictureBudget(stamp: HwpxStampFill, rows: number): number {
+  const textLines =
+    1 +
+    Math.max(stamp.memoLines.length, 1) +
+    Math.max(stamp.metaLines.length, 1) +
+    1;
+  const room = slotHeight(rows) - textLines * LINE_VERT_STEP - 800;
+  return Math.max(MIN_PIC_HWP, room);
+}
+
+function placeKind(
+  index: number,
+  photosPerPage: HwpxPhotosPerPage,
+): 'page' | 'column' | 'continue' {
+  if (index <= 0) {
+    return 'continue';
+  }
+  if (photosPerPage === 4) {
+    if (index % 4 === 0) {
+      return 'page';
+    }
+    if (index % 4 === 2) {
+      return 'column';
+    }
+    return 'continue';
+  }
+  if (photosPerPage <= 1) {
+    return 'page';
+  }
+  if (index % photosPerPage === 0) {
+    return 'page';
+  }
+  return 'column';
+}
+
+function bumpVertpos(block: string, delta: number): string {
+  if (delta <= 0) {
+    return block;
+  }
+  return block.replace(/vertpos="(\d+)"/g, (_full, raw: string) => `vertpos="${Number(raw) + delta}"`);
+}
+
+function blockExtent(block: string): number {
+  let max = 0;
+  const re = /vertpos="(\d+)"[^>]*vertsize="(\d+)"/g;
+  for (const match of block.matchAll(re)) {
+    max = Math.max(max, Number(match[1]) + Number(match[2]));
+  }
+  return max + 400;
+}
+
+function buildStampBlocks(
+  blockTemplate: string,
+  stamps: HwpxStampFill[],
+  photosPerPage: HwpxPhotosPerPage,
+): string {
+  const layout = pageLayout(photosPerPage);
+  const width = columnWidth(layout.columns);
+  const parts: string[] = [];
+  let columnCursor = 0;
+
+  for (let index = 0; index < stamps.length; index++) {
+    const stamp = stamps[index];
+    const imageId = `image${index + 1}`;
+    const imageKey = `@img${index + 1}`;
+    let block = blockTemplate
+      .replaceAll('{{stampIndex}}', String(index + 1))
+      .replaceAll('{{stampTitle}}', escapeXmlText(stamp.title))
+      .replaceAll('{{@stampImage}}', `{{${imageKey}}}`)
+      .replaceAll('binaryItemIDRef="image1"', `binaryItemIDRef="${imageId}"`);
+    block = expandParagraphForLines(block, 'stampMemo', stamp.memoLines);
+    block = expandParagraphForLines(block, 'stampMeta', stamp.metaLines);
+    block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
+    block = reflowBlockLines(block, width);
+
+    const kind = placeKind(index, photosPerPage);
+    if (kind === 'page' || kind === 'column') {
+      columnCursor = 0;
+      block = markPageOrColumnBreak(block, kind);
+    } else if (columnCursor > 0) {
+      block = bumpVertpos(block, columnCursor);
+    }
+    columnCursor = blockExtent(block);
+    parts.push(block);
+  }
+
+  return parts.join('');
+}
+
+function expandStampBlocks(
+  sectionXml: string,
+  stamps: HwpxStampFill[],
+  photosPerPage: HwpxPhotosPerPage,
+): string {
+  const layout = pageLayout(photosPerPage);
+  const withColumns = applyColumnCount(sectionXml, layout.columns);
+  const blockTemplate = extractStampBlock(withColumns);
+  const blocks = buildStampBlocks(blockTemplate, stamps, photosPerPage);
+  const startIdx = withColumns.indexOf(BLOCK_START);
+  const endIdx = withColumns.indexOf(BLOCK_END) + BLOCK_END.length;
+  return withColumns.slice(0, startIdx) + blocks + withColumns.slice(endIdx);
 }
 
 function ensureHpfImageItem(
@@ -194,6 +405,7 @@ export async function renderHwpxFromTemplate(
   reportTitle: string,
   exportedAt: string,
   stamps: HwpxStampFill[],
+  photosPerPage: HwpxPhotosPerPage = 1,
 ): Promise<Uint8Array> {
   if (stamps.length === 0) {
     throw new Error('보낼 스탬프가 없습니다.');
@@ -206,7 +418,7 @@ export async function renderHwpxFromTemplate(
   }
 
   let sectionXml = await sectionEntry.async('string');
-  sectionXml = expandStampBlocks(sectionXml, stamps);
+  sectionXml = expandStampBlocks(sectionXml, stamps, photosPerPage);
   zip.file('Contents/section0.xml', sectionXml);
 
   const textValues: Record<string, string> = {

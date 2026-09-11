@@ -4306,3 +4306,11 @@ restore-hwpx-caption-oneline.bat
 ```
 
 Restores `exportHwpx.ts` and `help.html` from `src.pre-hwpx-caption-oneline/` (before ` · ` one-line join for memo/meta).
+
+## HWPX page-count restore (2026-09-11)
+
+```bat
+restore-hwpx-page-count.bat
+```
+
+Restores HWPX fill, template fill, settings hint, and help from `src.pre-hwpx-page-count/` (before following PDF photos-per-page).
