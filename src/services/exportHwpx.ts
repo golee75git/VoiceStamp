@@ -105,8 +105,8 @@ async function readImageBytes(
 
 /**
  * Map one stamp to HWPX text slots under the photo (PDF 「별도 영역」과 같은 정보).
- * title ← 기관명, memo ← 캡션 표 각 줄, meta ← 하단 문구·촬영일시.
- * hwpxTemplate.ts가 맨 위 행에 사진, 아래 행에 위 줄을 표로 넣는다.
+ * title ← 기관명, memo ← 캡션 표 각 줄, meta ← 하단 문구·촬영일시 각 줄.
+ * 각 줄은 hwpxTemplate.ts에서 문단(<hp:p>)을 줄 수만큼 복제해 표시한다.
  */
 function buildCaptionBelowFill(
   stamp: Stamp,
