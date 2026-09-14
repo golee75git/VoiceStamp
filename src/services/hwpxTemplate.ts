@@ -272,6 +272,19 @@ function setCellBoxes(head: string, width: number, heights: number[]): string {
   });
 }
 
+function photoCellKeepsCaption(head: string): boolean {
+  const cellEnd = head.indexOf('</hp:tc>');
+  if (cellEnd < 0) {
+    return false;
+  }
+  const cell = head.slice(0, cellEnd);
+  const picEnd = cell.indexOf('</hp:pic>');
+  if (picEnd < 0) {
+    return false;
+  }
+  return /<hp:t>[^<]+<\/hp:t>/.test(cell.slice(picEnd));
+}
+
 function fitStampTable(
   block: string,
   maxWidth: number,
@@ -285,14 +298,15 @@ function fitStampTable(
   }
   const head = block.slice(tblStart, tblEnd);
   const twoRow = (head.match(/<hp:tr/g) || []).length >= 2;
+  const captionInPhoto = !twoRow && photoCellKeepsCaption(head);
   const captionH = captionBandHeight(stamp);
   const photoH = Math.max(MIN_PIC_HWP, maxHeight - captionH);
-  const tableH = twoRow ? photoH + captionH : photoH;
+  const tableH = twoRow ? photoH + captionH : captionInPhoto ? maxHeight : photoH;
   let nextHead = setTableBox(head, maxWidth, tableH);
   if (twoRow) {
     nextHead = setCellBoxes(nextHead, maxWidth, [photoH, captionH]);
   } else {
-    nextHead = setCellBoxes(nextHead, maxWidth, [photoH]);
+    nextHead = setCellBoxes(nextHead, maxWidth, [tableH]);
   }
   let next = block.slice(0, tblStart) + nextHead + block.slice(tblEnd);
   const pad = cellPad(head);

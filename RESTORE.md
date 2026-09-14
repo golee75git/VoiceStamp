@@ -4354,3 +4354,11 @@ restore-hwpx-pic-caption.bat
 ```
 
 Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-pic-caption/` (before the 2-row photo/caption Hangul table and page-slot photo size).
+
+## HWPX one-cell caption blob restore (2026-09-14)
+
+```bat
+restore-hwpx-caption-blob.bat
+```
+
+Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-caption-blob/` (before the 1-cell Hangul table with photo and app caption as one blob).
