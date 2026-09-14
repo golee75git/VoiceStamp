@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
+import { useEffect, useRef, useState, useCallback, useLayoutEffect, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Dimensions,
   FlatList,
   InteractionManager,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -283,6 +285,29 @@ function followUpTitleFromParent(parentTitle: string, seq: number): string {
   return `${base} (이음 ${n})`;
 }
 
+const SAVE_KB_CLEAR_GAP = 12;
+
+function SaveKbClearHost({
+  id,
+  hosts,
+  children,
+}: {
+  id: string;
+  hosts: { current: Record<string, View | null> };
+  children: ReactNode;
+}) {
+  return (
+    <View
+      collapsable={false}
+      ref={(node) => {
+        hosts.current[id] = node;
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+
 export function StampSaveModal({
   visible,
   imageUri,
@@ -434,12 +459,82 @@ export function StampSaveModal({
   const scrollRef = useRef<ScrollView>(null);
   const slotSpeechOpenedRef = useRef(false);
   const saveSheetBackLockRef = useRef(false);
+  const saveSheetKbInsetRef = useRef(0);
+  const saveSheetScrollYRef = useRef(0);
+  const saveSheetRaiseHostRef = useRef<View | null>(null);
+  const saveSheetFooterRef = useRef<View>(null);
+  const saveFieldHostRefs = useRef<Record<string, View | null>>({});
+  const [saveSheetKbInset, setSaveSheetKbInset] = useState(0);
 
-  const scrollMemoIntoView = () => {
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollToEnd({ animated: true });
+  const runSaveFieldRaise = useCallback(() => {
+    const host = saveSheetRaiseHostRef.current;
+    const kb = saveSheetKbInsetRef.current;
+    if (!host || kb <= 0) {
+      return;
+    }
+    const winH = Dimensions.get('window').height;
+    const kbTop = winH - kb;
+    const applyLift = (obstacleTop: number) => {
+      host.measureInWindow((_x, y, _w, h) => {
+        const need = y + h + SAVE_KB_CLEAR_GAP - obstacleTop;
+        if (need > 0) {
+          scrollRef.current?.scrollTo({
+            y: Math.max(0, saveSheetScrollYRef.current + need),
+            animated: true,
+          });
+        }
+      });
+    };
+    const footer = saveSheetFooterRef.current;
+    if (footer) {
+      footer.measureInWindow((_x, fy) => {
+        applyLift(Math.min(fy, kbTop));
+      });
+    } else {
+      applyLift(kbTop);
+    }
+  }, []);
+
+  const openSaveFieldKbClear = useCallback(
+    (id: string) => {
+      saveSheetRaiseHostRef.current = saveFieldHostRefs.current[id] ?? null;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          runSaveFieldRaise();
+        });
+      });
+    },
+    [runSaveFieldRaise],
+  );
+
+  useEffect(() => {
+    if (!visible) {
+      saveSheetKbInsetRef.current = 0;
+      setSaveSheetKbInset(0);
+      saveSheetRaiseHostRef.current = null;
+      return;
+    }
+    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvt, (e) => {
+      const h = e.endCoordinates?.height ?? 0;
+      saveSheetKbInsetRef.current = h;
+      setSaveSheetKbInset(h);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          runSaveFieldRaise();
+        });
+      });
     });
-  };
+    const hideSub = Keyboard.addListener(hideEvt, () => {
+      saveSheetKbInsetRef.current = 0;
+      setSaveSheetKbInset(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [visible, runSaveFieldRaise]);
 
   useEffect(() => {
     speechTargetRef.current = speechTarget;
@@ -2005,9 +2100,16 @@ export function StampSaveModal({
           <ScrollView
             ref={scrollRef}
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={[
+              styles.scrollContent,
+              Platform.OS === 'android' ? { paddingBottom: 8 + saveSheetKbInset } : null,
+            ]}
             style={styles.scroll}
             bounces={false}
+            onScroll={(event) => {
+              saveSheetScrollYRef.current = event.nativeEvent.contentOffset.y;
+            }}
+            scrollEventThrottle={16}
           >
             <View style={styles.card}>
             <Text style={styles.heading}>
@@ -2227,6 +2329,7 @@ export function StampSaveModal({
             Boolean(capturedSourceUrl) ||
             Boolean(normalizeHttpUrl(sourceUrl)) ? (
               <View>
+                <SaveKbClearHost id="sourceUrl" hosts={saveFieldHostRefs}>
                 <VoiceInputField
                   label="QR URL"
                   value={sourceUrl}
@@ -2234,6 +2337,7 @@ export function StampSaveModal({
                   onMicPress={() => handleMicPress('sourceUrl')}
                   listening={listening && speechTarget === 'sourceUrl'}
                   speechAvailable={available}
+                  onFocus={() => openSaveFieldKbClear('sourceUrl')}
                   selection={sourceUrlSelection}
                   onSelectionChange={(selection) => {
                     sourceUrlSelectionRef.current = selection;
@@ -2244,6 +2348,7 @@ export function StampSaveModal({
                   fontSize={inputFontSizeForStampText(stampTextSize)}
                   placeholderHint="https://… (확인 후 저장)"
                 />
+                </SaveKbClearHost>
                 <View style={styles.photoActionRow}>
                   <Pressable
                     style={[
@@ -2277,6 +2382,7 @@ export function StampSaveModal({
             {!isEdit ? (
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
+                <SaveKbClearHost id="folderSite" hosts={saveFieldHostRefs}>
                 <View style={styles.folderInputRow}>
                   {cameraHand === 'left' ? (
                     <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
@@ -2290,6 +2396,7 @@ export function StampSaveModal({
                       siteNameTouchedRef.current = true;
                       setSiteName(text);
                     }}
+                    onFocus={() => openSaveFieldKbClear('folderSite')}
                     placeholder="예: 20260609_역삼동 (비우면 기본)"
                     maxLength={80}
                   />
@@ -2299,6 +2406,7 @@ export function StampSaveModal({
                     </Pressable>
                   ) : null}
                 </View>
+                </SaveKbClearHost>
                 {locationLookupEnabled && locationLoading ? (
                   <Text style={styles.locationHint}>위치 확인 중…</Text>
                 ) : null}
@@ -2306,6 +2414,7 @@ export function StampSaveModal({
             ) : (
               <View style={styles.siteField}>
                 <Text style={styles.siteLabel}>저장 폴더(앨범)</Text>
+                <SaveKbClearHost id="folderGroup" hosts={saveFieldHostRefs}>
                 <View style={styles.folderInputRow}>
                   {cameraHand === 'left' ? (
                     <Pressable style={styles.folderPickButton} onPress={() => void openFolderPicker()}>
@@ -2316,6 +2425,7 @@ export function StampSaveModal({
                     style={styles.folderInput}
                     value={groupName}
                     onChangeText={setGroupName}
+                    onFocus={() => openSaveFieldKbClear('folderGroup')}
                     placeholder="예: 20260608_OO초 (비우면 기본)"
                     maxLength={80}
                   />
@@ -2325,13 +2435,14 @@ export function StampSaveModal({
                     </Pressable>
                   ) : null}
                 </View>
+                </SaveKbClearHost>
                 <Text style={styles.locationHint}>
                   선택한 스탬프만 이동합니다. 앱 폴더와 갤러리 앨범이 함께 변경됩니다.
                 </Text>
               </View>
             )}
 
-            <View>
+            <SaveKbClearHost id="title" hosts={saveFieldHostRefs}>
               <VoiceInputField
                 label={titleFieldLabel}
                 labelEditable
@@ -2344,6 +2455,7 @@ export function StampSaveModal({
                 onMicPress={() => handleMicPress('title')}
                 listening={listening && speechTarget === 'title'}
                 speechAvailable={available}
+                onFocus={() => openSaveFieldKbClear('title')}
                 selection={titleSelection}
                 onSelectionChange={(selection) => {
                   titleSelectionRef.current = selection;
@@ -2354,8 +2466,9 @@ export function StampSaveModal({
                 fontSize={inputFontSizeForStampText(stampTextSize)}
                 placeholderHint={fieldPlaceholders.title}
               />
-            </View>
+            </SaveKbClearHost>
 
+            <SaveKbClearHost id="place" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={placeFieldLabel}
               labelEditable
@@ -2368,6 +2481,7 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('place')}
               listening={listening && speechTarget === 'place'}
               speechAvailable={available}
+              onFocus={() => openSaveFieldKbClear('place')}
               selection={placeSelection}
               onSelectionChange={(selection) => {
                 placeSelectionRef.current = selection;
@@ -2378,6 +2492,7 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.place}
             />
+            </SaveKbClearHost>
 
             {showFloorPicker ? (
               <View style={styles.siteField}>
@@ -2403,6 +2518,7 @@ export function StampSaveModal({
               </View>
             ) : null}
 
+            <SaveKbClearHost id="extra1" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra1FieldLabel}
               labelEditable
@@ -2412,6 +2528,7 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra1')}
               listening={listening && speechTarget === 'extra1'}
               speechAvailable={available}
+              onFocus={() => openSaveFieldKbClear('extra1')}
               selection={extra1Selection}
               onSelectionChange={(selection) => {
                 extra1SelectionRef.current = selection;
@@ -2422,7 +2539,9 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.extra1}
             />
+            </SaveKbClearHost>
 
+            <SaveKbClearHost id="extra2" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra2FieldLabel}
               labelEditable
@@ -2432,6 +2551,7 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra2')}
               listening={listening && speechTarget === 'extra2'}
               speechAvailable={available}
+              onFocus={() => openSaveFieldKbClear('extra2')}
               selection={extra2Selection}
               onSelectionChange={(selection) => {
                 extra2SelectionRef.current = selection;
@@ -2442,7 +2562,9 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.extra2}
             />
+            </SaveKbClearHost>
 
+            <SaveKbClearHost id="extra3" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra3FieldLabel}
               labelEditable
@@ -2452,6 +2574,7 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra3')}
               listening={listening && speechTarget === 'extra3'}
               speechAvailable={available}
+              onFocus={() => openSaveFieldKbClear('extra3')}
               selection={extra3Selection}
               onSelectionChange={(selection) => {
                 extra3SelectionRef.current = selection;
@@ -2462,7 +2585,9 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.extra3}
             />
+            </SaveKbClearHost>
 
+            <SaveKbClearHost id="memo" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={memoFieldLabel}
               labelEditable
@@ -2476,7 +2601,7 @@ export function StampSaveModal({
               listening={listening && speechTarget === 'memo'}
               speechAvailable={available}
               multiline
-              onFocus={scrollMemoIntoView}
+              onFocus={() => openSaveFieldKbClear('memo')}
               selection={memoSelection}
               onSelectionChange={(selection) => {
                 memoSelectionRef.current = selection;
@@ -2487,6 +2612,7 @@ export function StampSaveModal({
               fontSize={inputFontSizeForStampText(stampTextSize)}
               placeholderHint={fieldPlaceholders.memo}
             />
+            </SaveKbClearHost>
             {sceneAnalyzing ? (
               <Text style={styles.locationHint}>장면 분석 중…</Text>
             ) : null}
@@ -2499,7 +2625,7 @@ export function StampSaveModal({
               {`이 사진이 「${collectJoinName}」으로 전송됩니다`}
             </Text>
           ) : null}
-          <View style={styles.actionsFooter}>
+          <View style={styles.actionsFooter} ref={saveSheetFooterRef} collapsable={false}>
             <View style={styles.actions}>
               <Pressable style={styles.cancelButton} onPress={onClose} disabled={saving}>
                 <Text style={styles.cancelText}>취소</Text>

@@ -15,6 +15,8 @@ type VoiceInputFieldProps = {
   multiline?: boolean;
   speechAvailable?: boolean;
   onFocus?: () => void;
+  /** 칸 이름 입력 시작. 없으면 onFocus와 같음. */
+  onLabelFocus?: () => void;
   onSelectionChange?: (selection: { start: number; end: number }) => void;
   selection?: { start: number; end: number };
   textAlign?: TextAlign;
@@ -37,6 +39,7 @@ export function VoiceInputField({
   multiline = false,
   speechAvailable = true,
   onFocus,
+  onLabelFocus,
   onSelectionChange,
   selection,
   textAlign = 'left',
@@ -85,6 +88,9 @@ export function VoiceInputField({
             style={styles.labelInput}
             value={draftLabel}
             onChangeText={setDraftLabel}
+            onFocus={() => {
+              (onLabelFocus ?? onFocus)?.();
+            }}
             onBlur={commitLabel}
             onSubmitEditing={commitLabel}
             maxLength={FIELD_LABEL_MAX_LENGTH}

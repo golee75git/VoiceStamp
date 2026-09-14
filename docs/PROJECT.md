@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-09-14** — 저장 화면 뒤로가기 · 권장 `190436` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: (본 배포) 저장 화면 시스템 뒤로가기가 홈으로 복귀
+문서 동기화: **2026-09-15** — 저장·수정 입력칸 키보드 가림 · 권장 `075220` · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: (본 배포) 저장·수정에서 아래 칸이 키보드에 가리지 않음
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -674,6 +674,12 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-09-15
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260915_075220.apk` | (본 커밋) | **권장** — 저장·수정 입력칸이 키보드에 가리지 않음 · `restore-save-kb-clear.bat` | **GitHub `releases/`** |
+
 #### 2026-08-23
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
@@ -1297,6 +1303,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-15 (저장 화면 키보드 가림)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장·수정에서 아래쪽 칸·칸 이름 입력이 시스템 키보드에 가리지 않음 |
+| APK | `releases/VoiceStamp_20260915_075220.apk` |
+| 롤백 | `restore-save-kb-clear.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-save-kb-clear-20260915.md](./SECURITY-save-kb-clear-20260915.md) |
 
 ### 2026-09-14 (수신함 이 폰 사진 표시)
 

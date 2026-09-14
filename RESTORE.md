@@ -4410,3 +4410,11 @@ restore-inbox-on-device.bat
 ```
 
 Restores `ProjectCollectScreen.tsx`, `projectImportedStamps.ts`, and `help.html` from `*.pre-inbox-on-device/` (before inbox showing this-phone thumbs instead of waiting).
+
+## Save keyboard clear restore (2026-09-15)
+
+```bat
+restore-save-kb-clear.bat
+```
+
+Restores `StampSaveModal.tsx`, `VoiceInputField.tsx`, and `help.html` from `*.pre-save-kb-clear/` (before save/edit fields staying above the system keyboard).
