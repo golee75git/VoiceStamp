@@ -212,6 +212,29 @@ function markPageOrColumnBreak(block: string, kind: 'page' | 'column'): string {
   return block.replace('columnBreak="0"', 'columnBreak="1"');
 }
 
+function scaleTableToSlot(block: string, maxWidth: number): string {
+  const tblStart = block.indexOf('<hp:tbl');
+  const tblEnd = block.indexOf('</hp:tbl>');
+  if (tblStart < 0 || tblEnd < 0 || tblEnd <= tblStart) {
+    return block;
+  }
+  const head = block.slice(tblStart, tblEnd);
+  const sizeMatch = head.match(/<hp:sz width="(\d+)"([^>]*height=")(\d+)"/);
+  if (!sizeMatch) {
+    return block;
+  }
+  const srcW = Number(sizeMatch[1]);
+  const srcH = Number(sizeMatch[3]);
+  if (srcW <= 0 || srcW === maxWidth) {
+    return block;
+  }
+  const height = Math.max(1, Math.round((srcH * maxWidth) / srcW));
+  let nextHead = head.replace(`<hp:sz width="${srcW}"`, `<hp:sz width="${maxWidth}"`);
+  nextHead = nextHead.replace(`height="${srcH}"`, `height="${height}"`);
+  nextHead = nextHead.replace(/<hp:cellSz width="\d+"/, `<hp:cellSz width="${maxWidth}"`);
+  return block.slice(0, tblStart) + nextHead + block.slice(tblEnd);
+}
+
 function scalePictureToSlot(block: string, maxWidth: number, maxHeight: number): string {
   const picStart = block.indexOf('<hp:pic');
   const picEnd = block.indexOf('</hp:pic>');
@@ -339,8 +362,13 @@ function buildStampBlocks(
       .replaceAll('binaryItemIDRef="image1"', `binaryItemIDRef="${imageId}"`);
     block = expandParagraphForLines(block, 'stampMemo', stamp.memoLines);
     block = expandParagraphForLines(block, 'stampMeta', stamp.metaLines);
+    const hasTable = block.includes('<hp:tbl');
     block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
-    block = reflowBlockLines(block, width);
+    if (hasTable) {
+      block = scaleTableToSlot(block, width);
+    } else {
+      block = reflowBlockLines(block, width);
+    }
 
     const kind = placeKind(index, photosPerPage);
     if (kind === 'page' || kind === 'column') {
@@ -387,14 +415,12 @@ function ensureHpfImageItem(
   return hpfXml.replace('</opf:manifest>', `${item}</opf:manifest>`);
 }
 
-function removeUnusedBinData(zip: JSZip, keepImageIds: Set<string>): void {
+function removeUnusedBinData(zip: JSZip, keepFiles: Set<string>): void {
   for (const fileName of Object.keys(zip.files)) {
     if (!fileName.startsWith('BinData/') || fileName.endsWith('/')) {
       continue;
     }
-    const base = fileName.slice('BinData/'.length);
-    const imageId = base.replace(/\.[^.]+$/, '');
-    if (!keepImageIds.has(imageId)) {
+    if (!keepFiles.has(fileName)) {
       zip.remove(fileName);
     }
   }
@@ -426,18 +452,18 @@ export async function renderHwpxFromTemplate(
     exportedAt,
   };
   const imageValues: Record<string, Uint8Array> = {};
-  const keepImageIds = new Set<string>();
+  const keepFiles = new Set<string>();
 
   for (let i = 0; i < stamps.length; i++) {
     const imageId = `image${i + 1}`;
     const ext = stamps[i].imageExt;
     const fileName = `${imageId}.${ext}`;
-    keepImageIds.add(imageId);
+    keepFiles.add(`BinData/${fileName}`);
     imageValues[`@img${i + 1}`] = stamps[i].imageBytes;
     zip.file(`BinData/${fileName}`, stamps[i].imageBytes);
   }
 
-  removeUnusedBinData(zip, keepImageIds);
+  removeUnusedBinData(zip, keepFiles);
 
   const hpfEntry = zip.file('Contents/content.hpf');
   if (hpfEntry) {

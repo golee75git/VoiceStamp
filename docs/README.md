@@ -87,14 +87,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-10)
 
-- **문서 갱신일:** 2026-09-11 — **HWPX를 110523 확인된 문단 방식으로 되돌림**(표 방식 3회 시도 모두 실기기에서 열기 실패) · APK `175943`
-- **최신 기능 커밋:** (본 배포) · APK `175943` — HWPX `70f73bf` 기준(한글 서식에 자리 표시 채움, 표 미사용)으로 복귀
+- **문서 갱신일:** 2026-09-14 — **HWPX 한글 저장 사진 표** 서식 적용 · APK `112329`
+- **최신 기능 커밋:** (본 배포) · APK `112329` — 한글이 넣은 report.hwpx 사진 표를 보내기에 적용
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260911_175943.apk` — HWPX 110523 확인된 문단 방식(실기기 검증 완료)
-- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260911_175943.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260914_112329.apk` — 한글 저장 사진 표 서식 적용
+- **APK raw URL (GitHub):** https://github.com/golee75git/VoiceStamp/raw/main/releases/VoiceStamp_20260914_112329.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260911_175943.apk` — HWPX 110523 문단 방식(실기기 검증)
 - **이전 권장 APK:** `releases/VoiceStamp_20260911_170631.apk` — HWPX 실제 서식 재사용 표(실기기 열었으나 사진·캡션 빈 페이지)
 - **이전 권장 APK:** `releases/VoiceStamp_20260911_164421.apk` — HWPX 패키지 구성요소 보강(그래도 열기 실패)
 - **이전 권장 APK:** `releases/VoiceStamp_20260911_162242.apk` — HWPX 저장을 표 형식(자체 생성)으로 재적용(hwpx 열기 오류 있었음)

@@ -4330,3 +4330,11 @@ restore-hwpx-own-table.bat
 ```
 
 Restores `exportHwpx.ts` and `help.html` from `src.pre-hwpx-own-table/` and removes `hwpxCaptionPack.ts` (before the app-built photo + caption table).
+
+## HWPX hangul table restore (2026-09-14)
+
+```bat
+restore-hwpx-han-table.bat
+```
+
+Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-han-table/` (before applying the Hangul-saved photo table).
