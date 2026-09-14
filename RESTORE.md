@@ -4346,3 +4346,11 @@ restore-hwpx-first-pic.bat
 ```
 
 Restores `hwpxTemplate.ts` and `help.html` from `*.pre-hwpx-first-pic/` (before first-stamp BinData/hpf order, table-inner picture scale, and title-page break).
+
+## HWPX photo-caption table restore (2026-09-14)
+
+```bat
+restore-hwpx-pic-caption.bat
+```
+
+Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-pic-caption/` (before the 2-row photo/caption Hangul table and page-slot photo size).

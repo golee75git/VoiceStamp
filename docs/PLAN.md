@@ -749,6 +749,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG · 권장 `181951` (**소스 없음**) |
 | 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
+| 2026-09-14 | 4·3 | **HWPX 사진·캡션 표** 칸·사진 크게 · APK `134700` · `restore-hwpx-pic-caption.bat` |
 | 2026-09-14 | 4·3 | **HWPX 첫 사진** 누락·표 넘침 보정 · APK `131007` · `restore-hwpx-first-pic.bat` |
 | 2026-09-14 | 4·3 | **HWPX 한글 저장 사진 표** 서식 적용 · APK `112329` · `restore-hwpx-han-table.bat` |
 | 2026-08-23 | 2AS·3 | 저장 목록 엑셀 **사진 가로 px**(수신과 동일 기억값) · `restore-list-xlsx-photo-px.bat` |

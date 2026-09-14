@@ -126,13 +126,37 @@ function mimeForImageExt(ext: 'jpg' | 'png'): string {
   return ext === 'png' ? 'image/png' : 'image/jpeg';
 }
 
-function extractStampBlock(sectionXml: string): string {
-  const startIdx = sectionXml.indexOf(BLOCK_START);
-  const endIdx = sectionXml.indexOf(BLOCK_END);
-  if (startIdx < 0 || endIdx < 0 || endIdx <= startIdx) {
+function stampSpan(sectionXml: string): { start: number; end: number; inner: boolean } {
+  const startTok = sectionXml.indexOf(BLOCK_START);
+  const endTok = sectionXml.indexOf(BLOCK_END);
+  if (startTok < 0 || endTok < 0 || endTok <= startTok) {
     throw new Error('HWPX 템플릿에 스탬프 블록 마커가 없습니다.');
   }
-  return sectionXml.slice(startIdx + BLOCK_START.length, endIdx);
+  const between = sectionXml.slice(startTok, endTok);
+  if (between.includes('<hp:tbl')) {
+    return { start: startTok, end: endTok + BLOCK_END.length, inner: false };
+  }
+  const tblStart = sectionXml.lastIndexOf('<hp:tbl', startTok);
+  if (tblStart >= 0) {
+    const wrapP = sectionXml.lastIndexOf('<hp:p ', tblStart);
+    const tblEnd = sectionXml.indexOf('</hp:tbl>', endTok);
+    const wrapEnd = tblEnd >= 0 ? sectionXml.indexOf('</hp:p>', tblEnd) : -1;
+    if (wrapP >= 0 && wrapEnd > wrapP) {
+      return { start: wrapP, end: wrapEnd + '</hp:p>'.length, inner: true };
+    }
+  }
+  return { start: startTok, end: endTok + BLOCK_END.length, inner: false };
+}
+
+function extractStampBlock(sectionXml: string): string {
+  const span = stampSpan(sectionXml);
+  if (!span.inner) {
+    return sectionXml.slice(span.start + BLOCK_START.length, span.end - BLOCK_END.length);
+  }
+  return sectionXml
+    .slice(span.start, span.end)
+    .replaceAll(BLOCK_START, '')
+    .replaceAll(BLOCK_END, '');
 }
 
 const LINE_VERT_STEP = 1600;
@@ -212,52 +236,72 @@ function markPageOrColumnBreak(block: string, kind: 'page' | 'column'): string {
   return block.replace('columnBreak="0"', 'columnBreak="1"');
 }
 
-function scaleTableToSlot(block: string, maxWidth: number): string {
-  const tblStart = block.indexOf('<hp:tbl');
-  const tblEnd = block.indexOf('</hp:tbl>');
-  if (tblStart < 0 || tblEnd < 0 || tblEnd <= tblStart) {
-    return block;
-  }
-  const head = block.slice(tblStart, tblEnd);
-  const sizeMatch = head.match(/<hp:sz width="(\d+)"([^>]*height=")(\d+)"/);
-  if (!sizeMatch) {
-    return block;
-  }
-  const srcW = Number(sizeMatch[1]);
-  const srcH = Number(sizeMatch[3]);
-  if (srcW <= 0) {
-    return block;
-  }
-  const height = srcW === maxWidth ? srcH : Math.max(1, Math.round((srcH * maxWidth) / srcW));
-  let nextHead = head.replace(`<hp:sz width="${srcW}"`, `<hp:sz width="${maxWidth}"`);
-  nextHead = nextHead.replace(`height="${srcH}"`, `height="${height}"`);
-  nextHead = nextHead.replace(
-    /<hp:cellSz width="\d+" height="\d+"/,
-    `<hp:cellSz width="${maxWidth}" height="${height}"`,
-  );
-  return block.slice(0, tblStart) + nextHead + block.slice(tblEnd);
+function captionBandHeight(stamp: HwpxStampFill): number {
+  const lines =
+    1 + Math.max(stamp.memoLines.length, 1) + Math.max(stamp.metaLines.length, 1);
+  return lines * LINE_VERT_STEP + 1200;
 }
 
-function tableInnerSlot(block: string): { width: number; height: number } | null {
+function cellPad(xml: string): { x: number; y: number } {
+  const match = xml.match(
+    /<hp:cellMargin left="(\d+)" right="(\d+)" top="(\d+)" bottom="(\d+)"/,
+  ) || xml.match(
+    /<hp:inMargin left="(\d+)" right="(\d+)" top="(\d+)" bottom="(\d+)"/,
+  );
+  if (!match) {
+    return { x: 0, y: 0 };
+  }
+  return {
+    x: Number(match[1]) + Number(match[2]),
+    y: Number(match[3]) + Number(match[4]),
+  };
+}
+
+function setTableBox(head: string, width: number, height: number): string {
+  let next = head.replace(/<hp:sz width="\d+"/, `<hp:sz width="${width}"`);
+  next = next.replace(/(<hp:sz width="\d+"[^>]*height=")(\d+)"/, `$1${height}"`);
+  return next;
+}
+
+function setCellBoxes(head: string, width: number, heights: number[]): string {
+  let index = 0;
+  return head.replace(/<hp:cellSz width="\d+" height="\d+"\/>/g, () => {
+    const height = heights[Math.min(index, heights.length - 1)] ?? heights[0];
+    index += 1;
+    return `<hp:cellSz width="${width}" height="${height}"/>`;
+  });
+}
+
+function fitStampTable(
+  block: string,
+  maxWidth: number,
+  maxHeight: number,
+  stamp: HwpxStampFill,
+): string {
   const tblStart = block.indexOf('<hp:tbl');
   const tblEnd = block.indexOf('</hp:tbl>');
   if (tblStart < 0 || tblEnd <= tblStart) {
-    return null;
+    return block;
   }
-  const head = block.slice(tblStart, Math.min(tblEnd, tblStart + 1200));
-  const sizeMatch = head.match(/<hp:sz width="(\d+)"[^>]*height="(\d+)"/);
-  if (!sizeMatch) {
-    return null;
+  const head = block.slice(tblStart, tblEnd);
+  const twoRow = (head.match(/<hp:tr/g) || []).length >= 2;
+  const captionH = captionBandHeight(stamp);
+  const photoH = Math.max(MIN_PIC_HWP, maxHeight - captionH);
+  const tableH = twoRow ? photoH + captionH : photoH;
+  let nextHead = setTableBox(head, maxWidth, tableH);
+  if (twoRow) {
+    nextHead = setCellBoxes(nextHead, maxWidth, [photoH, captionH]);
+  } else {
+    nextHead = setCellBoxes(nextHead, maxWidth, [photoH]);
   }
-  const inMatch = head.match(
-    /<hp:inMargin left="(\d+)" right="(\d+)" top="(\d+)" bottom="(\d+)"/,
+  let next = block.slice(0, tblStart) + nextHead + block.slice(tblEnd);
+  const pad = cellPad(head);
+  next = scalePictureToSlot(
+    next,
+    Math.max(1, maxWidth - pad.x),
+    Math.max(1, photoH - pad.y),
   );
-  const padX = inMatch ? Number(inMatch[1]) + Number(inMatch[2]) : 0;
-  const padY = inMatch ? Number(inMatch[3]) + Number(inMatch[4]) : 0;
-  return {
-    width: Math.max(1, Number(sizeMatch[1]) - padX),
-    height: Math.max(1, Number(sizeMatch[2]) - padY),
-  };
+  return next;
 }
 
 function scalePictureToSlot(block: string, maxWidth: number, maxHeight: number): string {
@@ -389,11 +433,7 @@ function buildStampBlocks(
     block = expandParagraphForLines(block, 'stampMeta', stamp.metaLines);
     const hasTable = block.includes('<hp:tbl');
     if (hasTable) {
-      block = scaleTableToSlot(block, width);
-      const slot = tableInnerSlot(block);
-      if (slot) {
-        block = scalePictureToSlot(block, slot.width, slot.height);
-      }
+      block = fitStampTable(block, width, slotHeight(layout.rows), stamp);
     } else {
       block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
       block = reflowBlockLines(block, width);
@@ -420,11 +460,10 @@ function expandStampBlocks(
 ): string {
   const layout = pageLayout(photosPerPage);
   const withColumns = applyColumnCount(sectionXml, layout.columns);
+  const span = stampSpan(withColumns);
   const blockTemplate = extractStampBlock(withColumns);
   const blocks = buildStampBlocks(blockTemplate, stamps, photosPerPage);
-  const startIdx = withColumns.indexOf(BLOCK_START);
-  const endIdx = withColumns.indexOf(BLOCK_END) + BLOCK_END.length;
-  return withColumns.slice(0, startIdx) + blocks + withColumns.slice(endIdx);
+  return withColumns.slice(0, span.start) + blocks + withColumns.slice(span.end);
 }
 
 function ensureHpfImageItem(

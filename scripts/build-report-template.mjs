@@ -37,7 +37,11 @@ function placeStampBlockMarkers(xml) {
     throw new Error('스탬프 블록 자리 표시가 없습니다.');
   }
   const block = startIdx < endIdx ? xml.slice(startIdx, endIdx) : '';
-  if (block.includes('{{@stampImage}}') && block.includes('{{stampMemo}}')) {
+  if (
+    block.includes('<hp:tbl') &&
+    block.includes('{{@stampImage}}') &&
+    block.includes('{{stampMemo}}')
+  ) {
     return xml;
   }
 
@@ -68,12 +72,20 @@ function placeStampBlockMarkers(xml) {
 
   next = next.slice(0, insertStartAt) + startEx.para + next.slice(insertStartAt);
 
-  const metaIdx = next.indexOf('{{stampMeta}}');
-  if (metaIdx < 0) {
-    throw new Error('{{stampMeta}} 가 없습니다.');
+  const tblClose = next.indexOf('</hp:tbl>');
+  let insertEndAt = -1;
+  if (tblClose >= 0) {
+    const afterTblP = next.indexOf('</hp:p>', tblClose);
+    insertEndAt =
+      afterTblP >= 0 ? afterTblP + '</hp:p>'.length : tblClose + '</hp:tbl>'.length;
+  } else {
+    const metaIdx = next.indexOf('{{stampMeta}}');
+    if (metaIdx < 0) {
+      throw new Error('{{stampMeta}} 가 없습니다.');
+    }
+    insertEndAt = next.indexOf('</hp:p>', metaIdx) + '</hp:p>'.length;
   }
-  const metaEnd = next.indexOf('</hp:p>', metaIdx) + '</hp:p>'.length;
-  next = next.slice(0, metaEnd) + endEx.para + next.slice(metaEnd);
+  next = next.slice(0, insertEndAt) + endEx.para + next.slice(insertEndAt);
 
   const blockStart = next.indexOf(startTok);
   const blockEnd = next.indexOf(endTok);
@@ -177,8 +189,17 @@ const outBytes = await zip.generateAsync({
 
 fs.mkdirSync('assets/templates', { recursive: true });
 fs.mkdirSync('public/templates', { recursive: true });
-fs.writeFileSync(SRC, outBytes);
-fs.copyFileSync(SRC, PUBLIC_OUT);
+fs.writeFileSync(SRC + '.next', outBytes);
+try {
+  fs.writeFileSync(SRC, outBytes);
+} catch {
+  console.log('assets template locked; wrote', SRC + '.next');
+}
+try {
+  fs.copyFileSync(SRC + '.next', PUBLIC_OUT);
+} catch {
+  fs.writeFileSync(PUBLIC_OUT + '.next', outBytes);
+}
 
 console.log('Wrote', SRC, outBytes.length, 'bytes');
 console.log('Wrote', PUBLIC_OUT);
