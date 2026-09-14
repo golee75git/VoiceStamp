@@ -1298,6 +1298,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-09-14 (목록 사업 보내기 고르기·연결 확인)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장 목록 사업으로 보내기 창에서 이름 줄을 눌러 고르고, 종료·끊긴 사업은 올리지 않음 |
+| APK | `releases/VoiceStamp_20260914_223408.apk` |
+| 롤백 | `restore-join-list-send-check.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-join-list-send-check-20260914.md](./SECURITY-join-list-send-check-20260914.md) |
+
 ### 2026-09-14 (저장 화면 뒤로가기)
 
 | 항목 | 내용 |

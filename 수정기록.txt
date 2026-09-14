@@ -1,3 +1,42 @@
+# 수정기록 — 목록 사업 보내기 고르기·연결 확인 (2026-09-14)
+
+## 목적
+저장 목록에서 사업으로 보내기를 눌러도 고르기 창만 닫히고 전송이 안 되는 문제를 막고, 종료·끊긴 사업으로 조용히 올리지 않게 한다.
+
+## 조치
+- 고르기 창 카드를 Pressable로 바꿔 바깥 닫기 탭이 사업 줄까지 먹지 않게 한다.
+- 줄에 연결됨·종료됨·만료됨을 표시하고, 종료·만료는 올리지 않는다.
+- 보내기 전 lookup으로 사업이 열려 있는지 확인하고, 연결 기록이 없으면 안내한다.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: StampListScreen·help 소량 변경.
+- 식별자 joinSendActiveId / joinSendOwned / joinSendRowBlocked 공개 GitHub 동일 구현 없음.
+- OSS 목록 GPL 단독 신규 없음.
+- 실기기 전송은 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-join-list-send-check.bat, docs/SECURITY-join-list-send-check-20260914.md |
+| **재사용·수정** | src/components/StampListScreen.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/services/joinStampSend.ts, src/services/projectUploadQueue.ts, api/project.js |
+| **스냅샷** | src.pre-join-list-send-check/, public.pre-join-list-send-check/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한 없음. 기존 lookup만 추가 호출.
+
+## 특허
+- 고르기 창 탭 가로채기와 보내기 전 조회는 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260914_223408.apk
+- 되돌리기: restore-join-list-send-check.bat
+
+---
+
 # 수정기록 — 저장 화면 뒤로가기 (2026-09-14)
 
 ## 목적

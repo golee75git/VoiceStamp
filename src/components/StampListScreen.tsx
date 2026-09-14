@@ -27,12 +27,14 @@ import {
   getInboxExcelFontSize,
   getInboxExcelPreviewWidth,
   inboxExcelFontSizeToPt,
+  joinHistoryUploadBlocked,
   sanitizeInboxExcelFontSize,
   sanitizeInboxExcelPreviewWidth,
   setInboxExcelFontSize,
   setInboxExcelPreviewWidth,
   type InboxExcelFontSize,
   type JoinedProjectHistory,
+  type OwnedProject,
   type ProjectUploadStatus,
 } from '../services/projectCollectSettings';
 import { StampSaveModal } from './StampSaveModal';
@@ -135,6 +137,8 @@ export function StampListScreen({
   const [joinSendPickerVisible, setJoinSendPickerVisible] = useState(false);
   const [joinSendList, setJoinSendList] = useState<JoinedProjectHistory[]>([]);
   const [joinSendIds, setJoinSendIds] = useState<string[]>([]);
+  const [joinSendActiveId, setJoinSendActiveId] = useState<string | null>(null);
+  const [joinSendOwned, setJoinSendOwned] = useState<OwnedProject[]>([]);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
@@ -851,8 +855,14 @@ export function StampListScreen({
       return;
     }
     try {
-      const { listJoinedProjectHistory } = await import('../services/projectCollectSettings');
-      const history = await listJoinedProjectHistory();
+      const { getProjectJoin, listJoinedProjectHistory, listOwnedProjects } = await import(
+        '../services/projectCollectSettings'
+      );
+      const [history, currentJoin, owned] = await Promise.all([
+        listJoinedProjectHistory(),
+        getProjectJoin(),
+        listOwnedProjects(),
+      ]);
       if (history.length === 0) {
         Alert.alert(
           '사업으로 보내기',
@@ -862,6 +872,8 @@ export function StampListScreen({
       }
       setJoinSendIds(ids);
       setJoinSendList(history);
+      setJoinSendActiveId(currentJoin?.projectId ?? null);
+      setJoinSendOwned(owned);
       setJoinSendPickerVisible(true);
     } catch (e) {
       Alert.alert('사업으로 보내기', e instanceof Error ? e.message : '실패');
@@ -869,18 +881,41 @@ export function StampListScreen({
   };
 
   const handlePickJoinForSend = (item: JoinedProjectHistory) => {
-    setJoinSendPickerVisible(false);
     const ids = joinSendIds;
     if (ids.length === 0) {
+      setJoinSendPickerVisible(false);
       return;
     }
+    if (joinHistoryUploadBlocked(item, joinSendOwned).blocked) {
+      Alert.alert(
+        '사업으로 보내기',
+        '종료되었거나 보관이 끝난 사업에는 올리지 않습니다.',
+      );
+      return;
+    }
+    setJoinSendPickerVisible(false);
     void (async () => {
       try {
-        const { getProjectJoin } = await import('../services/projectCollectSettings');
+        const { getProjectJoin, markJoinedProjectEnded } = await import(
+          '../services/projectCollectSettings'
+        );
+        const { apiLookupProject, mapProjectApiError } = await import(
+          '../services/projectCollectApi'
+        );
+        const { isProjectGoneApiError } = await import('../services/joinEndedNotice');
         const { isProjectUploadQueueIdle, queueStampsToCurrentJoin } = await import(
           '../services/projectUploadQueue'
         );
         const { connectJoinForSend } = await import('../services/joinStampSend');
+        try {
+          await apiLookupProject(item.projectId);
+        } catch (e) {
+          if (isProjectGoneApiError(e)) {
+            await markJoinedProjectEnded(item.projectId);
+          }
+          Alert.alert('사업으로 보내기', mapProjectApiError(e));
+          return;
+        }
         const current = await getProjectJoin();
         if (current && current.projectId !== item.projectId && !isProjectUploadQueueIdle()) {
           Alert.alert('사업으로 보내기', '아직 올리는 중이니 잠시 후 다시 시도해 주세요.');
@@ -890,6 +925,14 @@ export function StampListScreen({
           setJoinSendBusy(true);
           try {
             await connectJoinForSend(item);
+            const join = await getProjectJoin();
+            if (!join || join.projectId !== item.projectId || !join.uploadCode) {
+              Alert.alert(
+                '사업으로 보내기',
+                '이 사업에 연결되지 않았습니다. 사업 취합에서 참여한 뒤 다시 시도해 주세요.',
+              );
+              return;
+            }
             await queueStampsToCurrentJoin(ids);
             exitSelection();
             await load();
@@ -1656,22 +1699,33 @@ export function StampListScreen({
           style={styles.joinSendBg}
           onPress={() => setJoinSendPickerVisible(false)}
         >
-          <View style={styles.joinSendCard}>
+          <Pressable style={styles.joinSendCard} onPress={() => {}}>
             <Text style={styles.joinSendTitle}>참여한 사업</Text>
+            <Text style={styles.joinSendHint}>보낼 사업 이름을 누르세요.</Text>
             <ScrollView style={styles.joinSendScroll}>
-              {joinSendList.map((item) => (
-                <Pressable
-                  key={item.projectId}
-                  style={styles.joinSendRow}
-                  onPress={() => handlePickJoinForSend(item)}
-                  disabled={joinSendBusy}
-                >
-                  <Text style={styles.joinSendRowTitle}>{item.name}</Text>
-                  {item.mark ? (
-                    <Text style={styles.joinSendRowSub}>{item.mark}</Text>
-                  ) : null}
-                </Pressable>
-              ))}
+              {joinSendList.map((item) => {
+                const flags = joinHistoryUploadBlocked(item, joinSendOwned);
+                const live = joinSendActiveId === item.projectId;
+                const sub = [
+                  live ? '연결됨' : '',
+                  flags.closed ? '종료됨' : '',
+                  flags.expired ? '만료됨' : '',
+                  item.mark || '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
+                return (
+                  <Pressable
+                    key={item.projectId}
+                    style={[styles.joinSendRow, flags.blocked && styles.joinSendRowBlocked]}
+                    onPress={() => handlePickJoinForSend(item)}
+                    disabled={joinSendBusy}
+                  >
+                    <Text style={styles.joinSendRowTitle}>{item.name}</Text>
+                    {sub ? <Text style={styles.joinSendRowSub}>{sub}</Text> : null}
+                  </Pressable>
+                );
+              })}
             </ScrollView>
             <Pressable
               style={styles.joinSendClose}
@@ -1679,7 +1733,7 @@ export function StampListScreen({
             >
               <Text style={styles.joinSendCloseText}>닫기</Text>
             </Pressable>
-          </View>
+          </Pressable>
         </Pressable>
       </Modal>
       <Modal
@@ -2383,6 +2437,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
+  joinSendHint: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
   joinSendScroll: {
     maxHeight: 320,
   },
@@ -2390,6 +2448,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e5e7eb',
+  },
+  joinSendRowBlocked: {
+    opacity: 0.45,
   },
   joinSendRowTitle: {
     fontSize: 16,

@@ -4394,3 +4394,11 @@ restore-save-sheet-back.bat
 ```
 
 Restores `StampSaveModal.tsx`, `CameraScreen.tsx`, and `help.html` from `*.pre-save-sheet-back/` (before hardware back leaving a blank save sheet).
+
+## Join list send check restore (2026-09-14)
+
+```bat
+restore-join-list-send-check.bat
+```
+
+Restores `StampListScreen.tsx` and `help.html` from `*.pre-join-list-send-check/` (before list send picker tap + join check).
