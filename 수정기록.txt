@@ -1,3 +1,42 @@
+# 수정기록 — 저장 화면 뒤로가기 (2026-09-14)
+
+## 목적
+일부 폰에서 저장 화면 시스템 뒤로가기가 흰 화면에 머물고 카메라 홈이 안 나오던 문제를 막는다.
+
+## 조치
+- StampSaveModal: handleSaveSheetBack으로 안쪽 시트(확대·폴더·유형·취합·가리기·항목 말하기)를 한 단계씩 닫고, 저장 중이면 닫지 않는다.
+- Android KeyboardAvoidingView padding 제거(iOS만 padding).
+- CameraScreen: 저장 모달이 열려 있으면 앱 종료 확인을 띄우지 않음. 저장 모달을 열 때 앱 내 카메라 모드를 지움.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: StampSaveModal·CameraScreen·help 소량 변경.
+- 식별자 handleSaveSheetBack / saveSheetBackLockRef 공개 GitHub 동일 구현 없음.
+- OSS 목록 GPL 단독 신규 없음.
+- 실기기 뒤로가기는 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-save-sheet-back.bat, docs/SECURITY-save-sheet-back-20260914.md |
+| **재사용·수정** | src/components/StampSaveModal.tsx, src/components/CameraScreen.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/services/exportOnDemand.ts, src/screens/MainScreen.tsx |
+| **스냅샷** | src.pre-save-sheet-back/, public.pre-save-sheet-back/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 모달 단계 닫기와 하드웨어 뒤로가기는 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260914_190436.apk
+- 되돌리기: restore-save-sheet-back.bat
+
+---
+
 # 수정기록 — 저장 화면 칸 이름 탭 유지 (2026-09-14)
 
 ## 목적

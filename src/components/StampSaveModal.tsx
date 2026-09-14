@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react
 import {
   ActivityIndicator,
   Alert,
+  BackHandler,
   FlatList,
   InteractionManager,
   KeyboardAvoidingView,
@@ -432,6 +433,7 @@ export function StampSaveModal({
   const originalCameraUriRef = useRef<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const slotSpeechOpenedRef = useRef(false);
+  const saveSheetBackLockRef = useRef(false);
 
   const scrollMemoIntoView = () => {
     requestAnimationFrame(() => {
@@ -1536,6 +1538,64 @@ export function StampSaveModal({
     setImageViewerVisible(false);
   };
 
+  const handleSaveSheetBack = useCallback(() => {
+    if (saveSheetBackLockRef.current || saving) {
+      return;
+    }
+    saveSheetBackLockRef.current = true;
+    requestAnimationFrame(() => {
+      saveSheetBackLockRef.current = false;
+    });
+    if (imageViewerVisible) {
+      setImageViewerVisible(false);
+      return;
+    }
+    if (folderPickerVisible) {
+      setFolderPickerVisible(false);
+      return;
+    }
+    if (templatePickerVisible) {
+      setTemplatePickerVisible(false);
+      return;
+    }
+    if (joinPickerVisible) {
+      if (!joinSwitchBusy) {
+        setJoinPickerVisible(false);
+      }
+      return;
+    }
+    if (privacyModalOpen) {
+      setPrivacyModalOpen(false);
+      return;
+    }
+    if (slotSpeechOpen) {
+      setSlotSpeechOpen(false);
+      return;
+    }
+    onClose();
+  }, [
+    saving,
+    imageViewerVisible,
+    folderPickerVisible,
+    templatePickerVisible,
+    joinPickerVisible,
+    joinSwitchBusy,
+    privacyModalOpen,
+    slotSpeechOpen,
+    onClose,
+  ]);
+
+  useEffect(() => {
+    if (!visible || Platform.OS === 'web') {
+      return;
+    }
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleSaveSheetBack();
+      return true;
+    });
+    return () => sub.remove();
+  }, [visible, handleSaveSheetBack]);
+
   const persistFieldLabel = useCallback(
     async (
       field: 'title' | 'place' | 'memo' | 'extra1' | 'extra2' | 'extra3',
@@ -1936,10 +1996,10 @@ export function StampSaveModal({
 
   return (
     <>
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={handleSaveSheetBack}>
       <KeyboardAvoidingView
         style={styles.overlay}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.sheet}>
           <ScrollView

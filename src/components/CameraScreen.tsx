@@ -330,10 +330,21 @@ export function CameraScreen({
   }, [isWeb]);
 
   const openSaveModal = useCallback((uri: string, seedSourceUrl?: string | null) => {
+    setInAppCameraMode(null);
+    setInAppCameraReady(false);
     setSaveSeedSourceUrl(seedSourceUrl ?? null);
     setCapturedUri(uri);
     setModalVisible(true);
   }, []);
+
+  const closeSaveModal = useCallback(() => {
+    setModalVisible(false);
+    setCapturedUri(null);
+    setSaveSeedSourceUrl(null);
+    cancelLocationPrefetch();
+    savedAndClosingRef.current = false;
+    setAutoLaunch(false);
+  }, [cancelLocationPrefetch]);
 
   const handleCameraError = useCallback((error: unknown) => {
     const message = error instanceof Error ? error.message : '카메라에 실패했습니다.';
@@ -728,17 +739,33 @@ export function CameraScreen({
   ]);
 
   useEffect(() => {
-    if (!inAppCameraMode) {
+    if (Platform.OS === 'web') {
       return;
     }
 
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      exitInAppCamera();
-      return true;
+      if (modalVisible) {
+        return true;
+      }
+      if (actionSheetVisible) {
+        handleActionRetake();
+        return true;
+      }
+      if (inAppCameraMode) {
+        exitInAppCamera();
+        return true;
+      }
+      return false;
     });
 
     return () => sub.remove();
-  }, [exitInAppCamera, inAppCameraMode]);
+  }, [
+    actionSheetVisible,
+    exitInAppCamera,
+    handleActionRetake,
+    inAppCameraMode,
+    modalVisible,
+  ]);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -1083,14 +1110,7 @@ export function CameraScreen({
         locationPrefetchLoading={locationPrefetchLoading}
         locationPrefetchFinished={locationPrefetchFinished}
         capturedSourceUrl={saveSeedSourceUrl}
-        onClose={() => {
-          setModalVisible(false);
-          setCapturedUri(null);
-          setSaveSeedSourceUrl(null);
-          cancelLocationPrefetch();
-          savedAndClosingRef.current = false;
-          setAutoLaunch(false);
-        }}
+        onClose={closeSaveModal}
         onSaved={() => {
           savedAndClosingRef.current = true;
           onSaved();

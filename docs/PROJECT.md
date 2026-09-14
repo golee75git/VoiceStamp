@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-09-14** — 저장 화면 칸 이름 탭 유지 · 권장 `183910` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: (본 배포) 저장 화면 칸 이름 탭 유지
+문서 동기화: **2026-09-14** — 저장 화면 뒤로가기 · 권장 `190436` · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: (본 배포) 저장 화면 시스템 뒤로가기가 홈으로 복귀
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -1297,6 +1297,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-14 (저장 화면 뒤로가기)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장 화면 시스템 뒤로가기가 「취소」와 같게 이전 화면으로, 안쪽 시트는 한 단계씩 |
+| APK | `releases/VoiceStamp_20260914_190436.apk` |
+| 롤백 | `restore-save-sheet-back.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-save-sheet-back-20260914.md](./SECURITY-save-sheet-back-20260914.md) |
 
 ### 2026-09-14 (저장 화면 칸 이름 탭 유지)
 

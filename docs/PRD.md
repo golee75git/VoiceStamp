@@ -725,7 +725,8 @@
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `181951` | `4f27cd0` |
-| **2026-09-14** | 저장 화면 **칸 이름 탭**이 메모로 내려가지 않게 · 도움말 · APK `183910` · `restore-save-label-stay.bat` | (본 커밋) |
+| **2026-09-14** | 저장 화면 **시스템 뒤로가기**가 흰 화면에 머물지 않게 · 도움말 · APK `190436` · `restore-save-sheet-back.bat` | (본 커밋) |
+| **2026-09-14** | 저장 화면 **칸 이름 탭**이 메모로 내려가지 않게 · 도움말 · APK `183910` · `restore-save-label-stay.bat` | (이전) |
 | **2026-09-14** | **HWPX 표·사진 조금 작게**(한 쪽) · 도움말 · APK `151454` · `restore-hwpx-table-slack.bat` | (이전) |
 | **2026-09-14** | **HWPX 한글 1칸 서식 재적용** · 랜딩 APK 주소·캐시 · APK `144257` · `restore-hwpx-reapply-1cell.bat` | (이전) |
 | **2026-09-14** | **HWPX 한 칸** 사진·캡션 덩어리 · 도움말 · APK `142225` · `restore-hwpx-caption-blob.bat` | (이전) |
@@ -759,11 +760,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-09-14:** 권장 파일은 **`VoiceStamp_20260914_183910.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-09-14:** 권장 파일은 **`VoiceStamp_20260914_190436.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260914_183910.apk` | (본 커밋) | **설치·GitHub 권장** — 저장 화면 칸 이름 탭이 메모로 내려가지 않음 |
+| `releases/VoiceStamp_20260914_190436.apk` | (본 커밋) | **설치·GitHub 권장** — 저장 화면 뒤로가기가 흰 화면에 머물지 않음 |
+| `releases/VoiceStamp_20260914_183910.apk` | (이전) | **이전** — 저장 화면 칸 이름 탭이 메모로 내려가지 않음 |
 | `releases/VoiceStamp_20260914_151454.apk` | (이전) | **이전** — HWPX 표·사진 조금 작게 |
 | `releases/VoiceStamp_20260914_144257.apk` | (이전) | **이전** — HWPX 한글 1칸 서식 재적용 |
 | `releases/VoiceStamp_20260914_142225.apk` | (이전) | **이전** — HWPX 한 칸 사진·캡션 덩어리 |

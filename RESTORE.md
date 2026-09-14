@@ -4386,3 +4386,11 @@ restore-save-label-stay.bat
 ```
 
 Restores `StampSaveModal.tsx`, `VoiceInputField.tsx`, and `help.html` from `*.pre-save-label-stay/` (before label-tap staying on the field instead of scrolling to memo).
+
+## Save sheet back restore (2026-09-14)
+
+```bat
+restore-save-sheet-back.bat
+```
+
+Restores `StampSaveModal.tsx`, `CameraScreen.tsx`, and `help.html` from `*.pre-save-sheet-back/` (before hardware back leaving a blank save sheet).
