@@ -4370,3 +4370,11 @@ restore-hwpx-reapply-1cell.bat
 ```
 
 Restores `report.hwpx`, `help.html`, and `vercel.json` from `*.pre-hwpx-reapply-1cell/` (before the latest Hangul 1-cell `report.hwpx` and landing cache/download URL change).
+
+## HWPX table slack restore (2026-09-14)
+
+```bat
+restore-hwpx-table-slack.bat
+```
+
+Restores `hwpxTemplate.ts` and `help.html` from `*.pre-hwpx-table-slack/` (before slightly shorter HWPX photo/table height).

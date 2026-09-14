@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 |------|------|
 | 문서 갱신 | 2026-08-23 — 날짜별·APK별 정리 |
-| 권장 APK | `releases/VoiceStamp_20260914_144257.apk` |
+| 권장 APK | `releases/VoiceStamp_20260914_151454.apk` |
 | 기준 커밋 | `bba7014` 연결 비교 엑셀 사진 가로 |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
@@ -16,6 +16,7 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
+| **2026-09-14** | HWPX 표·사진을 **조금 작게** 해 한 쪽에 맞춤 · 도움말 · APK `151454` | `restore-hwpx-table-slack.bat` · `151454` |
 | **2026-09-14** | HWPX 한글 **1칸 서식 재적용** · 랜딩 APK 주소·캐시 · APK `144257` | `restore-hwpx-reapply-1cell.bat` · `144257` |
 | **2026-09-14** | HWPX **한 칸** 사진·캡션 덩어리(앱 칸 이름·값) · 도움말 · APK `142225` | `restore-hwpx-caption-blob.bat` · `142225` |
 | **2026-09-14** | HWPX **사진·캡션 표** 칸·사진은 쪽 칸에 맞춰 크게 · 도움말 · APK `134700` | `restore-hwpx-pic-caption.bat` · `134700` |
@@ -72,7 +73,8 @@
 
 | APK | 커밋 | 한 줄 |
 |-----|------|--------|
-| **`VoiceStamp_20260914_144257.apk`** | (본 커밋) | **설치·GitHub 권장** — HWPX 한글 1칸 서식 재적용 · 랜딩 직접 다운로드 |
+| **`VoiceStamp_20260914_151454.apk`** | (본 커밋) | **설치·GitHub 권장** — HWPX 표·사진 조금 작게(한 쪽) |
+| **`VoiceStamp_20260914_144257.apk`** | (이전 커밋) | **이전** — HWPX 한글 1칸 서식 재적용 · 랜딩 직접 다운로드 |
 | **`VoiceStamp_20260914_142225.apk`** | (이전 커밋) | **이전** — HWPX 한 칸 사진·캡션 덩어리 |
 | **`VoiceStamp_20260914_134700.apk`** | (이전 커밋) | **이전** — HWPX 사진·캡션 표 칸, 사진은 쪽 칸에 맞춤 |
 | **`VoiceStamp_20260914_131007.apk`** | (이전 커밋) | **이전** — HWPX 첫 사진 누락·표 넘침 보정 |

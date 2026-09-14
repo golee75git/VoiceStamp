@@ -166,6 +166,8 @@ const CONTENT_WIDTH_HWP = 42520;
 const COLUMN_GAP_HWP = 1134;
 const HEADER_RESERVE_HWP = 3600;
 const MIN_PIC_HWP = 4800;
+/** 표·사진이 쪽 칸을 살짝 넘지 않게 비우는 세로 여유. */
+const TABLE_PAGE_SLACK_HWP = 5600;
 
 export type HwpxPhotosPerPage = 1 | 2 | 3 | 4;
 
@@ -300,8 +302,9 @@ function fitStampTable(
   const twoRow = (head.match(/<hp:tr/g) || []).length >= 2;
   const captionInPhoto = !twoRow && photoCellKeepsCaption(head);
   const captionH = captionBandHeight(stamp);
-  const photoH = Math.max(MIN_PIC_HWP, maxHeight - captionH);
-  const tableH = twoRow ? photoH + captionH : captionInPhoto ? maxHeight : photoH;
+  const fitH = Math.max(MIN_PIC_HWP, maxHeight - TABLE_PAGE_SLACK_HWP);
+  const photoH = Math.max(MIN_PIC_HWP, fitH - captionH);
+  const tableH = twoRow ? photoH + captionH : captionInPhoto ? fitH : photoH;
   let nextHead = setTableBox(head, maxWidth, tableH);
   if (twoRow) {
     nextHead = setCellBoxes(nextHead, maxWidth, [photoH, captionH]);
