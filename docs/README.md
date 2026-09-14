@@ -67,6 +67,7 @@
 | [SECURITY-follow-title-seq-20260823.md](./SECURITY-follow-title-seq-20260823.md) | 보안·UX | 이음 제목 번호 |
 | [SECURITY-follow-xlsx-photo-px-20260823.md](./SECURITY-follow-xlsx-photo-px-20260823.md) | 보안·UX | 연결 비교 엑셀 사진 가로 |
 | [SECURITY-list-xlsx-photo-px-20260823.md](./SECURITY-list-xlsx-photo-px-20260823.md) | 보안·UX | 저장 목록 엑셀 사진 가로 |
+| [SECURITY-save-label-stay-20260914.md](./SECURITY-save-label-stay-20260914.md) | 보안·UX | 저장 화면 칸 이름 탭이 메모로 내려가지 않음 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
 | [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) | 배포·법무 | OSS 고지·dual-license 검토 결론 (MIT/BSD 확정) |
@@ -87,14 +88,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-10)
 
-- **문서 갱신일:** 2026-09-14 — **HWPX 표·사진 조금 작게** · APK `151454`
-- **최신 기능 커밋:** (본 배포) · APK `151454` — HWPX 표가 한 쪽에 들어가도록 사진 조금 작게
+- **문서 갱신일:** 2026-09-14 — **저장 화면 칸 이름 탭 유지** · APK `183910`
+- **최신 기능 커밋:** (본 배포) · APK `183910` — 칸 이름 탭 시 메모로 스크롤되지 않음
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260914_151454.apk` — HWPX 표·사진 조금 작게
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260914_151454.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260914_183910.apk` — 저장 화면 칸 이름 탭이 메모로 내려가지 않음
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260914_183910.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260914_151454.apk` — HWPX 표·사진 조금 작게
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_144257.apk` — HWPX 한글 1칸 서식 재적용
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_142225.apk` — HWPX 한 칸 사진·캡션 덩어리
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_134700.apk` — HWPX 사진·캡션 표 칸·사진 크게

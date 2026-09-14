@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { FIELD_LABEL_MAX_LENGTH } from '../services/fieldLabels';
@@ -48,6 +48,8 @@ export function VoiceInputField({
 }: VoiceInputFieldProps) {
   const [editingLabel, setEditingLabel] = useState(false);
   const [draftLabel, setDraftLabel] = useState(label);
+  const valueInputRef = useRef<TextInput>(null);
+  const skipValueFocusFromLabelRef = useRef(false);
 
   useEffect(() => {
     if (!editingLabel) {
@@ -58,6 +60,21 @@ export function VoiceInputField({
   const commitLabel = () => {
     setEditingLabel(false);
     onLabelCommit?.(draftLabel);
+  };
+
+  const beginLabelEdit = () => {
+    skipValueFocusFromLabelRef.current = true;
+    valueInputRef.current?.blur();
+    setEditingLabel(true);
+  };
+
+  const handleValueFocus = () => {
+    if (skipValueFocusFromLabelRef.current || editingLabel) {
+      skipValueFocusFromLabelRef.current = false;
+      valueInputRef.current?.blur();
+      return;
+    }
+    onFocus?.();
   };
 
   return (
@@ -79,7 +96,8 @@ export function VoiceInputField({
           />
         ) : labelEditable ? (
           <Pressable
-            onPress={() => setEditingLabel(true)}
+            onPressIn={beginLabelEdit}
+            onPress={beginLabelEdit}
             accessibilityRole="button"
             accessibilityLabel={`${label} 표시명 수정`}
             accessibilityHint="탭하면 칸 이름을 바꿀 수 있습니다. 설정에도 저장됩니다."
@@ -108,10 +126,12 @@ export function VoiceInputField({
         </View>
       </View>
       <TextInput
+        ref={valueInputRef}
         style={[styles.input, multiline && styles.inputMultiline, { textAlign, fontSize }]}
         value={value}
         onChangeText={onChangeText}
-        onFocus={onFocus}
+        onFocus={handleValueFocus}
+        editable={!editingLabel}
         onSelectionChange={(event) => onSelectionChange?.(event.nativeEvent.selection)}
         selection={selection}
         placeholder={placeholderHint?.trim() || `${label} 입력`}

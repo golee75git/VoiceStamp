@@ -4378,3 +4378,11 @@ restore-hwpx-table-slack.bat
 ```
 
 Restores `hwpxTemplate.ts` and `help.html` from `*.pre-hwpx-table-slack/` (before slightly shorter HWPX photo/table height).
+
+## Save label stay restore (2026-09-14)
+
+```bat
+restore-save-label-stay.bat
+```
+
+Restores `StampSaveModal.tsx`, `VoiceInputField.tsx`, and `help.html` from `*.pre-save-label-stay/` (before label-tap staying on the field instead of scrolling to memo).

@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-09-14** — HWPX 표·사진 조금 작게 · 권장 `151454` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: (본 배포) HWPX 표·사진 조금 작게
+문서 동기화: **2026-09-14** — 저장 화면 칸 이름 탭 유지 · 권장 `183910` · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: (본 배포) 저장 화면 칸 이름 탭 유지
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -1297,6 +1297,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-14 (저장 화면 칸 이름 탭 유지)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 칸 이름 탭 시 메모로 스크롤되지 않음(메모·글자 읽기는 유지) |
+| APK | `releases/VoiceStamp_20260914_183910.apk` |
+| 롤백 | `restore-save-label-stay.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-save-label-stay-20260914.md](./SECURITY-save-label-stay-20260914.md) |
 
 ### 2026-09-14 (표·사진 세로 여유)
 

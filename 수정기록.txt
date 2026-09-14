@@ -1,3 +1,41 @@
+# 수정기록 — 저장 화면 칸 이름 탭 유지 (2026-09-14)
+
+## 목적
+저장 화면에서 칸 이름(표시명)을 탭하면 시트가 맨 아래 메모로 내려가던 문제를 막는다.
+
+## 조치
+- VoiceInputField: 칸 이름 편집을 시작할 때 값 입력 포커스 스크롤을 건너뛴다(skipValueFocusFromLabelRef).
+- StampSaveModal: scrollToEnd는 메모 칸 포커스와 글자 읽기 채우기 후에만 쓴다.
+- npm·글꼴 추가 없음.
+
+## 검증
+- Git diff: StampSaveModal 스크롤 연결 축소, VoiceInputField 라벨 탭 가드.
+- 식별자 skipValueFocusFromLabelRef / scrollMemoIntoView 공개 GitHub 히트 없음.
+- OSS 목록 GPL 단독 패키지 없음. npm 추가 없음.
+- 실기기 칸 이름 탭·메모 입력은 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-save-label-stay.bat, docs/SECURITY-save-label-stay-20260914.md |
+| **재사용·수정** | src/components/StampSaveModal.tsx, src/components/VoiceInputField.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/services/exportOnDemand.ts |
+| **스냅샷** | src.pre-save-label-stay/, public.pre-save-label-stay/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 입력 포커스와 시트 스크롤을 나누는 동작은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260914_183910.apk
+- 되돌리기: restore-save-label-stay.bat
+
+---
+
 # 수정기록 — HWPX 표·사진 세로 여유 (2026-09-14)
 
 ## 목적

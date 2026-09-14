@@ -433,7 +433,7 @@ export function StampSaveModal({
   const scrollRef = useRef<ScrollView>(null);
   const slotSpeechOpenedRef = useRef(false);
 
-  const scrollFieldIntoView = () => {
+  const scrollMemoIntoView = () => {
     requestAnimationFrame(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
     });
@@ -2174,7 +2174,6 @@ export function StampSaveModal({
                   onMicPress={() => handleMicPress('sourceUrl')}
                   listening={listening && speechTarget === 'sourceUrl'}
                   speechAvailable={available}
-                  onFocus={scrollFieldIntoView}
                   selection={sourceUrlSelection}
                   onSelectionChange={(selection) => {
                     sourceUrlSelectionRef.current = selection;
@@ -2232,7 +2231,6 @@ export function StampSaveModal({
                       setSiteName(text);
                     }}
                     placeholder="예: 20260609_역삼동 (비우면 기본)"
-                    onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
                   {cameraHand === 'right' ? (
@@ -2259,7 +2257,6 @@ export function StampSaveModal({
                     value={groupName}
                     onChangeText={setGroupName}
                     placeholder="예: 20260608_OO초 (비우면 기본)"
-                    onFocus={scrollFieldIntoView}
                     maxLength={80}
                   />
                   {cameraHand === 'right' ? (
@@ -2287,7 +2284,6 @@ export function StampSaveModal({
                 onMicPress={() => handleMicPress('title')}
                 listening={listening && speechTarget === 'title'}
                 speechAvailable={available}
-                onFocus={scrollFieldIntoView}
                 selection={titleSelection}
                 onSelectionChange={(selection) => {
                   titleSelectionRef.current = selection;
@@ -2312,7 +2308,6 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('place')}
               listening={listening && speechTarget === 'place'}
               speechAvailable={available}
-              onFocus={scrollFieldIntoView}
               selection={placeSelection}
               onSelectionChange={(selection) => {
                 placeSelectionRef.current = selection;
@@ -2357,7 +2352,6 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra1')}
               listening={listening && speechTarget === 'extra1'}
               speechAvailable={available}
-              onFocus={scrollFieldIntoView}
               selection={extra1Selection}
               onSelectionChange={(selection) => {
                 extra1SelectionRef.current = selection;
@@ -2378,7 +2372,6 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra2')}
               listening={listening && speechTarget === 'extra2'}
               speechAvailable={available}
-              onFocus={scrollFieldIntoView}
               selection={extra2Selection}
               onSelectionChange={(selection) => {
                 extra2SelectionRef.current = selection;
@@ -2399,7 +2392,6 @@ export function StampSaveModal({
               onMicPress={() => handleMicPress('extra3')}
               listening={listening && speechTarget === 'extra3'}
               speechAvailable={available}
-              onFocus={scrollFieldIntoView}
               selection={extra3Selection}
               onSelectionChange={(selection) => {
                 extra3SelectionRef.current = selection;
@@ -2424,7 +2416,7 @@ export function StampSaveModal({
               listening={listening && speechTarget === 'memo'}
               speechAvailable={available}
               multiline
-              onFocus={scrollFieldIntoView}
+              onFocus={scrollMemoIntoView}
               selection={memoSelection}
               onSelectionChange={(selection) => {
                 memoSelectionRef.current = selection;
