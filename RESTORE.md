@@ -4362,3 +4362,11 @@ restore-hwpx-caption-blob.bat
 ```
 
 Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-caption-blob/` (before the 1-cell Hangul table with photo and app caption as one blob).
+
+## HWPX Hangul 1-cell reapply restore (2026-09-14)
+
+```bat
+restore-hwpx-reapply-1cell.bat
+```
+
+Restores `report.hwpx`, `help.html`, and `vercel.json` from `*.pre-hwpx-reapply-1cell/` (before the latest Hangul 1-cell `report.hwpx` and landing cache/download URL change).

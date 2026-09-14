@@ -749,6 +749,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG · 권장 `181951` (**소스 없음**) |
 | 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
+| 2026-09-14 | 4·3 | **HWPX 한글 1칸 서식 재적용** · 랜딩 APK 주소·캐시 · APK `144257` · `restore-hwpx-reapply-1cell.bat` |
 | 2026-09-14 | 4·3 | **HWPX 한 칸** 사진·캡션 덩어리 · APK `142225` · `restore-hwpx-caption-blob.bat` |
 | 2026-09-14 | 4·3 | **HWPX 사진·캡션 표** 칸·사진 크게 · APK `134700` · `restore-hwpx-pic-caption.bat` |
 | 2026-09-14 | 4·3 | **HWPX 첫 사진** 누락·표 넘침 보정 · APK `131007` · `restore-hwpx-first-pic.bat` |
@@ -780,10 +781,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-09-14:** 권장 = `releases/VoiceStamp_20260914_142225.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-09-14:** 권장 = `releases/VoiceStamp_20260914_144257.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260914_142225.apk` | (본 커밋) | **설치·GitHub 권장** — HWPX 한 칸 사진·캡션 덩어리 |
+| `releases/VoiceStamp_20260914_144257.apk` | (본 커밋) | **설치·GitHub 권장** — HWPX 한글 1칸 서식 재적용 |
+| `releases/VoiceStamp_20260914_142225.apk` | (이전) | **이전** — HWPX 한 칸 사진·캡션 덩어리 |
 | `releases/VoiceStamp_20260914_134700.apk` | (이전) | **이전** — HWPX 사진·캡션 표 칸 |
 | `releases/VoiceStamp_20260823_181951.apk` | `bba7014` | **이전** — 연결 비교 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |

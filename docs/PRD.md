@@ -8,8 +8,8 @@
 | 기술 스택 | Expo SDK 56, React Native 0.85, SQLite |
 | 저장소 | https://github.com/golee75git/VoiceStamp |
 | 문서 작성일 | 2026-07-31 |
-| 문서 동기화 | 2026-09-14 — HWPX 한 칸 사진·캡션 덩어리 · 권장 `142225` |
-| 최신 반영 커밋 | (본 배포) HWPX 한 칸 사진·캡션 덩어리 |
+| 문서 동기화 | 2026-09-14 — HWPX 한글 1칸 서식 재적용 · 권장 `144257` |
+| 최신 반영 커밋 | (본 배포) HWPX 한글 1칸 서식 재적용 |
 | 변경 이력 | [CHANGELOG.md](./CHANGELOG.md) |
 | 성능·헬스체크 | [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`) |
 
@@ -725,7 +725,8 @@
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `181951` | `4f27cd0` |
-| **2026-09-14** | **HWPX 한 칸** 사진·캡션 덩어리 · 도움말 · APK `142225` · `restore-hwpx-caption-blob.bat` | (본 커밋) |
+| **2026-09-14** | **HWPX 한글 1칸 서식 재적용** · 랜딩 APK 주소·캐시 · APK `144257` · `restore-hwpx-reapply-1cell.bat` | (본 커밋) |
+| **2026-09-14** | **HWPX 한 칸** 사진·캡션 덩어리 · 도움말 · APK `142225` · `restore-hwpx-caption-blob.bat` | (이전) |
 | **2026-09-14** | **HWPX 사진·캡션 표** 칸 적용·사진 크게 · 도움말 · APK `134700` · `restore-hwpx-pic-caption.bat` | (이전) |
 | **2026-09-14** | **HWPX 첫 사진** 누락·표 넘침 보정 · 도움말 · APK `131007` · `restore-hwpx-first-pic.bat` | (이전) |
 | **2026-09-14** | **HWPX 한글 저장 사진 표** 서식 적용 · 도움말 · APK `112329` · `restore-hwpx-han-table.bat` | (이전) |
@@ -756,11 +757,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-09-14:** 권장 파일은 **`VoiceStamp_20260914_142225.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-09-14:** 권장 파일은 **`VoiceStamp_20260914_144257.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260914_142225.apk` | (본 커밋) | **설치·GitHub 권장** — HWPX 한 칸 사진·캡션 덩어리 |
+| `releases/VoiceStamp_20260914_144257.apk` | (본 커밋) | **설치·GitHub 권장** — HWPX 한글 1칸 서식 재적용 |
+| `releases/VoiceStamp_20260914_142225.apk` | (이전) | **이전** — HWPX 한 칸 사진·캡션 덩어리 |
 | `releases/VoiceStamp_20260914_134700.apk` | (이전) | **이전** — HWPX 사진·캡션 표 칸 |
 | `releases/VoiceStamp_20260823_181951.apk` | `bba7014` | **이전** — 연결 비교 엑셀 사진 가로 |
 | `releases/VoiceStamp_20260823_173038.apk` | `a5f627a` | **이전** — 저장 목록 엑셀 사진 가로 |
