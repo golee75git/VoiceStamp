@@ -4402,3 +4402,11 @@ restore-join-list-send-check.bat
 ```
 
 Restores `StampListScreen.tsx` and `help.html` from `*.pre-join-list-send-check/` (before list send picker tap + join check).
+
+## Inbox on-device thumb restore (2026-09-14)
+
+```bat
+restore-inbox-on-device.bat
+```
+
+Restores `ProjectCollectScreen.tsx`, `projectImportedStamps.ts`, and `help.html` from `*.pre-inbox-on-device/` (before inbox showing this-phone thumbs instead of waiting).

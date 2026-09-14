@@ -62,6 +62,8 @@ export async function listImportedStampsForProject(
 }
 
 /** One row in the project inbox list (server + local import merge). */
+export type InboxLocalKind = 'imported' | 'on_device';
+
 export type MergedInboxItem = {
   stampId: string;
   title: string;
@@ -69,12 +71,15 @@ export type MergedInboxItem = {
   uploadedByMark?: string | null;
   onServer: boolean;
   localImagePath: string | null;
+  /** imported = 「내 폰으로」. on_device = same id already on this phone. */
+  localKind?: InboxLocalKind | null;
 };
 
 /** Merge remote manifest with local imported stamps. Local-only rows stay after server delete. */
 export function mergeInboxWithLocal(
   remote: ManifestStamp[],
   localImported: Stamp[],
+  onDevice: Stamp[] = [],
 ): MergedInboxItem[] {
   const byId = new Map<string, MergedInboxItem>();
   for (const r of remote) {
@@ -85,6 +90,7 @@ export function mergeInboxWithLocal(
       uploadedByMark: r.uploadedByMark ?? null,
       onServer: true,
       localImagePath: null,
+      localKind: null,
     });
   }
   for (const s of localImported) {
@@ -92,6 +98,7 @@ export function mergeInboxWithLocal(
     const prev = byId.get(s.id);
     if (prev) {
       prev.localImagePath = s.imagePath;
+      prev.localKind = 'imported';
       if (s.title) prev.title = s.title;
     } else {
       byId.set(s.id, {
@@ -101,8 +108,17 @@ export function mergeInboxWithLocal(
         uploadedByMark: null,
         onServer: false,
         localImagePath: s.imagePath,
+        localKind: 'imported',
       });
     }
+  }
+  for (const s of onDevice) {
+    if (s.deletedAt) continue;
+    const prev = byId.get(s.id);
+    if (!prev || prev.localImagePath) continue;
+    prev.localImagePath = s.imagePath;
+    prev.localKind = 'on_device';
+    if (s.title) prev.title = s.title;
   }
   return [...byId.values()].sort((a, b) => (b.uploadedAt || 0) - (a.uploadedAt || 0));
 }

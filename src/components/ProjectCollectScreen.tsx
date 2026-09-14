@@ -628,7 +628,7 @@ export function ProjectCollectScreen({
         folderMode,
       );
       if (expired) {
-        setInbox(mergeInboxWithLocal([], localImp));
+        setInbox(mergeInboxWithLocal([], localImp, all));
         setSelected(new Set());
         setBarPick(null);
         setPhase('inbox');
@@ -670,7 +670,7 @@ export function ProjectCollectScreen({
         return;
       }
       const man = await apiManifest({ projectId: project.projectId, collectorPin: pinLocal });
-      setInbox(mergeInboxWithLocal(man.stamps || [], localImp));
+      setInbox(mergeInboxWithLocal(man.stamps || [], localImp, all));
       setSelected(new Set());
       setBarPick(null);
       setPhase('inbox');
@@ -1561,7 +1561,7 @@ export function ProjectCollectScreen({
         <Text style={styles.hint}>
           {expired
             ? '보관이 끝나 이 기기로 가져온 사진만 보입니다. 목록에서 빼야 사업 줄이 지워집니다.'
-            : '서버에 남은 사진과 내 폰으로 가져온 사진을 함께 봅니다. 썸네일을 누르면 크게 볼 수 있습니다.'}
+            : '서버에 남은 사진과 이 폰에 있는 사진을 함께 봅니다. 썸네일을 누르면 크게 볼 수 있습니다.'}
         </Text>
       </View>
       <FlatList
@@ -1613,7 +1613,11 @@ export function ProjectCollectScreen({
                   <Text style={[styles.rowTitle, styles.inboxTitleFlex]} numberOfLines={2}>
                     {item.title || item.stampId}
                   </Text>
-                  {got ? <Text style={styles.importedBadge}>가져옴</Text> : null}
+                  {got && item.localKind === 'on_device' ? (
+                    <Text style={styles.onDeviceBadge}>이 폰</Text>
+                  ) : got ? (
+                    <Text style={styles.importedBadge}>가져옴</Text>
+                  ) : null}
                 </View>
                 <Text style={styles.rowSub}>
                   {[
@@ -2071,6 +2075,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1e40af',
     backgroundColor: '#dbeafe',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  onDeviceBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#374151',
+    backgroundColor: '#f3f4f6',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

@@ -1,3 +1,41 @@
+# 수정기록 — 수신함 이 폰 사진 표시 (2026-09-14)
+
+## 목적
+같은 폰에서 사업으로 올린 사진이 수신 목록에서 대기 칸만 나와 엑셀에 못 넣던 문제를 막는다.
+
+## 조치
+- 서버 줄 ID와 이 폰 저장 목록 ID가 같으면 그 사진을 붙인다.
+- 내 폰으로 받은 장은 가져옴, 저장 목록 원본은 이 폰. 이 폰에 없으면 대기.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: projectImportedStamps·ProjectCollectScreen·help 소량.
+- 식별자 InboxLocalKind / onDeviceBadge 공개 GitHub 동일 구현 없음.
+- OSS 목록 GPL 단독 신규 없음.
+- 실기기 수신함은 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-inbox-on-device.bat, docs/SECURITY-inbox-on-device-20260914.md |
+| **재사용·수정** | src/services/projectImportedStamps.ts, src/components/ProjectCollectScreen.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/services/projectImportService.ts, api/project.js |
+| **스냅샷** | src.pre-inbox-on-device/, public.pre-inbox-on-device/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 같은 ID로 목록을 붙이는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260914_230623.apk
+- 되돌리기: restore-inbox-on-device.bat
+
+---
+
 # 수정기록 — 목록 사업 보내기 고르기·연결 확인 (2026-09-14)
 
 ## 목적

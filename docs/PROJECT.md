@@ -1298,6 +1298,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 
 ## 12. 날짜별 수정 상세
 
+### 2026-09-14 (수신함 이 폰 사진 표시)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 수신 목록에서 이 폰 저장 목록과 같은 ID면 대기 대신 사진·이 폰 표시 |
+| APK | `releases/VoiceStamp_20260914_230623.apk` |
+| 롤백 | `restore-inbox-on-device.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-inbox-on-device-20260914.md](./SECURITY-inbox-on-device-20260914.md) |
+
 ### 2026-09-14 (목록 사업 보내기 고르기·연결 확인)
 
 | 항목 | 내용 |
