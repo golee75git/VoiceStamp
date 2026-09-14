@@ -225,14 +225,39 @@ function scaleTableToSlot(block: string, maxWidth: number): string {
   }
   const srcW = Number(sizeMatch[1]);
   const srcH = Number(sizeMatch[3]);
-  if (srcW <= 0 || srcW === maxWidth) {
+  if (srcW <= 0) {
     return block;
   }
-  const height = Math.max(1, Math.round((srcH * maxWidth) / srcW));
+  const height = srcW === maxWidth ? srcH : Math.max(1, Math.round((srcH * maxWidth) / srcW));
   let nextHead = head.replace(`<hp:sz width="${srcW}"`, `<hp:sz width="${maxWidth}"`);
   nextHead = nextHead.replace(`height="${srcH}"`, `height="${height}"`);
-  nextHead = nextHead.replace(/<hp:cellSz width="\d+"/, `<hp:cellSz width="${maxWidth}"`);
+  nextHead = nextHead.replace(
+    /<hp:cellSz width="\d+" height="\d+"/,
+    `<hp:cellSz width="${maxWidth}" height="${height}"`,
+  );
   return block.slice(0, tblStart) + nextHead + block.slice(tblEnd);
+}
+
+function tableInnerSlot(block: string): { width: number; height: number } | null {
+  const tblStart = block.indexOf('<hp:tbl');
+  const tblEnd = block.indexOf('</hp:tbl>');
+  if (tblStart < 0 || tblEnd <= tblStart) {
+    return null;
+  }
+  const head = block.slice(tblStart, Math.min(tblEnd, tblStart + 1200));
+  const sizeMatch = head.match(/<hp:sz width="(\d+)"[^>]*height="(\d+)"/);
+  if (!sizeMatch) {
+    return null;
+  }
+  const inMatch = head.match(
+    /<hp:inMargin left="(\d+)" right="(\d+)" top="(\d+)" bottom="(\d+)"/,
+  );
+  const padX = inMatch ? Number(inMatch[1]) + Number(inMatch[2]) : 0;
+  const padY = inMatch ? Number(inMatch[3]) + Number(inMatch[4]) : 0;
+  return {
+    width: Math.max(1, Number(sizeMatch[1]) - padX),
+    height: Math.max(1, Number(sizeMatch[2]) - padY),
+  };
 }
 
 function scalePictureToSlot(block: string, maxWidth: number, maxHeight: number): string {
@@ -305,7 +330,7 @@ function placeKind(
   photosPerPage: HwpxPhotosPerPage,
 ): 'page' | 'column' | 'continue' {
   if (index <= 0) {
-    return 'continue';
+    return 'page';
   }
   if (photosPerPage === 4) {
     if (index % 4 === 0) {
@@ -363,10 +388,14 @@ function buildStampBlocks(
     block = expandParagraphForLines(block, 'stampMemo', stamp.memoLines);
     block = expandParagraphForLines(block, 'stampMeta', stamp.metaLines);
     const hasTable = block.includes('<hp:tbl');
-    block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
     if (hasTable) {
       block = scaleTableToSlot(block, width);
+      const slot = tableInnerSlot(block);
+      if (slot) {
+        block = scalePictureToSlot(block, slot.width, slot.height);
+      }
     } else {
+      block = scalePictureToSlot(block, width, pictureBudget(stamp, layout.rows));
       block = reflowBlockLines(block, width);
     }
 
@@ -404,14 +433,17 @@ function ensureHpfImageItem(
   fileName: string,
   mediaType: string,
 ): string {
+  const item = `<opf:item id="${imageId}" href="BinData/${fileName}" media-type="${mediaType}" isEmbeded="1"/>`;
+  const selfClose = new RegExp(`<opf:item\\b[^>]*\\bid="${imageId}"[^>]*/>`);
+  if (selfClose.test(hpfXml)) {
+    return hpfXml.replace(selfClose, item);
+  }
   if (hpfXml.includes(`id="${imageId}"`)) {
     return hpfXml.replace(
-      new RegExp(`<opf:item id="${imageId}" href="BinData/[^"]+" media-type="[^"]+" isEmbeded="1"/>`),
-      `<opf:item id="${imageId}" href="BinData/${fileName}" media-type="${mediaType}" isEmbeded="1"/>`,
+      new RegExp(`(id="${imageId}"[^>]*href=")BinData/[^"]+"`),
+      `$1BinData/${fileName}"`,
     );
   }
-
-  const item = `<opf:item id="${imageId}" href="BinData/${fileName}" media-type="${mediaType}" isEmbeded="1"/>`;
   return hpfXml.replace('</opf:manifest>', `${item}</opf:manifest>`);
 }
 
@@ -453,33 +485,33 @@ export async function renderHwpxFromTemplate(
   };
   const imageValues: Record<string, Uint8Array> = {};
   const keepFiles = new Set<string>();
+  const hpfNames: Array<{ imageId: string; fileName: string; mediaType: string }> = [];
 
   for (let i = 0; i < stamps.length; i++) {
     const imageId = `image${i + 1}`;
     const ext = stamps[i].imageExt;
-    const fileName = `${imageId}.${ext}`;
-    keepFiles.add(`BinData/${fileName}`);
+    const canonical = `${imageId}.${ext}`;
+    const existing = findBinDataEntryName(zip, imageId);
+    keepFiles.add(`BinData/${canonical}`);
     imageValues[`@img${i + 1}`] = stamps[i].imageBytes;
-    zip.file(`BinData/${fileName}`, stamps[i].imageBytes);
+    zip.file(`BinData/${canonical}`, stamps[i].imageBytes);
+    if (existing && existing !== `BinData/${canonical}`) {
+      zip.file(existing, stamps[i].imageBytes);
+      keepFiles.add(existing);
+    }
+    hpfNames.push({ imageId, fileName: canonical, mediaType: mimeForImageExt(ext) });
   }
-
-  removeUnusedBinData(zip, keepFiles);
 
   const hpfEntry = zip.file('Contents/content.hpf');
   if (hpfEntry) {
     let hpfXml = await hpfEntry.async('string');
-    for (let i = 0; i < stamps.length; i++) {
-      const imageId = `image${i + 1}`;
-      const ext = stamps[i].imageExt;
-      hpfXml = ensureHpfImageItem(
-        hpfXml,
-        imageId,
-        `${imageId}.${ext}`,
-        mimeForImageExt(ext),
-      );
+    for (const row of hpfNames) {
+      hpfXml = ensureHpfImageItem(hpfXml, row.imageId, row.fileName, row.mediaType);
     }
     zip.file('Contents/content.hpf', hpfXml);
   }
+
+  removeUnusedBinData(zip, keepFiles);
 
   const imageKeys = new Set(Object.keys(imageValues));
   const unresolved = new Set<string>();

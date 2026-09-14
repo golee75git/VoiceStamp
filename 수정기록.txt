@@ -1,3 +1,39 @@
+# 수정기록 — HWPX 첫 사진 누락·표 넘침 보정 (2026-09-14)
+
+## 목적
+한글 표 서식으로 보낸 HWPX에서 첫 장 사진이 빠지거나 표보다 크게 그려지는 문제를, 기존 채우기 코드만 고쳐서 바로잡는다.
+
+## 원인과 조치
+- 서식 BinData의 image1.PNG를 지운 뒤 content.hpf 경로가 그대로면 첫 그림만 비었다. hpf를 먼저 고치고, jpg와 기존 PNG 이름 모두에 같은 바이트를 둔다.
+- 그림을 페이지 너비로 키운 뒤 표를 줄이면 표 칸을 넘친다. 표를 맞춘 다음 안쪽 크기에 그림을 맞춘다.
+- 첫 스탬프가 제목과 같은 쪽에 있어 잘렸다. 첫 장은 제목 다음 쪽에서 시작한다. 2장째부터는 페이지당 장수 배치를 유지한다.
+
+## 검증
+- renderHwpxFromTemplate 샘플 2장(jpg): content.hpf의 image1이 BinData/image1.jpg를 가리키고 파일이 있음. 표 래퍼 pageBreak=1. 그림 크기 표 안쪽 이하. 남은 자리 표시 없음.
+- 한글/한컴 앱 화면은 이 환경에서 확인하지 못함. 기기에서 열기 확인이 필요하다.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-hwpx-first-pic.bat, docs/SECURITY-hwpx-first-pic-20260914.md |
+| **재사용·수정** | src/services/hwpxTemplate.ts, public/help.html, docs/LICENSE-NOTICE.md, RESTORE.md, docs/CHANGELOG.md, docs/PRD.md, docs/PLAN.md, docs/README.md |
+| **재사용(무수정)** | src/services/exportHwpx.ts, src/services/exportOnDemand.ts |
+| **스냅샷** | src.pre-hwpx-first-pic/, public.pre-hwpx-first-pic/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴. 서식은 한글 화면 글자 이름만 가리킴.
+- npm 추가 없음. jszip MIT. GPL 신규 없음.
+- 새 권한·네트워크 없음. 자리 글은 XML 이스케이프.
+
+## 특허
+- 표 칸 사진·제목 다음 쪽 나눔·페이지당 장수 배치는 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260914_131007.apk
+- 되돌리기: restore-hwpx-first-pic.bat
+
+---
+
 # 수정기록 — 한글이 넣은 report.hwpx 표를 보내기에 적용 (2026-09-14)
 
 ## 목적

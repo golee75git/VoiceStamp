@@ -4338,3 +4338,11 @@ restore-hwpx-han-table.bat
 ```
 
 Restores `hwpxTemplate.ts`, `build-report-template.mjs`, `help.html`, and `report.hwpx` from `*.pre-hwpx-han-table/` (before applying the Hangul-saved photo table).
+
+## HWPX first photo restore (2026-09-14)
+
+```bat
+restore-hwpx-first-pic.bat
+```
+
+Restores `hwpxTemplate.ts` and `help.html` from `*.pre-hwpx-first-pic/` (before first-stamp BinData/hpf order, table-inner picture scale, and title-page break).
