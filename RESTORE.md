@@ -4426,3 +4426,11 @@ restore-photo-note-pad.bat
 ```
 
 Restores save/edit preview files from `*.pre-photo-note-pad/` (before round notes on the photo for image save).
+
+## Note pad press restore (2026-09-15)
+
+```bat
+restore-note-pad-press.bat
+```
+
+Restores zoom-viewer add button and note chips from `*.pre-note-pad-press/` (before add control sat outside the scroll view).

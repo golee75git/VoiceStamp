@@ -71,7 +71,7 @@ export function makePhotoNotePadItem(index: number): PhotoNotePadItem {
   const step = 0.08 * (index % PHOTO_NOTE_PAD_MAX);
   return {
     id: `pn-${Date.now().toString(36)}-${index}`,
-    body: '',
+    body: '글',
     nx: clampUnit(0.12 + step),
     ny: clampUnit(0.18 + step * 0.5),
   };

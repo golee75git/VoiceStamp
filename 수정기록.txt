@@ -1,3 +1,42 @@
+# 수정기록 — 글 칸 추가 누름 (2026-09-15)
+
+## 목적
+큰 미리보기에서 「글 칸 추가」를 눌러도 눌림 표시만 남고 칸이 생기지 않던 문제를 막는다.
+
+## 조치
+- 「글 칸 추가」를 사진 스크롤 밖에 둔다(닫기와 같이 스크롤 제스처에 안 먹히게).
+- 단추를 비활성으로 두지 않는다. 8개면 안내만 띄운다.
+- 새 칸 처음 글은 「글」. 칸 위치는 일반 View, 이동만 Animated.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: ZoomViewer·PhotoNotePadLayer·photoNotePad·StampSaveModal·help 소량.
+- 식별자 NOTE_PAD_PRESS_HOST / restore-note-pad-press 공개 GitHub 동일 구현 없음.
+- OSS 목록 GPL 단독 신규 없음. 기존 트리에 MIT OR GPL 이중 라이선스 패키지는 유지.
+- 실기기 누름은 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-note-pad-press.bat, docs/SECURITY-note-pad-press-20260915.md |
+| **재사용·수정** | src/components/StampSaveZoomViewer.tsx, src/components/PhotoNotePadLayer.tsx, src/components/StampSaveModal.tsx, src/services/photoNotePad.ts, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/screens/MainScreen.tsx, src/services/exportOnDemand.ts |
+| **스냅샷** | src.pre-note-pad-press/, public.pre-note-pad-press/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 사진 위 글 칸을 끌어 옮기는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260915_103528.apk
+- 되돌리기: restore-note-pad-press.bat
+
+---
+
 # 수정기록 — 사진 위 글 칸 (2026-09-15)
 
 ## 목적

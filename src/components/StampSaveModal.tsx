@@ -2682,7 +2682,6 @@ export function StampSaveModal({
               <StampSaveZoomViewer
                 scrollEnabled={!photoNoteDragLock}
                 onAddPhotoNote={handleAddPhotoNote}
-                addPhotoNoteDisabled={photoNoteItems.length >= PHOTO_NOTE_PAD_MAX}
               >
                 <StampSavePreview
                   imageUri={normalizeDisplayUri(workingImageUri ?? imageUri!)}

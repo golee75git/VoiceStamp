@@ -79,48 +79,49 @@ function PhotoNoteChip({
   }));
 
   return (
-    <Animated.View
+    <View
       style={[
         styles.chipAbs,
         { left: `${item.nx * 100}%`, top: `${item.ny * 100}%` },
-        chipShift,
       ]}
       pointerEvents={editable ? 'auto' : 'none'}
     >
-      <View style={[styles.chip, compact && styles.chipCompact]}>
-        {editable ? (
-          <GestureDetector gesture={pan}>
-            <View style={styles.grip} accessibilityLabel="글 칸 위치 옮기기">
-              <Text style={styles.gripMark}>↕</Text>
-            </View>
-          </GestureDetector>
-        ) : null}
-        {editable ? (
-          <TextInput
-            style={[styles.chipInput, compact && styles.chipInputCompact]}
-            value={item.body}
-            onChangeText={(text) => onChangeBody?.(item.id, text)}
-            placeholder="글"
-            placeholderTextColor="#9ca3af"
-            maxLength={PHOTO_NOTE_PAD_BODY_MAX}
-            multiline={false}
-          />
-        ) : (
-          <Text style={[styles.chipText, compact && styles.chipTextCompact]} numberOfLines={1}>
-            {item.body}
-          </Text>
-        )}
-        {editable ? (
-          <Pressable
-            onPress={() => onRemove?.(item.id)}
-            hitSlop={6}
-            accessibilityLabel="글 칸 지우기"
-          >
-            <Text style={styles.removeMark}>×</Text>
-          </Pressable>
-        ) : null}
-      </View>
-    </Animated.View>
+      <Animated.View style={chipShift}>
+        <View style={[styles.chip, compact && styles.chipCompact]}>
+          {editable ? (
+            <GestureDetector gesture={pan}>
+              <View style={styles.grip} accessibilityLabel="글 칸 위치 옮기기">
+                <Text style={styles.gripMark}>↕</Text>
+              </View>
+            </GestureDetector>
+          ) : null}
+          {editable ? (
+            <TextInput
+              style={[styles.chipInput, compact && styles.chipInputCompact]}
+              value={item.body}
+              onChangeText={(text) => onChangeBody?.(item.id, text)}
+              placeholder="글"
+              placeholderTextColor="#9ca3af"
+              maxLength={PHOTO_NOTE_PAD_BODY_MAX}
+              multiline={false}
+            />
+          ) : (
+            <Text style={[styles.chipText, compact && styles.chipTextCompact]} numberOfLines={1}>
+              {item.body}
+            </Text>
+          )}
+          {editable ? (
+            <Pressable
+              onPress={() => onRemove?.(item.id)}
+              hitSlop={6}
+              accessibilityLabel="글 칸 지우기"
+            >
+              <Text style={styles.removeMark}>×</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </Animated.View>
+    </View>
   );
 }
 
