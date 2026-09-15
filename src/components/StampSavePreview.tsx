@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -37,10 +37,12 @@ const PreviewPhoto = memo(function PreviewPhoto({
   uri,
   style,
   resizeMode,
+  children,
 }: {
   uri: string;
   style: StyleProp<ImageStyle>;
   resizeMode: ImageResizeMode;
+  children?: ReactNode;
 }) {
   const [displayUri, setDisplayUri] = useState(() => normalizeDisplayUri(uri));
 
@@ -61,6 +63,7 @@ const PreviewPhoto = memo(function PreviewPhoto({
           }
         }}
       />
+      {children}
     </View>
   );
 });
@@ -249,15 +252,24 @@ export function StampSavePreview({
   const wmCoordsFs = { fontSize: fs(isThumbnail ? 10 : 13) };
   const orgFs = { fontSize: fs(isThumbnail ? 11 : 16) };
 
-  const renderThumbnailPhoto = (photoStyle: StyleProp<ImageStyle>, resizeMode: ImageResizeMode) => {
+  const renderThumbnailPhoto = (
+    photoStyle: StyleProp<ImageStyle>,
+    resizeMode: ImageResizeMode,
+    overlay?: ReactNode,
+  ) => {
     if (imageLoading || !imageUri) {
       return (
-        <View style={[photoStyle, styles.thumbnailPhotoLoading]}>
+        <View style={[photoStyle, styles.thumbnailPhotoLoading]} collapsable={false}>
           <ActivityIndicator color="#6b7280" />
+          {overlay}
         </View>
       );
     }
-    return <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={resizeMode} />;
+    return (
+      <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={resizeMode}>
+        {overlay}
+      </PreviewPhoto>
+    );
   };
 
   const renderPhotoNotes = (compact: boolean) => (
@@ -388,8 +400,7 @@ export function StampSavePreview({
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
-          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
-          {renderPhotoNotes(true)}
+          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', renderPhotoNotes(true))}
           {renderThumbnailWatermarkBar()}
         </View>
       </View>
@@ -404,8 +415,9 @@ export function StampSavePreview({
             uri={imageUri}
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode="contain"
-          />
-          {renderPhotoNotes(false)}
+          >
+            {renderPhotoNotes(false)}
+          </PreviewPhoto>
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
               <Text
@@ -515,8 +527,7 @@ export function StampSavePreview({
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailCaptionPhotoSlot}>
-          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
-          {renderPhotoNotes(true)}
+          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', renderPhotoNotes(true))}
         </View>
         <View style={styles.thumbnailCaptionText}>
           {displayOrgName ? (
@@ -559,8 +570,9 @@ export function StampSavePreview({
           uri={imageUri}
           style={[styles.fullscreenPhoto, { aspectRatio }]}
           resizeMode="contain"
-        />
-        {renderPhotoNotes(false)}
+        >
+          {renderPhotoNotes(false)}
+        </PreviewPhoto>
       </View>
       <View style={styles.fullscreenCaptionText}>
         {displayOrgName ? (

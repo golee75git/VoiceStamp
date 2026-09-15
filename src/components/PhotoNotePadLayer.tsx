@@ -80,9 +80,14 @@ function PhotoNoteChip({
 
   return (
     <View
+      collapsable={false}
       style={[
         styles.chipAbs,
-        { left: `${item.nx * 100}%`, top: `${item.ny * 100}%` },
+        {
+          left: item.nx * boxW,
+          top: item.ny * boxH,
+          maxWidth: Math.max(72, boxW * 0.7),
+        },
       ]}
       pointerEvents={editable ? 'auto' : 'none'}
     >
@@ -125,6 +130,7 @@ function PhotoNoteChip({
   );
 }
 
+/* NOTE_PAD_SHOW_HOST: 글 칸은 사진 View 안에 픽셀 위치로 그린다. 되돌리: restore-note-pad-show.bat */
 export function PhotoNotePadLayer({
   items,
   editable = false,
@@ -135,11 +141,10 @@ export function PhotoNotePadLayer({
   onDragLock,
 }: PhotoNotePadLayerProps) {
   const [box, setBox] = useState({ w: 1, h: 1 });
-  if (items.length === 0) {
-    return null;
-  }
+  const ready = box.w > 1 && box.h > 1;
   return (
     <View
+      collapsable={false}
       style={styles.layer}
       pointerEvents={editable ? 'box-none' : 'none'}
       onLayout={(event) => {
@@ -149,22 +154,24 @@ export function PhotoNotePadLayer({
         }
       }}
     >
-      {items.map((item) =>
-        compact && !item.body ? null : (
-          <PhotoNoteChip
-            key={item.id}
-            item={item}
-            boxW={box.w}
-            boxH={box.h}
-            editable={editable}
-            compact={compact}
-            onMove={onMove}
-            onChangeBody={onChangeBody}
-            onRemove={onRemove}
-            onDragLock={onDragLock}
-          />
-        ),
-      )}
+      {ready
+        ? items.map((item) =>
+            compact && !item.body ? null : (
+              <PhotoNoteChip
+                key={item.id}
+                item={item}
+                boxW={box.w}
+                boxH={box.h}
+                editable={editable}
+                compact={compact}
+                onMove={onMove}
+                onChangeBody={onChangeBody}
+                onRemove={onRemove}
+                onDragLock={onDragLock}
+              />
+            ),
+          )
+        : null}
     </View>
   );
 }
@@ -172,11 +179,13 @@ export function PhotoNotePadLayer({
 const styles = StyleSheet.create({
   layer: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 2,
+    zIndex: 6,
+    elevation: 6,
   },
   chipAbs: {
     position: 'absolute',
-    maxWidth: '70%',
+    zIndex: 7,
+    elevation: 7,
   },
   chip: {
     flexDirection: 'row',

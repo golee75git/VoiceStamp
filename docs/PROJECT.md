@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-09-15** — 글 칸 추가 누름 · 권장 `103528` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: (본 배포) 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음
+문서 동기화: **2026-09-15** — 글 칸 사진 위 표시 · 권장 `112033` · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: (본 배포) 큰 미리보기 글 칸이 사진 위에 보임
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260915_103528.apk` | (본 커밋) | **권장** — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음 · `restore-note-pad-press.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260915_112033.apk` | (본 커밋) | **권장** — 큰 미리보기 글 칸이 사진 위에 보임 · `restore-note-pad-show.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260915_103528.apk` | (이전) | **이전** — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음 · `restore-note-pad-press.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260915_095143.apk` | (이전) | **이전** — 저장·수정 큰 미리보기 사진 위 글 칸 · `restore-photo-note-pad.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260915_075220.apk` | (이전) | **이전** — 저장·수정 입력칸이 키보드에 가리지 않음 · `restore-save-kb-clear.bat` | **GitHub `releases/`** |
 
@@ -1305,6 +1306,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-15 (글 칸 사진 위 표시)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 큰 미리보기 「글 칸 추가」가 사진 위에 바로 보이게 |
+| APK | `releases/VoiceStamp_20260915_112033.apk` |
+| 롤백 | `restore-note-pad-show.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-note-pad-show-20260915.md](./SECURITY-note-pad-show-20260915.md) |
 
 ### 2026-09-15 (글 칸 추가 누름)
 

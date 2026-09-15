@@ -4434,3 +4434,11 @@ restore-note-pad-press.bat
 ```
 
 Restores zoom-viewer add button and note chips from `*.pre-note-pad-press/` (before add control sat outside the scroll view).
+
+## Note pad show restore (2026-09-15)
+
+```bat
+restore-note-pad-show.bat
+```
+
+Restores preview overlay files from `*.pre-note-pad-show/` (before pads were painted inside the photo view).

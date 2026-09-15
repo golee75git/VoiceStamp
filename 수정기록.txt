@@ -1,3 +1,41 @@
+# 수정기록 — 글 칸 사진 위 표시 (2026-09-15)
+
+## 목적
+「글 칸 추가」를 누르면 개수는 늘어나는데 사진 위에 칸이 안 보이던 문제를 막는다.
+
+## 조치
+- 글 칸 레이어를 사진 View 안에 둔다. Android가 뷰를 접지 않게 collapsable을 끈다.
+- 위치는 onLayout 픽셀. 칸이 없어도 레이어는 올려 크기를 잡는다.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: PhotoNotePadLayer·StampSavePreview·help 소량.
+- 식별자 NOTE_PAD_SHOW_HOST / restore-note-pad-show 공개 GitHub 동일 구현 없음.
+- OSS 목록 GPL 단독 신규 없음. 기존 트리에 MIT OR GPL 이중 라이선스 패키지는 유지.
+- 실기기 표시는 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-note-pad-show.bat, docs/SECURITY-note-pad-show-20260915.md |
+| **재사용·수정** | src/components/PhotoNotePadLayer.tsx, src/components/StampSavePreview.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/screens/MainScreen.tsx, src/services/exportOnDemand.ts |
+| **스냅샷** | src.pre-note-pad-show/, public.pre-note-pad-show/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 사진 위 글 칸을 끌어 옮기는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260915_112033.apk
+- 되돌리기: restore-note-pad-show.bat
+
+---
+
 # 수정기록 — 글 칸 추가 누름 (2026-09-15)
 
 ## 목적
