@@ -1,11 +1,9 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { Image, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 import { resolveImageUri } from './fileService';
-import { applyPhotoNotePadToUri } from './applyPhotoNotePad';
-import { parsePhotoNotePad } from './photoNotePad';
 import { renderHwpxFromTemplate } from './hwpxTemplate';
 import {
   buildCaptionTableRows,
@@ -86,19 +84,11 @@ async function loadReportTemplateBytes(): Promise<ArrayBuffer> {
   return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
 }
 
-function getImageSize(uri: string): Promise<{ width: number; height: number }> {
-  return new Promise((resolve, reject) => {
-    Image.getSize(uri, (width, height) => resolve({ width, height }), reject);
-  });
-}
-
 async function readImageBytes(
   imagePath: string,
-  photoNotePad?: string | null,
 ): Promise<{ data: Uint8Array; format: 'jpg' | 'png' }> {
   const uri = resolveImageUri(imagePath);
   const format = imagePath.toLowerCase().endsWith('.png') ? 'png' : 'jpg';
-  const notes = parsePhotoNotePad(photoNotePad).filter((note) => note.body.length > 0);
 
   if (Platform.OS === 'web') {
     const response = await fetch(uri);
@@ -107,19 +97,10 @@ async function readImageBytes(
     return { data: new Uint8Array(arrayBuffer), format };
   }
 
-  if (notes.length === 0) {
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    return { data: base64ToUint8Array(base64), format };
-  }
-
-  const { width, height } = await getImageSize(uri);
-  const notedUri = await applyPhotoNotePadToUri(uri, width, height, notes, 90);
-  const base64 = await FileSystem.readAsStringAsync(notedUri, {
+  const base64 = await FileSystem.readAsStringAsync(uri, {
     encoding: FileSystem.EncodingType.Base64,
   });
-  return { data: base64ToUint8Array(base64), format: 'jpg' };
+  return { data: base64ToUint8Array(base64), format };
 }
 
 /**
@@ -226,7 +207,7 @@ async function buildHwpxBytes(stamps: Stamp[], reportTitle: string): Promise<Uin
       showOrgName,
       showFooterPhrase,
     });
-    const { data, format } = await readImageBytes(stamp.imagePath, stamp.photoNotePad);
+    const { data, format } = await readImageBytes(stamp.imagePath);
     stampFills.push({
       title: caption.title,
       memoLines: caption.memoLines,

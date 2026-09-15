@@ -3,8 +3,6 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
 import { resolveImageUri } from './fileService';
-import { applyPhotoNotePadToUri } from './applyPhotoNotePad';
-import { parsePhotoNotePad, type PhotoNotePadItem } from './photoNotePad';
 import type { PdfImageQuality } from './settingsService';
 
 type PdfImageProfile = {
@@ -80,26 +78,14 @@ function compressDataUriOnWeb(dataUri: string, profile: PdfImageProfile): Promis
   });
 }
 
-async function compressFileUri(
-  uri: string,
-  profile: PdfImageProfile,
-  notes: PhotoNotePadItem[],
-): Promise<string> {
+async function compressFileUri(uri: string, profile: PdfImageProfile): Promise<string> {
   const result = await manipulateAsync(
     uri,
     [{ resize: { width: profile.maxWidth } }],
     { compress: profile.compress, format: SaveFormat.JPEG },
   );
 
-  const notedUri = await applyPhotoNotePadToUri(
-    result.uri,
-    result.width,
-    result.height,
-    notes,
-    Math.round(profile.compress * 100),
-  );
-
-  const base64 = await FileSystem.readAsStringAsync(notedUri, {
+  const base64 = await FileSystem.readAsStringAsync(result.uri, {
     encoding: FileSystem.EncodingType.Base64,
   });
   return `data:image/jpeg;base64,${base64}`;
@@ -108,7 +94,6 @@ async function compressFileUri(
 export async function readImageDataUriForPdf(
   imagePath: string,
   quality: PdfImageQuality,
-  photoNotePad?: string | null,
 ): Promise<string> {
   const profile = getProfile(quality);
 
@@ -122,5 +107,5 @@ export async function readImageDataUriForPdf(
     return compressDataUriOnWeb(original, profile);
   }
 
-  return compressFileUri(uri, profile, parsePhotoNotePad(photoNotePad));
+  return compressFileUri(uri, profile);
 }

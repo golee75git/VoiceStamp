@@ -566,7 +566,7 @@ export async function createStampsPdf(
     getExtra3FieldLabel(),
   ]);
   const imageDataUris = await Promise.all(
-    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality, stamp.photoNotePad)),
+    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
   );
   const qrDataUris = await Promise.all(
     stamps.map(async (stamp) => {

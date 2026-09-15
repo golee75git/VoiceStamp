@@ -4442,3 +4442,11 @@ restore-note-pad-show.bat
 ```
 
 Restores preview overlay files from `*.pre-note-pad-show/` (before pads were painted inside the photo view).
+
+## Note pad in exports restore (2026-09-16)
+
+```bat
+restore-note-pad-in-exports.bat
+```
+
+Restores `exportPdf.ts`, `exportHwpx.ts`, and `pdfImageForExport.ts` from `*.pre-note-pad-in-exports/` (before photo note pad text was baked into PDF/HWPX exports).
