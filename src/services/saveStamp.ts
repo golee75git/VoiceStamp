@@ -78,6 +78,8 @@ type SaveStampInput = {
   templateId?: string | null;
   /** Follow-up root stamp id (null = standalone). */
   parentId?: string | null;
+  /** Round photo notes (JSON). */
+  photoNotePad?: string | null;
   /** album = 갤러리 보내기/앨범 저장, shot = 촬영 저장. */
   joinSendWay?: 'album' | 'shot';
   captureForExport?: (
@@ -348,6 +350,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     extra2FieldLabel: fieldLabels.extra2FieldLabel,
     extra3FieldLabel: fieldLabels.extra3FieldLabel,
     parentId,
+    photoNotePad: input.photoNotePad?.trim() || null,
   };
 
   await insertStamp(stamp);
@@ -398,6 +401,7 @@ export async function updateStamp(input: {
   templateId?: string | null;
   captureForExport?: SaveStampInput['captureForExport'];
   skipIdleCaptionGallery?: boolean;
+  photoNotePad?: string | null;
 }): Promise<Stamp> {
   const stamp = await getStampById(input.id);
   if (!stamp) {
@@ -493,6 +497,7 @@ export async function updateStamp(input: {
     extra3 !== (stamp.extra3?.trim() || null) ||
     sourceUrl !== (stamp.sourceUrl?.trim() || null) ||
     templateId !== (stamp.templateId ?? null) ||
+    (input.photoNotePad?.trim() || null) !== (stamp.photoNotePad?.trim() || null) ||
     labelsChanged;
 
   if (metadataChanged) {
@@ -510,6 +515,7 @@ export async function updateStamp(input: {
       fieldLabels,
       sourceUrl,
       templateId,
+      input.photoNotePad?.trim() || null,
     );
   } else {
     await updateStampMetadata(
@@ -524,6 +530,7 @@ export async function updateStamp(input: {
       fieldLabels,
       sourceUrl,
       templateId,
+      input.photoNotePad?.trim() || null,
     );
   }
 
@@ -546,6 +553,7 @@ export async function updateStamp(input: {
     extra1FieldLabel: fieldLabels.extra1FieldLabel,
     extra2FieldLabel: fieldLabels.extra2FieldLabel,
     extra3FieldLabel: fieldLabels.extra3FieldLabel,
+    photoNotePad: input.photoNotePad?.trim() || null,
     updatedAt: Date.now(),
   };
 

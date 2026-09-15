@@ -31,6 +31,8 @@ export type Stamp = {
   parentId?: string | null;
   /** Photographer join mark from project collect (null = not from inbox / unknown). */
   uploadedByMark?: string | null;
+  /** Round photo notes for 이미지 저장 (null = none). */
+  photoNotePad?: string | null;
 };
 
 export type StampRow = {
@@ -59,4 +61,5 @@ export type StampRow = {
   extra3_field_label?: string | null;
   parent_id?: string | null;
   uploaded_by_mark?: string | null;
+  photo_note_pad?: string | null;
 };

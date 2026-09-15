@@ -95,6 +95,11 @@ export const ALTER_STAMPS_ADD_UPLOADED_BY_MARK = `
   ALTER TABLE stamps ADD COLUMN uploaded_by_mark TEXT;
 `;
 
+/** Round notes on the photo, JSON, used only when exporting a caption JPEG. */
+export const ALTER_STAMPS_ADD_PHOTO_NOTE_PAD = `
+  ALTER TABLE stamps ADD COLUMN photo_note_pad TEXT;
+`;
+
 export const CREATE_STAMPS_PARENT_INDEX = `
   CREATE INDEX IF NOT EXISTS idx_stamps_parent_id ON stamps(parent_id);
 `;

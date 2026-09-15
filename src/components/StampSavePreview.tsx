@@ -24,6 +24,8 @@ import {
 import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
 import { buildCaptionTableRows } from '../services/captionTable';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
+import { PhotoNotePadLayer } from './PhotoNotePadLayer';
+import type { PhotoNotePadItem } from '../services/photoNotePad';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import type { StampTextLayout, StampTextSize, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
 import { stampTextSizeScale } from '../services/settingsService';
@@ -95,6 +97,12 @@ type StampSavePreviewProps = {
   latitude?: number | null;
   longitude?: number | null;
   variant: 'thumbnail' | 'fullscreen';
+  photoNoteItems?: PhotoNotePadItem[];
+  photoNoteEditable?: boolean;
+  onPhotoNoteMove?: (id: string, nx: number, ny: number) => void;
+  onPhotoNoteBody?: (id: string, body: string) => void;
+  onPhotoNoteRemove?: (id: string) => void;
+  onPhotoNoteDragLock?: (locked: boolean) => void;
 };
 
 export function StampSavePreview({
@@ -129,6 +137,12 @@ export function StampSavePreview({
   latitude,
   longitude,
   variant,
+  photoNoteItems = [],
+  photoNoteEditable = false,
+  onPhotoNoteMove,
+  onPhotoNoteBody,
+  onPhotoNoteRemove,
+  onPhotoNoteDragLock,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const labels = resolveFieldLabels({
@@ -245,6 +259,18 @@ export function StampSavePreview({
     }
     return <PreviewPhoto uri={imageUri} style={photoStyle} resizeMode={resizeMode} />;
   };
+
+  const renderPhotoNotes = (compact: boolean) => (
+    <PhotoNotePadLayer
+      items={photoNoteItems}
+      compact={compact}
+      editable={photoNoteEditable && !compact}
+      onMove={onPhotoNoteMove}
+      onChangeBody={onPhotoNoteBody}
+      onRemove={onPhotoNoteRemove}
+      onDragLock={onPhotoNoteDragLock}
+    />
+  );
 
   const renderThumbnailWatermarkBar = () => (
     <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkBar}>
@@ -363,6 +389,7 @@ export function StampSavePreview({
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
           {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
+          {renderPhotoNotes(true)}
           {renderThumbnailWatermarkBar()}
         </View>
       </View>
@@ -378,6 +405,7 @@ export function StampSavePreview({
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode="contain"
           />
+          {renderPhotoNotes(false)}
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
               <Text
@@ -486,7 +514,10 @@ export function StampSavePreview({
   if (isThumbnail) {
     return (
       <View style={styles.thumbnailCaptionCard}>
-        {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
+        <View style={styles.thumbnailCaptionPhotoSlot}>
+          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover')}
+          {renderPhotoNotes(true)}
+        </View>
         <View style={styles.thumbnailCaptionText}>
           {displayOrgName ? (
             <Text style={[styles.thumbnailOrg, { textAlign: titleAlign }, orgFs]} numberOfLines={1}>
@@ -529,6 +560,7 @@ export function StampSavePreview({
           style={[styles.fullscreenPhoto, { aspectRatio }]}
           resizeMode="contain"
         />
+        {renderPhotoNotes(false)}
       </View>
       <View style={styles.fullscreenCaptionText}>
         {displayOrgName ? (
@@ -583,6 +615,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingHorizontal: 10,
     paddingVertical: 8,
+    zIndex: 3,
   },
   thumbnailWatermarkTopBar: {
     position: 'absolute',
@@ -635,6 +668,12 @@ const styles = StyleSheet.create({
   thumbnailCaptionPhoto: {
     width: '100%',
     height: 120,
+  },
+  thumbnailCaptionPhotoSlot: {
+    position: 'relative',
+    width: '100%',
+    height: 120,
+    overflow: 'hidden',
   },
   thumbnailCaptionText: {
     paddingHorizontal: 10,
@@ -731,6 +770,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    zIndex: 3,
   },
   fullscreenWatermarkTopBar: {
     position: 'absolute',

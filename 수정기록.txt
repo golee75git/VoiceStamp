@@ -1,3 +1,42 @@
+# 수정기록 — 사진 위 글 칸 (2026-09-15)
+
+## 목적
+저장·수정 큰 미리보기에서 사진 위에 둥근 글 칸을 여러 개 두고, 기존 제목·메모 표·워터마크와 함께 보이게 한다. 「이미지 저장」할 때만 JPEG에 구워지고, 앱 원본 사진은 덮지 않는다.
+
+## 조치
+- 큰 미리보기에서 「글 칸 추가」(최대 8). 둥근 배경만, 꼬리 없음.
+- 위치는 옆 막대로 옮긴다. 썸네일은 읽기만.
+- 캡션 표·워터마크 합성 전에 글 칸을 입힌다. PDF·한글·엑셀은 그대로.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: 스키마·저장·미리보기·이미지 저장 경로와 신규 3파일.
+- 식별자 PhotoNotePad / applyPhotoNotePadToUri / PhotoNotePadLayer / photo-note-pad 공개 GitHub 동일 구현 없음(동명 메모 앱과는 무관).
+- OSS 목록 GPL 단독 신규 없음. 기존 트리에 MIT OR GPL 이중 라이선스 패키지는 유지.
+- 실기기 글 칸 이동·이미지 저장은 이 환경에서 확인하지 못함.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | src/services/photoNotePad.ts, src/services/applyPhotoNotePad.ts, src/components/PhotoNotePadLayer.tsx, restore-photo-note-pad.bat, docs/SECURITY-photo-note-pad-20260915.md |
+| **재사용·수정** | src/types/stamp.ts, src/db/schema.ts, src/db/database.ts, src/services/stampRepository.ts, src/services/saveStamp.ts, src/services/renderStampWatermarkNative.ts, src/services/renderStampCaptionNative.ts, src/components/StampSavePreview.tsx, src/components/StampSaveModal.tsx, src/components/StampSaveZoomViewer.tsx, public/help.html, docs, RESTORE.md |
+| **재사용(무수정)** | src/screens/MainScreen.tsx, src/services/exportOnDemand.ts |
+| **스냅샷** | src.pre-photo-note-pad/, public.pre-photo-note-pad/ |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음. 글 칸은 기기 SQLite JSON(개수·길이 상한, 제어문자 제거).
+
+## 특허
+- 사진 위 글 칸을 끌어 옮기는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260915_095143.apk
+- 되돌리기: restore-photo-note-pad.bat
+
+---
+
 # 수정기록 — 저장 화면 키보드 가림 (2026-09-15)
 
 ## 목적

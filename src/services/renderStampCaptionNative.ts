@@ -27,6 +27,8 @@ import {
   overlayMarkDrawSize,
   resolveOverlayMarkFileUri,
 } from './overlayMark';
+import { parsePhotoNotePad } from './photoNotePad';
+import { applyPhotoNotePadToUri } from './applyPhotoNotePad';
 
 const CAPTION_JPEG_COMPRESS = 0.95;
 const CAPTION_REFERENCE_PHOTO_WIDTH = 1032;
@@ -98,6 +100,13 @@ export async function renderStampCaptionNative(
   const maxWidth = renderParams?.maxWidth;
   const jpegCompress = renderParams?.jpegCompress ?? CAPTION_JPEG_COMPRESS;
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
+  const notedUri = await applyPhotoNotePadToUri(
+    prepared.uri,
+    prepared.width,
+    prepared.height,
+    parsePhotoNotePad(stamp.photoNotePad),
+    100,
+  );
   const labels = resolveFieldLabels(options);
   const orgName = resolveOverlayOrgName(options);
   const footerPhrase = resolveOverlayFooterPhrase(options);
@@ -171,7 +180,7 @@ export async function renderStampCaptionNative(
     position: { X: number; Y: number };
   }[] = [
     {
-      src: prepared.uri,
+      src: notedUri,
       scale: 1,
       position: { X: padding, Y: padding },
     },

@@ -4418,3 +4418,11 @@ restore-save-kb-clear.bat
 ```
 
 Restores `StampSaveModal.tsx`, `VoiceInputField.tsx`, and `help.html` from `*.pre-save-kb-clear/` (before save/edit fields staying above the system keyboard).
+
+## Photo note pad restore (2026-09-15)
+
+```bat
+restore-photo-note-pad.bat
+```
+
+Restores save/edit preview files from `*.pre-photo-note-pad/` (before round notes on the photo for image save).

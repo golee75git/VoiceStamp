@@ -5,7 +5,7 @@ import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad';
 
 function normalizeOptionalText(value?: string | null): string | null {
   return value?.trim() || null;
@@ -70,6 +70,7 @@ function mapRow(row: StampRow): Stamp {
     extra3FieldLabel: normalizeFieldLabelSnapshot(row.extra3_field_label),
     parentId: normalizeParentId(row.parent_id),
     uploadedByMark: normalizeJoinMark(row.uploaded_by_mark),
+    photoNotePad: normalizeOptionalText(row.photo_note_pad),
   };
 }
 
@@ -101,8 +102,8 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     extra3FieldLabel: stamp.extra3FieldLabel ?? undefined,
   });
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -128,6 +129,7 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     labels[5],
     normalizeParentId(stamp.parentId),
     normalizeJoinMark(stamp.uploadedByMark),
+    normalizeOptionalText(stamp.photoNotePad),
   );
 }
 
@@ -252,13 +254,14 @@ export async function updateStampMetadata(
   fieldLabels?: Partial<FieldLabels> | null,
   sourceUrl?: string | null,
   templateId?: string | null,
+  photoNotePad?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   const labels = labelParams(fieldLabels);
   await db.runAsync(
     `UPDATE stamps SET title = ?, memo = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?, source_url = ?, template_id = ?,
       title_field_label = ?, place_field_label = ?, memo_field_label = ?, extra1_field_label = ?, extra2_field_label = ?, extra3_field_label = ?,
-      updated_at = ? WHERE id = ?`,
+      photo_note_pad = ?, updated_at = ? WHERE id = ?`,
     title,
     memo,
     floor ?? null,
@@ -274,6 +277,7 @@ export async function updateStampMetadata(
     labels[3],
     labels[4],
     labels[5],
+    normalizeOptionalText(photoNotePad),
     Date.now(),
     id,
   );
@@ -310,6 +314,7 @@ export async function updateStampRecord(
   fieldLabels?: Partial<FieldLabels> | null,
   sourceUrl?: string | null,
   templateId?: string | null,
+  photoNotePad?: string | null,
 ): Promise<void> {
   const db = await getDatabase();
   const labels = labelParams(fieldLabels);
@@ -317,7 +322,7 @@ export async function updateStampRecord(
     `UPDATE stamps
      SET title = ?, memo = ?, image_path = ?, gallery_asset_id = ?, floor = ?, place_label = ?, extra1 = ?, extra2 = ?, extra3 = ?, source_url = ?, template_id = ?,
          title_field_label = ?, place_field_label = ?, memo_field_label = ?, extra1_field_label = ?, extra2_field_label = ?, extra3_field_label = ?,
-         updated_at = ?
+         photo_note_pad = ?, updated_at = ?
      WHERE id = ?`,
     title,
     memo,
@@ -336,6 +341,7 @@ export async function updateStampRecord(
     labels[3],
     labels[4],
     labels[5],
+    normalizeOptionalText(photoNotePad),
     Date.now(),
     id,
   );

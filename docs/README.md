@@ -92,13 +92,14 @@
 ## 현재 상태 스냅샷 (2026-09-10)
 
 - **문서 갱신일:** 2026-09-15 — **저장·수정 입력칸 키보드 가림** · APK `075220`
-- **최신 기능 커밋:** (본 배포) · APK `075220` — 저장·수정에서 아래 칸이 키보드에 가리지 않음
+- **최신 기능 커밋:** (본 배포) · APK `095143` — 저장·수정 큰 미리보기 사진 위 글 칸
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260915_075220.apk` — 저장·수정 입력칸이 키보드에 가리지 않음
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260915_075220.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260915_095143.apk` — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260915_095143.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260915_075220.apk` — 저장·수정 입력칸이 키보드에 가리지 않음
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_230623.apk` — 수신함 이 폰 사진 표시
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_223408.apk` — 목록 사업 보내기 고르기·연결 확인
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_190436.apk` — 저장 화면 뒤로가기가 흰 화면에 머물지 않음

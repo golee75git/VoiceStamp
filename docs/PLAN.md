@@ -749,6 +749,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG · 권장 `181951` (**소스 없음**) |
 | 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
+| 2026-09-15 | 4·3 | 저장·수정 큰 미리보기 **사진 위 글 칸** · APK `095143` · `restore-photo-note-pad.bat` |
 | 2026-09-15 | 4·3 | 저장·수정 입력칸이 **키보드에 가리지 않게** · APK `075220` · `restore-save-kb-clear.bat` |
 | 2026-09-14 | 4·3 | 수신함 **이 폰** 사진 표시 · APK `230623` · `restore-inbox-on-device.bat` |
 | 2026-09-14 | 4·3 | 저장 목록 **사업으로 보내기** 고르기·연결 확인 · APK `223408` · `restore-join-list-send-check.bat` |
@@ -787,10 +788,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-09-15:** 권장 = `releases/VoiceStamp_20260915_075220.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-09-15:** 권장 = `releases/VoiceStamp_20260915_095143.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260915_075220.apk` | (본 커밋) | **설치·GitHub 권장** — 저장·수정 입력칸이 키보드에 가리지 않음 |
+| `releases/VoiceStamp_20260915_095143.apk` | (본 커밋) | **설치·GitHub 권장** — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG |
+| `releases/VoiceStamp_20260915_075220.apk` | (이전) | **이전** — 저장·수정 입력칸이 키보드에 가리지 않음 |
 | `releases/VoiceStamp_20260914_230623.apk` | (이전) | **이전** — 수신함 이 폰 사진 표시 |
 | `releases/VoiceStamp_20260914_223408.apk` | (이전) | **이전** — 목록 사업 보내기 고르기·연결 확인 |
 | `releases/VoiceStamp_20260914_190436.apk` | (이전) | **이전** — 저장 화면 뒤로가기가 흰 화면에 머물지 않음 |

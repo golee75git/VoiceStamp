@@ -1,8 +1,8 @@
 # VoiceStamp 프로젝트 현황
 
 문서 작성일: **2026-07-31**
-문서 동기화: **2026-09-15** — 저장·수정 입력칸 키보드 가림 · 권장 `075220` · [CHANGELOG.md](./CHANGELOG.md)
-최신 기능 커밋 기준: (본 배포) 저장·수정에서 아래 칸이 키보드에 가리지 않음
+문서 동기화: **2026-09-15** — 사진 위 글 칸 · 권장 `095143` · [CHANGELOG.md](./CHANGELOG.md)
+최신 기능 커밋 기준: (본 배포) 저장·수정 큰 미리보기 사진 위 글 칸
 변경 이력: [CHANGELOG.md](./CHANGELOG.md)
 성능·헬스체크: [HEALTHCHECK.md](./HEALTHCHECK.md) (번들 A/B/C 기준선 `193317`)
 
@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260915_075220.apk` | (본 커밋) | **권장** — 저장·수정 입력칸이 키보드에 가리지 않음 · `restore-save-kb-clear.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260915_095143.apk` | (본 커밋) | **권장** — 저장·수정 큰 미리보기 사진 위 글 칸 · `restore-photo-note-pad.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260915_075220.apk` | (이전) | **이전** — 저장·수정 입력칸이 키보드에 가리지 않음 · `restore-save-kb-clear.bat` | **GitHub `releases/`** |
 
 #### 2026-08-23
 
@@ -1303,6 +1304,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-15 (사진 위 글 칸)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장·수정 큰 미리보기에서 사진 위에 둥근 글 칸(최대 8). 「이미지 저장」JPEG에만 굽고 앱 원본은 유지 |
+| APK | `releases/VoiceStamp_20260915_095143.apk` |
+| 롤백 | `restore-photo-note-pad.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-photo-note-pad-20260915.md](./SECURITY-photo-note-pad-20260915.md) |
 
 ### 2026-09-15 (저장 화면 키보드 가림)
 

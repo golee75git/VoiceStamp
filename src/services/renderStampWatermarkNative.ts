@@ -23,6 +23,8 @@ import {
   overlayMarkDrawSize,
   resolveOverlayMarkFileUri,
 } from './overlayMark';
+import { parsePhotoNotePad } from './photoNotePad';
+import { applyPhotoNotePadToUri } from './applyPhotoNotePad';
 
 const EXPORT_PHOTO_WIDTH = 1032;
 
@@ -65,6 +67,13 @@ export async function renderStampWatermarkNative(
   const maxWidth = renderParams?.maxWidth;
   const jpegCompress = renderParams?.jpegCompress ?? STAMP_JPEG_COMPRESS;
   const prepared = await prepareExportPhoto(photoUri, maxWidth);
+  const notedUri = await applyPhotoNotePadToUri(
+    prepared.uri,
+    prepared.width,
+    prepared.height,
+    parsePhotoNotePad(stamp.photoNotePad),
+    Math.round(jpegCompress * 100),
+  );
   const labels = resolveFieldLabels(options);
   const title = formatLabeledValue(
     labels.titleFieldLabel,
@@ -116,7 +125,7 @@ export async function renderStampWatermarkNative(
   const text = overlayLines.join('\n');
 
   const markedUri = await Marker.markText({
-    backgroundImage: { src: prepared.uri, scale: 1 },
+    backgroundImage: { src: notedUri, scale: 1 },
     watermarkTexts: [
       {
         text,

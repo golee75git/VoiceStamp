@@ -99,6 +99,16 @@ import type { StampFloor } from '../types/stamp';
 import { StampSavePreview } from './StampSavePreview';
 import { StampSaveZoomViewer } from './StampSaveZoomViewer';
 import { VoiceInputField } from './VoiceInputField';
+import {
+  PHOTO_NOTE_PAD_MAX,
+  dropPhotoNotePadItem,
+  makePhotoNotePadItem,
+  movePhotoNotePadItem,
+  parsePhotoNotePad,
+  serializePhotoNotePad,
+  setPhotoNotePadBody,
+  type PhotoNotePadItem,
+} from '../services/photoNotePad';
 import { isPrivacyBlurSupported } from '../services/privacyBlurService';
 import {
   isOcrTitleMemoSupported,
@@ -335,6 +345,8 @@ export function StampSaveModal({
   const [extra1, setExtra1] = useState('');
   const [extra2, setExtra2] = useState('');
   const [extra3, setExtra3] = useState('');
+  const [photoNoteItems, setPhotoNoteItems] = useState<PhotoNotePadItem[]>([]);
+  const [photoNoteDragLock, setPhotoNoteDragLock] = useState(false);
   const [sourceUrl, setSourceUrl] = useState(SOURCE_URL_PREFIX);
   const [saving, setSaving] = useState(false);
   const [saveIntent, setSaveIntent] = useState<'app' | 'image'>('app');
@@ -709,6 +721,8 @@ export function StampSaveModal({
     setExtra1('');
     setExtra2('');
     setExtra3('');
+    setPhotoNoteItems([]);
+    setPhotoNoteDragLock(false);
     setSourceUrl(SOURCE_URL_PREFIX);
     setSaving(false);
     setLocationLoading(false);
@@ -776,6 +790,7 @@ export function StampSaveModal({
     setExtra1(stamp.extra1 ?? '');
     setExtra2(stamp.extra2 ?? '');
     setExtra3(stamp.extra3 ?? '');
+    setPhotoNoteItems(parsePhotoNotePad(stamp.photoNotePad));
     setSourceUrl(defaultSourceUrlDraft(stamp.sourceUrl));
     const draftPos = defaultSourceUrlDraft(stamp.sourceUrl).length;
     setSourceUrlSelection({ start: draftPos, end: draftPos });
@@ -1893,6 +1908,7 @@ export function StampSaveModal({
           extra2FieldLabel,
           extra3FieldLabel,
         },
+        photoNotePad: serializePhotoNotePad(photoNoteItems),
       });
     }
 
@@ -1931,6 +1947,7 @@ export function StampSaveModal({
         extra2FieldLabel,
         extra3FieldLabel,
       },
+      photoNotePad: serializePhotoNotePad(photoNoteItems),
     });
     if (placeLabel?.trim()) {
       await setLastPlaceLabel(placeLabel);
@@ -2078,6 +2095,14 @@ export function StampSaveModal({
     },
     [floorDisplayMode, placeLabel],
   );
+
+  const handleAddPhotoNote = () => {
+    if (photoNoteItems.length >= PHOTO_NOTE_PAD_MAX) {
+      showAlert('글 칸', `사진 위 글 칸은 ${PHOTO_NOTE_PAD_MAX}개까지입니다.`);
+      return;
+    }
+    setPhotoNoteItems((prev) => [...prev, makePhotoNotePadItem(prev.length)]);
+  };
 
   const showFloorPicker =
     (locationLookupEnabled &&
@@ -2234,6 +2259,7 @@ export function StampSaveModal({
                     latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                     longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
                     variant="thumbnail"
+                    photoNoteItems={photoNoteItems}
                   />
                   <Image
                       source={zoomEditIcon}
@@ -2653,7 +2679,11 @@ export function StampSaveModal({
         <View style={styles.imageViewerOverlay}>
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer>
+              <StampSaveZoomViewer
+                scrollEnabled={!photoNoteDragLock}
+                onAddPhotoNote={handleAddPhotoNote}
+                addPhotoNoteDisabled={photoNoteItems.length >= PHOTO_NOTE_PAD_MAX}
+              >
                 <StampSavePreview
                   imageUri={normalizeDisplayUri(workingImageUri ?? imageUri!)}
                   imageLoading={false}
@@ -2686,6 +2716,18 @@ export function StampSaveModal({
                   latitude={isEdit && stamp ? stamp.latitude : captureCoords?.latitude}
                   longitude={isEdit && stamp ? stamp.longitude : captureCoords?.longitude}
                   variant="fullscreen"
+                  photoNoteItems={photoNoteItems}
+                  photoNoteEditable
+                  onPhotoNoteMove={(id, nx, ny) => {
+                    setPhotoNoteItems((prev) => movePhotoNotePadItem(prev, id, nx, ny));
+                  }}
+                  onPhotoNoteBody={(id, body) => {
+                    setPhotoNoteItems((prev) => setPhotoNotePadBody(prev, id, body));
+                  }}
+                  onPhotoNoteRemove={(id) => {
+                    setPhotoNoteItems((prev) => dropPhotoNotePadItem(prev, id));
+                  }}
+                  onPhotoNoteDragLock={setPhotoNoteDragLock}
                 />
               </StampSaveZoomViewer>
             </View>
