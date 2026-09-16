@@ -749,7 +749,8 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG · 권장 `181951` (**소스 없음**) |
 | 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
-| 2026-09-16 | 문서 | Android **PDF·HWPX** 저장 시 사진 위 글 칸 · APK `002642` · `restore-note-pad-in-exports.bat` (**소스 없음**) |
+| 2026-09-16 | 4·3 | **글 넣기**(닫기 옆)·크기·투명도 막대·저장 위치 맞춤 · APK `104154` · `restore-note-pad-tune.bat` |
+| 2026-09-16 | 문서 | Android **PDF·HWPX** 저장 시 사진 위 글 칸 · APK `002642` · `restore-note-pad-in-exports.bat` |
 | 2026-09-15 | 4·3 | 큰 미리보기 **글 칸이 사진 위에 보이게** · APK `112033` · `restore-note-pad-show.bat` |
 | 2026-09-15 | 4·3 | 큰 미리보기 **글 칸 추가**가 스크롤에 가로채이지 않게 · APK `103528` · `restore-note-pad-press.bat` |
 | 2026-09-15 | 4·3 | 저장·수정 큰 미리보기 **사진 위 글 칸** · APK `095143` · `restore-photo-note-pad.bat` |
@@ -791,10 +792,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-09-16:** 권장 = `releases/VoiceStamp_20260916_002642.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-09-16:** 권장 = `releases/VoiceStamp_20260916_104154.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260916_002642.apk` | (본 커밋) | **설치·GitHub 권장** — Android PDF·HWPX 저장 시 사진 위 글 칸 |
+| `releases/VoiceStamp_20260916_104154.apk` | (본 커밋) | **설치·GitHub 권장** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 |
+| `releases/VoiceStamp_20260916_002642.apk` | (이전) | **이전** — Android PDF·HWPX 저장 시 사진 위 글 칸 |
 | `releases/VoiceStamp_20260915_112033.apk` | (이전) | **이전** — 큰 미리보기 글 칸이 사진 위에 보임 |
 | `releases/VoiceStamp_20260915_103528.apk` | (이전) | **이전** — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음 |
 | `releases/VoiceStamp_20260915_095143.apk` | (이전) | **이전** — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG |

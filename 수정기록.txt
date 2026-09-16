@@ -1,3 +1,40 @@
+# 수정기록 — 글 넣기·막대 조절 (2026-09-16)
+
+## 목적
+「글 칸 추가」를 「글 넣기」로 바꿔 닫기 옆에 두고, 저장 위치를 글 상자에 맞추며, 크기·배경 투명도를 막대로 고르게 한다.
+
+## 조치
+- 단추: 「글 넣기」, 하단 닫기와 같은 손잡이 쪽. 스크롤 밖.
+- 손잡이: 가로 두 줄. 글 상자 왼쪽 위 = 저장 좌표(손잡이만큼 왼쪽 이동).
+- 크기: 작게·보통·크게 세 칸 막대. 투명도: 0~100 막대. 새 npm 없음.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: PhotoNotePadLayer·StampSaveZoomViewer·StampSaveModal·help·문서.
+- 식별자 NOTE_PAD_TUNE_HOST / restore-note-pad-tune 공개 GitHub 동일 구현 없음.
+- OSS 목록 변경 없음. GPL 단독 신규 없음. license-checker --production --summary 기존 이중 허가만.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-note-pad-tune.bat, docs/SECURITY-note-pad-tune-20260916.md, src.pre-note-pad-tune/, public.pre-note-pad-tune/, src/services/photoNoteStyle.ts |
+| **재사용·수정** | src/components/PhotoNotePadLayer.tsx, src/components/StampSaveZoomViewer.tsx, src/components/StampSaveModal.tsx, src/components/StampSavePreview.tsx, src/services/photoNotePad.ts, src/services/applyPhotoNotePad.ts, public/help.html, public/landing.html, public/info.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/services/exportOnDemand.ts |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 사진 위 글을 끌어 옮기고 크기·투명도를 막대로 고르는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260916_104154.apk
+- 되돌리기: restore-note-pad-tune.bat
+
+---
+
 # 수정기록 — PDF·HWPX 글 칸 (2026-09-16)
 
 ## 목적

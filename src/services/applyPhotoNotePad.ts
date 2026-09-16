@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import Marker, { ImageFormat, TextBackgroundType } from 'react-native-image-marker';
 
 import type { PhotoNotePadItem } from './photoNotePad';
+import { photoNoteBackgroundSolidHexOverWhite, photoNoteColorHex } from './photoNoteStyle';
 
 function normalizeMarkedUri(markedUri: string): string {
   if (markedUri.startsWith('file://') || markedUri.startsWith('content://')) {
@@ -28,34 +29,42 @@ export async function applyPhotoNotePadToUri(
   if (visible.length === 0) {
     return photoUri;
   }
-  const fontSize = Math.max(14, Math.round(Math.min(width, height) * 0.028));
-  const pad = Math.max(6, Math.round(fontSize * 0.45));
-  const radius = Math.max(8, Math.round(fontSize * 0.7));
+  const baseFontSize = Math.max(14, Math.round(Math.min(width, height) * 0.028));
+  const sizeScale = (size: PhotoNotePadItem['textSize']) =>
+    size === 'small' ? 0.85 : size === 'large' ? 1.3 : 1;
   try {
     const marked = await Marker.markText({
       backgroundImage: { src: photoUri, scale: 1 },
-      watermarkTexts: visible.map((note) => ({
-        text: note.body,
-        positionOptions: {
-          X: Math.round(note.nx * width),
-          Y: Math.round(note.ny * height),
-        },
-        style: {
-          color: '#111827',
-          fontSize,
-          bold: true,
-          textAlign: 'left' as const,
-          textBackgroundStyle: {
-            type: TextBackgroundType.none,
-            color: '#F8FAFC',
-            paddingX: pad,
-            paddingY: pad,
-            cornerRadius: {
-              all: { x: radius, y: radius },
-            },
+      watermarkTexts: visible.map((note) => {
+        const fontSize = Math.max(11, Math.round(baseFontSize * sizeScale(note.textSize)));
+        const pad = Math.max(6, Math.round(fontSize * 0.45));
+        const radius = Math.max(8, Math.round(fontSize * 0.7));
+        return {
+          text: note.body,
+          positionOptions: {
+            X: Math.round(note.nx * width),
+            Y: Math.round(note.ny * height),
           },
-        },
-      })),
+          style: {
+            color: photoNoteColorHex(note.textColor),
+            fontSize,
+            bold: true,
+            textAlign: 'left' as const,
+            textBackgroundStyle:
+              note.bgOpacity <= 0
+                ? null
+                : {
+                    type: TextBackgroundType.none,
+                    color: photoNoteBackgroundSolidHexOverWhite(note.bgColor, note.bgOpacity),
+                    paddingX: pad,
+                    paddingY: pad,
+                    cornerRadius: {
+                      all: { x: radius, y: radius },
+                    },
+                  },
+          },
+        };
+      }),
       quality: Math.max(70, Math.min(100, Math.round(jpegQuality))),
       saveFormat: ImageFormat.jpg,
     });

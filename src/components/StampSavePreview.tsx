@@ -42,16 +42,26 @@ const PreviewPhoto = memo(function PreviewPhoto({
   uri: string;
   style: StyleProp<ImageStyle>;
   resizeMode: ImageResizeMode;
-  children?: ReactNode;
+  children?: (box: { width: number; height: number }) => ReactNode;
 }) {
   const [displayUri, setDisplayUri] = useState(() => normalizeDisplayUri(uri));
+  const [box, setBox] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     setDisplayUri(normalizeDisplayUri(uri));
   }, [uri]);
 
   return (
-    <View style={style} collapsable={false}>
+    <View
+      style={style}
+      collapsable={false}
+      onLayout={(event) => {
+        const { width, height } = event.nativeEvent.layout;
+        if (width > 0 && height > 0 && (width !== box.width || height !== box.height)) {
+          setBox({ width, height });
+        }
+      }}
+    >
       <Image
         source={{ uri: displayUri }}
         style={styles.previewPhotoImage}
@@ -63,7 +73,7 @@ const PreviewPhoto = memo(function PreviewPhoto({
           }
         }}
       />
-      {children}
+      {box.width > 0 && box.height > 0 ? children?.(box) : null}
     </View>
   );
 });
@@ -106,6 +116,10 @@ type StampSavePreviewProps = {
   onPhotoNoteBody?: (id: string, body: string) => void;
   onPhotoNoteRemove?: (id: string) => void;
   onPhotoNoteDragLock?: (locked: boolean) => void;
+  onPhotoNoteStyleChange?: (
+    id: string,
+    patch: Partial<Pick<PhotoNotePadItem, 'textSize' | 'textColor' | 'bgColor' | 'bgOpacity'>>,
+  ) => void;
 };
 
 export function StampSavePreview({
@@ -146,6 +160,7 @@ export function StampSavePreview({
   onPhotoNoteBody,
   onPhotoNoteRemove,
   onPhotoNoteDragLock,
+  onPhotoNoteStyleChange,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const labels = resolveFieldLabels({
@@ -255,13 +270,12 @@ export function StampSavePreview({
   const renderThumbnailPhoto = (
     photoStyle: StyleProp<ImageStyle>,
     resizeMode: ImageResizeMode,
-    overlay?: ReactNode,
+    overlay?: (box: { width: number; height: number }) => ReactNode,
   ) => {
     if (imageLoading || !imageUri) {
       return (
         <View style={[photoStyle, styles.thumbnailPhotoLoading]} collapsable={false}>
           <ActivityIndicator color="#6b7280" />
-          {overlay}
         </View>
       );
     }
@@ -272,15 +286,18 @@ export function StampSavePreview({
     );
   };
 
-  const renderPhotoNotes = (compact: boolean) => (
+  const renderPhotoNotes = (compact: boolean, box?: { width: number; height: number }) => (
     <PhotoNotePadLayer
       items={photoNoteItems}
       compact={compact}
       editable={photoNoteEditable && !compact}
+      boxWidth={box?.width ?? 0}
+      boxHeight={box?.height ?? 0}
       onMove={onPhotoNoteMove}
       onChangeBody={onPhotoNoteBody}
       onRemove={onPhotoNoteRemove}
       onDragLock={onPhotoNoteDragLock}
+      onStyleChange={onPhotoNoteStyleChange}
     />
   );
 
@@ -400,7 +417,7 @@ export function StampSavePreview({
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
-          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', renderPhotoNotes(true))}
+          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', (box) => renderPhotoNotes(true, box))}
           {renderThumbnailWatermarkBar()}
         </View>
       </View>
@@ -416,7 +433,7 @@ export function StampSavePreview({
             style={[styles.fullscreenPhoto, { aspectRatio }]}
             resizeMode="contain"
           >
-            {renderPhotoNotes(false)}
+            {(box) => renderPhotoNotes(false, box)}
           </PreviewPhoto>
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
@@ -527,7 +544,7 @@ export function StampSavePreview({
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailCaptionPhotoSlot}>
-          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', renderPhotoNotes(true))}
+          {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', (box) => renderPhotoNotes(true, box))}
         </View>
         <View style={styles.thumbnailCaptionText}>
           {displayOrgName ? (
@@ -571,7 +588,7 @@ export function StampSavePreview({
           style={[styles.fullscreenPhoto, { aspectRatio }]}
           resizeMode="contain"
         >
-          {renderPhotoNotes(false)}
+          {(box) => renderPhotoNotes(false, box)}
         </PreviewPhoto>
       </View>
       <View style={styles.fullscreenCaptionText}>

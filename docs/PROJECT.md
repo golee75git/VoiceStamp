@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260916_002642.apk` | (본 커밋) | **권장** — Android PDF·HWPX 저장 시 사진 위 글 칸 · 문서·도움말만 · `restore-note-pad-in-exports.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260916_104154.apk` | (본 커밋) | **권장** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 · `restore-note-pad-tune.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260916_002642.apk` | (이전) | **이전** — Android PDF·HWPX 저장 시 사진 위 글 칸 · 문서·도움말만 · `restore-note-pad-in-exports.bat` | **GitHub `releases/`** |
 
 #### 2026-09-15
 
@@ -1312,6 +1313,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-16 (글 넣기·막대 조절)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 「글 넣기」를 닫기 옆. 크기·투명도 막대. 글 상자 왼쪽 위가 저장 좌표 |
+| APK | `releases/VoiceStamp_20260916_104154.apk` |
+| 롤백 | `restore-note-pad-tune.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-note-pad-tune-20260916.md](./SECURITY-note-pad-tune-20260916.md) |
 
 ### 2026-09-16 (PDF·HWPX 글 칸)
 

@@ -107,6 +107,7 @@ import {
   parsePhotoNotePad,
   serializePhotoNotePad,
   setPhotoNotePadBody,
+  setPhotoNotePadStyle,
   type PhotoNotePadItem,
 } from '../services/photoNotePad';
 import { isPrivacyBlurSupported } from '../services/privacyBlurService';
@@ -2098,7 +2099,7 @@ export function StampSaveModal({
 
   const handleAddPhotoNote = () => {
     if (photoNoteItems.length >= PHOTO_NOTE_PAD_MAX) {
-      showAlert('글 칸', `사진 위 글 칸은 ${PHOTO_NOTE_PAD_MAX}개까지입니다.`);
+      showAlert('글 넣기', `사진 위 글은 ${PHOTO_NOTE_PAD_MAX}개까지입니다.`);
       return;
     }
     setPhotoNoteItems((prev) => [...prev, makePhotoNotePadItem(prev.length)]);
@@ -2679,10 +2680,7 @@ export function StampSaveModal({
         <View style={styles.imageViewerOverlay}>
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer
-                scrollEnabled={!photoNoteDragLock}
-                onAddPhotoNote={handleAddPhotoNote}
-              >
+              <StampSaveZoomViewer scrollEnabled={!photoNoteDragLock}>
                 <StampSavePreview
                   imageUri={normalizeDisplayUri(workingImageUri ?? imageUri!)}
                   imageLoading={false}
@@ -2727,11 +2725,14 @@ export function StampSaveModal({
                     setPhotoNoteItems((prev) => dropPhotoNotePadItem(prev, id));
                   }}
                   onPhotoNoteDragLock={setPhotoNoteDragLock}
+                  onPhotoNoteStyleChange={(id, patch) => {
+                    setPhotoNoteItems((prev) => setPhotoNotePadStyle(prev, id, patch));
+                  }}
                 />
               </StampSaveZoomViewer>
             </View>
           ) : null}
-          {/* VIEWER_ACTION_HAND: 닫기를 카메라 손잡이 쪽 하단(사진버리기 위)에 배치. 자르기 적용은 비활성(A). */}
+          {/* NOTE_PAD_TUNE_HOST: 글 넣기를 닫기와 같은 줄(손잡이 쪽)에 둔다. 되돌리: restore-note-pad-tune.bat */}
           <View
             style={[
               styles.imageViewerActionBar,
@@ -2740,6 +2741,14 @@ export function StampSaveModal({
                 : styles.imageViewerActionBarRight,
             ]}
           >
+            <Pressable
+              style={styles.imageViewerCloseButton}
+              onPress={handleAddPhotoNote}
+              accessibilityRole="button"
+              accessibilityLabel="글 넣기"
+            >
+              <Text style={styles.imageViewerCloseText}>글 넣기</Text>
+            </Pressable>
             <Pressable
               style={styles.imageViewerCloseButton}
               onPress={handleCloseViewer}

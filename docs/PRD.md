@@ -725,7 +725,8 @@
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `181951` | `4f27cd0` |
-| **2026-09-16** | Android **PDF·한글(HWPX)** 저장 시 사진 위 글 칸을 파일 속 사진에 넣음 · 도움말 · APK `002642` · `restore-note-pad-in-exports.bat` (**소스 변경 없음**) | (본 커밋) |
+| **2026-09-16** | **글 넣기**(닫기 옆)·크기·투명도 막대·저장 위치 맞춤 · 도움말 · APK `104154` · `restore-note-pad-tune.bat` | (본 커밋) |
+| **2026-09-16** | Android **PDF·한글(HWPX)** 저장 시 사진 위 글 칸을 파일 속 사진에 넣음 · 도움말 · APK `002642` · `restore-note-pad-in-exports.bat` | (이전) |
 | **2026-09-15** | 큰 미리보기 **글 칸이 사진 위에 보이게** · 도움말 · APK `112033` · `restore-note-pad-show.bat` | (이전) |
 | **2026-09-15** | 큰 미리보기 **글 칸 추가**가 스크롤에 가로채이지 않게 · 도움말 · APK `103528` · `restore-note-pad-press.bat` | (이전) |
 | **2026-09-15** | 저장·수정 큰 미리보기 **사진 위 글 칸**(최대 8) · 이미지 저장 JPEG · 도움말 · APK `095143` · `restore-photo-note-pad.bat` | (이전) |
@@ -767,11 +768,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-09-16:** 권장 파일은 **`VoiceStamp_20260916_002642.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-09-16:** 권장 파일은 **`VoiceStamp_20260916_104154.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20260916_002642.apk` | (본 커밋) | **설치·GitHub 권장** — Android PDF·HWPX 저장 시 사진 위 글 칸 |
+| `releases/VoiceStamp_20260916_104154.apk` | (본 커밋) | **설치·GitHub 권장** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 |
+| `releases/VoiceStamp_20260916_002642.apk` | (이전) | **이전** — Android PDF·HWPX 저장 시 사진 위 글 칸 |
 | `releases/VoiceStamp_20260915_112033.apk` | (이전) | **이전** — 큰 미리보기 글 칸이 사진 위에 보임 |
 | `releases/VoiceStamp_20260915_103528.apk` | (이전) | **이전** — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음 |
 | `releases/VoiceStamp_20260915_095143.apk` | (이전) | **이전** — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG |

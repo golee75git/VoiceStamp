@@ -1,3 +1,15 @@
+import {
+  DEFAULT_PHOTO_NOTE_BG_COLOR,
+  DEFAULT_PHOTO_NOTE_BG_OPACITY,
+  DEFAULT_PHOTO_NOTE_TEXT_COLOR,
+  DEFAULT_PHOTO_NOTE_TEXT_SIZE,
+  sanitizePhotoNoteColorKey,
+  sanitizePhotoNoteOpacity,
+  sanitizePhotoNoteTextSize,
+  type PhotoNoteColorKey,
+  type PhotoNoteTextSize,
+} from './photoNoteStyle';
+
 export const PHOTO_NOTE_PAD_MAX = 8;
 export const PHOTO_NOTE_PAD_BODY_MAX = 40;
 
@@ -6,6 +18,10 @@ export type PhotoNotePadItem = {
   body: string;
   nx: number;
   ny: number;
+  textSize: PhotoNoteTextSize;
+  textColor: PhotoNoteColorKey;
+  bgColor: PhotoNoteColorKey;
+  bgOpacity: number;
 };
 
 function clampUnit(value: number): number {
@@ -46,6 +62,13 @@ export function parsePhotoNotePad(raw?: string | null): PhotoNotePadItem[] {
         body: typeof rec.body === 'string' ? cleanBody(rec.body) : '',
         nx: clampUnit(typeof rec.nx === 'number' ? rec.nx : Number(rec.nx)),
         ny: clampUnit(typeof rec.ny === 'number' ? rec.ny : Number(rec.ny)),
+        textSize: sanitizePhotoNoteTextSize(typeof rec.textSize === 'string' ? rec.textSize : null),
+        textColor: sanitizePhotoNoteColorKey(typeof rec.textColor === 'string' ? rec.textColor : null),
+        bgColor: sanitizePhotoNoteColorKey(
+          typeof rec.bgColor === 'string' ? rec.bgColor : null,
+          DEFAULT_PHOTO_NOTE_BG_COLOR,
+        ),
+        bgOpacity: sanitizePhotoNoteOpacity(typeof rec.bgOpacity === 'number' ? rec.bgOpacity : null),
       });
     }
     return out;
@@ -60,6 +83,10 @@ export function serializePhotoNotePad(items: PhotoNotePadItem[]): string | null 
     body: cleanBody(item.body),
     nx: clampUnit(item.nx),
     ny: clampUnit(item.ny),
+    textSize: sanitizePhotoNoteTextSize(item.textSize),
+    textColor: sanitizePhotoNoteColorKey(item.textColor),
+    bgColor: sanitizePhotoNoteColorKey(item.bgColor, DEFAULT_PHOTO_NOTE_BG_COLOR),
+    bgOpacity: sanitizePhotoNoteOpacity(item.bgOpacity),
   }));
   if (notes.length === 0) {
     return null;
@@ -74,7 +101,19 @@ export function makePhotoNotePadItem(index: number): PhotoNotePadItem {
     body: '글',
     nx: clampUnit(0.12 + step),
     ny: clampUnit(0.18 + step * 0.5),
+    textSize: DEFAULT_PHOTO_NOTE_TEXT_SIZE,
+    textColor: DEFAULT_PHOTO_NOTE_TEXT_COLOR,
+    bgColor: DEFAULT_PHOTO_NOTE_BG_COLOR,
+    bgOpacity: DEFAULT_PHOTO_NOTE_BG_OPACITY,
   };
+}
+
+export function setPhotoNotePadStyle(
+  items: PhotoNotePadItem[],
+  id: string,
+  patch: Partial<Pick<PhotoNotePadItem, 'textSize' | 'textColor' | 'bgColor' | 'bgOpacity'>>,
+): PhotoNotePadItem[] {
+  return items.map((item) => (item.id === id ? { ...item, ...patch } : item));
 }
 
 export function movePhotoNotePadItem(

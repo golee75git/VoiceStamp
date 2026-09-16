@@ -1,34 +1,22 @@
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 type StampSaveZoomViewerProps = {
   children: ReactNode;
   scrollEnabled?: boolean;
-  onAddPhotoNote?: () => void;
 };
 
 /* SAVE_VIEWER_CAPTION: 저장·수정 탭 화면에서 사진+표시 글을 스크롤로 본다. 핀치·JPEG 합성·QR 생성 없음. 되돌리: restore-save-viewer-caption.bat */
-/* NOTE_PAD_PRESS_HOST: 글 칸 추가는 ScrollView 밖에 둔다. 되돌리: restore-note-pad-press.bat */
+/* NOTE_PAD_TUNE_HOST: 글 넣기는 하단 닫기 줄에 둔다. 되돌리: restore-note-pad-tune.bat */
 export function StampSaveZoomViewer({
   children,
   scrollEnabled = true,
-  onAddPhotoNote,
 }: StampSaveZoomViewerProps) {
   return (
     <View style={styles.root}>
       <Text style={styles.lead}>
-        입력한 표시 글을 사진과 같이 봅니다. 아래를 밀어 확인한 뒤 「닫기」로 저장 화면으로 돌아갑니다.
+        사진과 표시 글을 봅니다. 사진 위 글은 아래 「글 넣기」입니다. 「닫기」로 저장 화면으로 돌아갑니다.
       </Text>
-      {onAddPhotoNote ? (
-        <Pressable
-          style={styles.addNoteBtn}
-          onPress={onAddPhotoNote}
-          accessibilityRole="button"
-          accessibilityLabel="글 칸 추가"
-        >
-          <Text style={styles.addNoteText}>글 칸 추가</Text>
-        </Pressable>
-      ) : null}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -63,20 +51,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  addNoteBtn: {
-    alignSelf: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10,
-    backgroundColor: '#1e293b',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#64748b',
-  },
-  addNoteText: {
-    color: '#e2e8f0',
-    fontSize: 13,
-    fontWeight: '700',
   },
 });

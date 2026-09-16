@@ -4442,3 +4442,19 @@ restore-note-pad-show.bat
 ```
 
 Restores preview overlay files from `*.pre-note-pad-show/` (before pads were painted inside the photo view).
+
+## Note pad in exports restore (2026-09-16)
+
+```bat
+restore-note-pad-in-exports.bat
+```
+
+Restores `exportPdf.ts`, `exportHwpx.ts`, and `pdfImageForExport.ts` from `*.pre-note-pad-in-exports/` (before photo note pad text was baked into PDF/HWPX exports).
+
+## Note pad tune restore (2026-09-16)
+
+```bat
+restore-note-pad-tune.bat
+```
+
+Restores overlay, zoom viewer, save modal, preview, note pad data/bake, and help from `*.pre-note-pad-tune/` (before 글 넣기, size/opacity slides, text-box origin). Deletes `src/services/photoNoteStyle.ts` if present.
