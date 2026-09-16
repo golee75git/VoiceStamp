@@ -1,3 +1,40 @@
+# 수정기록 — PDF·HWPX 글 칸 (2026-09-16)
+
+## 목적
+Android에서 PDF·한글(HWPX) 저장 때도 미리보기 글 칸이 파일 속 사진에 들어가게 된 상태를 문서·도움말에 맞춘다. 소스는 바꾸지 않는다.
+
+## 조치
+- 도움말: 「이미지 저장」만이 아니라 PDF·한글 저장에도 글 칸이 들어간다고 적음. 앱 원본은 그대로, 웹은 글 칸 없음.
+- PRD·PLAN·PROJECT·CHANGELOG·README를 권장 APK `VoiceStamp_20260916_002642.apk`로 맞춤.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음. APK 재빌드 없음.
+
+## 검증
+- Git diff: 문서·`public/help.html`만. `src/` 없음.
+- 식별자 NOTE_PAD_IN_EXPORTS_HOST / restore-note-pad-in-exports 공개 GitHub 동일 구현 없음.
+- OSS 목록 변경 없음. GPL 단독 신규 없음.
+- 실기기 PDF·HWPX 열람은 이 문서 작업에서 다시 하지 않음. 기능은 기존 APK `002642`에 있음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | docs/SECURITY-note-pad-in-exports-20260916.md |
+| **재사용·수정** | public/help.html, docs/CHANGELOG.md, docs/PRD.md, docs/PLAN.md, docs/PROJECT.md, docs/README.md, 수정기록.txt |
+| **재사용(무수정)** | src/ 전체, 랜딩 APK 주소 |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음. 원본 사진을 덮어쓰지 않음.
+
+## 특허
+- 사진 위 글을 내보내기 이미지에 합성하는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260916_002642.apk (재빌드 없음)
+- 되돌리기: restore-note-pad-in-exports.bat (소스 미커밋)
+
+---
+
 # 수정기록 — 글 칸 사진 위 표시 (2026-09-15)
 
 ## 목적

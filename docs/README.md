@@ -70,6 +70,7 @@
 | [SECURITY-save-label-stay-20260914.md](./SECURITY-save-label-stay-20260914.md) | 보안·UX | 저장 화면 칸 이름 탭이 메모로 내려가지 않음 |
 | [SECURITY-save-sheet-back-20260914.md](./SECURITY-save-sheet-back-20260914.md) | 보안·UX | 저장 화면 시스템 뒤로가기가 흰 화면에 머물지 않음 |
 | [SECURITY-join-list-send-check-20260914.md](./SECURITY-join-list-send-check-20260914.md) | 보안·UX | 목록 사업 보내기 고르기·연결 확인 |
+| [SECURITY-note-pad-in-exports-20260916.md](./SECURITY-note-pad-in-exports-20260916.md) | 보안·내보내기 | Android PDF·HWPX 저장 시 사진 위 글 칸 (문서만) |
 | [SECURITY-inbox-on-device-20260914.md](./SECURITY-inbox-on-device-20260914.md) | 보안·UX | 수신함 이 폰 사진 표시 |
 | [drafts/google-sheets-upload/README.md](./drafts/google-sheets-upload/README.md) | 기획·연동 | Apps Script `Code.gs`·클라이언트 API·샘플 payload |
 | [PRIVACY.md](./PRIVACY.md) | 배포·법무 | 개인정보 원본 (웹: `/privacy`) |
@@ -89,17 +90,17 @@
 
 ---
 
-## 현재 상태 스냅샷 (2026-09-10)
+## 현재 상태 스냅샷 (2026-09-16)
 
-- **문서 갱신일:** 2026-09-15 — **저장·수정 입력칸 키보드 가림** · APK `075220`
-- **최신 기능 커밋:** (본 배포) · APK `112033` — 큰 미리보기 글 칸이 사진 위에 보임
+- **문서 갱신일:** 2026-09-16 — Android **PDF·HWPX 글 칸** · APK `002642` (**소스 변경 없음**)
+- **최신 기능 커밋:** (본 배포) · APK `002642` — PDF·한글 저장 시 사진 위 글 칸
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260915_112033.apk` — 큰 미리보기 글 칸이 사진 위에 보임
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260915_112033.apk
-- **이전 권장 APK:** `releases/VoiceStamp_20260915_103528.apk` — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260916_002642.apk` — Android PDF·HWPX 저장 시 사진 위 글 칸
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260916_002642.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260915_112033.apk` — 큰 미리보기 글 칸이 사진 위에 보임
 - **이전 권장 APK:** `releases/VoiceStamp_20260915_095143.apk` — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG
 - **이전 권장 APK:** `releases/VoiceStamp_20260915_075220.apk` — 저장·수정 입력칸이 키보드에 가리지 않음
 - **이전 권장 APK:** `releases/VoiceStamp_20260914_230623.apk` — 수신함 이 폰 사진 표시

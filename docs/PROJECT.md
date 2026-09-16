@@ -674,11 +674,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-09-16
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260916_002642.apk` | (본 커밋) | **권장** — Android PDF·HWPX 저장 시 사진 위 글 칸 · 문서·도움말만 · `restore-note-pad-in-exports.bat` | **GitHub `releases/`** |
+
 #### 2026-09-15
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260915_112033.apk` | (본 커밋) | **권장** — 큰 미리보기 글 칸이 사진 위에 보임 · `restore-note-pad-show.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260915_112033.apk` | (이전) | **이전** — 큰 미리보기 글 칸이 사진 위에 보임 · `restore-note-pad-show.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260915_103528.apk` | (이전) | **이전** — 큰 미리보기 글 칸 추가가 스크롤에 가로채이지 않음 · `restore-note-pad-press.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260915_095143.apk` | (이전) | **이전** — 저장·수정 큰 미리보기 사진 위 글 칸 · `restore-photo-note-pad.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260915_075220.apk` | (이전) | **이전** — 저장·수정 입력칸이 키보드에 가리지 않음 · `restore-save-kb-clear.bat` | **GitHub `releases/`** |
@@ -1306,6 +1312,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-16 (PDF·HWPX 글 칸)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | Android PDF·한글(HWPX) 저장 시 사진 위 글 칸을 파일 속 사진에 넣음. 앱 원본은 유지. **문서·도움말만** |
+| APK | `releases/VoiceStamp_20260916_002642.apk` |
+| 롤백 | `restore-note-pad-in-exports.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-note-pad-in-exports-20260916.md](./SECURITY-note-pad-in-exports-20260916.md) |
 
 ### 2026-09-15 (글 칸 사진 위 표시)
 
