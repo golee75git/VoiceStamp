@@ -1,3 +1,40 @@
+# 수정기록 — 사진 글 세로 맞춤 (2026-09-17)
+
+## 목적
+사진에 둔 글이 이미지 저장 때 작업 위치보다 위로 올라가 보이던 현상을 맞춘다.
+
+## 조치
+- 칸 위 여백·손잡이 가운데 정렬만큼 marginTop으로 올려 글자 상단이 ny가 되게 함.
+- Android 글꼴 추가 여백 끔(includeFontPadding false).
+- 가로 손잡이 보정·저장 bake(nx,ny)는 그대로.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: PhotoNotePadLayer·help·문서.
+- 식별자 NOTE_PAD_RISE_HOST / restore-note-pad-rise 공개 검색에서 동일 구현 없음.
+- OSS 목록 변경 없음. GPL 단독 신규 없음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-note-pad-rise.bat, docs/SECURITY-note-pad-rise-20260917.md, src.pre-note-pad-rise/, public.pre-note-pad-rise/ |
+| **재사용·수정** | src/components/PhotoNotePadLayer.tsx, public/help.html, public/landing.html, public/info.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/services/applyPhotoNotePad.ts |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 사진 위 글 위치와 저장 위치를 맞추는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260917_102508.apk
+- 되돌리기: restore-note-pad-rise.bat
+
+---
+
 # 수정기록 — 저장 칸 본문 글자색 (2026-09-17)
 
 ## 목적

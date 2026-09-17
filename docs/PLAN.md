@@ -749,6 +749,7 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 | 2026-08-16 | 4·3 | 기본 템플릿 **홍보기록** · APK `181459` · `restore-promo-log-template.bat` |
 | 2026-08-23 | 문서 | 날짜별·APK별 정리 · PRD/PLAN/PROJECT/README/CHANGELOG · 권장 `181951` (**소스 없음**) |
 | 2026-08-23 | 2AT·3 | 연결 비교 엑셀 **사진 가로 px**(수신·목록과 동일 기억값) · `restore-follow-xlsx-photo-px.bat` |
+| 2026-09-17 | 4·3 | 사진 위 글 **저장 위치를 글자 상단에 맞춤** · APK `102508` · `restore-note-pad-rise.bat` |
 | 2026-09-17 | 4·3 | 저장·수정 **칸 본문 글자색**을 흰 바탕에 어둡게 고정 · APK `094104` · `restore-field-ink.bat` |
 | 2026-09-16 | 4·3 | **글 넣기**(닫기 옆)·크기·투명도 막대·저장 위치 맞춤 · APK `104154` · `restore-note-pad-tune.bat` |
 | 2026-09-16 | 문서 | Android **PDF·HWPX** 저장 시 사진 위 글 칸 · APK `002642` · `restore-note-pad-in-exports.bat` |
@@ -793,10 +794,11 @@ PRD §10.1 및 기획 메모(`최소수정.txt`)에서 도출.
 
 ## 11. APK 빌드별 요약
 
-> **2026-09-17:** 권장 = `releases/VoiceStamp_20260917_094104.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
+> **2026-09-17:** 권장 = `releases/VoiceStamp_20260917_102508.apk`. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md) §2.
 | APK (권장) | 커밋 | 한 줄 |
 |------------|------|--------|
-| `releases/VoiceStamp_20260917_094104.apk` | (본 커밋) | **설치·GitHub 권장** — 저장·수정 칸 본문 글자색 고정 |
+| `releases/VoiceStamp_20260917_102508.apk` | (본 커밋) | **설치·GitHub 권장** — 사진 위 글 저장 위치를 글자 상단에 맞춤 |
+| `releases/VoiceStamp_20260917_094104.apk` | (이전) | **이전** — 저장·수정 칸 본문 글자색 고정 |
 | `releases/VoiceStamp_20260916_104154.apk` | (이전) | **이전** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 |
 | `releases/VoiceStamp_20260916_002642.apk` | (이전) | **이전** — Android PDF·HWPX 저장 시 사진 위 글 칸 |
 | `releases/VoiceStamp_20260915_112033.apk` | (이전) | **이전** — 큰 미리보기 글 칸이 사진 위에 보임 |

@@ -4466,3 +4466,11 @@ restore-field-ink.bat
 ```
 
 Restores `VoiceInputField.tsx` and help from `*.pre-field-ink/` (before save/edit field body text color).
+
+## Note pad rise restore (2026-09-17)
+
+```bat
+restore-note-pad-rise.bat
+```
+
+Restores `PhotoNotePadLayer.tsx` and help from `*.pre-note-pad-rise/` (before vertical text-origin match).

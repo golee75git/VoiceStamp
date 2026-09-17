@@ -40,6 +40,16 @@ type PhotoNotePadLayerProps = {
 
 const CHIP_LEAD_EDIT = 32;
 const CHIP_LEAD_COMPACT = 6;
+const CHIP_PAD_Y_EDIT = 6;
+const CHIP_PAD_Y_COMPACT = 3;
+const CHIP_GRIP_H = 22;
+
+function chipTextRise(compact: boolean, fontSizePt: number): number {
+  if (compact) {
+    return CHIP_PAD_Y_COMPACT;
+  }
+  return CHIP_PAD_Y_EDIT + Math.max(0, (CHIP_GRIP_H - fontSizePt) / 2);
+}
 
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) {
@@ -226,6 +236,7 @@ function PhotoNoteChip({
             {
               backgroundColor: bgRgba,
               marginLeft: compact ? -CHIP_LEAD_COMPACT : -CHIP_LEAD_EDIT,
+              marginTop: -chipTextRise(compact, fontSizePt),
             },
           ]}
         >
@@ -252,6 +263,7 @@ function PhotoNoteChip({
               onChangeText={(text) => onChangeBody?.(item.id, text)}
               placeholder="글"
               placeholderTextColor="#9ca3af"
+              includeFontPadding={false}
               maxLength={PHOTO_NOTE_PAD_BODY_MAX}
               multiline={false}
             />
@@ -263,6 +275,7 @@ function PhotoNoteChip({
                 { fontSize: fontSizePt, color: textColorHex },
               ]}
               numberOfLines={1}
+              includeFontPadding={false}
             >
               {item.body}
             </Text>
@@ -348,6 +361,7 @@ function PhotoNoteChip({
 }
 
 /* NOTE_PAD_TUNE_HOST: 글 상자의 왼쪽 위가 저장 좌표. 되돌리: restore-note-pad-tune.bat */
+/* NOTE_PAD_RISE_HOST: 글자 상단이 ny. 되돌리: restore-note-pad-rise.bat */
 export function PhotoNotePadLayer({
   items,
   editable = false,
