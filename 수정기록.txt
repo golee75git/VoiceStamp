@@ -1,3 +1,39 @@
+# 수정기록 — 저장 칸 본문 글자색 (2026-09-17)
+
+## 목적
+일부 폰에서 스탬프 수정 화면 칸 본문이 흰색으로 보이던 현상을 막는다.
+
+## 조치
+- VoiceInputField 본문에 color `#111` (저장 폴더 칸과 동일).
+- cursorColor `#111`, underlineColorAndroid transparent.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: VoiceInputField·help·문서.
+- 식별자 FIELD_INK_HOST / restore-field-ink 공개 검색에서 동일 구현 없음.
+- OSS 목록 변경 없음. GPL 단독 신규 없음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-field-ink.bat, docs/SECURITY-field-ink-20260917.md, src.pre-field-ink/, public.pre-field-ink/ |
+| **재사용·수정** | src/components/VoiceInputField.tsx, public/help.html, public/landing.html, public/info.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/components/StampSaveModal.tsx |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 글자색 명시는 일반 화면 표시. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260917_094104.apk
+- 되돌리기: restore-field-ink.bat
+
+---
+
 # 수정기록 — 글 넣기·막대 조절 (2026-09-16)
 
 ## 목적

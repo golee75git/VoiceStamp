@@ -674,11 +674,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-09-17
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260917_094104.apk` | (본 커밋) | **권장** — 저장·수정 칸 본문 글자색 고정 · `restore-field-ink.bat` | **GitHub `releases/`** |
+
 #### 2026-09-16
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260916_104154.apk` | (본 커밋) | **권장** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 · `restore-note-pad-tune.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260916_104154.apk` | (이전) | **이전** — 글 넣기·크기·투명도 막대·저장 위치 맞춤 · `restore-note-pad-tune.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260916_002642.apk` | (이전) | **이전** — Android PDF·HWPX 저장 시 사진 위 글 칸 · 문서·도움말만 · `restore-note-pad-in-exports.bat` | **GitHub `releases/`** |
 
 #### 2026-09-15
@@ -1313,6 +1319,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-17 (저장 칸 본문 글자색)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 제목·장소·메모·추가 칸 본문을 흰 바탕·어두운 글자로 고정 |
+| APK | `releases/VoiceStamp_20260917_094104.apk` |
+| 롤백 | `restore-field-ink.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-field-ink-20260917.md](./SECURITY-field-ink-20260917.md) |
 
 ### 2026-09-16 (글 넣기·막대 조절)
 

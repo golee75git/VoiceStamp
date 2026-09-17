@@ -4458,3 +4458,11 @@ restore-note-pad-tune.bat
 ```
 
 Restores overlay, zoom viewer, save modal, preview, note pad data/bake, and help from `*.pre-note-pad-tune/` (before 글 넣기, size/opacity slides, text-box origin). Deletes `src/services/photoNoteStyle.ts` if present.
+
+## Field ink restore (2026-09-17)
+
+```bat
+restore-field-ink.bat
+```
+
+Restores `VoiceInputField.tsx` and help from `*.pre-field-ink/` (before save/edit field body text color).

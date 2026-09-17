@@ -131,6 +131,7 @@ export function VoiceInputField({
           </Pressable>
         </View>
       </View>
+      {/* FIELD_INK_HOST: 칸 본문 글자색을 저장 폴더 칸과 같게. 되돌리: restore-field-ink.bat */}
       <TextInput
         ref={valueInputRef}
         style={[styles.input, multiline && styles.inputMultiline, { textAlign, fontSize }]}
@@ -142,6 +143,8 @@ export function VoiceInputField({
         selection={selection}
         placeholder={placeholderHint?.trim() || `${label} 입력`}
         placeholderTextColor="#9ca3af"
+        cursorColor="#111"
+        underlineColorAndroid="transparent"
         multiline={multiline}
         scrollEnabled={multiline}
         textAlignVertical={multiline ? 'top' : 'center'}
@@ -224,6 +227,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 16,
     backgroundColor: '#fff',
+    color: '#111',
   },
   inputMultiline: {
     minHeight: 96,
