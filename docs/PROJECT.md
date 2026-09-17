@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260917_102508.apk` | (본 커밋) | **권장** — 사진 위 글 저장 위치를 글자 상단에 맞춤 · `restore-note-pad-rise.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260917_175121.apk` | (본 커밋) | **권장** — 내보내기 파일명 장소·장별 JPEG 이름 · `restore-export-file-place.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260917_102508.apk` | (이전) | **이전** — 사진 위 글 저장 위치를 글자 상단에 맞춤 · `restore-note-pad-rise.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260917_094104.apk` | (이전) | **이전** — 저장·수정 칸 본문 글자색 고정 · `restore-field-ink.bat` | **GitHub `releases/`** |
 
 #### 2026-09-16
@@ -1320,6 +1321,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-17 (내보내기 파일명 장소·장별 JPEG)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 기본 파일명에 장소 칸 · 여러 장 이미지 저장은 장별 이름 |
+| APK | `releases/VoiceStamp_20260917_175121.apk` |
+| 롤백 | `restore-export-file-place.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-export-file-place-20260917.md](./SECURITY-export-file-place-20260917.md) |
 
 ### 2026-09-17 (사진 글 세로 맞춤)
 

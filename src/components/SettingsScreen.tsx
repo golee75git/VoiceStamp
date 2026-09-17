@@ -703,7 +703,7 @@ export function SettingsScreen({
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>PDF 파일명 날짜·시간</Text>
-          <Text style={styles.hint}>PDF보내기 시 파일명 기본값에 날짜·시간 포함 여부입니다.</Text>
+          <Text style={styles.hint}>PDF·엑셀·한글·ZIP 기본 파일명과, 목록 이미지 저장의 장별 JPEG 이름에 날짜·시간을 넣을지입니다.</Text>
           <View style={styles.optionRow}>
             <Pressable
               style={[styles.optionButton, pdfFilenameIncludeDatetime && styles.optionButtonSelected]}

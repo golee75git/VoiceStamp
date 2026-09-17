@@ -1,3 +1,40 @@
+# 수정기록 — 내보내기 파일명 장소·장별 JPEG (2026-09-17)
+
+## 목적
+내보내기 기본 파일명에 장소(위치) 칸 글을 넣고, 여러 장 이미지 저장 때 파일마다 그 장의 제목·장소를 쓴다.
+
+## 조치
+- 제목에 장소 글이 없으면 장소 칸을 뒤에 붙임. 좌표 숫자는 넣지 않음.
+- 목록 이미지 저장은 공통 `_1` `_2` 대신 장별 이름. 같으면 번호.
+- PDF·엑셀·한글·ZIP은 파일이 하나라 첫 장 기준 기본 이름 유지.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: pdfTitleFormat·exportStampImage·StampListScreen·FollowLinkCompareSheet·SettingsScreen·help.
+- 식별자 EXPORT_FILE_PLACE_HOST / restore-export-file-place 공개 검색에서 동일 구현 없음.
+- OSS 목록 변경 없음. GPL 단독 신규 없음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-export-file-place.bat, docs/SECURITY-export-file-place-20260917.md, src.pre-export-file-place/, public.pre-export-file-place/ |
+| **재사용·수정** | src/services/pdfTitleFormat.ts, src/services/exportStampImage.ts, src/components/StampListScreen.tsx, src/components/FollowLinkCompareSheet.tsx, src/components/SettingsScreen.tsx, public/help.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/services/exportOnDemand.ts |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음. GPL 신규 없음.
+- 새 권한·네트워크 없음.
+
+## 특허
+- 제목·장소로 파일명을 만드는 구성은 검토가 필요할 수 있음. 특허 비침해를 보장하지 않음.
+
+## 배포
+- APK: VoiceStamp_20260917_175121.apk
+- 되돌리기: restore-export-file-place.bat
+
+---
+
 # 수정기록 — 사진 글 세로 맞춤 (2026-09-17)
 
 ## 목적

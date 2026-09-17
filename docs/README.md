@@ -95,14 +95,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-16)
 
-- **문서 갱신일:** 2026-09-17 — **사진 글 세로 맞춤** · APK `102508`
-- **최신 기능 커밋:** (본 배포) · APK `102508` — 사진 위 글 저장 위치를 글자 상단에 맞춤
+- **문서 갱신일:** 2026-09-17 — **내보내기 파일명 장소·장별 JPEG** · APK `175121`
+- **최신 기능 커밋:** (본 배포) · APK `175121` — 내보내기 기본 파일명에 장소, 여러 장 이미지 저장은 장별 이름
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260917_102508.apk` — 사진 위 글 저장 위치를 글자 상단에 맞춤
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260917_102508.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260917_175121.apk` — 내보내기 파일명 장소·장별 JPEG 이름
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260917_175121.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260917_102508.apk` — 사진 위 글 저장 위치를 글자 상단에 맞춤
 - **이전 권장 APK:** `releases/VoiceStamp_20260917_094104.apk` — 저장·수정 칸 본문 글자색 고정
 - **이전 권장 APK:** `releases/VoiceStamp_20260915_095143.apk` — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG
 - **이전 권장 APK:** `releases/VoiceStamp_20260915_075220.apk` — 저장·수정 입력칸이 키보드에 가리지 않음

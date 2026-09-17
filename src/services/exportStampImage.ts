@@ -29,7 +29,7 @@ import {
   type FieldLabels,
 } from './fieldLabels';
 import { buildCaptionTableRows } from './captionTable';
-import { formatStampFooterDatetime } from './pdfTitleFormat';
+import { defaultExportFileNameFromStamp, formatStampFooterDatetime } from './pdfTitleFormat';
 import type { StampTextLayout, TextAlign, CoordsLabelMode, WatermarkStyle, StampTextSize } from './settingsService';
 import { DEFAULT_STAMP_TEXT_SIZE, stampTextSizeScale } from './settingsService';
 import { drawWatermarkBar, getWatermarkTheme } from './watermarkStyle';
@@ -677,6 +677,25 @@ export function buildExportJpegFileName(
   return `${base}_${index + 1}.jpg`;
 }
 
+function takeUnusedJpegBase(base: string, used: Set<string>): string {
+  const cleaned = sanitizeStampFileBaseName(base);
+  if (!used.has(cleaned)) {
+    used.add(cleaned);
+    return cleaned;
+  }
+  let n = 2;
+  while (n < 1000) {
+    const candidate = sanitizeStampFileBaseName(`${cleaned}_${n}`);
+    if (!used.has(candidate)) {
+      used.add(candidate);
+      return candidate;
+    }
+    n += 1;
+  }
+  used.add(cleaned);
+  return cleaned;
+}
+
 
 
 export function buildCaptionGalleryFileName(title: string): string {
@@ -715,16 +734,17 @@ export async function renderStampPreviewJpegUri(
 export async function saveStampsAsJpegToGallery(
   stamps: Stamp[],
   options: StampImageExportOptions,
-  exportBaseName: string,
+  _exportBaseName: string,
   captureNative?: (stamp: Stamp, exportOptions: StampImageExportOptions) => Promise<string>,
+  filenameIncludeDatetime = true,
 ): Promise<{ saved: number; failed: number }> {
   let saved = 0;
   let failed = 0;
-  const total = stamps.length;
+  const usedJpegBases = new Set<string>();
 
-  for (let index = 0; index < stamps.length; index += 1) {
-    const stamp = stamps[index];
-    const fileName = buildExportJpegFileName(exportBaseName, index, total);
+  for (const stamp of stamps) {
+    const perStampBase = defaultExportFileNameFromStamp(stamp, filenameIncludeDatetime);
+    const fileName = `${takeUnusedJpegBase(perStampBase, usedJpegBases)}.jpg`;
     const stampOptions: StampImageExportOptions = {
       ...options,
       ...fieldLabelsFromStamp(stamp),

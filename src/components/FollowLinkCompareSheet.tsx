@@ -16,7 +16,7 @@ import {
 import { confirmAlert } from '../utils/confirmAlert';
 import { resolveImageUri } from '../services/fileService';
 import { loadStampPdfExport, loadStampXlsxExport } from '../services/exportOnDemand';
-import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
+import { defaultExportFileNameFromStamp } from '../services/pdfTitleFormat';
 import {
   DEFAULT_INBOX_EXCEL_FONT_SIZE,
   DEFAULT_INBOX_EXCEL_PREVIEW_WIDTH,
@@ -73,7 +73,7 @@ export function FollowLinkCompareSheet({
     setSelectedIds(new Set(rows.map((row) => row.id)));
     setPdfUri(null);
     if (rows[0]) {
-      setPdfFileName(defaultPdfFileNameFromStampTitle(rows[0].title, true));
+      setPdfFileName(defaultExportFileNameFromStamp(rows[0], true));
     }
     return rows;
   }, []);
@@ -141,7 +141,7 @@ export function FollowLinkCompareSheet({
     setPdfBusy(true);
     try {
       const { createStampsPdf } = await loadStampPdfExport();
-      const name = defaultPdfFileNameFromStampTitle(selectedStamps[0]?.title, true);
+      const name = defaultExportFileNameFromStamp(selectedStamps[0], true);
       setPdfFileName(name);
       const uri = await createStampsPdf(selectedStamps, name, name);
       setPdfUri(uri);

@@ -56,7 +56,7 @@ import {
   XLSX_ROW_FILL_MIN,
 } from '../services/exportOnDemand';
 import { fieldLabelsFromStamp, formatLabeledValue } from '../services/fieldLabels';
-import { defaultPdfFileNameFromStampTitle } from '../services/pdfTitleFormat';
+import { defaultExportFileNameFromStamp } from '../services/pdfTitleFormat';
 import { pickImageFromLibrary, takePhotoWithSystemCamera } from '../services/pickStampImage';
 import {
   getLocationSnapshotFromCoords,
@@ -389,10 +389,9 @@ export function StampListScreen({
     }
 
     const selected = stamps.filter((s) => selectedIds.has(s.id));
-    const defaultName = defaultPdfFileNameFromStampTitle(
-      selected[0]?.title,
-      pdfFilenameIncludeDatetime,
-    );
+    const defaultName = selected[0]
+      ? defaultExportFileNameFromStamp(selected[0], pdfFilenameIncludeDatetime)
+      : 'VoiceStamp';
     setPdfFileName(defaultName);
     setPdfReportTitle(defaultName);
   }, [selectedIds, stamps, selecting, pdfFilenameIncludeDatetime]);
@@ -596,6 +595,7 @@ export function StampListScreen({
         exportOptions,
         pdfFileName,
         captureStampForExport,
+        pdfFilenameIncludeDatetime,
       );
 
       if (saved === 0) {

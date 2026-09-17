@@ -4474,3 +4474,11 @@ restore-note-pad-rise.bat
 ```
 
 Restores `PhotoNotePadLayer.tsx` and help from `*.pre-note-pad-rise/` (before vertical text-origin match).
+
+## Export file place restore (2026-09-17)
+
+```bat
+restore-export-file-place.bat
+```
+
+Restores PDF title format, JPEG export names, list/follow/settings, and help from `*.pre-export-file-place/` (before place in default export names and per-stamp JPEG names).

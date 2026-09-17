@@ -33,3 +33,39 @@ export function defaultPdfFileNameFromStampTitle(
   const stripped = stripDateTimePrefixFromTitle(raw);
   return stripped || 'VoiceStamp';
 }
+
+function compactExportNameToken(value: string): string {
+  return value.replace(/[_\s]/g, '').toLowerCase();
+}
+
+function placeTokenForExportName(placeLabel: string | null | undefined): string {
+  const raw = placeLabel?.trim() ?? '';
+  if (!raw) {
+    return '';
+  }
+  return raw
+    .replace(/[\\/:*?"<>|]/g, '_')
+    .replace(/\s+/g, '')
+    .replace(/_+/g, '_');
+}
+
+/** EXPORT_FILE_PLACE_HOST: 제목 + 장소칸(위치 표시명 포함). 되돌리: restore-export-file-place.bat */
+export function defaultExportFileNameFromStamp(
+  stamp: { title?: string | null; placeLabel?: string | null } | null | undefined,
+  includeDatetime: boolean,
+): string {
+  const titleBase = defaultPdfFileNameFromStampTitle(stamp?.title ?? undefined, includeDatetime);
+  const place = placeTokenForExportName(stamp?.placeLabel);
+  if (!place) {
+    return titleBase;
+  }
+  const titleCmp = compactExportNameToken(titleBase);
+  const placeCmp = compactExportNameToken(place);
+  if (titleCmp.includes(placeCmp) || placeCmp.includes(titleCmp)) {
+    return titleBase;
+  }
+  if (titleBase === 'VoiceStamp') {
+    return place;
+  }
+  return `${titleBase}_${place}`;
+}
