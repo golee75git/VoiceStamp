@@ -71,6 +71,7 @@
 | [SECURITY-save-sheet-back-20260914.md](./SECURITY-save-sheet-back-20260914.md) | 보안·UX | 저장 화면 시스템 뒤로가기가 흰 화면에 머물지 않음 |
 | [SECURITY-join-list-send-check-20260914.md](./SECURITY-join-list-send-check-20260914.md) | 보안·UX | 목록 사업 보내기 고르기·연결 확인 |
 | [SECURITY-note-pad-rise-20260917.md](./SECURITY-note-pad-rise-20260917.md) | 보안·UX | 사진 위 글 저장 위치를 글자 상단에 맞춤 |
+| [SECURITY-caption-batch-save-20260930.md](./SECURITY-caption-batch-save-20260930.md) | 보안·UX | 여러 장 이미지 저장 일부 실패 보정 |
 | [SECURITY-field-ink-20260917.md](./SECURITY-field-ink-20260917.md) | 보안·UX | 저장·수정 칸 본문 글자색 고정 |
 | [SECURITY-note-pad-tune-20260916.md](./SECURITY-note-pad-tune-20260916.md) | 보안·UX | 글 넣기·크기·투명도 막대·저장 위치 맞춤 |
 | [SECURITY-note-pad-in-exports-20260916.md](./SECURITY-note-pad-in-exports-20260916.md) | 보안·내보내기 | Android PDF·HWPX 저장 시 사진 위 글 칸 (문서만) |
@@ -95,14 +96,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-16)
 
-- **문서 갱신일:** 2026-09-17 — **내보내기 파일명 장소·장별 JPEG** · APK `175121`
-- **최신 기능 커밋:** (본 배포) · APK `175121` — 내보내기 기본 파일명에 장소, 여러 장 이미지 저장은 장별 이름
+- **문서 갱신일:** 2026-09-30 — **여러 장 이미지 저장 실패 보정** · APK `233350`
+- **최신 기능 커밋:** (본 배포) · APK `233350` — 목록에서 여러 장 이미지 저장 시 일부 실패 보정
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260917_175121.apk` — 내보내기 파일명 장소·장별 JPEG 이름
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260917_175121.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20260930_233350.apk` — 여러 장 이미지 저장 실패 보정
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20260930_233350.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20260917_175121.apk` — 내보내기 파일명 장소·장별 JPEG 이름
 - **이전 권장 APK:** `releases/VoiceStamp_20260917_102508.apk` — 사진 위 글 저장 위치를 글자 상단에 맞춤
 - **이전 권장 APK:** `releases/VoiceStamp_20260917_094104.apk` — 저장·수정 칸 본문 글자색 고정
 - **이전 권장 APK:** `releases/VoiceStamp_20260915_095143.apk` — 저장·수정 큰 미리보기 사진 위 글 칸 · 이미지 저장 JPEG

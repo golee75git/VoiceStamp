@@ -4475,6 +4475,14 @@ restore-note-pad-rise.bat
 
 Restores `PhotoNotePadLayer.tsx` and help from `*.pre-note-pad-rise/` (before vertical text-origin match).
 
+## Caption batch save restore (2026-09-30)
+
+```bat
+restore-caption-batch-save.bat
+```
+
+Restores export photo prepare and caption native render, plus help, from `*.pre-caption-batch-save/` (before separate vertical-rule files and bitmap release on multi-image save).
+
 ## Export file place restore (2026-09-17)
 
 ```bat

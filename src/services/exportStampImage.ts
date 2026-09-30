@@ -121,16 +121,20 @@ export async function prepareExportPhoto(
   const context = ImageManipulator.manipulate(imageUri);
   context.resize({ width: maxWidth });
   const image = await context.renderAsync();
-  const saved = await image.saveAsync({
-    format: SaveFormat.JPEG,
-    compress: 1,
-  });
-
-  return {
-    uri: saved.uri,
-    width: image.width,
-    height: image.height,
-  };
+  try {
+    const saved = await image.saveAsync({
+      format: SaveFormat.JPEG,
+      compress: 1,
+    });
+    return {
+      uri: saved.uri,
+      width: image.width,
+      height: image.height,
+    };
+  } finally {
+    // CAPTION_BATCH_SAVE_HOST: 여러 장 합성 시 비트맵이 쌓이지 않게 파일로 쓴 뒤 바로 놓는다.
+    image.release();
+  }
 }
 
 export async function compressStampJpeg(sourceUri: string): Promise<string> {

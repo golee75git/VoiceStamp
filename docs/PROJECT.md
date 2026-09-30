@@ -674,11 +674,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-09-30
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20260930_233350.apk` | (본 커밋) | **권장** — 여러 장 이미지 저장 실패 보정 · `restore-caption-batch-save.bat` | **GitHub `releases/`** |
+
 #### 2026-09-17
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260917_175121.apk` | (본 커밋) | **권장** — 내보내기 파일명 장소·장별 JPEG 이름 · `restore-export-file-place.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260917_175121.apk` | (이전) | **이전** — 내보내기 파일명 장소·장별 JPEG 이름 · `restore-export-file-place.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260917_102508.apk` | (이전) | **이전** — 사진 위 글 저장 위치를 글자 상단에 맞춤 · `restore-note-pad-rise.bat` | **GitHub `releases/`** |
 | `releases/VoiceStamp_20260917_094104.apk` | (이전) | **이전** — 저장·수정 칸 본문 글자색 고정 · `restore-field-ink.bat` | **GitHub `releases/`** |
 
@@ -1321,6 +1327,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-09-30 (여러 장 이미지 저장 실패)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 목록에서 여러 장 이미지 저장 시 일부 실패 보정 |
+| APK | `releases/VoiceStamp_20260930_233350.apk` |
+| 롤백 | `restore-caption-batch-save.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-caption-batch-save-20260930.md](./SECURITY-caption-batch-save-20260930.md) |
 
 ### 2026-09-17 (내보내기 파일명 장소·장별 JPEG)
 

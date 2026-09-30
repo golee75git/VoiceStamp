@@ -240,16 +240,29 @@ export async function renderStampCaptionNative(
       scale: 1,
       position: { X: padding, Y: cursorY },
     });
-    const vEdge = await createSolidJpeg(
+    // CAPTION_BATCH_SAVE_HOST: 세로선 3개는 파일 3장. 같은 주소를 세 번 쓰면 합성 중 하나가 버려져 그 장만 실패한다.
+    const vEdgeLeft = await createSolidJpeg(
       BORDER_1X1_PNG_BASE64,
-      `caption-vedge-${i}.png`,
+      `caption-vedge-${i}-l.png`,
+      borderW,
+      rowH,
+    );
+    const vEdgeMid = await createSolidJpeg(
+      BORDER_1X1_PNG_BASE64,
+      `caption-vedge-${i}-m.png`,
+      borderW,
+      rowH,
+    );
+    const vEdgeRight = await createSolidJpeg(
+      BORDER_1X1_PNG_BASE64,
+      `caption-vedge-${i}-r.png`,
       borderW,
       rowH,
     );
     overlayImages.push(
-      { src: vEdge, scale: 1, position: { X: padding, Y: cursorY } },
-      { src: vEdge, scale: 1, position: { X: padding + labelColWidth, Y: cursorY } },
-      { src: vEdge, scale: 1, position: { X: padding + imgWidth - borderW, Y: cursorY } },
+      { src: vEdgeLeft, scale: 1, position: { X: padding, Y: cursorY } },
+      { src: vEdgeMid, scale: 1, position: { X: padding + labelColWidth, Y: cursorY } },
+      { src: vEdgeRight, scale: 1, position: { X: padding + imgWidth - borderW, Y: cursorY } },
     );
     cursorY += rowH;
   }
