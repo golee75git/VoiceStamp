@@ -88,6 +88,7 @@ const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
 /** How many optional save slots (추가1~3) stay open on the next new stamp. 0–3. */
 const SAVE_EXTRA_SLOT_COUNT_KEY = 'save_extra_slot_count';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
+const SAVE_SHEET_IMAGE_BUTTON_KEY = 'save_sheet_image_button';
 const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
 const QR_CAPTION_ENABLED_KEY = 'qr_caption_enabled';
@@ -127,6 +128,8 @@ export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
 export const DEFAULT_SHUTTER_SOUND = true;
+/** Save-sheet 「이미지 저장」 button. Default hidden. List export is unchanged. */
+export const DEFAULT_SAVE_SHEET_IMAGE_BUTTON = false;
 /** Android on-device face/number mosaic blur. Default off (opt-in). */
 export const DEFAULT_PRIVACY_BLUR_ENABLED = false;
 export const DEFAULT_OCR_TITLE_MEMO_ENABLED = false;
@@ -490,6 +493,7 @@ export type SettingsScreenSnapshot = {
   continuousCaptureCamera: ContinuousCaptureCamera;
   captureAfterMode: CaptureAfterMode;
   shutterSound: boolean;
+  saveSheetImageButton: boolean;
   privacyBlurEnabled: boolean;
   ocrTitleMemoEnabled: boolean;
   qrCaptionEnabled: boolean;
@@ -601,6 +605,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
     shutterSound: parseBooleanSetting(
       pickSetting(map, SHUTTER_SOUND_KEY),
       DEFAULT_SHUTTER_SOUND,
+    ),
+    saveSheetImageButton: parseBooleanSetting(
+      pickSetting(map, SAVE_SHEET_IMAGE_BUTTON_KEY),
+      DEFAULT_SAVE_SHEET_IMAGE_BUTTON,
     ),
     privacyBlurEnabled: parseBooleanSetting(
       pickSetting(map, PRIVACY_BLUR_ENABLED_KEY),
@@ -735,6 +743,7 @@ export function sanitizeSettingsScreenSnapshot(
     continuousCaptureCamera: sanitizeContinuousCaptureCamera(draft.continuousCaptureCamera),
     captureAfterMode: sanitizeCaptureAfterMode(draft.captureAfterMode),
     shutterSound: draft.shutterSound,
+    saveSheetImageButton: draft.saveSheetImageButton,
     privacyBlurEnabled: draft.privacyBlurEnabled,
     ocrTitleMemoEnabled: draft.ocrTitleMemoEnabled,
     qrCaptionEnabled: draft.qrCaptionEnabled,
@@ -782,6 +791,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [CONTINUOUS_CAPTURE_CAMERA_KEY, snapshot.continuousCaptureCamera],
     [CAPTURE_AFTER_MODE_KEY, snapshot.captureAfterMode],
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
+    [SAVE_SHEET_IMAGE_BUTTON_KEY, snapshot.saveSheetImageButton ? 'true' : 'false'],
     [PRIVACY_BLUR_ENABLED_KEY, snapshot.privacyBlurEnabled ? 'true' : 'false'],
     [OCR_TITLE_MEMO_ENABLED_KEY, snapshot.ocrTitleMemoEnabled ? 'true' : 'false'],
     [QR_CAPTION_ENABLED_KEY, snapshot.qrCaptionEnabled ? 'true' : 'false'],
@@ -1163,6 +1173,15 @@ export async function getShutterSoundEnabled(): Promise<boolean> {
 export async function setShutterSoundEnabled(enabled: boolean): Promise<boolean> {
   await writeSetting(SHUTTER_SOUND_KEY, enabled ? 'true' : 'false');
   return enabled;
+}
+
+export function saveSheetImageButtonLabel(shown: boolean): string {
+  return shown ? '표시' : '숨김';
+}
+
+export async function getSaveSheetImageButton(): Promise<boolean> {
+  const value = await readSetting(SAVE_SHEET_IMAGE_BUTTON_KEY);
+  return parseBooleanSetting(value, DEFAULT_SAVE_SHEET_IMAGE_BUTTON);
 }
 
 export function privacyBlurEnabledLabel(enabled: boolean): string {

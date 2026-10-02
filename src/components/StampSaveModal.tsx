@@ -86,6 +86,7 @@ import {
   getFloorPickerMode,
   getLastFloor,
   getPrivacyBlurEnabled,
+  getSaveSheetImageButton,
   getOcrTitleMemoEnabled,
   getQrCaptionEnabled,
   getMlkitSceneLabelEnabled,
@@ -424,6 +425,7 @@ export function StampSaveModal({
   const [folderOptionsLoading, setFolderOptionsLoading] = useState(false);
   const [workingImageUri, setWorkingImageUri] = useState<string | null>(null);
   const [previewThumbUri, setPreviewThumbUri] = useState<string | null>(null);
+  const [saveSheetImageButton, setSaveSheetImageButton] = useState(false);
   const [privacyBlurEnabled, setPrivacyBlurEnabled] = useState(false);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabled] = useState(false);
   const [qrCaptionEnabled, setQrCaptionEnabled] = useState(false);
@@ -846,13 +848,15 @@ export function StampSaveModal({
     }
     let cancelled = false;
     void Promise.all([
+      getSaveSheetImageButton(),
       getPrivacyBlurEnabled(),
       getOcrTitleMemoEnabled(),
       getQrCaptionEnabled(),
       getMlkitSceneLabelEnabled(),
       getSaveSlotSpeechEnabled(),
-    ]).then(([blurEnabled, ocrEnabled, qrEnabled, sceneEnabled, slotSpeech]) => {
+    ]).then(([imageButton, blurEnabled, ocrEnabled, qrEnabled, sceneEnabled, slotSpeech]) => {
       if (!cancelled) {
+        setSaveSheetImageButton(imageButton);
         setPrivacyBlurEnabled(blurEnabled);
         setOcrTitleMemoEnabled(ocrEnabled);
         setQrCaptionEnabled(qrEnabled);
@@ -1962,8 +1966,13 @@ export function StampSaveModal({
 
     const trimmedSource = sourceUrl.trim();
     const bareSource = isBareSourceUrlPrefix(trimmedSource);
-    const resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
-    if (!bareSource && !resolvedSourceUrl) {
+    let resolvedSourceUrl: string | null;
+    if (!qrCaptionEnabled) {
+      resolvedSourceUrl = isEdit && stamp ? stamp.sourceUrl ?? null : null;
+    } else {
+      resolvedSourceUrl = bareSource ? null : normalizeHttpUrl(trimmedSource);
+    }
+    if (qrCaptionEnabled && !bareSource && !resolvedSourceUrl) {
       const msg = 'QR URL은 http:// 또는 https:// 만 사용할 수 있습니다.';
       setError(msg);
       showAlert('저장', msg);
@@ -2369,8 +2378,14 @@ export function StampSaveModal({
               </Pressable>
             ) : null}
 
-            {photoUri ? (
+            {photoUri &&
+            (saveSheetImageButton ||
+              (privacyBlurEnabled && isPrivacyBlurSupported()) ||
+              (ocrTitleMemoEnabled && isOcrTitleMemoSupported()) ||
+              qrCaptionEnabled ||
+              (mlkitSceneLabelEnabled && isSceneLabelSupported())) ? (
               <View style={styles.photoActionRow}>
+                {saveSheetImageButton ? (
                 <Pressable
                   style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
                   onPress={() => void handlePreviewJpegGallerySave()}
@@ -2385,6 +2400,7 @@ export function StampSaveModal({
                     <Text style={styles.privacyBlurBtnText}>이미지 저장</Text>
                   )}
                 </Pressable>
+                ) : null}
                 {privacyBlurEnabled && isPrivacyBlurSupported() ? (
                   <Pressable
                     style={[styles.privacyBlurBtn, saving ? { opacity: 0.5 } : null]}
@@ -2444,9 +2460,7 @@ export function StampSaveModal({
               </View>
             ) : null}
 
-            {qrCaptionEnabled ||
-            Boolean(capturedSourceUrl) ||
-            Boolean(normalizeHttpUrl(sourceUrl)) ? (
+            {qrCaptionEnabled ? (
               <View>
                 <SaveKbClearHost id="sourceUrl" hosts={saveFieldHostRefs}>
                 <VoiceInputField

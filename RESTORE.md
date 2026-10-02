@@ -4475,6 +4475,14 @@ restore-note-pad-rise.bat
 
 Restores `PhotoNotePadLayer.tsx` and help from `*.pre-note-pad-rise/` (before vertical text-origin match).
 
+## Save sheet tools restore (2026-10-02)
+
+```bat
+restore-save-sheet-tools.bat
+```
+
+Restores the save sheet, settings, and help from `*.pre-save-sheet-tools/` (before hiding the save-sheet image button by default and tying the QR URL field to the QR setting).
+
 ## Save core slots restore (2026-10-02)
 
 ```bat

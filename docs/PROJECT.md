@@ -678,7 +678,8 @@ build-apk.bat
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20261002_091137.apk` | (본 커밋) | **권장** — 저장 칸은 제목·장소·메모, 추가 칸은 버튼 · `restore-save-core-slots.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20261002_100640.apk` | (본 커밋) | **권장** — 저장 화면 이미지 저장 기본 숨김, QR URL 칸은 설정이 사용일 때만 · `restore-save-sheet-tools.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20261002_091137.apk` | (이전) | **이전** — 저장 칸은 제목·장소·메모, 추가 칸은 버튼 · `restore-save-core-slots.bat` | **GitHub `releases/`** |
 
 #### 2026-09-30
 
@@ -1333,6 +1334,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-10-02 (저장 화면 도구 표시)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장 화면 이미지 저장은 기본 숨김. QR URL 칸은 사진 URL 설정이 사용일 때만 |
+| APK | `releases/VoiceStamp_20261002_100640.apk` |
+| 롤백 | `restore-save-sheet-tools.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-save-sheet-tools-20261002.md](./SECURITY-save-sheet-tools-20261002.md) |
 
 ### 2026-10-02 (저장 칸 기본 3개)
 

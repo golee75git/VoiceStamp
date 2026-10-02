@@ -64,6 +64,7 @@ import {
   DEFAULT_FIELD_EXTRA2_LABEL,
   DEFAULT_FIELD_EXTRA3_LABEL,
   DEFAULT_SHUTTER_SOUND,
+  DEFAULT_SAVE_SHEET_IMAGE_BUTTON,
   DEFAULT_PRIVACY_BLUR_ENABLED,
   DEFAULT_OCR_TITLE_MEMO_ENABLED,
   DEFAULT_QR_CAPTION_ENABLED,
@@ -76,6 +77,7 @@ import {
   primaryCaptureCameraLabel,
   captureAfterModeLabel,
   shutterSoundLabel,
+  saveSheetImageButtonLabel,
   privacyBlurEnabledLabel,
   ocrTitleMemoEnabledLabel,
   qrCaptionEnabledLabel,
@@ -203,6 +205,9 @@ export function SettingsScreen({
     DEFAULT_CAPTURE_AFTER_MODE,
   );
   const [shutterSound, setShutterSoundState] = useState(DEFAULT_SHUTTER_SOUND);
+  const [saveSheetImageButton, setSaveSheetImageButtonState] = useState(
+    DEFAULT_SAVE_SHEET_IMAGE_BUTTON,
+  );
   const [privacyBlurEnabled, setPrivacyBlurEnabledState] = useState(DEFAULT_PRIVACY_BLUR_ENABLED);
   const [ocrTitleMemoEnabled, setOcrTitleMemoEnabledState] = useState(DEFAULT_OCR_TITLE_MEMO_ENABLED);
   const [qrCaptionEnabled, setQrCaptionEnabledState] = useState(DEFAULT_QR_CAPTION_ENABLED);
@@ -275,6 +280,7 @@ export function SettingsScreen({
       setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
       setCaptureAfterModeState(snapshot.captureAfterMode);
       setShutterSoundState(snapshot.shutterSound);
+      setSaveSheetImageButtonState(snapshot.saveSheetImageButton);
       setPrivacyBlurEnabledState(snapshot.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(snapshot.ocrTitleMemoEnabled);
       setQrCaptionEnabledState(snapshot.qrCaptionEnabled);
@@ -353,6 +359,7 @@ export function SettingsScreen({
         continuousCaptureCamera,
         captureAfterMode,
         shutterSound,
+        saveSheetImageButton,
         privacyBlurEnabled,
         ocrTitleMemoEnabled,
         qrCaptionEnabled,
@@ -396,6 +403,7 @@ export function SettingsScreen({
       setContinuousCaptureCameraState(saved.continuousCaptureCamera);
       setCaptureAfterModeState(saved.captureAfterMode);
       setShutterSoundState(saved.shutterSound);
+      setSaveSheetImageButtonState(saved.saveSheetImageButton);
       setPrivacyBlurEnabledState(saved.privacyBlurEnabled);
       setOcrTitleMemoEnabledState(saved.ocrTitleMemoEnabled);
       setQrCaptionEnabledState(saved.qrCaptionEnabled);
@@ -1255,6 +1263,42 @@ export function SettingsScreen({
 
           {showAdvanced ? (
           <>
+          <Text style={[styles.label, styles.sectionGap]}>저장 화면 이미지 저장</Text>
+          <Text style={styles.hint}>
+            표시: 촬영 뒤 저장 화면 미리보기 아래에 「이미지 저장」이 나옵니다. 목록의 이미지 저장은
+            그대로입니다. 기본은 숨김입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, !saveSheetImageButton && styles.optionButtonSelected]}
+              onPress={() => setSaveSheetImageButtonState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !saveSheetImageButton && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(saveSheetImageButtonLabel(false), !DEFAULT_SAVE_SHEET_IMAGE_BUTTON)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, saveSheetImageButton && styles.optionButtonSelected]}
+              onPress={() => setSaveSheetImageButtonState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  saveSheetImageButton && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel(saveSheetImageButtonLabel(true), DEFAULT_SAVE_SHEET_IMAGE_BUTTON)}
+              </Text>
+            </Pressable>
+          </View>
+
           <Text style={[styles.label, styles.sectionGap]}>개인정보 가리기</Text>
           <Text style={styles.hint}>
             사용: 저장 화면에서 얼굴·숫자 영역을 폰 안에서만 흐리게 할 수 있습니다. 서버로 보내지 않습니다.
@@ -1367,8 +1411,10 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>사진 URL → QR</Text>
           <Text style={styles.hint}>
-            사용: 저장 화면 QR URL 칸에 https:// 가 기본으로 들어가며 마이크·키보드로 이어서
-            입력할 수 있습니다. 「연결확인」으로 접속 여부를 미리 볼 수 있습니다. 저장 JPEG
+            사용: 저장 화면에 QR URL 칸·「URL 찾아 QR」이 나옵니다. 칸에 https:// 가 기본으로
+            들어가며 마이크·키보드로 이어서 입력할 수 있습니다. 끄면 그 칸과 버튼은 숨기고, 새
+            스탬프에는 미리보기에서 읽은 주소를 넣지 않습니다. 이미 저장된 주소는 유지됩니다.
+            「연결확인」으로 접속 여부를 미리 볼 수 있습니다. 저장 JPEG
             우하단에 QR이 들어갑니다. 「별도 영역」은 사진 안, 「워터마크」는 글자 바 위에
             붙습니다. http(s)만 허용. https:// 만 두면 QR 없이 저장됩니다. 자동 찾기는
             Android에서 사진 글자(OCR)로만 하며 서버로 보내지 않습니다. PDF/XLSX/HWPX에는 아직

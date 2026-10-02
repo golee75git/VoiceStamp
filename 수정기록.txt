@@ -1,3 +1,44 @@
+# 수정기록 — 저장 화면 도구 표시 (2026-10-02)
+
+## 목적
+촬영 뒤 저장 화면의 이미지 저장·QR URL 칸이 기본으로 길게 보이지 않게 한다.
+
+## 조치
+- 「저장 화면 이미지 저장」을 표시/숨김으로 두고 기본은 숨김. 목록의 이미지 저장은 그대로.
+- 개인정보 가리기·글자 읽어 채우기·URL 찾아 QR·장면 키워드는 기존 사용 설정이 꺼져 있으면 숨김. 기본은 이미 숨김.
+- QR URL 칸은 「사진 URL → QR」이 사용일 때만 연다. 꺼져 있으면 새 스탬프에 미리보기 주소를 넣지 않고, 이미 저장된 주소는 유지한다.
+- 도움말에 같은 내용을 적었다.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: StampSaveModal·SettingsScreen·settingsService·help.
+- 식별자 save_sheet_image_button / restore-save-sheet-tools 는 이 저장소 전용.
+- GitHub 코드 검색: `save_sheet_image_button`, `getSaveSheetImageButton`, `restore-save-sheet-tools` 결과 없음.
+- `license-checker --production --summary`(2026-10-02): MIT 533, ISC 41, Apache-2.0 15. GPL은 기존 이중 허가 2건뿐. GPL 단독 신규 없음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-save-sheet-tools.bat, docs/SECURITY-save-sheet-tools-20261002.md, src.pre-save-sheet-tools/, public.pre-save-sheet-tools/ |
+| **재사용·수정** | src/components/StampSaveModal.tsx, src/components/SettingsScreen.tsx, src/services/settingsService.ts, public/help.html, src/constants/apkBuildLabel.ts, public/landing.html, public/info.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/services/saveStamp.ts |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴.
+- npm 추가 없음.
+- 표시 여부는 true/false만 기기 설정에 저장. 새 권한·네트워크 없음.
+
+## 특허
+- 단추를 설정으로 숨기는 구성은 일반적인 설정 화면이다. 특허 비침해를 보장하지 않음.
+- 사진에 글을 겹쳐 저장하는 기존 구성은 검토가 필요할 수 있음.
+
+## 배포
+- APK: VoiceStamp_20261002_100640.apk
+- 다운로드: https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261002_100640.apk
+- 되돌리기: restore-save-sheet-tools.bat
+
+---
+
 # 수정기록 — 저장 칸 기본 3개 (2026-10-02)
 
 ## 목적

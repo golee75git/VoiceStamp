@@ -725,7 +725,8 @@
 | **2026-08-16** | 보낸 사진 **갤러리·촬영** 표시 · 도움말 · APK `171905` · `restore-sent-way-label.bat` | `cd575ce` |
 | **2026-08-16** | 기본 템플릿 **홍보기록** · 도움말 · APK `181459` · `restore-promo-log-template.bat` | `3f157ef` |
 | **2026-08-23** | 날짜별·APK별 문서 정리 (**소스 변경 없음**) · 권장 APK `181951` | `4f27cd0` |
-| **2026-10-02** | 저장·수정 **제목·장소·메모**만 먼저 · **+ 칸 추가**·**칸 줄이기** · 도움말 · APK `091137` · `restore-save-core-slots.bat` | (본 커밋) |
+| **2026-10-02** | 저장 화면 **이미지 저장** 기본 숨김 · **QR URL 칸**은 사진 URL 설정이 사용일 때만 · 도움말 · APK `100640` · `restore-save-sheet-tools.bat` | (본 커밋) |
+| **2026-10-02** | 저장·수정 **제목·장소·메모**만 먼저 · **+ 칸 추가**·**칸 줄이기** · 도움말 · APK `091137` · `restore-save-core-slots.bat` | (이전) |
 | **2026-09-30** | 목록 **여러 장 이미지 저장** 일부 실패 보정 · 도움말 · APK `233350` · `restore-caption-batch-save.bat` | (이전) |
 | **2026-09-17** | 내보내기 기본 파일명에 **장소** · 여러 장 **이미지 저장은 장별 이름** · 도움말 · APK `175121` · `restore-export-file-place.bat` | (이전) |
 | **2026-09-17** | 사진 위 글 **저장 위치를 글자 상단에 맞춤** · 도움말 · APK `102508` · `restore-note-pad-rise.bat` | (이전) |
@@ -773,11 +774,12 @@
 
 ## 13. APK 빌드별 요약 (앱 버전 1.0.0)
 
-> **2026-10-02:** 권장 파일은 **`VoiceStamp_20261002_091137.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
+> **2026-10-02:** 권장 파일은 **`VoiceStamp_20261002_100640.apk`**. 채널: [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md). 성능: [HEALTHCHECK.md](./HEALTHCHECK.md).
 
 | APK (권장) | 커밋 | 핵심 |
 |------------|------|------|
-| `releases/VoiceStamp_20261002_091137.apk` | (본 커밋) | **설치·GitHub 권장** — 저장 칸은 제목·장소·메모, 추가 칸은 버튼 |
+| `releases/VoiceStamp_20261002_100640.apk` | (본 커밋) | **설치·GitHub 권장** — 저장 화면 이미지 저장 기본 숨김, QR URL 칸은 설정이 사용일 때만 |
+| `releases/VoiceStamp_20261002_091137.apk` | (이전) | **이전** — 저장 칸은 제목·장소·메모, 추가 칸은 버튼 |
 | `releases/VoiceStamp_20260930_233350.apk` | (이전) | **이전** — 여러 장 이미지 저장 실패 보정 |
 | `releases/VoiceStamp_20260917_175121.apk` | (이전) | **이전** — 내보내기 파일명 장소·장별 JPEG 이름 |
 | `releases/VoiceStamp_20260917_102508.apk` | (이전) | **이전** — 사진 위 글 저장 위치를 글자 상단에 맞춤 |
