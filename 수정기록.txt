@@ -1,3 +1,43 @@
+# 수정기록 — 저장 칸 기본 3개 (2026-10-02)
+
+## 목적
+저장·수정 화면이 추가 칸까지 항상 길어지지 않게, 제목·장소·메모만 먼저 보여 준다.
+
+## 조치
+- 「+ 칸 추가」로 추가1·추가2·추가3을 하나씩 연다. 맨 끝 칸이 비어 있으면 「칸 줄이기」로 접는다.
+- 연 칸 수는 기기에 남아 다음 저장에 쓰인다. 글이 있는 칸은 수정·이음에서 바로 보인다. 접힌 칸은 빈 값으로 저장한다.
+- 도움말에 같은 내용을 적었다.
+- npm·글꼴 추가 없음. 번들 A/B/C 재패치 없음.
+
+## 검증
+- Git diff: StampSaveModal·settingsService·help.
+- 식별자 save_extra_slot_count / restore-save-core-slots 는 이 저장소 전용.
+- GitHub 코드 검색: `save_extra_slot_count`, `filledExtraSlotCount`, `restore-save-core-slots` 결과 없음.
+- `license-checker --production --summary`(2026-10-02): MIT 533, ISC 41, Apache-2.0 15. GPL은 기존 이중 허가 2건뿐. GPL 단독 신규 없음.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | restore-save-core-slots.bat, docs/SECURITY-save-core-slots-20261002.md, src.pre-save-core-slots/, public.pre-save-core-slots/ |
+| **재사용·수정** | src/components/StampSaveModal.tsx, src/services/settingsService.ts, public/help.html, src/constants/apkBuildLabel.ts, public/landing.html, public/info.html, docs, RESTORE.md, 수정기록.txt |
+| **재사용(무수정)** | src/services/fieldLabels.ts, src/services/saveStamp.ts |
+
+## 글꼴·라이선스·보안
+- 글꼴 파일 추가 없음. 앱은 시스템 글꼴. 저장소에 번들 글꼴 파일 없음.
+- npm 추가 없음. GPL 신규 없음.
+- 칸 개수는 0~3만 기기 설정에 저장. 새 권한·네트워크 없음.
+
+## 특허
+- 입력 칸을 버튼으로 여는 구성은 일반적인 폼 화면이다. 특허 비침해를 보장하지 않음.
+- 사진에 글을 겹쳐 저장하는 기존 구성은 검토가 필요할 수 있음.
+
+## 배포
+- APK: VoiceStamp_20261002_091137.apk
+- 다운로드: https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261002_091137.apk
+- 되돌리기: restore-save-core-slots.bat
+
+---
+
 # 수정기록 — 여러 장 이미지 저장 실패 (2026-09-30)
 
 ## 목적

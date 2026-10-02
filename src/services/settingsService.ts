@@ -85,6 +85,8 @@ const FIELD_LABEL_MEMO_KEY = 'field_label_memo';
 const FIELD_LABEL_EXTRA1_KEY = 'field_label_extra1';
 const FIELD_LABEL_EXTRA2_KEY = 'field_label_extra2';
 const FIELD_LABEL_EXTRA3_KEY = 'field_label_extra3';
+/** How many optional save slots (추가1~3) stay open on the next new stamp. 0–3. */
+const SAVE_EXTRA_SLOT_COUNT_KEY = 'save_extra_slot_count';
 const STAMP_LIST_DISPLAY_MODE_KEY = 'stamp_list_display_mode';
 const PRIVACY_BLUR_ENABLED_KEY = 'privacy_blur_enabled';
 const OCR_TITLE_MEMO_ENABLED_KEY = 'ocr_title_memo_enabled';
@@ -1440,6 +1442,25 @@ export async function getExtra3FieldLabel(): Promise<string> {
 export async function setExtra3FieldLabel(label: string): Promise<string> {
   const safe = sanitizeFieldLabel(label, DEFAULT_FIELD_EXTRA3_LABEL);
   await writeSetting(FIELD_LABEL_EXTRA3_KEY, safe);
+  return safe;
+}
+
+export function sanitizeSaveExtraSlotCount(value: string | number | null | undefined): number {
+  const parsed = typeof value === 'number' ? value : Number.parseInt(String(value ?? ''), 10);
+  if (parsed === 1 || parsed === 2 || parsed === 3) {
+    return parsed;
+  }
+  return 0;
+}
+
+export async function getSaveExtraSlotCount(): Promise<number> {
+  const value = await readSetting(SAVE_EXTRA_SLOT_COUNT_KEY);
+  return sanitizeSaveExtraSlotCount(value);
+}
+
+export async function setSaveExtraSlotCount(count: number): Promise<number> {
+  const safe = sanitizeSaveExtraSlotCount(count);
+  await writeSetting(SAVE_EXTRA_SLOT_COUNT_KEY, String(safe));
   return safe;
 }
 

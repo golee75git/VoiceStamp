@@ -38,7 +38,9 @@ import {
 } from '../services/locationService';
 import {
   getCurrentSiteName,
+  getSaveExtraSlotCount,
   setCurrentSiteName,
+  setSaveExtraSlotCount,
   setLastCapturePlaceCache,
   setLastPlaceLabel,
   setTitleFieldLabel as writeTitleFieldLabel,
@@ -319,6 +321,19 @@ function SaveKbClearHost({
   );
 }
 
+function filledExtraSlotCount(extra1: string, extra2: string, extra3: string): number {
+  if (extra3.trim()) {
+    return 3;
+  }
+  if (extra2.trim()) {
+    return 2;
+  }
+  if (extra1.trim()) {
+    return 1;
+  }
+  return 0;
+}
+
 export function StampSaveModal({
   visible,
   imageUri,
@@ -380,6 +395,9 @@ export function StampSaveModal({
   const [extra1FieldLabel, setExtra1FieldLabel] = useState('추가1');
   const [extra2FieldLabel, setExtra2FieldLabel] = useState('추가2');
   const [extra3FieldLabel, setExtra3FieldLabel] = useState('추가3');
+  const [extraSlotCount, setExtraSlotCount] = useState(0);
+  const preferredExtraSlotsRef = useRef(0);
+  const extraSlotGenRef = useRef(0);
   const [fieldPlaceholders, setFieldPlaceholders] = useState<FieldPlaceholders>({
     title: '',
     place: '',
@@ -920,6 +938,30 @@ export function StampSaveModal({
       cancelled = true;
     };
   }, [visible, isEdit, followUpParent?.id]);
+
+  useLayoutEffect(() => {
+    if (!visible) {
+      return;
+    }
+    const filled = filledExtraSlotCount(
+      stamp?.extra1 ?? followUpParent?.extra1 ?? '',
+      stamp?.extra2 ?? followUpParent?.extra2 ?? '',
+      stamp?.extra3 ?? followUpParent?.extra3 ?? '',
+    );
+    const genAtStart = extraSlotGenRef.current;
+    setExtraSlotCount(Math.max(preferredExtraSlotsRef.current, filled));
+    let cancelled = false;
+    void getSaveExtraSlotCount().then((preferred) => {
+      if (cancelled || extraSlotGenRef.current !== genAtStart) {
+        return;
+      }
+      preferredExtraSlotsRef.current = preferred;
+      setExtraSlotCount(Math.max(preferred, filled));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, stamp?.id, followUpParent?.id]);
 
   useEffect(() => {
     if (!visible || isEdit || followUpParent) {
@@ -1857,6 +1899,56 @@ export function StampSaveModal({
     }
   }, [saving, sourceUrl]);
 
+  const commitExtraSlotCount = (next: number) => {
+    const clamped = next <= 0 ? 0 : next >= 3 ? 3 : next;
+    extraSlotGenRef.current += 1;
+    preferredExtraSlotsRef.current = clamped;
+    setExtraSlotCount(clamped);
+    void setSaveExtraSlotCount(clamped);
+  };
+
+  const openNextExtraSlot = () => {
+    if (saving || extraSlotCount >= 3) {
+      return;
+    }
+    commitExtraSlotCount(extraSlotCount + 1);
+  };
+
+  const closeLastExtraSlot = () => {
+    if (saving || extraSlotCount <= 0) {
+      return;
+    }
+    const lastValue = extraSlotCount === 1 ? extra1 : extraSlotCount === 2 ? extra2 : extra3;
+    if (lastValue.trim()) {
+      return;
+    }
+    const closing = extraSlotCount === 1 ? 'extra1' : extraSlotCount === 2 ? 'extra2' : 'extra3';
+    if (speechTarget === closing) {
+      stop();
+      setSpeechTarget(null);
+    }
+    if (extraSlotCount === 1) {
+      setExtra1('');
+    } else if (extraSlotCount === 2) {
+      setExtra2('');
+    } else {
+      setExtra3('');
+    }
+    commitExtraSlotCount(extraSlotCount - 1);
+  };
+
+  const keptExtra1 = extraSlotCount >= 1 ? extra1 : '';
+  const keptExtra2 = extraSlotCount >= 2 ? extra2 : '';
+  const keptExtra3 = extraSlotCount >= 3 ? extra3 : '';
+  const lastExtraEmpty =
+    extraSlotCount === 1
+      ? !extra1.trim()
+      : extraSlotCount === 2
+        ? !extra2.trim()
+        : extraSlotCount === 3
+          ? !extra3.trim()
+          : false;
+
   const persistCurrentStamp = async (options: {
     skipIdleCaptionGallery: boolean;
   }): Promise<Stamp | null> => {
@@ -1890,9 +1982,9 @@ export function StampSaveModal({
         id: stamp.id,
         title,
         memo,
-        extra1,
-        extra2,
-        extra3,
+        extra1: keptExtra1,
+        extra2: keptExtra2,
+        extra3: keptExtra3,
         sourceUrl: resolvedSourceUrl,
         groupName,
         floor: effectiveFloor,
@@ -1926,9 +2018,9 @@ export function StampSaveModal({
       originalTempUri,
       title,
       memo,
-      extra1,
-      extra2,
-      extra3,
+      extra1: keptExtra1,
+      extra2: keptExtra2,
+      extra3: keptExtra3,
       sourceUrl: resolvedSourceUrl,
       groupName: siteName,
       latitude: captureCoordsRef.current?.latitude ?? null,
@@ -2233,9 +2325,9 @@ export function StampSaveModal({
                     imageLoading={false}
                     title={title}
                     memo={memo}
-                    extra1={extra1}
-                    extra2={extra2}
-                    extra3={extra3}
+                    extra1={keptExtra1}
+                    extra2={keptExtra2}
+                    extra3={keptExtra3}
                     placeLabel={placeLabel}
                     titleAlign={titleTextAlign}
                     memoAlign={memoTextAlign}
@@ -2545,6 +2637,7 @@ export function StampSaveModal({
               </View>
             ) : null}
 
+            {extraSlotCount >= 1 ? (
             <SaveKbClearHost id="extra1" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra1FieldLabel}
@@ -2567,7 +2660,9 @@ export function StampSaveModal({
               placeholderHint={fieldPlaceholders.extra1}
             />
             </SaveKbClearHost>
+            ) : null}
 
+            {extraSlotCount >= 2 ? (
             <SaveKbClearHost id="extra2" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra2FieldLabel}
@@ -2590,7 +2685,9 @@ export function StampSaveModal({
               placeholderHint={fieldPlaceholders.extra2}
             />
             </SaveKbClearHost>
+            ) : null}
 
+            {extraSlotCount >= 3 ? (
             <SaveKbClearHost id="extra3" hosts={saveFieldHostRefs}>
             <VoiceInputField
               label={extra3FieldLabel}
@@ -2613,6 +2710,34 @@ export function StampSaveModal({
               placeholderHint={fieldPlaceholders.extra3}
             />
             </SaveKbClearHost>
+            ) : null}
+
+            {extraSlotCount < 3 || lastExtraEmpty ? (
+              <View style={styles.photoActionRow}>
+                {extraSlotCount < 3 ? (
+                  <Pressable
+                    style={styles.ocrFillBtn}
+                    onPress={openNextExtraSlot}
+                    disabled={saving}
+                    accessibilityRole="button"
+                    accessibilityLabel="입력 칸 추가"
+                  >
+                    <Text style={styles.ocrFillBtnText}>+ 칸 추가</Text>
+                  </Pressable>
+                ) : null}
+                {lastExtraEmpty ? (
+                  <Pressable
+                    style={styles.ocrFillBtn}
+                    onPress={closeLastExtraSlot}
+                    disabled={saving}
+                    accessibilityRole="button"
+                    accessibilityLabel="마지막 빈 칸 접기"
+                  >
+                    <Text style={styles.ocrFillBtnText}>칸 줄이기</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            ) : null}
 
             <SaveKbClearHost id="memo" hosts={saveFieldHostRefs}>
             <VoiceInputField
@@ -2686,9 +2811,9 @@ export function StampSaveModal({
                   imageLoading={false}
                   title={title}
                   memo={memo}
-                  extra1={extra1}
-                  extra2={extra2}
-                  extra3={extra3}
+                  extra1={keptExtra1}
+                  extra2={keptExtra2}
+                  extra3={keptExtra3}
                   placeLabel={placeLabel}
                   titleAlign={titleTextAlign}
                   memoAlign={memoTextAlign}

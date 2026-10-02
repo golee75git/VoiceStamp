@@ -4475,6 +4475,14 @@ restore-note-pad-rise.bat
 
 Restores `PhotoNotePadLayer.tsx` and help from `*.pre-note-pad-rise/` (before vertical text-origin match).
 
+## Save core slots restore (2026-10-02)
+
+```bat
+restore-save-core-slots.bat
+```
+
+Restores the save/edit form and help from `*.pre-save-core-slots/` (before showing title, place, and memo first, with extra slots opened on demand).
+
 ## Caption batch save restore (2026-09-30)
 
 ```bat

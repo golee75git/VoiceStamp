@@ -674,11 +674,17 @@ build-apk.bat
 
 앱 **버전명**은 모두 `1.0.0` (`app.json`). 아래는 **파일명(빌드 시각)** 기준입니다. 주요 APK는 git에 포함되며, 로컬 `build-apk.bat`로 동일 이름으로 재빌드 가능합니다.
 
+#### 2026-10-02
+
+| APK 파일 | 커밋 | 주요 변경 | 배포 |
+|----------|------|-----------|------|
+| `releases/VoiceStamp_20261002_091137.apk` | (본 커밋) | **권장** — 저장 칸은 제목·장소·메모, 추가 칸은 버튼 · `restore-save-core-slots.bat` | **GitHub `releases/`** |
+
 #### 2026-09-30
 
 | APK 파일 | 커밋 | 주요 변경 | 배포 |
 |----------|------|-----------|------|
-| `releases/VoiceStamp_20260930_233350.apk` | (본 커밋) | **권장** — 여러 장 이미지 저장 실패 보정 · `restore-caption-batch-save.bat` | **GitHub `releases/`** |
+| `releases/VoiceStamp_20260930_233350.apk` | (이전) | **이전** — 여러 장 이미지 저장 실패 보정 · `restore-caption-batch-save.bat` | **GitHub `releases/`** |
 
 #### 2026-09-17
 
@@ -1327,6 +1333,15 @@ https://voicestamp-gilt.vercel.app/privacy · /license · /help · /info
 ---
 
 ## 12. 날짜별 수정 상세
+
+### 2026-10-02 (저장 칸 기본 3개)
+
+| 항목 | 내용 |
+|------|------|
+| 분류 | 저장·수정은 제목·장소·메모만 먼저 표시하고, 추가 칸은 버튼으로 염 |
+| APK | `releases/VoiceStamp_20261002_091137.apk` |
+| 롤백 | `restore-save-core-slots.bat` |
+| 문서 | [CHANGELOG.md](./CHANGELOG.md) · [SECURITY-save-core-slots-20261002.md](./SECURITY-save-core-slots-20261002.md) |
 
 ### 2026-09-30 (여러 장 이미지 저장 실패)
 
