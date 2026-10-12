@@ -96,14 +96,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-16)
 
-- **문서 갱신일:** 2026-10-02 — **저장 화면 도구 표시** · APK `100640`
-- **최신 기능 커밋:** (본 배포) · APK `100640` — 저장 화면 이미지 저장은 기본 숨김, QR URL 칸은 설정이 사용일 때만
+- **문서 갱신일:** 2026-10-12 — **저장 목록 보이는 장 선택** · APK `113522`
+- **최신 기능 커밋:** (본 배포) · APK `113522` — 저장 목록에서 보이는 장 선택, 선택 막대 위 빈칸 제거
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20261002_100640.apk` — 저장 화면 이미지 저장 기본 숨김, QR URL 칸은 설정이 사용일 때만
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261002_100640.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20261012_113522.apk` — 저장 목록 보이는 장 선택
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261012_113522.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20261002_100640.apk` — 저장 화면 이미지 저장 기본 숨김
 - **이전 권장 APK:** `releases/VoiceStamp_20261002_091137.apk` — 저장 칸은 제목·장소·메모, 추가 칸은 버튼
 - **이전 권장 APK:** `releases/VoiceStamp_20260930_233350.apk` — 여러 장 이미지 저장 실패 보정
 - **이전 권장 APK:** `releases/VoiceStamp_20260917_175121.apk` — 내보내기 파일명 장소·장별 JPEG 이름

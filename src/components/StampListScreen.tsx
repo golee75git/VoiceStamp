@@ -476,6 +476,33 @@ export function StampListScreen({
     });
   };
 
+  const toggleSelectVisible = () => {
+    const visibleIds = filteredStamps.map((stamp) => stamp.id);
+    if (visibleIds.length === 0) {
+      return;
+    }
+    setPdfUri(null);
+    setSelectedIds((prev) => {
+      const allOn = visibleIds.every((id) => prev.has(id));
+      const next = new Set(prev);
+      if (allOn) {
+        for (const id of visibleIds) {
+          next.delete(id);
+        }
+      } else {
+        for (const id of visibleIds) {
+          next.add(id);
+        }
+      }
+      if (prev.size > 0 && next.size === 0) {
+        queueMicrotask(() => {
+          scheduleStampThumbs(stamps, resolveImageUri);
+        });
+      }
+      return next;
+    });
+  };
+
   const getSelectedStamps = () => stamps.filter((s) => selectedIds.has(s.id));
 
   const beginSelection = (initialIds?: Set<string>) => {
@@ -1007,8 +1034,11 @@ export function StampListScreen({
   const hasPlaceFilter = placeFilter !== 'all';
   const hasListFilters = hasTemplateFilter || hasPlaceFilter;
   const selectionCompact = selecting && selectedCount > 0;
-  // Keep bottom inset whenever gallery bar or export bar is showing (avoids jump on select).
-  const reserveBottomChrome = !selecting || selectionCompact;
+  const visibleIds = filteredStamps.map((stamp) => stamp.id);
+  const allVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  // Gallery bar floats over the list. The export bar is in normal flow, so that inset would leave a gray band.
+  const reserveOverlayBar = !selecting;
   const { width } = useWindowDimensions();
   const numColumns = width >= 600 ? 2 : 1;
   const isGrid = numColumns > 1;
@@ -1031,9 +1061,20 @@ export function StampListScreen({
           </View>
           <View style={styles.headerActions}>
             {selecting ? (
-              <Pressable onPress={exitSelection}>
-                <Text style={styles.actionText}>취소</Text>
-              </Pressable>
+              <>
+                <Pressable
+                  onPress={toggleSelectVisible}
+                  disabled={filteredStamps.length === 0}
+                  accessibilityLabel={
+                    allVisibleSelected ? '목록에 나온 사진 고름 해제' : '목록에 나온 사진 모두 고르기'
+                  }
+                >
+                  <Text style={styles.actionText}>{allVisibleSelected ? '해제' : '전체'}</Text>
+                </Pressable>
+                <Pressable onPress={exitSelection}>
+                  <Text style={styles.actionText}>취소</Text>
+                </Pressable>
+              </>
             ) : (
               stamps.length > 0 && (
                 <Pressable
@@ -1282,7 +1323,7 @@ export function StampListScreen({
         ) : null}
       </View>
 
-      <View style={[styles.listArea, reserveBottomChrome && styles.listAreaWithBottomBar]}>
+      <View style={[styles.listArea, reserveOverlayBar && styles.listAreaWithBottomBar]}>
         {loading ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" />
@@ -1311,7 +1352,7 @@ export function StampListScreen({
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
             columnWrapperStyle={isGrid ? styles.columnWrapper : undefined}
-            contentContainerStyle={[styles.list, reserveBottomChrome && styles.listWithBottomBar]}
+            contentContainerStyle={[styles.list, reserveOverlayBar && styles.listWithBottomBar]}
             extraData={`${selecting}:${selectedIds.size}:${templateFilter}:${placeFilter}:${[...selectedIds].join(',')}`}
             initialNumToRender={8}
             maxToRenderPerBatch={6}

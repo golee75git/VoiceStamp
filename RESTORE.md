@@ -4506,3 +4506,11 @@ restore-export-file-place.bat
 ```
 
 Restores PDF title format, JPEG export names, list/follow/settings, and help from `*.pre-export-file-place/` (before place in default export names and per-stamp JPEG names).
+
+## List visible select restore (2026-10-12)
+
+```bat
+restore-list-select-visible.bat
+```
+
+Restores `StampListScreen.tsx` and `help.html` from `*.pre-list-select-visible/` (before visible-row select and the export-bar gap).
