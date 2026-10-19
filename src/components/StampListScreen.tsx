@@ -81,7 +81,11 @@ import {
 import { listStamps, resolveFollowRootId } from '../services/stampRepository';
 import { scheduleStampThumbs } from '../services/stampThumb';
 import { moveStampsToTrash } from '../services/stampTrash';
-import { resolveImageUri } from '../services/fileService';
+import {
+  discardIncomingAlbumImage,
+  resolveImageUri,
+  stageIncomingAlbumImage,
+} from '../services/fileService';
 import type { Stamp } from '../types/stamp';
 import { filterStampsByQuery } from '../utils/stampListSearch';
 import { StampListThumb } from './StampListThumb';
@@ -785,11 +789,14 @@ export function StampListScreen({
     }
 
     setAlbumBusy(true);
+    let heldUri: string | null = null;
     try {
       const picked = await pickImageFromLibrary();
       if (!picked) {
         return;
       }
+
+      heldUri = await stageIncomingAlbumImage(picked.uri);
 
       let snapshot: LocationSnapshot | null = null;
       if (picked.latitude != null && picked.longitude != null) {
@@ -806,9 +813,11 @@ export function StampListScreen({
       setFollowUpParent(null);
       setImportJoinSendWay('album');
       setImportLocationSnapshot(snapshot);
-      setImportUri(picked.uri);
+      setImportUri(heldUri);
       setImportModalVisible(true);
+      heldUri = null;
     } catch (e) {
+      void discardIncomingAlbumImage(heldUri);
       Alert.alert(
         '앨범',
         e instanceof Error ? e.message : '앨범에서 선택하지 못했습니다.',
@@ -826,6 +835,7 @@ export function StampListScreen({
       const rootParent = stamps.find((s) => s.id === resolveFollowRootId(parent)) ?? parent;
       setEditingStamp(null);
       setAlbumBusy(true);
+      let heldUri: string | null = null;
       try {
         if (mode === 'camera') {
           const uri = await takePhotoWithSystemCamera();
@@ -844,6 +854,7 @@ export function StampListScreen({
         if (!picked) {
           return;
         }
+        heldUri = await stageIncomingAlbumImage(picked.uri);
         let snapshot: LocationSnapshot | null = null;
         if (picked.latitude != null && picked.longitude != null) {
           snapshot = await getLocationSnapshotFromCoords(picked.latitude, picked.longitude);
@@ -858,9 +869,11 @@ export function StampListScreen({
         setFollowUpParent(rootParent);
         setImportJoinSendWay('album');
         setImportLocationSnapshot(snapshot);
-        setImportUri(picked.uri);
+        setImportUri(heldUri);
         setImportModalVisible(true);
+        heldUri = null;
       } catch (e) {
+        void discardIncomingAlbumImage(heldUri);
         Alert.alert(
           mode === 'camera' ? '이음 촬영' : '앨범 이음',
           e instanceof Error ? e.message : '이음 사진을 준비하지 못했습니다.',
@@ -1687,10 +1700,12 @@ export function StampListScreen({
         allowLiveLocationFallback={followUpParent != null && importLocationSnapshot == null}
         joinSendWay={importJoinSendWay}
         onClose={() => {
+          const heldUri = importUri;
           setImportModalVisible(false);
           setImportUri(null);
           setImportLocationSnapshot(null);
           setFollowUpParent(null);
+          void discardIncomingAlbumImage(heldUri);
         }}
         onSaved={() => {
           setFollowUpParent(null);

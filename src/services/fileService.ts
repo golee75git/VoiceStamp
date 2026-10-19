@@ -205,6 +205,107 @@ export async function ensureStampsDir(): Promise<string> {
   return dir;
 }
 
+/** App-owned copy of a gallery pick. Save must not keep the picker cache path. */
+const ALBUM_HOLD_DIR = 'album-hold/';
+
+function albumHoldDirectory(): string | null {
+  const base = FileSystem.documentDirectory;
+  if (!base) {
+    return null;
+  }
+  return `${base}${ALBUM_HOLD_DIR}`;
+}
+
+function isPickerLocalUri(uri: string): boolean {
+  return (
+    uri.startsWith('file://') ||
+    uri.startsWith('content://') ||
+    uri.startsWith('ph://') ||
+    uri.startsWith('/')
+  );
+}
+
+function isAlbumHoldFileUri(uri: string): boolean {
+  const dir = albumHoldDirectory();
+  if (!dir || !uri.startsWith(dir) || uri.includes('..')) {
+    return false;
+  }
+  const name = uri.slice(dir.length);
+  return /^[a-z0-9-]+\.jpg$/i.test(name);
+}
+
+async function heldFileHasBytes(uri: string): Promise<boolean> {
+  const info = await FileSystem.getInfoAsync(uri);
+  if (!info.exists || info.isDirectory) {
+    return false;
+  }
+  return typeof info.size !== 'number' || info.size > 32;
+}
+
+async function ensureAlbumHoldDir(): Promise<string> {
+  const dir = albumHoldDirectory();
+  if (!dir) {
+    throw new Error('사진을 앱에 담지 못했습니다. 앨범에서 다시 선택해 주세요.');
+  }
+  const info = await FileSystem.getInfoAsync(dir);
+  if (!info.exists) {
+    await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+  }
+  return dir;
+}
+
+async function writeHeldJpeg(sourceUri: string, dest: string): Promise<void> {
+  try {
+    await FileSystem.copyAsync({ from: sourceUri, to: dest });
+    if (await heldFileHasBytes(dest)) {
+      return;
+    }
+  } catch {
+    // Picker cache or content URI can fail; rewrite below.
+  }
+
+  await FileSystem.deleteAsync(dest, { idempotent: true });
+  const { SaveFormat, manipulateAsync } = await import('expo-image-manipulator');
+  const encoded = await manipulateAsync(sourceUri, [], {
+    compress: STAMP_CAPTURE_JPEG_QUALITY,
+    format: SaveFormat.JPEG,
+  });
+  await FileSystem.copyAsync({ from: encoded.uri, to: dest });
+  if (!(await heldFileHasBytes(dest))) {
+    await FileSystem.deleteAsync(dest, { idempotent: true });
+    throw new Error('사진을 앱에 담지 못했습니다. 앨범에서 다시 선택해 주세요.');
+  }
+}
+
+/**
+ * Copy a gallery pick into document storage before the save form.
+ * Web keeps the picker URI (the browser persist path reads it directly).
+ */
+export async function stageIncomingAlbumImage(tempUri: string): Promise<string> {
+  if (Platform.OS === 'web') {
+    return tempUri;
+  }
+
+  const source = tempUri.trim();
+  if (!isPickerLocalUri(source)) {
+    throw new Error('사진을 앱에 담지 못했습니다. 앨범에서 다시 선택해 주세요.');
+  }
+
+  const dir = await ensureAlbumHoldDir();
+  const name = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.jpg`;
+  const dest = `${dir}${name}`;
+  await writeHeldJpeg(source, dest);
+  return dest;
+}
+
+/** Delete only a file this module created under album-hold. */
+export async function discardIncomingAlbumImage(uri: string | null | undefined): Promise<void> {
+  if (Platform.OS === 'web' || !uri || !isAlbumHoldFileUri(uri)) {
+    return;
+  }
+  await FileSystem.deleteAsync(uri, { idempotent: true });
+}
+
 export async function ensureStampGroupDir(groupName: string): Promise<string> {
   const rootDir = await ensureStampsDir();
   const safeGroup = sanitizeStampFileBaseName(groupName);

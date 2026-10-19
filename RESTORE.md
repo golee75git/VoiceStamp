@@ -4514,3 +4514,11 @@ restore-list-select-visible.bat
 ```
 
 Restores `StampListScreen.tsx` and `help.html` from `*.pre-list-select-visible/` (before visible-row select and the export-bar gap).
+
+## Album hold restore (2026-10-19)
+
+```bat
+restore-album-hold.bat
+```
+
+Restores `fileService.ts`, `StampListScreen.tsx`, and `help.html` from `*.pre-album-hold/` (before copying a gallery pick into the app folder as soon as it is chosen).
