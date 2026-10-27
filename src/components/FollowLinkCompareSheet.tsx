@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,6 +12,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { confirmAlert } from '../utils/confirmAlert';
 import { resolveImageUri } from '../services/fileService';
@@ -37,6 +39,162 @@ import type { Stamp } from '../types/stamp';
 
 /** Same chips as list/inbox Excel. FOLLOW_XLSX_PHOTO_PX */
 const FOLLOW_XLSX_PX_PRESETS = [180, 240, 320, 480, 800] as const;
+/** Card width 220 plus the row gap. Used only to count how many slots a drag crossed. */
+const COMPARE_CARD_STRIDE = 232;
+const COMPARE_HOLD_MS = 400;
+
+type CompareChainCardProps = {
+  item: Stamp;
+  index: number;
+  count: number;
+  isSelected: boolean;
+  canShift: boolean;
+  onToggle: (id: string) => void;
+  onShift: (index: number, delta: -1 | 1) => void;
+  onDragLock: (locked: boolean) => void;
+  onDropSlots: (index: number, slots: number) => void;
+};
+
+function CompareChainCard({
+  item,
+  index,
+  count,
+  isSelected,
+  canShift,
+  onToggle,
+  onShift,
+  onDragLock,
+  onDropSlots,
+}: CompareChainCardProps) {
+  const skipTap = useRef(false);
+  const indexRef = useRef(index);
+  const onDropRef = useRef(onDropSlots);
+  const onLockRef = useRef(onDragLock);
+  indexRef.current = index;
+  onDropRef.current = onDropSlots;
+  onLockRef.current = onDragLock;
+  const shiftX = useSharedValue(0);
+  const held = useSharedValue(0);
+  const isRoot = item.id === resolveFollowRootId(item);
+  const label = isRoot ? '처음' : '이음';
+
+  const markHold = useCallback(() => {
+    skipTap.current = true;
+    onLockRef.current(true);
+  }, []);
+
+  const finishDrag = useCallback((slots: number) => {
+    onLockRef.current(false);
+    if (slots !== 0) {
+      onDropRef.current(indexRef.current, slots);
+    }
+    setTimeout(() => {
+      skipTap.current = false;
+    }, 80);
+  }, []);
+
+  const pan = useMemo(
+    () =>
+      Gesture.Pan()
+        .enabled(canShift)
+        .activateAfterLongPress(COMPARE_HOLD_MS)
+        .onStart(() => {
+          held.value = 1;
+          runOnJS(markHold)();
+        })
+        .onUpdate((event) => {
+          shiftX.value = event.translationX;
+        })
+        .onFinalize((event) => {
+          const active = held.value === 1;
+          const slots = active ? Math.round(event.translationX / COMPARE_CARD_STRIDE) : 0;
+          shiftX.value = 0;
+          held.value = 0;
+          if (active) {
+            runOnJS(finishDrag)(slots);
+          }
+        }),
+    [canShift, finishDrag, held, markHold, shiftX],
+  );
+
+  const dragStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shiftX.value }],
+    zIndex: held.value ? 2 : 0,
+    elevation: held.value ? 4 : 0,
+    opacity: held.value ? 0.92 : 1,
+  }));
+
+  return (
+    <Animated.View style={[styles.card, isSelected && styles.cardSelected, dragStyle]}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardLabel}>{`${index + 1} · ${label}`}</Text>
+        <View style={styles.cardHeaderActions}>
+          {count >= 2 ? (
+            <>
+              <Pressable
+                style={[styles.shiftButton, (!canShift || index === 0) && styles.shiftButtonOff]}
+                onPress={() => onShift(index, -1)}
+                disabled={!canShift || index === 0}
+                accessibilityLabel={`${label} 앞으로`}
+              >
+                <Text style={styles.shiftButtonText}>앞</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.shiftButton,
+                  (!canShift || index === count - 1) && styles.shiftButtonOff,
+                ]}
+                onPress={() => onShift(index, 1)}
+                disabled={!canShift || index === count - 1}
+                accessibilityLabel={`${label} 뒤로`}
+              >
+                <Text style={styles.shiftButtonText}>뒤</Text>
+              </Pressable>
+            </>
+          ) : null}
+          <Pressable
+            onPress={() => onToggle(item.id)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: isSelected }}
+            accessibilityLabel={`${label} 선택 표시`}
+          >
+            <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
+              {isSelected ? <Text style={styles.checkmark}>✓</Text> : null}
+            </View>
+          </Pressable>
+        </View>
+      </View>
+      <GestureDetector gesture={pan}>
+        <Animated.View>
+          <Pressable
+            style={styles.cardBody}
+            onPress={() => {
+              if (skipTap.current) {
+                return;
+              }
+              onToggle(item.id);
+            }}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: isSelected }}
+            accessibilityLabel={`${index + 1} ${label} 선택. 길게 눌러 순서 이동`}
+          >
+            <Image
+              source={{ uri: resolveImageUri(item.imagePath) }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <Text style={styles.cardTitle} numberOfLines={2}>
+              {item.title.trim() || '(제목 없음)'}
+            </Text>
+            <Text style={styles.cardDate}>
+              {new Date(item.createdAt).toLocaleString('ko-KR')}
+            </Text>
+          </Pressable>
+        </Animated.View>
+      </GestureDetector>
+    </Animated.View>
+  );
+}
 
 type FollowLinkCompareSheetProps = {
   visible: boolean;
@@ -66,6 +224,7 @@ export function FollowLinkCompareSheet({
   const [xlsxFontSize, setXlsxFontSize] = useState<InboxExcelFontSize>(
     DEFAULT_INBOX_EXCEL_FONT_SIZE,
   );
+  const [dragScrollLocked, setDragScrollLocked] = useState(false);
 
   const reloadChain = useCallback(async (source: Stamp) => {
     const rows = await listFollowLinkChain(source);
@@ -89,6 +248,7 @@ export function FollowLinkCompareSheet({
       setDeleteBusy(false);
       setXlsxBusy(false);
       setXlsxPxVisible(false);
+      setDragScrollLocked(false);
       return;
     }
 
@@ -150,6 +310,20 @@ export function FollowLinkCompareSheet({
       return next;
     });
   };
+
+  const dropChainCard = useCallback((index: number, slots: number) => {
+    setPdfUri(null);
+    setChain((prev) => {
+      const target = Math.max(0, Math.min(prev.length - 1, index + slots));
+      if (target === index || index < 0 || index >= prev.length) {
+        return prev;
+      }
+      const next = prev.slice();
+      const [moved] = next.splice(index, 1);
+      next.splice(target, 0, moved);
+      return next;
+    });
+  }, []);
 
   const handleCreatePdf = async () => {
     if (selectedStamps.length === 0 || exportBusy) {
@@ -317,12 +491,13 @@ export function FollowLinkCompareSheet({
   return (
     <>
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+      <GestureHandlerRootView style={styles.gestureRoot}>
       <View style={styles.overlay}>
         <View style={styles.sheet}>
           <Text style={styles.title}>연결 비교</Text>
           <Text style={styles.hint}>
             처음과 이음 스탬프를 나란히 봅니다. 카드를 눌러 선택한 뒤 PDF·엑셀·휴지통을 쓸 수 있습니다.
-            앞·뒤는 이번 화면의 비교·PDF·엑셀 순서만 바꿉니다. 닫으면 촬영 순서로 돌아갑니다.
+            앞·뒤나 사진을 길게 눌러 끌면 이번 화면의 비교·PDF·엑셀 순서만 바뀝니다. 닫으면 촬영 순서로 돌아갑니다.
           </Text>
           {loading ? (
             <View style={styles.centered}>
@@ -333,79 +508,24 @@ export function FollowLinkCompareSheet({
           ) : (
             <ScrollView
               horizontal
+              scrollEnabled={!dragScrollLocked}
               showsHorizontalScrollIndicator
               contentContainerStyle={styles.row}
             >
-              {chain.map((item, index) => {
-                const isRoot = item.id === resolveFollowRootId(item);
-                const label = isRoot ? '처음' : '이음';
-                const isSelected = selectedIds.has(item.id);
-                const canShift = chain.length >= 2 && !exportBusy;
-                return (
-                  <View
-                    key={item.id}
-                    style={[styles.card, isSelected && styles.cardSelected]}
-                  >
-                    <View style={styles.cardHeader}>
-                      <Text style={styles.cardLabel}>{`${index + 1} · ${label}`}</Text>
-                      <View style={styles.cardHeaderActions}>
-                        {chain.length >= 2 ? (
-                          <>
-                            <Pressable
-                              style={[styles.shiftButton, (!canShift || index === 0) && styles.shiftButtonOff]}
-                              onPress={() => moveChainCard(index, -1)}
-                              disabled={!canShift || index === 0}
-                              accessibilityLabel={`${label} 앞으로`}
-                            >
-                              <Text style={styles.shiftButtonText}>앞</Text>
-                            </Pressable>
-                            <Pressable
-                              style={[
-                                styles.shiftButton,
-                                (!canShift || index === chain.length - 1) && styles.shiftButtonOff,
-                              ]}
-                              onPress={() => moveChainCard(index, 1)}
-                              disabled={!canShift || index === chain.length - 1}
-                              accessibilityLabel={`${label} 뒤로`}
-                            >
-                              <Text style={styles.shiftButtonText}>뒤</Text>
-                            </Pressable>
-                          </>
-                        ) : null}
-                        <Pressable
-                          onPress={() => toggleSelect(item.id)}
-                          accessibilityRole="checkbox"
-                          accessibilityState={{ checked: isSelected }}
-                          accessibilityLabel={`${label} 선택 표시`}
-                        >
-                          <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
-                            {isSelected ? <Text style={styles.checkmark}>✓</Text> : null}
-                          </View>
-                        </Pressable>
-                      </View>
-                    </View>
-                    <Pressable
-                      style={styles.cardBody}
-                      onPress={() => toggleSelect(item.id)}
-                      accessibilityRole="checkbox"
-                      accessibilityState={{ checked: isSelected }}
-                      accessibilityLabel={`${index + 1} ${label} 선택`}
-                    >
-                      <Image
-                        source={{ uri: resolveImageUri(item.imagePath) }}
-                        style={styles.image}
-                        resizeMode="cover"
-                      />
-                      <Text style={styles.cardTitle} numberOfLines={2}>
-                        {item.title.trim() || '(제목 없음)'}
-                      </Text>
-                      <Text style={styles.cardDate}>
-                        {new Date(item.createdAt).toLocaleString('ko-KR')}
-                      </Text>
-                    </Pressable>
-                  </View>
-                );
-              })}
+              {chain.map((item, index) => (
+                <CompareChainCard
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  count={chain.length}
+                  isSelected={selectedIds.has(item.id)}
+                  canShift={chain.length >= 2 && !exportBusy}
+                  onToggle={toggleSelect}
+                  onShift={moveChainCard}
+                  onDragLock={setDragScrollLocked}
+                  onDropSlots={dropChainCard}
+                />
+              ))}
             </ScrollView>
           )}
           {!loading && chain.length < 2 ? (
@@ -516,6 +636,7 @@ export function FollowLinkCompareSheet({
           </Pressable>
         </View>
       </View>
+      </GestureHandlerRootView>
     </Modal>
       <Modal
         visible={xlsxPxVisible}
@@ -613,6 +734,9 @@ export function FollowLinkCompareSheet({
 }
 
 const styles = StyleSheet.create({
+  gestureRoot: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',

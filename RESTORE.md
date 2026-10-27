@@ -4530,3 +4530,11 @@ restore-compare-order-title.bat
 ```
 
 Restores the compare sheet, stamp list, stamp repository, help, landing, info, and APK label from `*.pre-compare-order-title/` (before in-sheet photo order buttons and the same-title edit for selected stamps).
+
+## Compare drag restore (2026-10-27)
+
+```bat
+restore-compare-drag.bat
+```
+
+Restores the compare sheet, help, landing, info, and APK label from `*.pre-compare-drag/` (before holding a photo and dragging it along the compare row).
