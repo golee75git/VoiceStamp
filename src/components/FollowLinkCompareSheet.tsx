@@ -10,10 +10,16 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  type SharedValue,
+} from 'react-native-reanimated';
 
 import { confirmAlert } from '../utils/confirmAlert';
 import { resolveImageUri } from '../services/fileService';
@@ -42,6 +48,8 @@ const FOLLOW_XLSX_PX_PRESETS = [180, 240, 320, 480, 800] as const;
 /** Card width 220 plus the row gap. Used only to count how many slots a drag crossed. */
 const COMPARE_CARD_STRIDE = 232;
 const COMPARE_HOLD_MS = 400;
+const COMPARE_EDGE_PX = 36;
+const COMPARE_EDGE_STEP = 18;
 
 type CompareChainCardProps = {
   item: Stamp;
@@ -52,7 +60,10 @@ type CompareChainCardProps = {
   onToggle: (id: string) => void;
   onShift: (index: number, delta: -1 | 1) => void;
   onDragLock: (locked: boolean) => void;
-  onDropSlots: (index: number, slots: number) => void;
+  onDragStart: () => void;
+  onFingerX: (absoluteX: number) => void;
+  edgeBoost: SharedValue<number>;
+  onDropMove: (index: number, translationX: number) => void;
 };
 
 function CompareChainCard({
@@ -64,15 +75,22 @@ function CompareChainCard({
   onToggle,
   onShift,
   onDragLock,
-  onDropSlots,
+  onDragStart,
+  onFingerX,
+  edgeBoost,
+  onDropMove,
 }: CompareChainCardProps) {
   const skipTap = useRef(false);
   const indexRef = useRef(index);
-  const onDropRef = useRef(onDropSlots);
+  const onDropRef = useRef(onDropMove);
   const onLockRef = useRef(onDragLock);
+  const onStartRef = useRef(onDragStart);
+  const onFingerRef = useRef(onFingerX);
   indexRef.current = index;
-  onDropRef.current = onDropSlots;
+  onDropRef.current = onDropMove;
   onLockRef.current = onDragLock;
+  onStartRef.current = onDragStart;
+  onFingerRef.current = onFingerX;
   const shiftX = useSharedValue(0);
   const held = useSharedValue(0);
   const isRoot = item.id === resolveFollowRootId(item);
@@ -81,16 +99,19 @@ function CompareChainCard({
   const markHold = useCallback(() => {
     skipTap.current = true;
     onLockRef.current(true);
+    onStartRef.current();
   }, []);
 
-  const finishDrag = useCallback((slots: number) => {
+  const finishDrag = useCallback((translationX: number) => {
     onLockRef.current(false);
-    if (slots !== 0) {
-      onDropRef.current(indexRef.current, slots);
-    }
+    onDropRef.current(indexRef.current, translationX);
     setTimeout(() => {
       skipTap.current = false;
     }, 80);
+  }, []);
+
+  const reportFinger = useCallback((absoluteX: number) => {
+    onFingerRef.current(absoluteX);
   }, []);
 
   const pan = useMemo(
@@ -98,27 +119,28 @@ function CompareChainCard({
       Gesture.Pan()
         .enabled(canShift)
         .activateAfterLongPress(COMPARE_HOLD_MS)
-        .onStart(() => {
+        .onStart((event) => {
           held.value = 1;
           runOnJS(markHold)();
+          runOnJS(reportFinger)(event.absoluteX);
         })
         .onUpdate((event) => {
           shiftX.value = event.translationX;
+          runOnJS(reportFinger)(event.absoluteX);
         })
         .onFinalize((event) => {
           const active = held.value === 1;
-          const slots = active ? Math.round(event.translationX / COMPARE_CARD_STRIDE) : 0;
           shiftX.value = 0;
           held.value = 0;
           if (active) {
-            runOnJS(finishDrag)(slots);
+            runOnJS(finishDrag)(event.translationX);
           }
         }),
-    [canShift, finishDrag, held, markHold, shiftX],
+    [canShift, finishDrag, held, markHold, reportFinger, shiftX],
   );
 
   const dragStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shiftX.value }],
+    transform: [{ translateX: shiftX.value + (held.value ? edgeBoost.value : 0) }],
     zIndex: held.value ? 2 : 0,
     elevation: held.value ? 4 : 0,
     opacity: held.value ? 0.92 : 1,
@@ -225,6 +247,57 @@ export function FollowLinkCompareSheet({
     DEFAULT_INBOX_EXCEL_FONT_SIZE,
   );
   const [dragScrollLocked, setDragScrollLocked] = useState(false);
+  const { width: windowWidth } = useWindowDimensions();
+  const windowWidthRef = useRef(windowWidth);
+  windowWidthRef.current = windowWidth;
+  const rowScrollRef = useRef<ScrollView>(null);
+  const rowScrollX = useRef(0);
+  const rowViewportW = useRef(0);
+  const rowContentW = useRef(0);
+  const dragOriginX = useRef(0);
+  const edgeDir = useRef(0);
+  const edgeTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const edgeBoost = useSharedValue(0);
+
+  const stopEdgeScroll = useCallback(() => {
+    edgeDir.current = 0;
+    if (edgeTimer.current) {
+      clearInterval(edgeTimer.current);
+      edgeTimer.current = null;
+    }
+  }, []);
+
+  const beginEdgeScroll = useCallback(() => {
+    dragOriginX.current = rowScrollX.current;
+    edgeBoost.value = 0;
+    edgeDir.current = 0;
+    stopEdgeScroll();
+    edgeTimer.current = setInterval(() => {
+      const dir = edgeDir.current;
+      if (dir === 0) {
+        return;
+      }
+      const maxX = Math.max(0, rowContentW.current - rowViewportW.current);
+      const next = Math.max(0, Math.min(maxX, rowScrollX.current + dir * COMPARE_EDGE_STEP));
+      if (next === rowScrollX.current) {
+        return;
+      }
+      rowScrollX.current = next;
+      edgeBoost.value = next - dragOriginX.current;
+      rowScrollRef.current?.scrollTo({ x: next, animated: false });
+    }, 32);
+  }, [edgeBoost, stopEdgeScroll]);
+
+  const noteFingerX = useCallback((absoluteX: number) => {
+    const width = windowWidthRef.current;
+    if (absoluteX <= COMPARE_EDGE_PX) {
+      edgeDir.current = -1;
+    } else if (width > 0 && absoluteX >= width - COMPARE_EDGE_PX) {
+      edgeDir.current = 1;
+    } else {
+      edgeDir.current = 0;
+    }
+  }, []);
 
   const reloadChain = useCallback(async (source: Stamp) => {
     const rows = await listFollowLinkChain(source);
@@ -249,6 +322,7 @@ export function FollowLinkCompareSheet({
       setXlsxBusy(false);
       setXlsxPxVisible(false);
       setDragScrollLocked(false);
+      stopEdgeScroll();
       return;
     }
 
@@ -272,7 +346,9 @@ export function FollowLinkCompareSheet({
     return () => {
       cancelled = true;
     };
-  }, [visible, anchor?.id, reloadChain]);
+  }, [visible, anchor?.id, reloadChain, stopEdgeScroll]);
+
+  useEffect(() => stopEdgeScroll, [stopEdgeScroll]);
 
   const selectedCount = selectedIds.size;
   const selectedStamps = useMemo(
@@ -311,7 +387,15 @@ export function FollowLinkCompareSheet({
     });
   };
 
-  const dropChainCard = useCallback((index: number, slots: number) => {
+  const dropChainCard = useCallback((index: number, translationX: number) => {
+    const slots = Math.round(
+      (translationX + (rowScrollX.current - dragOriginX.current)) / COMPARE_CARD_STRIDE,
+    );
+    stopEdgeScroll();
+    edgeBoost.value = 0;
+    if (slots === 0) {
+      return;
+    }
     setPdfUri(null);
     setChain((prev) => {
       const target = Math.max(0, Math.min(prev.length - 1, index + slots));
@@ -323,7 +407,7 @@ export function FollowLinkCompareSheet({
       next.splice(target, 0, moved);
       return next;
     });
-  }, []);
+  }, [edgeBoost, stopEdgeScroll]);
 
   const handleCreatePdf = async () => {
     if (selectedStamps.length === 0 || exportBusy) {
@@ -497,7 +581,7 @@ export function FollowLinkCompareSheet({
           <Text style={styles.title}>연결 비교</Text>
           <Text style={styles.hint}>
             처음과 이음 스탬프를 나란히 봅니다. 카드를 눌러 선택한 뒤 PDF·엑셀·휴지통을 쓸 수 있습니다.
-            앞·뒤나 사진을 길게 눌러 끌면 이번 화면의 비교·PDF·엑셀 순서만 바뀝니다. 닫으면 촬영 순서로 돌아갑니다.
+            앞·뒤나 사진을 길게 눌러 끌면 이번 화면의 비교·PDF·엑셀 순서만 바꿉니다. 화면 끝에서 계속 누르면 목록이 따라 움직입니다. 닫으면 촬영 순서로 돌아갑니다.
           </Text>
           {loading ? (
             <View style={styles.centered}>
@@ -507,9 +591,20 @@ export function FollowLinkCompareSheet({
             <Text style={styles.error}>{error}</Text>
           ) : (
             <ScrollView
+              ref={rowScrollRef}
               horizontal
               scrollEnabled={!dragScrollLocked}
               showsHorizontalScrollIndicator
+              scrollEventThrottle={16}
+              onScroll={(event) => {
+                rowScrollX.current = event.nativeEvent.contentOffset.x;
+              }}
+              onLayout={(event) => {
+                rowViewportW.current = event.nativeEvent.layout.width;
+              }}
+              onContentSizeChange={(width) => {
+                rowContentW.current = width;
+              }}
               contentContainerStyle={styles.row}
             >
               {chain.map((item, index) => (
@@ -523,7 +618,10 @@ export function FollowLinkCompareSheet({
                   onToggle={toggleSelect}
                   onShift={moveChainCard}
                   onDragLock={setDragScrollLocked}
-                  onDropSlots={dropChainCard}
+                  onDragStart={beginEdgeScroll}
+                  onFingerX={noteFingerX}
+                  edgeBoost={edgeBoost}
+                  onDropMove={dropChainCard}
                 />
               ))}
             </ScrollView>

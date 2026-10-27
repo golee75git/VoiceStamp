@@ -4538,3 +4538,11 @@ restore-compare-drag.bat
 ```
 
 Restores the compare sheet, help, landing, info, and APK label from `*.pre-compare-drag/` (before holding a photo and dragging it along the compare row).
+
+## Compare edge scroll restore (2026-10-27)
+
+```bat
+restore-compare-edge.bat
+```
+
+Restores the compare sheet, help, landing, info, and APK label from `*.pre-compare-edge/` (before the row keeps moving while a dragged photo is held at the screen edge).
