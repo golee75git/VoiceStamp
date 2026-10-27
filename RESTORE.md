@@ -4522,3 +4522,11 @@ restore-album-hold.bat
 ```
 
 Restores `fileService.ts`, `StampListScreen.tsx`, and `help.html` from `*.pre-album-hold/` (before copying a gallery pick into the app folder as soon as it is chosen).
+
+## Compare order and bulk title restore (2026-10-27)
+
+```bat
+restore-compare-order-title.bat
+```
+
+Restores the compare sheet, stamp list, stamp repository, help, landing, info, and APK label from `*.pre-compare-order-title/` (before in-sheet photo order buttons and the same-title edit for selected stamps).

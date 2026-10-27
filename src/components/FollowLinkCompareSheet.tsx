@@ -134,6 +134,23 @@ export function FollowLinkCompareSheet({
     });
   };
 
+  const moveChainCard = (index: number, delta: -1 | 1) => {
+    if (exportBusy) {
+      return;
+    }
+    setPdfUri(null);
+    setChain((prev) => {
+      const target = index + delta;
+      if (target < 0 || target >= prev.length) {
+        return prev;
+      }
+      const next = prev.slice();
+      const [moved] = next.splice(index, 1);
+      next.splice(target, 0, moved);
+      return next;
+    });
+  };
+
   const handleCreatePdf = async () => {
     if (selectedStamps.length === 0 || exportBusy) {
       return;
@@ -305,6 +322,7 @@ export function FollowLinkCompareSheet({
           <Text style={styles.title}>연결 비교</Text>
           <Text style={styles.hint}>
             처음과 이음 스탬프를 나란히 봅니다. 카드를 눌러 선택한 뒤 PDF·엑셀·휴지통을 쓸 수 있습니다.
+            앞·뒤는 이번 화면의 비교·PDF·엑셀 순서만 바꿉니다. 닫으면 촬영 순서로 돌아갑니다.
           </Text>
           {loading ? (
             <View style={styles.centered}>
@@ -319,35 +337,73 @@ export function FollowLinkCompareSheet({
               contentContainerStyle={styles.row}
             >
               {chain.map((item, index) => {
-                const label = index === 0 ? '처음' : `이음 ${index}`;
+                const isRoot = item.id === resolveFollowRootId(item);
+                const label = isRoot ? '처음' : '이음';
                 const isSelected = selectedIds.has(item.id);
+                const canShift = chain.length >= 2 && !exportBusy;
                 return (
-                  <Pressable
+                  <View
                     key={item.id}
                     style={[styles.card, isSelected && styles.cardSelected]}
-                    onPress={() => toggleSelect(item.id)}
-                    accessibilityRole="checkbox"
-                    accessibilityState={{ checked: isSelected }}
-                    accessibilityLabel={`${label} 선택`}
                   >
                     <View style={styles.cardHeader}>
-                      <Text style={styles.cardLabel}>{label}</Text>
-                      <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
-                        {isSelected ? <Text style={styles.checkmark}>✓</Text> : null}
+                      <Text style={styles.cardLabel}>{`${index + 1} · ${label}`}</Text>
+                      <View style={styles.cardHeaderActions}>
+                        {chain.length >= 2 ? (
+                          <>
+                            <Pressable
+                              style={[styles.shiftButton, (!canShift || index === 0) && styles.shiftButtonOff]}
+                              onPress={() => moveChainCard(index, -1)}
+                              disabled={!canShift || index === 0}
+                              accessibilityLabel={`${label} 앞으로`}
+                            >
+                              <Text style={styles.shiftButtonText}>앞</Text>
+                            </Pressable>
+                            <Pressable
+                              style={[
+                                styles.shiftButton,
+                                (!canShift || index === chain.length - 1) && styles.shiftButtonOff,
+                              ]}
+                              onPress={() => moveChainCard(index, 1)}
+                              disabled={!canShift || index === chain.length - 1}
+                              accessibilityLabel={`${label} 뒤로`}
+                            >
+                              <Text style={styles.shiftButtonText}>뒤</Text>
+                            </Pressable>
+                          </>
+                        ) : null}
+                        <Pressable
+                          onPress={() => toggleSelect(item.id)}
+                          accessibilityRole="checkbox"
+                          accessibilityState={{ checked: isSelected }}
+                          accessibilityLabel={`${label} 선택 표시`}
+                        >
+                          <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
+                            {isSelected ? <Text style={styles.checkmark}>✓</Text> : null}
+                          </View>
+                        </Pressable>
                       </View>
                     </View>
-                    <Image
-                      source={{ uri: resolveImageUri(item.imagePath) }}
-                      style={styles.image}
-                      resizeMode="cover"
-                    />
-                    <Text style={styles.cardTitle} numberOfLines={2}>
-                      {item.title.trim() || '(제목 없음)'}
-                    </Text>
-                    <Text style={styles.cardDate}>
-                      {new Date(item.createdAt).toLocaleString('ko-KR')}
-                    </Text>
-                  </Pressable>
+                    <Pressable
+                      style={styles.cardBody}
+                      onPress={() => toggleSelect(item.id)}
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked: isSelected }}
+                      accessibilityLabel={`${index + 1} ${label} 선택`}
+                    >
+                      <Image
+                        source={{ uri: resolveImageUri(item.imagePath) }}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
+                      <Text style={styles.cardTitle} numberOfLines={2}>
+                        {item.title.trim() || '(제목 없음)'}
+                      </Text>
+                      <Text style={styles.cardDate}>
+                        {new Date(item.createdAt).toLocaleString('ko-KR')}
+                      </Text>
+                    </Pressable>
+                  </View>
                 );
               })}
             </ScrollView>
@@ -608,8 +664,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 6,
+  },
+  cardHeaderActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  shiftButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#2563eb',
+    backgroundColor: '#fff',
+  },
+  shiftButtonOff: {
+    opacity: 0.35,
+  },
+  shiftButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563eb',
+  },
+  cardBody: {
+    gap: 6,
   },
   cardLabel: {
+    flexShrink: 1,
     fontSize: 12,
     fontWeight: '700',
     color: '#2563eb',

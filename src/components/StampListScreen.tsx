@@ -78,7 +78,7 @@ import { stampDisplayPlace } from '../services/stampPlace';
 import {
   listStampFieldTemplatesForFilter,
 } from '../services/stampFieldTemplates';
-import { listStamps, resolveFollowRootId } from '../services/stampRepository';
+import { listStamps, resolveFollowRootId, updateStampTitles } from '../services/stampRepository';
 import { scheduleStampThumbs } from '../services/stampThumb';
 import { moveStampsToTrash } from '../services/stampTrash';
 import {
@@ -144,6 +144,9 @@ export function StampListScreen({
   const [joinSendActiveId, setJoinSendActiveId] = useState<string | null>(null);
   const [joinSendOwned, setJoinSendOwned] = useState<OwnedProject[]>([]);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [bulkTitleVisible, setBulkTitleVisible] = useState(false);
+  const [bulkTitleText, setBulkTitleText] = useState('');
+  const [bulkTitleBusy, setBulkTitleBusy] = useState(false);
   const [titleTextAlign, setTitleTextAlign] = useState<TextAlign>('left');
   const [memoTextAlign, setMemoTextAlign] = useState<TextAlign>('left');
   const [pdfFilenameIncludeDatetime, setPdfFilenameIncludeDatetime] = useState(true);
@@ -407,9 +410,13 @@ export function StampListScreen({
   }, [clearCancelScrollTimers]);
 
   const exitSelection = () => {
+    if (bulkTitleBusy) {
+      return;
+    }
     if (searchListening) {
       stopSearchSpeech();
     }
+    setBulkTitleVisible(false);
     clearCancelScrollTimers();
     const targetOffset = Math.max(0, scrollAtSelectEnterRef.current);
     scrollOffsetRef.current = targetOffset;
@@ -651,7 +658,7 @@ export function StampListScreen({
     }
   };
 
-  const exportBusy = pdfBusy || imageBusy || projectBusy || xlsxBusy || hwpxBusy || joinSendBusy;
+  const exportBusy = pdfBusy || imageBusy || projectBusy || xlsxBusy || hwpxBusy || joinSendBusy || bulkTitleBusy;
 
   const handleShareProject = async () => {
     const selected = getSelectedStamps();
@@ -1037,6 +1044,65 @@ export function StampListScreen({
         );
       } finally {
         setDeleteBusy(false);
+      }
+    })();
+  };
+
+  const openBulkTitle = () => {
+    const selected = getSelectedStamps();
+    if (selected.length === 0 || exportBusy) {
+      return;
+    }
+    const first = selected[0].title.trim();
+    const same = selected.every((stamp) => stamp.title.trim() === first);
+    setBulkTitleText(same ? first.slice(0, 80) : '');
+    setBulkTitleVisible(true);
+  };
+
+  const closeBulkTitle = () => {
+    if (bulkTitleBusy) {
+      return;
+    }
+    setBulkTitleVisible(false);
+  };
+
+  const confirmBulkTitle = () => {
+    void (async () => {
+      const selected = getSelectedStamps();
+      if (selected.length === 0 || bulkTitleBusy) {
+        return;
+      }
+      const nextTitle = bulkTitleText.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, 80);
+      if (selected.every((stamp) => stamp.title === nextTitle)) {
+        setBulkTitleVisible(false);
+        return;
+      }
+      setBulkTitleBusy(true);
+      try {
+        const ids = selected.map((stamp) => stamp.id);
+        const updated = await updateStampTitles(ids, nextTitle);
+        if (updated === 0) {
+          Alert.alert('제목 바꾸기', '바꾼 사진이 없습니다.');
+          return;
+        }
+        const idSet = new Set(ids);
+        const now = Date.now();
+        setStamps((prev) =>
+          prev.map((stamp) =>
+            idSet.has(stamp.id) ? { ...stamp, title: nextTitle, updatedAt: now } : stamp,
+          ),
+        );
+        setPdfUri(null);
+        setBulkTitleVisible(false);
+        onChanged();
+        Alert.alert('제목 바꾸기', `${updated}장의 제목을 바꿨습니다.`);
+      } catch (e) {
+        Alert.alert(
+          '제목 바꾸기',
+          e instanceof Error ? e.message : '제목을 바꾸지 못했습니다.',
+        );
+      } finally {
+        setBulkTitleBusy(false);
       }
     })();
   };
@@ -1643,6 +1709,18 @@ export function StampListScreen({
             </Text>
           </Pressable>
           <Pressable
+            style={[styles.joinSendBarButton, exportBusy && styles.pdfBarButtonDisabled]}
+            onPress={openBulkTitle}
+            disabled={exportBusy || selectedCount === 0}
+            accessibilityLabel="선택 항목 제목 바꾸기"
+          >
+            {bulkTitleBusy ? (
+              <ActivityIndicator size="small" color="#2563eb" />
+            ) : (
+              <Text style={styles.pdfBarButtonText}>제목 바꾸기 ({selectedCount})</Text>
+            )}
+          </Pressable>
+          <Pressable
             style={[styles.deleteButton, exportBusy && styles.pdfBarButtonDisabled]}
             onPress={handleDeleteSelected}
             disabled={exportBusy || deleteBusy}
@@ -1655,6 +1733,52 @@ export function StampListScreen({
           </Pressable>
         </View>
       ) : null}
+
+      <Modal
+        visible={bulkTitleVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeBulkTitle}
+      >
+        <View style={styles.listXlsxPxBg}>
+          <View style={styles.listXlsxPxCard}>
+            <Text style={styles.joinSendTitle}>제목 바꾸기</Text>
+            <Text style={styles.listXlsxPxHint}>
+              고른 {selectedCount}장의 저장 제목을 같은 글로 바꿉니다. 최대 80자. 메모·장소·사진은
+              그대로입니다.
+            </Text>
+            <TextInput
+              style={styles.listXlsxPxInput}
+              value={bulkTitleText}
+              onChangeText={setBulkTitleText}
+              maxLength={80}
+              placeholder="새 제목"
+              editable={!bulkTitleBusy}
+              accessibilityLabel="바꿀 제목"
+            />
+            <Pressable
+              style={[styles.listXlsxPxPrimary, bulkTitleBusy && styles.pdfBarButtonDisabled]}
+              onPress={confirmBulkTitle}
+              disabled={bulkTitleBusy}
+              accessibilityLabel="제목 저장"
+            >
+              {bulkTitleBusy ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.listXlsxPxPrimaryText}>저장</Text>
+              )}
+            </Pressable>
+            <Pressable
+              style={styles.listXlsxPxSecondary}
+              onPress={closeBulkTitle}
+              disabled={bulkTitleBusy}
+              accessibilityLabel="제목 바꾸기 취소"
+            >
+              <Text style={styles.listXlsxPxSecondaryText}>취소</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <ExportNameModal
         visible={exportNameModalVisible}

@@ -185,6 +185,37 @@ export async function listFollowLinkChain(anchor: Stamp): Promise<Stamp[]> {
 }
 
 /** Live follow-up count for a root (trashed rows omitted). Uses parent_id index. */
+const BULK_TITLE_MAX = 80;
+
+/** One-line title for a bulk list edit. Control characters are dropped. */
+function cleanBulkTitle(title: string): string {
+  return title.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, BULK_TITLE_MAX);
+}
+
+/** Set the same stored title on live stamps. Memo, place, and image stay as they are. */
+export async function updateStampTitles(ids: string[], title: string): Promise<number> {
+  const unique = [...new Set(ids.map((id) => id.trim()).filter((id) => id.length > 0))];
+  if (unique.length === 0) {
+    return 0;
+  }
+  const nextTitle = cleanBulkTitle(title);
+  const db = await getDatabase();
+  const now = Date.now();
+  let updated = 0;
+  await db.withTransactionAsync(async () => {
+    for (const id of unique) {
+      const result = await db.runAsync(
+        'UPDATE stamps SET title = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL',
+        nextTitle,
+        now,
+        id,
+      );
+      updated += result.changes;
+    }
+  });
+  return updated;
+}
+
 export async function countFollowLinkChildren(rootId: string): Promise<number> {
   const id = normalizeParentId(rootId) ?? rootId.trim();
   if (!id) {
