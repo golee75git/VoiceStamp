@@ -25,6 +25,7 @@ import { formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels'
 import { buildCaptionTableRows } from '../services/captionTable';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { PhotoNotePadLayer } from './PhotoNotePadLayer';
+import { SavePhotoMagnifier } from './SavePhotoMagnifier';
 import type { PhotoNotePadItem } from '../services/photoNotePad';
 import { getWatermarkTheme } from '../services/watermarkStyle';
 import type { StampTextLayout, StampTextSize, TextAlign, CoordsLabelMode, WatermarkStyle } from '../services/settingsService';
@@ -116,6 +117,7 @@ type StampSavePreviewProps = {
   onPhotoNoteBody?: (id: string, body: string) => void;
   onPhotoNoteRemove?: (id: string) => void;
   onPhotoNoteDragLock?: (locked: boolean) => void;
+  onPhotoMagnifyLock?: (locked: boolean) => void;
   onPhotoNoteStyleChange?: (
     id: string,
     patch: Partial<Pick<PhotoNotePadItem, 'textSize' | 'textColor' | 'bgColor' | 'bgOpacity'>>,
@@ -161,6 +163,7 @@ export function StampSavePreview({
   onPhotoNoteRemove,
   onPhotoNoteDragLock,
   onPhotoNoteStyleChange,
+  onPhotoMagnifyLock,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
   const labels = resolveFieldLabels({
@@ -194,6 +197,12 @@ export function StampSavePreview({
     { showDatetime, coordsLabel, includeCoords: true },
   );
   const isThumbnail = variant === 'thumbnail';
+  const scaleLargePhoto = (photo: ReactNode) =>
+    isThumbnail ? (
+      photo
+    ) : (
+      <SavePhotoMagnifier onPinchLock={onPhotoMagnifyLock}>{photo}</SavePhotoMagnifier>
+    );
   const textScale = stampTextSizeScale(stampTextSize);
   const fs = (n: number) => Math.max(10, Math.round(n * textScale));
   const phraseFontSize = fs(overlayPhraseFontSize(isThumbnail ? 10 : 13));
@@ -428,13 +437,15 @@ export function StampSavePreview({
     return (
       <View style={styles.fullscreenWrap}>
         <View style={styles.fullscreenPhotoWrap}>
-          <PreviewPhoto
-            uri={imageUri}
-            style={[styles.fullscreenPhoto, { aspectRatio }]}
-            resizeMode="contain"
-          >
-            {(box) => renderPhotoNotes(false, box)}
-          </PreviewPhoto>
+          {scaleLargePhoto(
+            <PreviewPhoto
+              uri={imageUri}
+              style={[styles.fullscreenPhoto, { aspectRatio }]}
+              resizeMode="contain"
+            >
+              {(box) => renderPhotoNotes(false, box)}
+            </PreviewPhoto>,
+          )}
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
               <Text
@@ -583,13 +594,15 @@ export function StampSavePreview({
   return (
     <View style={styles.fullscreenCaptionCard}>
       <View style={[styles.fullscreenPhotoWrap, { width: '100%' }]}>
-        <PreviewPhoto
-          uri={imageUri}
-          style={[styles.fullscreenPhoto, { aspectRatio }]}
-          resizeMode="contain"
-        >
-          {(box) => renderPhotoNotes(false, box)}
-        </PreviewPhoto>
+        {scaleLargePhoto(
+          <PreviewPhoto
+            uri={imageUri}
+            style={[styles.fullscreenPhoto, { aspectRatio }]}
+            resizeMode="contain"
+          >
+            {(box) => renderPhotoNotes(false, box)}
+          </PreviewPhoto>,
+        )}
       </View>
       <View style={styles.fullscreenCaptionText}>
         {displayOrgName ? (

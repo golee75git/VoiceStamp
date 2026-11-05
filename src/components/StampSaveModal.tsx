@@ -364,6 +364,7 @@ export function StampSaveModal({
   const [extra3, setExtra3] = useState('');
   const [photoNoteItems, setPhotoNoteItems] = useState<PhotoNotePadItem[]>([]);
   const [photoNoteDragLock, setPhotoNoteDragLock] = useState(false);
+  const [photoMagnifyLock, setPhotoMagnifyLock] = useState(false);
   const [sourceUrl, setSourceUrl] = useState(SOURCE_URL_PREFIX);
   const [saving, setSaving] = useState(false);
   const [saveIntent, setSaveIntent] = useState<'app' | 'image'>('app');
@@ -1692,6 +1693,7 @@ export function StampSaveModal({
   };
 
   const handleCloseViewer = () => {
+    setPhotoMagnifyLock(false);
     setImageViewerVisible(false);
   };
 
@@ -1704,6 +1706,7 @@ export function StampSaveModal({
       saveSheetBackLockRef.current = false;
     });
     if (imageViewerVisible) {
+      setPhotoMagnifyLock(false);
       setImageViewerVisible(false);
       return;
     }
@@ -2819,7 +2822,7 @@ export function StampSaveModal({
         <View style={styles.imageViewerOverlay}>
           {workingImageUri ?? imageUri ? (
             <View style={styles.imageViewerContent}>
-              <StampSaveZoomViewer scrollEnabled={!photoNoteDragLock}>
+              <StampSaveZoomViewer scrollEnabled={!photoNoteDragLock && !photoMagnifyLock}>
                 <StampSavePreview
                   imageUri={normalizeDisplayUri(workingImageUri ?? imageUri!)}
                   imageLoading={false}
@@ -2864,6 +2867,7 @@ export function StampSaveModal({
                     setPhotoNoteItems((prev) => dropPhotoNotePadItem(prev, id));
                   }}
                   onPhotoNoteDragLock={setPhotoNoteDragLock}
+                  onPhotoMagnifyLock={setPhotoMagnifyLock}
                   onPhotoNoteStyleChange={(id, patch) => {
                     setPhotoNoteItems((prev) => setPhotoNotePadStyle(prev, id, patch));
                   }}

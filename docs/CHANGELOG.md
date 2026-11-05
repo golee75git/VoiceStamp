@@ -2,8 +2,8 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 갱신 | 2026-11-05 — 바로 촬영 때 홈 그림 생략 · APK `105455` |
-| 권장 APK | `releases/VoiceStamp_20261105_105455.apk` |
+| 문서 갱신 | 2026-11-05 — 저장·수정 큰 화면 사진만 확대 · APK `141510` |
+| 권장 APK | `releases/VoiceStamp_20261105_141510.apk` |
 | 기준 커밋 | `bba7014` 연결 비교 엑셀 사진 가로 |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
@@ -16,6 +16,7 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
+| **2026-11-05** | 저장·수정 **큰 화면의 사진만** 두 손가락으로 1~4배. 아래 글·저장 파일은 그대로 · 도움말 · APK `141510` | `restore-save-photo-magnify.bat` · `141510` |
 | **2026-11-05** | 바로 촬영 때 **안내색 대기·홈 그림을 생략**하고 저장된 촬영 화면으로 연다 · 도움말 · APK `105455` | `restore-direct-capture-skip.bat` · `105455` |
 | **2026-11-05** | 설정 **앱을 열면 촬영**(기본 켜기). 한 번 들어온 뒤 시작 그림·홈을 건너뛰고 저장된 촬영 카메라로 연다 · 도움말 · APK `102737` | `restore-resume-saved-capture.bat` · `102737` |
 | **2026-11-05** | 저장·수정에서 **칸 이름에 커서가 있을 때** 입력칸을 한 번 누르면 커서가 옮겨짐 · 도움말 · APK `100709` | `restore-label-to-value-focus.bat` · `100709` |

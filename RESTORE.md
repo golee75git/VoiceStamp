@@ -4570,3 +4570,11 @@ restore-direct-capture-skip.bat
 ```
 
 Restores the launch path from `*.pre-direct-capture-skip/` (before a return open skipped the guide-colored wait and the camera-home picture).
+
+## Save viewer photo magnify restore (2026-11-05)
+
+```bat
+restore-save-photo-magnify.bat
+```
+
+Restores the large save/edit viewer from `*.pre-save-photo-magnify/` and removes `SavePhotoMagnifier.tsx` (before the photo alone could be pinched). Caption text, the saved file, and crop stay as they were.
