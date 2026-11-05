@@ -2,8 +2,8 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 갱신 | 2026-10-02 — 저장 화면 도구 표시 · APK `100640` |
-| 권장 APK | `releases/VoiceStamp_20261002_100640.apk` |
+| 문서 갱신 | 2026-11-05 — 칸 이름에서 입력칸으로 커서 이동 · APK `100709` |
+| 권장 APK | `releases/VoiceStamp_20261105_100709.apk` |
 | 기준 커밋 | `bba7014` 연결 비교 엑셀 사진 가로 |
 | 상세 | [PRD.md](./PRD.md) §12–13 · [PLAN.md](./PLAN.md) §10–11 · [PROJECT.md](./PROJECT.md) §4·§7.4·§12 · [README.md](./README.md) · [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · [PLAY-STORE-QA.md](./PLAY-STORE-QA.md) |
 
@@ -16,7 +16,8 @@
 
 | 날짜 | 주요 변경 | 대표 커밋 · APK |
 |------|-----------|-----------------|
-| **2026-10-02** | 저장 화면 **이미지 저장** 기본 숨김 · **QR URL 칸**은 사진 URL 설정이 사용일 때만 · 도움말 · APK `100640` | `restore-save-sheet-tools.bat` · `100640` |
+| **2026-11-05** | 저장·수정에서 **칸 이름에 커서가 있을 때** 입력칸을 한 번 누르면 커서가 옮겨짐 · 도움말 · APK `100709` | `restore-label-to-value-focus.bat` · `100709` |
+| **2026-10-02** | 저장 화면 **이미지 저장** 기본 숨김 | · **QR URL 칸**은 사진 URL 설정이 사용일 때만 · 도움말 · APK `100640` | `restore-save-sheet-tools.bat` · `100640` |
 | **2026-10-02** | 저장·수정은 **제목·장소·메모**만 먼저 표시 · **+ 칸 추가**·**칸 줄이기** · 도움말 · APK `091137` | `restore-save-core-slots.bat` · `091137` |
 | **2026-09-30** | 목록 **여러 장 이미지 저장** 시 일부 실패 · 세로선 파일 분리·비트맵 해제 · 도움말 · APK `233350` | `restore-caption-batch-save.bat` · `233350` |
 | **2026-09-17** | 내보내기 기본 파일명에 **장소** · 여러 장 **이미지 저장은 장별 이름** · 도움말 · APK `175121` | `restore-export-file-place.bat` · `175121` |

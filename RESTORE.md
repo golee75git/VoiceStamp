@@ -4546,3 +4546,11 @@ restore-compare-edge.bat
 ```
 
 Restores the compare sheet, help, landing, info, and APK label from `*.pre-compare-edge/` (before the row keeps moving while a dragged photo is held at the screen edge).
+
+## Label to value focus restore (2026-11-05)
+
+```bat
+restore-label-to-value-focus.bat
+```
+
+Restores `VoiceInputField.tsx` and `help.html` from `*.pre-label-to-value-focus/` (before a tap on the value field moves the cursor out of the field name in one press).

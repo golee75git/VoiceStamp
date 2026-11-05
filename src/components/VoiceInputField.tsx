@@ -53,6 +53,8 @@ export function VoiceInputField({
   const [draftLabel, setDraftLabel] = useState(label);
   const valueInputRef = useRef<TextInput>(null);
   const skipValueFocusFromLabelRef = useRef(false);
+  const fieldNameDraftOpenRef = useRef(false);
+  const caretBelongsInValueRef = useRef(false);
 
   useEffect(() => {
     if (!editingLabel) {
@@ -60,22 +62,46 @@ export function VoiceInputField({
     }
   }, [label, editingLabel]);
 
-  const commitLabel = () => {
-    setEditingLabel(false);
+  const finishFieldNameDraft = (moveToValue: boolean) => {
+    if (moveToValue) {
+      caretBelongsInValueRef.current = true;
+    }
+    if (!fieldNameDraftOpenRef.current) {
+      if (moveToValue) {
+        valueInputRef.current?.focus();
+      }
+      return;
+    }
+    fieldNameDraftOpenRef.current = false;
+    skipValueFocusFromLabelRef.current = false;
     onLabelCommit?.(draftLabel);
+    requestAnimationFrame(() => {
+      setEditingLabel(false);
+      if (caretBelongsInValueRef.current) {
+        caretBelongsInValueRef.current = false;
+        valueInputRef.current?.focus();
+      }
+    });
   };
 
   const beginLabelEdit = () => {
     skipValueFocusFromLabelRef.current = true;
+    fieldNameDraftOpenRef.current = true;
     valueInputRef.current?.blur();
     setEditingLabel(true);
+    requestAnimationFrame(() => {
+      skipValueFocusFromLabelRef.current = false;
+    });
   };
 
   const handleValueFocus = () => {
-    if (skipValueFocusFromLabelRef.current || editingLabel) {
+    if (skipValueFocusFromLabelRef.current) {
       skipValueFocusFromLabelRef.current = false;
       valueInputRef.current?.blur();
       return;
+    }
+    if (fieldNameDraftOpenRef.current) {
+      finishFieldNameDraft(true);
     }
     onFocus?.();
   };
@@ -91,8 +117,15 @@ export function VoiceInputField({
             onFocus={() => {
               (onLabelFocus ?? onFocus)?.();
             }}
-            onBlur={commitLabel}
-            onSubmitEditing={commitLabel}
+            onBlur={() => {
+              requestAnimationFrame(() => {
+                if (!fieldNameDraftOpenRef.current) {
+                  return;
+                }
+                finishFieldNameDraft(false);
+              });
+            }}
+            onSubmitEditing={() => finishFieldNameDraft(false)}
             maxLength={FIELD_LABEL_MAX_LENGTH}
             autoFocus
             selectTextOnFocus
@@ -138,7 +171,6 @@ export function VoiceInputField({
         value={value}
         onChangeText={onChangeText}
         onFocus={handleValueFocus}
-        editable={!editingLabel}
         onSelectionChange={(event) => onSelectionChange?.(event.nativeEvent.selection)}
         selection={selection}
         placeholder={placeholderHint?.trim() || `${label} 입력`}
