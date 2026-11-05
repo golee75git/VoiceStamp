@@ -65,6 +65,9 @@ const CAMERA_HOME_IMAGES: Record<CameraHomeBg, number> = {
 
 type CameraScreenProps = {
   refreshKey: number;
+  /** Open the saved capture path once when this home is shown after a later app launch. */
+  resumeSavedCapture?: boolean;
+  onResumeCaptureHandled?: () => void;
   onOpenList: () => void;
   onOpenSettings: () => void;
   onOpenProjectCollect?: () => void;
@@ -76,6 +79,8 @@ type InAppCameraMode = 'single' | 'continuous';
 
 export function CameraScreen({
   refreshKey,
+  resumeSavedCapture = false,
+  onResumeCaptureHandled,
   onOpenList,
   onOpenSettings,
   onOpenProjectCollect,
@@ -96,7 +101,7 @@ export function CameraScreen({
   const saveFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
-  const [autoLaunch, setAutoLaunch] = useState(false);
+  const [autoLaunch, setAutoLaunch] = useState(resumeSavedCapture);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
   const launchingRef = useRef(false);
@@ -796,6 +801,13 @@ export function CameraScreen({
   }, [handleCapturedUri]);
 
   useEffect(() => {
+    if (!resumeSavedCapture) {
+      return;
+    }
+    onResumeCaptureHandled?.();
+  }, [onResumeCaptureHandled, resumeSavedCapture]);
+
+  useEffect(() => {
     if (
       !readyToLaunch ||
       !permission?.granted ||
@@ -811,6 +823,7 @@ export function CameraScreen({
       return;
     }
 
+    setAutoLaunch(false);
     void openPrimaryCapture();
   }, [
     readyToLaunch,

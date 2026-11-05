@@ -116,6 +116,10 @@ export function stashProjectJoinUrl(url: string | null | undefined): boolean {
   return true;
 }
 
+export function hasStashedJoinUrl(): boolean {
+  return pendingJoinUrl !== null;
+}
+
 export function takePendingJoinUrl(): string | null {
   const u = pendingJoinUrl;
   pendingJoinUrl = null;

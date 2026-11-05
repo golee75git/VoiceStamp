@@ -58,6 +58,8 @@ const LOCATION_MODE_KEY = 'location_mode';
 const GALLERY_SAVE_MODE_KEY = 'gallery_save_mode';
 const CONTINUOUS_CAPTURE_CAMERA_KEY = 'continuous_capture_camera';
 const PRIMARY_CAPTURE_CAMERA_KEY = 'primary_capture_camera';
+/** After the camera home has been reached once, open that saved capture path on the next app open. */
+const RESUME_SAVED_CAPTURE_KEY = 'resume_saved_capture';
 const CAPTURE_AFTER_MODE_KEY = 'capture_after_mode';
 const SHUTTER_SOUND_KEY = 'shutter_sound';
 const CURRENT_SITE_NAME_KEY = 'current_site_name';
@@ -126,6 +128,8 @@ export const DEFAULT_LOCATION_MODE = 'auto' as const;
 export const DEFAULT_GALLERY_SAVE_MODE = 'app_only' as const;
 export const DEFAULT_CONTINUOUS_CAPTURE_CAMERA = 'in_app' as const;
 export const DEFAULT_PRIMARY_CAPTURE_CAMERA = 'system' as const;
+/** Skip the start image and camera home after the first visit to main. */
+export const DEFAULT_RESUME_SAVED_CAPTURE = true;
 export const DEFAULT_CAPTURE_AFTER_MODE = 'action_sheet' as const;
 export const DEFAULT_SHUTTER_SOUND = true;
 /** Save-sheet 「이미지 저장」 button. Default hidden. List export is unchanged. */
@@ -490,6 +494,7 @@ export type SettingsScreenSnapshot = {
   watermarkStyle: WatermarkStyle;
   gallerySaveMode: GallerySaveMode;
   primaryCaptureCamera: ContinuousCaptureCamera;
+  resumeSavedCapture: boolean;
   continuousCaptureCamera: ContinuousCaptureCamera;
   captureAfterMode: CaptureAfterMode;
   shutterSound: boolean;
@@ -594,6 +599,10 @@ export async function loadSettingsForScreen(): Promise<SettingsScreenSnapshot> {
       const raw = pickSetting(map, PRIMARY_CAPTURE_CAMERA_KEY);
       return raw ? sanitizeContinuousCaptureCamera(raw) : DEFAULT_PRIMARY_CAPTURE_CAMERA;
     })(),
+    resumeSavedCapture: parseBooleanSetting(
+      pickSetting(map, RESUME_SAVED_CAPTURE_KEY),
+      DEFAULT_RESUME_SAVED_CAPTURE,
+    ),
     continuousCaptureCamera: (() => {
       const raw = pickSetting(map, CONTINUOUS_CAPTURE_CAMERA_KEY);
       return raw ? sanitizeContinuousCaptureCamera(raw) : DEFAULT_CONTINUOUS_CAPTURE_CAMERA;
@@ -740,6 +749,7 @@ export function sanitizeSettingsScreenSnapshot(
     watermarkStyle: sanitizeWatermarkStyle(draft.watermarkStyle),
     gallerySaveMode: sanitizeGallerySaveMode(draft.gallerySaveMode),
     primaryCaptureCamera: sanitizeContinuousCaptureCamera(draft.primaryCaptureCamera),
+    resumeSavedCapture: draft.resumeSavedCapture,
     continuousCaptureCamera: sanitizeContinuousCaptureCamera(draft.continuousCaptureCamera),
     captureAfterMode: sanitizeCaptureAfterMode(draft.captureAfterMode),
     shutterSound: draft.shutterSound,
@@ -788,6 +798,7 @@ function settingsSnapshotToRows(snapshot: SettingsScreenSnapshot): Array<[string
     [WATERMARK_STYLE_KEY, snapshot.watermarkStyle],
     [GALLERY_SAVE_MODE_KEY, snapshot.gallerySaveMode],
     [PRIMARY_CAPTURE_CAMERA_KEY, snapshot.primaryCaptureCamera],
+    [RESUME_SAVED_CAPTURE_KEY, snapshot.resumeSavedCapture ? 'true' : 'false'],
     [CONTINUOUS_CAPTURE_CAMERA_KEY, snapshot.continuousCaptureCamera],
     [CAPTURE_AFTER_MODE_KEY, snapshot.captureAfterMode],
     [SHUTTER_SOUND_KEY, snapshot.shutterSound ? 'true' : 'false'],
@@ -1137,6 +1148,11 @@ export async function getPrimaryCaptureCamera(): Promise<ContinuousCaptureCamera
     return DEFAULT_PRIMARY_CAPTURE_CAMERA;
   }
   return sanitizeContinuousCaptureCamera(value);
+}
+
+export async function getResumeSavedCapture(): Promise<boolean> {
+  const value = await readSetting(RESUME_SAVED_CAPTURE_KEY);
+  return parseBooleanSetting(value, DEFAULT_RESUME_SAVED_CAPTURE);
 }
 
 export async function setPrimaryCaptureCamera(

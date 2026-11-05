@@ -12,6 +12,7 @@ import { TrashScreen } from '../components/TrashScreen';
 import { ProjectCollectScreen } from '../components/ProjectCollectScreen';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import {
+  hasStashedJoinUrl,
   parseProjectJoinLink,
   takePendingJoinUrl,
 } from '../services/projectJoinLink';
@@ -21,8 +22,15 @@ type SettingsReturn = 'camera' | 'list';
 /** Where hub 「뒤로」 returns after leaving project collect. */
 type CollectReturn = 'camera' | 'settings';
 
-export function MainScreen() {
+type MainScreenProps = {
+  openCaptureOnReturn?: boolean;
+};
+
+export function MainScreen({ openCaptureOnReturn = false }: MainScreenProps) {
   const [screen, setScreen] = useState<Screen>('camera');
+  const [resumeSavedCapture, setResumeSavedCapture] = useState(
+    () => openCaptureOnReturn && !hasStashedJoinUrl(),
+  );
   const [settingsReturn, setSettingsReturn] = useState<SettingsReturn>('camera');
   const [refreshKey, setRefreshKey] = useState(0);
   const [showIntroOverlay, setShowIntroOverlay] = useState(false);
@@ -33,6 +41,10 @@ export function MainScreen() {
   const exportHostRef = useRef<StampImageExportHostRef>(null);
 
   const bumpRefresh = () => setRefreshKey((value) => value + 1);
+
+  const handleResumeCaptureHandled = useCallback(() => {
+    setResumeSavedCapture(false);
+  }, []);
 
   const captureStampForExport = useCallback<CaptureStampForExport>((stamp, options) => {
     if (!exportHostRef.current) {
@@ -130,6 +142,8 @@ export function MainScreen() {
       {screen === 'camera' ? (
         <CameraScreen
           refreshKey={refreshKey}
+          resumeSavedCapture={resumeSavedCapture}
+          onResumeCaptureHandled={handleResumeCaptureHandled}
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => openSettings('camera')}
           onOpenProjectCollect={() => {

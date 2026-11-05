@@ -4554,3 +4554,11 @@ restore-label-to-value-focus.bat
 ```
 
 Restores `VoiceInputField.tsx` and `help.html` from `*.pre-label-to-value-focus/` (before a tap on the value field moves the cursor out of the field name in one press).
+
+## Open saved capture restore (2026-11-05)
+
+```bat
+restore-resume-saved-capture.bat
+```
+
+Restores the app entry, settings, camera home, join-link stash check, and help from `*.pre-resume-saved-capture/` (before the 「앱을 열면 촬영」 setting).

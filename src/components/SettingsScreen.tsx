@@ -39,6 +39,7 @@ import {
   DEFAULT_GALLERY_SAVE_MODE,
   DEFAULT_CONTINUOUS_CAPTURE_CAMERA,
   DEFAULT_PRIMARY_CAPTURE_CAMERA,
+  DEFAULT_RESUME_SAVED_CAPTURE,
   DEFAULT_CAPTURE_AFTER_MODE,
   DEFAULT_COORDS_LABEL_MODE,
   DEFAULT_LOCATION_MODE,
@@ -201,6 +202,7 @@ export function SettingsScreen({
   const [primaryCaptureCamera, setPrimaryCaptureCameraState] = useState<ContinuousCaptureCamera>(
     DEFAULT_PRIMARY_CAPTURE_CAMERA,
   );
+  const [resumeSavedCapture, setResumeSavedCaptureState] = useState(DEFAULT_RESUME_SAVED_CAPTURE);
   const [captureAfterMode, setCaptureAfterModeState] = useState<CaptureAfterMode>(
     DEFAULT_CAPTURE_AFTER_MODE,
   );
@@ -277,6 +279,7 @@ export function SettingsScreen({
       setWatermarkStyleState(snapshot.watermarkStyle);
       setGallerySaveModeState(snapshot.gallerySaveMode);
       setPrimaryCaptureCameraState(snapshot.primaryCaptureCamera);
+      setResumeSavedCaptureState(snapshot.resumeSavedCapture);
       setContinuousCaptureCameraState(snapshot.continuousCaptureCamera);
       setCaptureAfterModeState(snapshot.captureAfterMode);
       setShutterSoundState(snapshot.shutterSound);
@@ -356,6 +359,7 @@ export function SettingsScreen({
         watermarkStyle,
         gallerySaveMode,
         primaryCaptureCamera,
+        resumeSavedCapture,
         continuousCaptureCamera,
         captureAfterMode,
         shutterSound,
@@ -400,6 +404,7 @@ export function SettingsScreen({
       setWatermarkStyleState(saved.watermarkStyle);
       setGallerySaveModeState(saved.gallerySaveMode);
       setPrimaryCaptureCameraState(saved.primaryCaptureCamera);
+      setResumeSavedCaptureState(saved.resumeSavedCapture);
       setContinuousCaptureCameraState(saved.continuousCaptureCamera);
       setCaptureAfterModeState(saved.captureAfterMode);
       setShutterSoundState(saved.shutterSound);
@@ -1149,6 +1154,42 @@ export function SettingsScreen({
                 </Pressable>
               );
             })}
+          </View>
+
+          <Text style={[styles.label, styles.sectionGap]}>앱을 열면 촬영</Text>
+          <Text style={styles.hint}>
+            카메라 홈까지 한 번 들어온 뒤, 켜면 다음 실행에서 시작 그림과 홈을 건너뛰고 위의 일반
+            촬영 카메라로 바로 엽니다. 끄면 홈에서 촬영 버튼을 누릅니다. 처음 실행 안내는 그대로입니다.
+          </Text>
+          <View style={styles.optionRow}>
+            <Pressable
+              style={[styles.optionButton, resumeSavedCapture && styles.optionButtonSelected]}
+              onPress={() => setResumeSavedCaptureState(true)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  resumeSavedCapture && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('켜기', DEFAULT_RESUME_SAVED_CAPTURE)}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.optionButton, !resumeSavedCapture && styles.optionButtonSelected]}
+              onPress={() => setResumeSavedCaptureState(false)}
+              disabled={saving}
+            >
+              <Text
+                style={[
+                  styles.optionButtonText,
+                  !resumeSavedCapture && styles.optionButtonTextSelected,
+                ]}
+              >
+                {chipLabel('끄기', !DEFAULT_RESUME_SAVED_CAPTURE)}
+              </Text>
+            </Pressable>
           </View>
 
           <Text style={[styles.label, styles.sectionGap]}>촬영 후</Text>

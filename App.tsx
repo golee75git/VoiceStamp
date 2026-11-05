@@ -9,6 +9,8 @@ import { MainScreen } from './src/screens/MainScreen';
 import { stashProjectJoinUrl } from './src/services/projectJoinLink';
 import {
   getFloorDisplayMode,
+  getLastAppOpenAt,
+  getResumeSavedCapture,
   getTitleDatetimeMode,
   setLastAppOpenAt,
   shouldShowOnboarding,
@@ -19,29 +21,45 @@ type AppPhase = 'boot' | 'intro' | 'start' | 'webNotice' | 'main';
 
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>('boot');
+  const [openCaptureOnReturn, setOpenCaptureOnReturn] = useState(false);
 
-  const enterMain = useCallback(async () => {
+  const enterMain = useCallback(async (openCapture: boolean) => {
     await setLastAppOpenAt(Date.now());
+    setOpenCaptureOnReturn(openCapture);
     setPhase('main');
   }, []);
 
   /** Web (/app): show limits notice once per visit before main. Native unchanged. */
-  const proceedTowardMain = useCallback(async () => {
+  const proceedTowardMain = useCallback(async (openCapture: boolean) => {
     if (Platform.OS === 'web') {
       setPhase('webNotice');
       return;
     }
-    await enterMain();
+    await enterMain(openCapture);
   }, [enterMain]);
 
-  const goToStartOrMain = useCallback(async () => {
-    const showStart = await shouldShowStartScreen();
-    if (showStart) {
-      setPhase('start');
-      return;
+  const skipLaunchGates = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      return false;
     }
-    await proceedTowardMain();
-  }, [proceedTowardMain]);
+    const [lastOpen, resumeCapture] = await Promise.all([
+      getLastAppOpenAt(),
+      getResumeSavedCapture(),
+    ]);
+    return lastOpen !== null && resumeCapture;
+  }, []);
+
+  const goToStartOrMain = useCallback(async () => {
+    const openCapture = await skipLaunchGates();
+    if (!openCapture) {
+      const showStart = await shouldShowStartScreen();
+      if (showStart) {
+        setPhase('start');
+        return;
+      }
+    }
+    await proceedTowardMain(openCapture);
+  }, [proceedTowardMain, skipLaunchGates]);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -64,8 +82,11 @@ export default function App() {
         return;
       }
       if (showIntro) {
-        setPhase('intro');
-        return;
+        const openCapture = await skipLaunchGates();
+        if (!openCapture) {
+          setPhase('intro');
+          return;
+        }
       }
       await goToStartOrMain();
     })();
@@ -73,7 +94,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [goToStartOrMain]);
+  }, [goToStartOrMain, skipLaunchGates]);
 
   let content: ReactNode = <View style={styles.boot} />;
 
@@ -86,11 +107,11 @@ export default function App() {
       />
     );
   } else if (phase === 'start') {
-    content = <StartScreen onComplete={() => void proceedTowardMain()} />;
+    content = <StartScreen onComplete={() => void proceedTowardMain(false)} />;
   } else if (phase === 'webNotice') {
-    content = <WebLimitNoticeScreen onContinue={() => void enterMain()} />;
+    content = <WebLimitNoticeScreen onContinue={() => void enterMain(false)} />;
   } else if (phase === 'main') {
-    content = <MainScreen />;
+    content = <MainScreen openCaptureOnReturn={openCaptureOnReturn} />;
   }
 
   return <GestureHandlerRootView style={styles.root}>{content}</GestureHandlerRootView>;
