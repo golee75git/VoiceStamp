@@ -11,6 +11,7 @@ import { OpenSourceLicensesScreen } from '../components/OpenSourceLicensesScreen
 import { TrashScreen } from '../components/TrashScreen';
 import { ProjectCollectScreen } from '../components/ProjectCollectScreen';
 import type { CaptureStampForExport } from '../services/exportStampImage';
+import type { ContinuousCaptureCamera } from '../services/settingsService';
 import {
   hasStashedJoinUrl,
   parseProjectJoinLink,
@@ -24,9 +25,13 @@ type CollectReturn = 'camera' | 'settings';
 
 type MainScreenProps = {
   openCaptureOnReturn?: boolean;
+  returnCaptureMode?: ContinuousCaptureCamera;
 };
 
-export function MainScreen({ openCaptureOnReturn = false }: MainScreenProps) {
+export function MainScreen({
+  openCaptureOnReturn = false,
+  returnCaptureMode = 'system',
+}: MainScreenProps) {
   const [screen, setScreen] = useState<Screen>('camera');
   const [resumeSavedCapture, setResumeSavedCapture] = useState(
     () => openCaptureOnReturn && !hasStashedJoinUrl(),
@@ -143,6 +148,7 @@ export function MainScreen({ openCaptureOnReturn = false }: MainScreenProps) {
         <CameraScreen
           refreshKey={refreshKey}
           resumeSavedCapture={resumeSavedCapture}
+          savedCaptureMode={returnCaptureMode}
           onResumeCaptureHandled={handleResumeCaptureHandled}
           onOpenList={() => setScreen('list')}
           onOpenSettings={() => openSettings('camera')}

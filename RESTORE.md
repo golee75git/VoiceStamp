@@ -4562,3 +4562,11 @@ restore-resume-saved-capture.bat
 ```
 
 Restores the app entry, settings, camera home, join-link stash check, and help from `*.pre-resume-saved-capture/` (before the 「앱을 열면 촬영」 setting).
+
+## Direct capture skip restore (2026-11-05)
+
+```bat
+restore-direct-capture-skip.bat
+```
+
+Restores the launch path from `*.pre-direct-capture-skip/` (before a return open skipped the guide-colored wait and the camera-home picture).

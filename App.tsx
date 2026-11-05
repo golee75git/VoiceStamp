@@ -8,13 +8,9 @@ import { WebLimitNoticeScreen } from './src/components/WebLimitNoticeScreen';
 import { MainScreen } from './src/screens/MainScreen';
 import { stashProjectJoinUrl } from './src/services/projectJoinLink';
 import {
-  getFloorDisplayMode,
-  getLastAppOpenAt,
-  getResumeSavedCapture,
-  getTitleDatetimeMode,
+  readLaunchPath,
   setLastAppOpenAt,
-  shouldShowOnboarding,
-  shouldShowStartScreen,
+  type LaunchPath,
 } from './src/services/settingsService';
 
 type AppPhase = 'boot' | 'intro' | 'start' | 'webNotice' | 'main';
@@ -22,9 +18,10 @@ type AppPhase = 'boot' | 'intro' | 'start' | 'webNotice' | 'main';
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>('boot');
   const [openCaptureOnReturn, setOpenCaptureOnReturn] = useState(false);
+  const [returnCaptureMode, setReturnCaptureMode] = useState<LaunchPath['primaryCaptureCamera']>('system');
 
   const enterMain = useCallback(async (openCapture: boolean) => {
-    await setLastAppOpenAt(Date.now());
+    void setLastAppOpenAt(Date.now());
     setOpenCaptureOnReturn(openCapture);
     setPhase('main');
   }, []);
@@ -38,28 +35,24 @@ export default function App() {
     await enterMain(openCapture);
   }, [enterMain]);
 
-  const skipLaunchGates = useCallback(async () => {
-    if (Platform.OS === 'web') {
-      return false;
+  const applyLaunchPath = useCallback(async (path: LaunchPath) => {
+    if (Platform.OS !== 'web' && path.openSavedCapture) {
+      setReturnCaptureMode(path.primaryCaptureCamera);
+      setOpenCaptureOnReturn(true);
+      void setLastAppOpenAt(Date.now());
+      setPhase('main');
+      return;
     }
-    const [lastOpen, resumeCapture] = await Promise.all([
-      getLastAppOpenAt(),
-      getResumeSavedCapture(),
-    ]);
-    return lastOpen !== null && resumeCapture;
-  }, []);
-
-  const goToStartOrMain = useCallback(async () => {
-    const openCapture = await skipLaunchGates();
-    if (!openCapture) {
-      const showStart = await shouldShowStartScreen();
-      if (showStart) {
-        setPhase('start');
-        return;
-      }
+    if (path.showIntro) {
+      setPhase('intro');
+      return;
     }
-    await proceedTowardMain(openCapture);
-  }, [proceedTowardMain, skipLaunchGates]);
+    if (path.showStart) {
+      setPhase('start');
+      return;
+    }
+    await proceedTowardMain(false);
+  }, [proceedTowardMain]);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -76,25 +69,17 @@ export default function App() {
     let cancelled = false;
 
     (async () => {
-      await Promise.all([getFloorDisplayMode(), getTitleDatetimeMode()]);
-      const showIntro = await shouldShowOnboarding();
+      const path = await readLaunchPath();
       if (cancelled) {
         return;
       }
-      if (showIntro) {
-        const openCapture = await skipLaunchGates();
-        if (!openCapture) {
-          setPhase('intro');
-          return;
-        }
-      }
-      await goToStartOrMain();
+      await applyLaunchPath(path);
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [goToStartOrMain, skipLaunchGates]);
+  }, [applyLaunchPath]);
 
   let content: ReactNode = <View style={styles.boot} />;
 
@@ -102,7 +87,8 @@ export default function App() {
     content = (
       <IntroScreen
         onComplete={async () => {
-          await goToStartOrMain();
+          const path = await readLaunchPath();
+          await applyLaunchPath({ ...path, showIntro: false });
         }}
       />
     );
@@ -111,7 +97,12 @@ export default function App() {
   } else if (phase === 'webNotice') {
     content = <WebLimitNoticeScreen onContinue={() => void enterMain(false)} />;
   } else if (phase === 'main') {
-    content = <MainScreen openCaptureOnReturn={openCaptureOnReturn} />;
+    content = (
+      <MainScreen
+        openCaptureOnReturn={openCaptureOnReturn}
+        returnCaptureMode={returnCaptureMode}
+      />
+    );
   }
 
   return <GestureHandlerRootView style={styles.root}>{content}</GestureHandlerRootView>;
@@ -123,6 +114,6 @@ const styles = StyleSheet.create({
   },
   boot: {
     flex: 1,
-    backgroundColor: '#E8F4FE',
+    backgroundColor: '#000',
   },
 });

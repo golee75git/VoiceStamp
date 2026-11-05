@@ -1155,6 +1155,60 @@ export async function getResumeSavedCapture(): Promise<boolean> {
   return parseBooleanSetting(value, DEFAULT_RESUME_SAVED_CAPTURE);
 }
 
+export type LaunchPath = {
+  openSavedCapture: boolean;
+  showIntro: boolean;
+  showStart: boolean;
+  primaryCaptureCamera: ContinuousCaptureCamera;
+};
+
+/** One settings read for the first screen choice. Also warms floor and title caches. */
+export async function readLaunchPath(): Promise<LaunchPath> {
+  const map = await readAllSettingsMap();
+
+  const floorRaw = pickSetting(map, FLOOR_DISPLAY_MODE_KEY);
+  setFloorDisplayModeCache(floorRaw ? sanitizeFloorDisplayMode(floorRaw) : DEFAULT_FLOOR_DISPLAY_MODE);
+  const titleRaw = pickSetting(map, TITLE_DATETIME_MODE_KEY);
+  setTitleDatetimeModeCache(
+    titleRaw ? sanitizeTitleDatetimeMode(titleRaw) : DEFAULT_TITLE_DATETIME_MODE,
+  );
+
+  const seen = pickSetting(map, ONBOARDING_SEEN_KEY) === 'true';
+  const lastRaw = pickSetting(map, LAST_APP_OPEN_AT_KEY);
+  const lastParsed = lastRaw ? Number.parseInt(lastRaw, 10) : Number.NaN;
+  const lastOpen = Number.isNaN(lastParsed) ? null : lastParsed;
+  const resumeCapture = parseBooleanSetting(
+    pickSetting(map, RESUME_SAVED_CAPTURE_KEY),
+    DEFAULT_RESUME_SAVED_CAPTURE,
+  );
+  const openSavedCapture = lastOpen !== null && resumeCapture;
+
+  let showIntro = !seen;
+  if (seen && lastOpen !== null) {
+    const idleMs = ONBOARDING_IDLE_RESHOW_DAYS * 24 * 60 * 60 * 1000;
+    showIntro = Date.now() - lastOpen >= idleMs;
+  }
+
+  const hiddenRaw = pickSetting(map, START_SCREEN_HIDDEN_UNTIL_KEY);
+  let showStart = true;
+  if (hiddenRaw) {
+    const hiddenUntil = Number.parseInt(hiddenRaw, 10);
+    if (!Number.isNaN(hiddenUntil)) {
+      showStart = Date.now() >= hiddenUntil;
+    }
+  }
+
+  const primaryRaw = pickSetting(map, PRIMARY_CAPTURE_CAMERA_KEY);
+  return {
+    openSavedCapture,
+    showIntro,
+    showStart,
+    primaryCaptureCamera: primaryRaw
+      ? sanitizeContinuousCaptureCamera(primaryRaw)
+      : DEFAULT_PRIMARY_CAPTURE_CAMERA,
+  };
+}
+
 export async function setPrimaryCaptureCamera(
   mode: ContinuousCaptureCamera,
 ): Promise<ContinuousCaptureCamera> {

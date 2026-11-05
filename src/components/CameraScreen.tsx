@@ -21,7 +21,7 @@ import { FieldTemplateSheet } from './FieldTemplateSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
-import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, cameraHomeBgFill, type CameraHand, type CameraHomeBg } from '../services/settingsService';
+import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, cameraHomeBgFill, type CameraHand, type CameraHomeBg, type ContinuousCaptureCamera } from '../services/settingsService';
 import type { CaptureStampForExport } from '../services/exportStampImage';
 import { STAMP_CAPTURE_JPEG_QUALITY } from '../constants/captureImageBudget';
 import { pickPreferredStampPictureSize } from '../utils/cameraPictureSize';
@@ -67,6 +67,7 @@ type CameraScreenProps = {
   refreshKey: number;
   /** Open the saved capture path once when this home is shown after a later app launch. */
   resumeSavedCapture?: boolean;
+  savedCaptureMode?: ContinuousCaptureCamera;
   onResumeCaptureHandled?: () => void;
   onOpenList: () => void;
   onOpenSettings: () => void;
@@ -80,6 +81,7 @@ type InAppCameraMode = 'single' | 'continuous';
 export function CameraScreen({
   refreshKey,
   resumeSavedCapture = false,
+  savedCaptureMode = 'system',
   onResumeCaptureHandled,
   onOpenList,
   onOpenSettings,
@@ -102,8 +104,10 @@ export function CameraScreen({
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [cameraHomeBg, setCameraHomeBg] = useState<CameraHomeBg>('mainint');
   const [autoLaunch, setAutoLaunch] = useState(resumeSavedCapture);
+  const [skipHomeSplash, setSkipHomeSplash] = useState(resumeSavedCapture);
   const [readyToLaunch, setReadyToLaunch] = useState(Platform.OS === 'web');
   const savedAndClosingRef = useRef(false);
+  const directOpenedRef = useRef(false);
   const launchingRef = useRef(false);
   const actionSheetVisibleRef = useRef(false);
   const prefetchForUriRef = useRef<string | null>(null);
@@ -785,8 +789,10 @@ export function CameraScreen({
           return;
         }
         if (pending && 'assets' in pending && !pending.canceled && pending.assets?.[0]?.uri) {
-          await handleCapturedUri(pending.assets[0].uri);
+          directOpenedRef.current = true;
           setAutoLaunch(false);
+          setInAppCameraMode(null);
+          await handleCapturedUri(pending.assets[0].uri);
         }
       } finally {
         if (!cancelled) {
@@ -801,16 +807,28 @@ export function CameraScreen({
   }, [handleCapturedUri]);
 
   useEffect(() => {
-    if (!resumeSavedCapture) {
+    if (!resumeSavedCapture || savedCaptureMode !== 'in_app' || !permission?.granted) {
       return;
     }
+    if (directOpenedRef.current) {
+      return;
+    }
+    directOpenedRef.current = true;
+    setAutoLaunch(false);
+    setInAppCameraMode('single');
+    setSkipHomeSplash(false);
+    startLocationWarmup();
     onResumeCaptureHandled?.();
-  }, [onResumeCaptureHandled, resumeSavedCapture]);
+  }, [
+    onResumeCaptureHandled,
+    permission?.granted,
+    resumeSavedCapture,
+    savedCaptureMode,
+    startLocationWarmup,
+  ]);
 
   useEffect(() => {
     if (
-      !readyToLaunch ||
-      !permission?.granted ||
       !autoLaunch ||
       modalVisible ||
       cameraBusy ||
@@ -822,9 +840,21 @@ export function CameraScreen({
     if (Platform.OS === 'web') {
       return;
     }
+    if (!resumeSavedCapture && !readyToLaunch) {
+      return;
+    }
+    if (!permission?.granted) {
+      return;
+    }
+    if (directOpenedRef.current) {
+      return;
+    }
 
     setAutoLaunch(false);
-    void openPrimaryCapture();
+    onResumeCaptureHandled?.();
+    void openPrimaryCapture().finally(() => {
+      setSkipHomeSplash(false);
+    });
   }, [
     readyToLaunch,
     permission?.granted,
@@ -835,6 +865,7 @@ export function CameraScreen({
     inAppCameraMode,
     openPrimaryCapture,
     refreshKey,
+    resumeSavedCapture,
   ]);
 
   // permission === null: show launcher immediately (avoid "권한 확인 중" flash)
@@ -969,6 +1000,10 @@ export function CameraScreen({
         ) : null}
       </View>
     );
+  }
+
+  if (!isWeb && skipHomeSplash && inAppCameraMode === null && !modalVisible && !actionSheetVisible) {
+    return <View style={styles.container} />;
   }
 
   // Left-hand theme: fixed light key visual + contrasting nav icons (overrides home-bg setting).
