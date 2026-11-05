@@ -1107,7 +1107,7 @@ export function SettingsScreen({
 
           <Text style={[styles.label, styles.sectionGap]}>층 표기</Text>
           <Text style={styles.hint}>
-            층 칩을 눌렀을 때 장소에 넣는 방식입니다. 「장소 커서에 삽입」은 장소 입력란의 커서 위치에 3층 등을 넣습니다.
+            층 칩을 눌렀을 때 장소에 넣는 방식입니다. 「장소 커서에 삽입」은 장소 입력란의 커서 위치에 3층 등을 넣습니다. 장소 칸이 비어 있으면 별도 영역·워터마크에 층만 나오지 않습니다.
           </Text>
           <View style={styles.optionRow}>
             {FLOOR_DISPLAY_OPTIONS.map((option) => {

@@ -14,6 +14,18 @@ export function pdfDisplayTitle(rawTitle: string | undefined, showDatetime: bool
   return stripped || '(제목 없음)';
 }
 
+/** 별도 영역·워터마크 줄. 빈 제목은 빈 문자열로 둔다. 목록용 pdfDisplayTitle과 구분. */
+export function captionFieldTitle(rawTitle: string | undefined, showDatetime: boolean): string {
+  const raw = rawTitle?.trim() ?? '';
+  if (!raw) {
+    return '';
+  }
+  if (showDatetime) {
+    return raw;
+  }
+  return stripDateTimePrefixFromTitle(raw);
+}
+
 /** Bottom caption/PDF line: stamp createdAt in Korean locale. */
 export function formatStampFooterDatetime(createdAt: number): string {
   return new Date(createdAt).toLocaleString('ko-KR');

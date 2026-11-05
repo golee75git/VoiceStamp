@@ -13,7 +13,7 @@ import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
 import { buildCaptionLayout } from './captionLayout';
-import { stampDisplayTitle } from './stampFloor';
+import { captionFieldTitle } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import {
@@ -237,7 +237,7 @@ async function renderStampJpegWatermarkOnWeb(
   const labels = resolveFieldLabels(options);
   const title = formatLabeledValue(
     labels.titleFieldLabel,
-    stampDisplayTitle(stamp, options.showDatetime),
+    captionFieldTitle(stamp.title, options.showDatetime),
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
@@ -300,10 +300,23 @@ async function renderStampJpegWatermarkOnWeb(
 
   ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
   const theme = getWatermarkTheme(options.watermarkStyle);
+  const paintBar =
+    orgLines.length +
+      titleLines.length +
+      placeLines.length +
+      extra1Lines.length +
+      extra2Lines.length +
+      extra3Lines.length +
+      memoLines.length +
+      coordsLines.length +
+      phraseLines.length >
+    0;
+  const usedBarHeight = paintBar ? barHeight : 0;
 
-  drawWatermarkBar(ctx, 0, imgHeight - barHeight, imgWidth, barHeight, options.watermarkStyle);
+  if (paintBar) {
+  drawWatermarkBar(ctx, 0, imgHeight - usedBarHeight, imgWidth, usedBarHeight, options.watermarkStyle);
 
-  let textY = imgHeight - barHeight + barPaddingY + (orgName ? sz(22) : sz(28));
+  let textY = imgHeight - usedBarHeight + barPaddingY + (orgName ? sz(22) : sz(28));
 
   if (orgName) {
     textY =
@@ -441,6 +454,7 @@ async function renderStampJpegWatermarkOnWeb(
       Math.max(18, Math.round(phraseSize * 1.1)),
     );
   }
+  }
 
   const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
   if (qrUrl && Platform.OS === 'web') {
@@ -451,7 +465,7 @@ async function renderStampJpegWatermarkOnWeb(
         const qrImg = await loadWebImage(qr.uri);
         const qrMargin = Math.max(8, Math.round(imgWidth * 0.02));
         const qrX = imgWidth - qr.size - qrMargin;
-        const qrY = Math.max(qrMargin, imgHeight - barHeight - qr.size - qrMargin);
+        const qrY = Math.max(qrMargin, imgHeight - usedBarHeight - qr.size - qrMargin);
         ctx.drawImage(qrImg, qrX, qrY, qr.size, qr.size);
       }
     } catch {

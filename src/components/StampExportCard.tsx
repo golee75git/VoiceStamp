@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { resolveImageUri } from '../services/fileService';
 import type { PreparedExportPhoto, StampImageExportOptions } from '../services/exportStampImage';
-import { stampDisplayTitle } from '../services/stampFloor';
+import { captionFieldTitle } from '../services/pdfTitleFormat';
 import { stampCoordinatesLine } from '../services/stampCoords';
 import { stampPlaceLine } from '../services/stampPlace';
 import { fieldLabelsFromStamp, formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
@@ -39,7 +39,7 @@ export function StampExportCard({
   });
   const title = formatLabeledValue(
     labels.titleFieldLabel,
-    stampDisplayTitle(stamp, options.showDatetime),
+    captionFieldTitle(stamp.title, options.showDatetime),
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
@@ -47,6 +47,7 @@ export function StampExportCard({
   const extra2 = formatLabeledValue(labels.extra2FieldLabel, stamp.extra2?.trim() ?? '');
   const extra3 = formatLabeledValue(labels.extra3FieldLabel, stamp.extra3?.trim() ?? '');
   const coords = stampCoordinatesLine(stamp, options.coordsLabel);
+  const showWatermarkBar = Boolean(title || place || extra1 || extra2 || extra3 || memo || coords);
   const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
@@ -109,6 +110,7 @@ export function StampExportCard({
           style={{ width: preparedPhoto.width, height: preparedPhoto.height }}
           onLoadEnd={notifyImageReady}
         />
+        {showWatermarkBar ? (
         <WatermarkBarBackground
           style={options.watermarkStyle}
           barStyle={[
@@ -220,6 +222,7 @@ export function StampExportCard({
             </Text>
           ) : null}
         </WatermarkBarBackground>
+        ) : null}
       </View>
     );
   }
@@ -234,6 +237,7 @@ export function StampExportCard({
             resizeMode="cover"
             onLoadEnd={notifyImageReady}
           />
+          {showWatermarkBar ? (
           <WatermarkBarBackground style={options.watermarkStyle} barStyle={styles.watermarkBar}>
             {title ? (
               <Text
@@ -306,6 +310,7 @@ export function StampExportCard({
               </Text>
             ) : null}
           </WatermarkBarBackground>
+          ) : null}
         </View>
       </View>
     );

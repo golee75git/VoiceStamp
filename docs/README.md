@@ -96,14 +96,15 @@
 
 ## 현재 상태 스냅샷 (2026-09-16)
 
-- **문서 갱신일:** 2026-11-05 — **큰 화면 사진만 확대** · APK `141510`
-- **최신 기능 커밋:** (본 배포) · APK `141510` — 저장·수정 큰 화면에서 사진만 두 손가락으로 확대
+- **문서 갱신일:** 2026-11-05 — **빈 칸은 별도 영역·워터마크에서 제외** · APK `182755`
+- **최신 기능 커밋:** (본 배포) · APK `182755` — 빈 제목·장소·메모·추가 칸은 별도 영역·워터마크에 넣지 않음. 장소가 없으면 층도 숨김
 - **배포 단계:** 베타·테스터 APK + Play Internal **인프라 준비** — [RELEASE-CHANNELS.md](./RELEASE-CHANNELS.md) · LEG-05 콘솔 반영은 미완
 - **성능·헬스체크:** [HEALTHCHECK.md](./HEALTHCHECK.md) — A/B/C **누적 적용**, 기준선 APK `193317`, 다음 후보는 §2
 - **웹:** https://voicestamp-gilt.vercel.app — **`/`** APK 안내·큰 **웹테스트**(`/app`) · 방문 집계 · **보안 헤더**·visitor POST 제한 · **QR·링크 공유**
 - **정책:** `/privacy` · `/license` · `/help` · `/info` · [LICENSE-NOTICE.md](./LICENSE-NOTICE.md) · [PLAY-DATA-SAFETY.md](./PLAY-DATA-SAFETY.md)
-- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20261105_141510.apk` — 큰 화면 사진만 확대
-- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261105_141510.apk
+- **권장 APK (설치·GitHub):** `releases/VoiceStamp_20261105_182755.apk` — 빈 칸은 별도 영역·워터마크에서 제외
+- **APK raw URL (GitHub):** https://raw.githubusercontent.com/golee75git/VoiceStamp/main/releases/VoiceStamp_20261105_182755.apk
+- **이전 권장 APK:** `releases/VoiceStamp_20261105_141510.apk` — 큰 화면 사진만 확대
 - **이전 권장 APK:** `releases/VoiceStamp_20261105_105455.apk` — 바로 촬영 때 홈 그림 생략
 - **이전 권장 APK:** `releases/VoiceStamp_20261105_102737.apk` — 앱을 열면 촬영
 - **이전 권장 APK:** `releases/VoiceStamp_20261105_100709.apk` — 칸 이름에서 입력칸으로 커서 이동

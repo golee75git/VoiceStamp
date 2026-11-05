@@ -6,17 +6,13 @@ export function stampDisplayPlace(
   stamp: Pick<Stamp, 'placeLabel' | 'floor'>,
 ): string | null {
   const trimmed = stamp.placeLabel?.trim() ?? '';
-  if (getFloorDisplayModeSync() === 'cursor') {
-    return trimmed || null;
-  }
-  const suffix = formatFloorSuffix(stamp.floor);
-  if (!trimmed && !suffix) {
+  if (!trimmed) {
     return null;
   }
-  if (!trimmed && suffix) {
-    return suffix.trim();
+  if (getFloorDisplayModeSync() === 'cursor') {
+    return trimmed;
   }
-  return trimmed + suffix;
+  return trimmed + formatFloorSuffix(stamp.floor);
 }
 
 export function stampPlaceLine(stamp: Pick<Stamp, 'placeLabel' | 'floor'>): string | null {

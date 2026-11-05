@@ -4,8 +4,7 @@ import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
-import { stampDisplayTitle } from './stampFloor';
-import { formatStampFooterDatetime } from './pdfTitleFormat';
+import { captionFieldTitle, formatStampFooterDatetime } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import {
@@ -108,7 +107,7 @@ function buildStampItem(
   qrDataUri: string | null = null,
 ): string {
   const labels = resolveFieldLabels(fieldLabels);
-  const titleRaw = stampDisplayTitle(stamp, showDatetime);
+  const titleRaw = captionFieldTitle(stamp.title, showDatetime);
   const title = escapeHtml(formatLabeledValue(labels.titleFieldLabel, titleRaw));
   const memoTrimmed = stamp.memo?.trim() ?? '';
   const memoLabeled = formatLabeledValue(labels.memoFieldLabel, memoTrimmed);
@@ -162,22 +161,26 @@ function buildStampItem(
     const titleBlock = title
       ? `<div class="watermark-title" style="text-align: ${titleAlign}; color: ${theme.titleColor};">${title}</div>`
       : '';
+    const watermarkInner = [
+      orgBlock,
+      titleBlock,
+      watermarkPlaceBlock,
+      watermarkExtra1Block,
+      watermarkExtra2Block,
+      watermarkExtra3Block,
+      memoBlock,
+      watermarkCoordsBlock,
+      phraseBlock,
+    ].join('');
+    const watermarkBar = watermarkInner
+      ? `<div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">${watermarkInner}</div>`
+      : '';
     return `
       <div class="item item-watermark">
         <div class="photo-slot photo-slot-watermark" style="height: ${slotHeight};">
           <img src="${imageDataUri}" alt="stamp" />
           ${qrImg}
-          <div class="watermark-bar" style="${watermarkBarCss(watermarkStyle)}">
-            ${orgBlock}
-            ${titleBlock}
-            ${watermarkPlaceBlock}
-            ${watermarkExtra1Block}
-            ${watermarkExtra2Block}
-            ${watermarkExtra3Block}
-            ${memoBlock}
-            ${watermarkCoordsBlock}
-            ${phraseBlock}
-          </div>
+          ${watermarkBar}
         </div>
       </div>`;
   }

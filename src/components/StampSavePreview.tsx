@@ -13,8 +13,7 @@ import {
 import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
-import { stampDisplayTitle } from '../services/stampFloor';
-import { formatStampFooterDatetime } from '../services/pdfTitleFormat';
+import { captionFieldTitle, formatStampFooterDatetime } from '../services/pdfTitleFormat';
 import { stampDisplayPlace } from '../services/stampPlace';
 import {
   overlayPhraseFontSize,
@@ -176,7 +175,7 @@ export function StampSavePreview({
   });
   const displayTitle = formatLabeledValue(
     labels.titleFieldLabel,
-    stampDisplayTitle({ title, floor }, showDatetime),
+    captionFieldTitle(title, showDatetime),
   );
   const displayMemo = formatLabeledValue(labels.memoFieldLabel, memo.trim());
   const displayExtra1 = formatLabeledValue(labels.extra1FieldLabel, extra1.trim());
@@ -195,6 +194,20 @@ export function StampSavePreview({
     { title, memo, floor, placeLabel, extra1, extra2, extra3, latitude, longitude },
     labels,
     { showDatetime, coordsLabel, includeCoords: true },
+  );
+  const hasWatermarkCopy = Boolean(
+    displayOrgName ||
+      displayTitle ||
+      displayPlace ||
+      displayExtra1 ||
+      displayExtra2 ||
+      displayExtra3 ||
+      displayMemo ||
+      coords ||
+      displayFooterPhrase,
+  );
+  const hasCaptionCopy = Boolean(
+    displayOrgName || captionTableRows.length > 0 || displayFooterPhrase || displayFooterDatetime,
   );
   const isThumbnail = variant === 'thumbnail';
   const scaleLargePhoto = (photo: ReactNode) =>
@@ -310,7 +323,8 @@ export function StampSavePreview({
     />
   );
 
-  const renderThumbnailWatermarkBar = () => (
+  const renderThumbnailWatermarkBar = () =>
+    hasWatermarkCopy ? (
     <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkBar}>
       {displayOrgName ? (
         <Text
@@ -420,7 +434,7 @@ export function StampSavePreview({
         </Text>
       ) : null}
     </WatermarkBarBackground>
-  );
+    ) : null;
 
   if (textLayout === 'watermark' && isThumbnail) {
     return (
@@ -446,6 +460,7 @@ export function StampSavePreview({
               {(box) => renderPhotoNotes(false, box)}
             </PreviewPhoto>,
           )}
+          {hasWatermarkCopy ? (
           <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
             {displayOrgName ? (
               <Text
@@ -546,6 +561,7 @@ export function StampSavePreview({
               </Text>
             ) : null}
           </WatermarkBarBackground>
+          ) : null}
         </View>
       </View>
     );
@@ -557,6 +573,7 @@ export function StampSavePreview({
         <View style={styles.thumbnailCaptionPhotoSlot}>
           {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', (box) => renderPhotoNotes(true, box))}
         </View>
+        {hasCaptionCopy ? (
         <View style={styles.thumbnailCaptionText}>
           {displayOrgName ? (
             <Text style={[styles.thumbnailOrg, { textAlign: titleAlign }, orgFs]} numberOfLines={1}>
@@ -587,6 +604,7 @@ export function StampSavePreview({
             </Text>
           ) : null}
         </View>
+        ) : null}
       </View>
     );
   }
@@ -604,6 +622,7 @@ export function StampSavePreview({
           </PreviewPhoto>,
         )}
       </View>
+      {hasCaptionCopy ? (
       <View style={styles.fullscreenCaptionText}>
         {displayOrgName ? (
           <Text style={[styles.fullscreenCaptionOrg, { textAlign: titleAlign }, orgFs]}>{displayOrgName}</Text>
@@ -630,6 +649,7 @@ export function StampSavePreview({
           </Text>
         ) : null}
       </View>
+      ) : null}
     </View>
   );
 }

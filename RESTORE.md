@@ -4578,3 +4578,11 @@ restore-save-photo-magnify.bat
 ```
 
 Restores the large save/edit viewer from `*.pre-save-photo-magnify/` and removes `SavePhotoMagnifier.tsx` (before the photo alone could be pinched). Caption text, the saved file, and crop stay as they were.
+
+## Empty caption lines restore (2026-11-05)
+
+```bat
+restore-empty-caption-lines.bat
+```
+
+Restores caption and watermark text from `*.pre-empty-caption-lines/` (before a blank title, place, memo, or extra field was left out of the separate area and the watermark, and before a floor line was hidden when the place field was empty).

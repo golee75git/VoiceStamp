@@ -1,5 +1,5 @@
 import { formatLabeledValue, resolveFieldLabels, type FieldLabels } from './fieldLabels';
-import { stampDisplayTitle } from './stampFloor';
+import { captionFieldTitle } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import type { CoordsLabelMode } from './settingsService';
@@ -26,10 +26,7 @@ export function buildCaptionTableRows(
   const labels = resolveFieldLabels(fieldLabels);
   const rows: CaptionTableRow[] = [];
 
-  const titleValue = stampDisplayTitle(
-    { title: stamp.title, floor: stamp.floor },
-    options.showDatetime,
-  ).trim();
+  const titleValue = captionFieldTitle(stamp.title, options.showDatetime).trim();
   if (titleValue) {
     rows.push({ label: labels.titleFieldLabel, value: titleValue });
   }

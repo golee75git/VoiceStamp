@@ -9,7 +9,7 @@ import {
 } from './exportStampImage';
 import { resolveOverlayFooterPhrase, resolveOverlayOrgName } from './overlayText';
 import { formatLabeledValue, resolveFieldLabels } from './fieldLabels';
-import { stampDisplayTitle } from './stampFloor';
+import { captionFieldTitle } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import { getWatermarkTheme } from './watermarkStyle';
@@ -77,7 +77,7 @@ export async function renderStampWatermarkNative(
   const labels = resolveFieldLabels(options);
   const title = formatLabeledValue(
     labels.titleFieldLabel,
-    stampDisplayTitle(stamp, options.showDatetime),
+    captionFieldTitle(stamp.title, options.showDatetime),
   );
   const memo = formatLabeledValue(labels.memoFieldLabel, stamp.memo?.trim() ?? '');
   const place = formatLabeledValue(labels.placeFieldLabel, stampPlaceLine(stamp) ?? '');
@@ -124,6 +124,8 @@ export async function renderStampWatermarkNative(
   }
   const text = overlayLines.join('\n');
 
+  let baseUri = notedUri;
+  if (text) {
   const markedUri = await Marker.markText({
     backgroundImage: { src: notedUri, scale: 1 },
     watermarkTexts: [
@@ -148,7 +150,12 @@ export async function renderStampWatermarkNative(
     saveFormat: ImageFormat.jpg,
   });
 
-  const baseUri = normalizeMarkedUri(markedUri);
+  baseUri = normalizeMarkedUri(markedUri);
+  }
+  const barHeight =
+    overlayLines.length === 0
+      ? 0
+      : estimateWatermarkBarHeight(overlayLines.length, titleSize, paddingY);
   const extras: {
     src: string;
     scale: number;
@@ -173,7 +180,6 @@ export async function renderStampWatermarkNative(
     const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
     if (qr) {
       const qrMargin = Math.max(8, Math.round(prepared.width * 0.02));
-      const barHeight = estimateWatermarkBarHeight(overlayLines.length, titleSize, paddingY);
       extras.push({
         src: qr.uri,
         scale: 1,
