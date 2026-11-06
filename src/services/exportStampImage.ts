@@ -12,6 +12,7 @@ import { embedCaptionExif } from './embedCaptionExif';
 import { saveStampPhotoToGallery } from './galleryService';
 import { renderStampCaptionNative } from './renderStampCaptionNative';
 import { renderStampWatermarkNative } from './renderStampWatermarkNative';
+import { resolveWatermarkShotLabel, shotClockTopLeft } from './shotClock';
 import { buildCaptionLayout } from './captionLayout';
 import { captionFieldTitle } from './pdfTitleFormat';
 import { stampCoordinatesLine } from './stampCoords';
@@ -456,6 +457,7 @@ async function renderStampJpegWatermarkOnWeb(
   }
   }
 
+  let drawnQrSize = 0;
   const qrUrl = await resolveComposeQrUrl(stamp.sourceUrl);
   if (qrUrl && Platform.OS === 'web') {
     try {
@@ -467,10 +469,34 @@ async function renderStampJpegWatermarkOnWeb(
         const qrX = imgWidth - qr.size - qrMargin;
         const qrY = Math.max(qrMargin, imgHeight - usedBarHeight - qr.size - qrMargin);
         ctx.drawImage(qrImg, qrX, qrY, qr.size, qr.size);
+        drawnQrSize = qr.size;
       }
     } catch {
       // QR overlay is optional on web watermark export.
     }
+  }
+
+  const shotLabel = await resolveWatermarkShotLabel(stamp);
+  if (shotLabel) {
+    const shotSize = Math.max(16, Math.round(26 * (imgWidth / 1032) * textScale));
+    ctx.save();
+    ctx.font = `700 ${shotSize}px sans-serif`;
+    const shotWidth = ctx.measureText(shotLabel).width;
+    const shotPos = shotClockTopLeft({
+      photoWidth: imgWidth,
+      photoHeight: imgHeight,
+      barHeight: usedBarHeight,
+      fontSize: shotSize,
+      textWidth: shotWidth,
+      qrSize: drawnQrSize,
+    });
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.75)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 1;
+    ctx.fillText(shotLabel, shotPos.x, shotPos.y + shotSize);
+    ctx.restore();
   }
 
   return canvas.toDataURL('image/jpeg', STAMP_JPEG_COMPRESS);

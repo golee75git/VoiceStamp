@@ -6,6 +6,8 @@ export type Stamp = {
   memo: string;
   imagePath: string;
   createdAt: number;
+  /** EXIF shutter instant in milliseconds. Null when the photo has no shutter tag. */
+  takenAt?: number | null;
   updatedAt: number;
   deletedAt?: number | null;
   galleryAssetId?: string | null;
@@ -41,6 +43,7 @@ export type StampRow = {
   memo: string;
   image_path: string;
   created_at: number;
+  taken_at?: number | null;
   updated_at: number;
   deleted_at?: number | null;
   gallery_asset_id?: string | null;

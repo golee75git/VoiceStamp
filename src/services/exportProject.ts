@@ -68,6 +68,7 @@ export type ProjectManifestStamp = {
   latitude: number | null;
   longitude: number | null;
   createdAt: number;
+  takenAt?: number | null;
   updatedAt: number;
   imageFile: string;
 };
@@ -191,6 +192,7 @@ export async function createStampsProjectZip(
       latitude: stamp.latitude ?? null,
       longitude: stamp.longitude ?? null,
       createdAt: stamp.createdAt,
+      takenAt: stamp.takenAt ?? null,
       updatedAt: stamp.updatedAt,
       imageFile,
     });

@@ -123,6 +123,7 @@ export async function importProjectStampToPhone(input: {
     memo: String(meta.memo || ''),
     imagePath,
     createdAt: typeof meta.createdAt === 'number' ? meta.createdAt : now,
+    takenAt: typeof meta.takenAt === 'number' ? meta.takenAt : null,
     updatedAt: now,
     galleryAssetId: null,
     latitude: typeof meta.latitude === 'number' ? meta.latitude : null,

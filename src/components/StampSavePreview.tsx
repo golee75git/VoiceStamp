@@ -14,6 +14,9 @@ import { normalizeDisplayUri } from '../services/exportStampImage';
 
 import { formatStampCoordinates } from '../services/stampCoords';
 import { captionFieldTitle, formatStampFooterDatetime } from '../services/pdfTitleFormat';
+import { epochFromExifDateTime, formatWatermarkShotClock } from '../services/shotClock';
+import { readShotDateTimeFromFile } from 'voicestamp-gallery';
+import { resolveComposeQrUrl } from '../services/overlayHomeQr';
 import { stampDisplayPlace } from '../services/stampPlace';
 import {
   overlayPhraseFontSize,
@@ -96,6 +99,10 @@ type StampSavePreviewProps = {
   showDatetime: boolean;
   showFooterDatetime?: boolean;
   createdAt?: number;
+  /** EXIF shutter instant. Empty watermark corner when missing. */
+  shotAt?: number | null;
+  /** Draft or saved http(s) used to decide whether a QR sits in the corner. */
+  qrSourceUrl?: string | null;
   orgName: string;
   footerPhrase: string;
   showOrgName: boolean;
@@ -141,6 +148,8 @@ export function StampSavePreview({
   showDatetime,
   showFooterDatetime = true,
   createdAt,
+  shotAt = null,
+  qrSourceUrl = null,
   orgName,
   footerPhrase,
   showOrgName,
@@ -165,6 +174,9 @@ export function StampSavePreview({
   onPhotoMagnifyLock,
 }: StampSavePreviewProps) {
   const [aspectRatio, setAspectRatio] = useState(FALLBACK_ASPECT_RATIO);
+  const [shotLabel, setShotLabel] = useState('');
+  const [qrOn, setQrOn] = useState(false);
+  const [watermarkBarHeight, setWatermarkBarHeight] = useState(0);
   const labels = resolveFieldLabels({
     titleFieldLabel,
     placeFieldLabel,
@@ -273,6 +285,44 @@ export function StampSavePreview({
     };
   }, [imageUri]);
 
+  useEffect(() => {
+    if (textLayout !== 'watermark') {
+      setShotLabel('');
+      return;
+    }
+    let cancelled = false;
+    const stored = formatWatermarkShotClock(shotAt);
+    if (stored) {
+      setShotLabel(stored);
+      return;
+    }
+    setShotLabel('');
+    void readShotDateTimeFromFile(imageUri).then((raw) => {
+      if (!cancelled) {
+        setShotLabel(formatWatermarkShotClock(epochFromExifDateTime(raw)));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [imageUri, shotAt, textLayout]);
+
+  useEffect(() => {
+    if (textLayout !== 'watermark') {
+      setQrOn(false);
+      return;
+    }
+    let cancelled = false;
+    void resolveComposeQrUrl(qrSourceUrl).then((url) => {
+      if (!cancelled) {
+        setQrOn(Boolean(url));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [qrSourceUrl, textLayout]);
+
   const titleStyle = isThumbnail ? styles.thumbnailTitle : styles.fullscreenCaptionTitle;
   const memoStyle = isThumbnail ? styles.thumbnailMemo : styles.fullscreenCaptionMemo;
   const coordsStyle = isThumbnail ? styles.thumbnailCoords : styles.fullscreenCaptionCoords;
@@ -325,7 +375,11 @@ export function StampSavePreview({
 
   const renderThumbnailWatermarkBar = () =>
     hasWatermarkCopy ? (
-    <WatermarkBarBackground style={watermarkStyle} barStyle={styles.thumbnailWatermarkBar}>
+    <WatermarkBarBackground
+      style={watermarkStyle}
+      barStyle={styles.thumbnailWatermarkBar}
+      onLayout={(event) => setWatermarkBarHeight(event.nativeEvent.layout.height)}
+    >
       {displayOrgName ? (
         <Text
           style={[
@@ -436,12 +490,38 @@ export function StampSavePreview({
     </WatermarkBarBackground>
     ) : null;
 
+  const renderShotClock = (compact: boolean) => {
+    if (textLayout !== 'watermark' || !shotLabel) {
+      return null;
+    }
+    return (
+      <Text
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          right: qrOn ? '20%' : 8,
+          bottom: watermarkBarHeight + 8,
+          zIndex: 4,
+          color: '#ffffff',
+          fontWeight: '700',
+          fontSize: fs(compact ? 10 : 14),
+          textShadowColor: 'rgba(0,0,0,0.75)',
+          textShadowOffset: { width: 0, height: 1 },
+          textShadowRadius: 2,
+        }}
+      >
+        {shotLabel}
+      </Text>
+    );
+  };
+
   if (textLayout === 'watermark' && isThumbnail) {
     return (
       <View style={styles.thumbnailCaptionCard}>
         <View style={styles.thumbnailWatermarkPhotoSlot}>
           {renderThumbnailPhoto(styles.thumbnailCaptionPhoto, 'cover', (box) => renderPhotoNotes(true, box))}
           {renderThumbnailWatermarkBar()}
+          {renderShotClock(true)}
         </View>
       </View>
     );
@@ -461,7 +541,11 @@ export function StampSavePreview({
             </PreviewPhoto>,
           )}
           {hasWatermarkCopy ? (
-          <WatermarkBarBackground style={watermarkStyle} barStyle={styles.fullscreenWatermarkBar}>
+          <WatermarkBarBackground
+            style={watermarkStyle}
+            barStyle={styles.fullscreenWatermarkBar}
+            onLayout={(event) => setWatermarkBarHeight(event.nativeEvent.layout.height)}
+          >
             {displayOrgName ? (
               <Text
                 style={[
@@ -562,6 +646,7 @@ export function StampSavePreview({
             ) : null}
           </WatermarkBarBackground>
           ) : null}
+          {renderShotClock(false)}
         </View>
       </View>
     );

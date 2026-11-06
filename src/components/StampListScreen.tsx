@@ -171,6 +171,7 @@ export function StampListScreen({
   const [extra3FieldLabel, setExtra3FieldLabel] = useState('추가3');
   const [cameraHand, setCameraHand] = useState<CameraHand>('right');
   const [importUri, setImportUri] = useState<string | null>(null);
+  const [importShotAt, setImportShotAt] = useState<number | null>(null);
   const [importLocationSnapshot, setImportLocationSnapshot] = useState<LocationSnapshot | null>(
     null,
   );
@@ -820,6 +821,7 @@ export function StampListScreen({
       setFollowUpParent(null);
       setImportJoinSendWay('album');
       setImportLocationSnapshot(snapshot);
+      setImportShotAt(picked.shotAt);
       setImportUri(heldUri);
       setImportModalVisible(true);
       heldUri = null;
@@ -845,14 +847,15 @@ export function StampListScreen({
       let heldUri: string | null = null;
       try {
         if (mode === 'camera') {
-          const uri = await takePhotoWithSystemCamera();
-          if (!uri) {
+          const photo = await takePhotoWithSystemCamera();
+          if (!photo?.uri) {
             return;
           }
           setFollowUpParent(rootParent);
           setImportJoinSendWay('shot');
           setImportLocationSnapshot(null);
-          setImportUri(uri);
+          setImportShotAt(photo.shotAt);
+          setImportUri(photo.uri);
           setImportModalVisible(true);
           return;
         }
@@ -876,6 +879,7 @@ export function StampListScreen({
         setFollowUpParent(rootParent);
         setImportJoinSendWay('album');
         setImportLocationSnapshot(snapshot);
+        setImportShotAt(picked.shotAt);
         setImportUri(heldUri);
         setImportModalVisible(true);
         heldUri = null;
@@ -1817,6 +1821,7 @@ export function StampListScreen({
       <StampSaveModal
         visible={importModalVisible}
         imageUri={importUri}
+        shotAt={importShotAt}
         followUpParent={followUpParent}
         captureStampForExport={captureStampForExport}
         prefetchedLocationSnapshot={importLocationSnapshot}
@@ -1827,6 +1832,7 @@ export function StampListScreen({
           const heldUri = importUri;
           setImportModalVisible(false);
           setImportUri(null);
+          setImportShotAt(null);
           setImportLocationSnapshot(null);
           setFollowUpParent(null);
           void discardIncomingAlbumImage(heldUri);

@@ -9,6 +9,7 @@ import { stampPlaceLine } from '../services/stampPlace';
 import { fieldLabelsFromStamp, formatLabeledValue, resolveFieldLabels } from '../services/fieldLabels';
 import { buildCaptionTableRows } from '../services/captionTable';
 import { getWatermarkTheme } from '../services/watermarkStyle';
+import { formatWatermarkShotClock } from '../services/shotClock';
 import { WatermarkBarBackground } from './WatermarkBarBackground';
 import { stampTextSizeScale } from '../services/settingsService';
 import type { Stamp } from '../types/stamp';
@@ -50,6 +51,7 @@ export function StampExportCard({
   const showWatermarkBar = Boolean(title || place || extra1 || extra2 || extra3 || memo || coords);
   const watermarkTheme = getWatermarkTheme(options.watermarkStyle);
   const imageUri = resolveImageUri(stamp.imagePath);
+  const shotLabel = options.textLayout === 'watermark' ? formatWatermarkShotClock(stamp.takenAt) : '';
   const photoStyle = { width: PHOTO_WIDTH, aspectRatio };
 
   useEffect(() => {
@@ -110,6 +112,23 @@ export function StampExportCard({
           style={{ width: preparedPhoto.width, height: preparedPhoto.height }}
           onLoadEnd={notifyImageReady}
         />
+        {shotLabel ? (
+          <Text
+            style={{
+              position: 'absolute',
+              right: 12,
+              bottom: 12,
+              color: '#ffffff',
+              fontWeight: '700',
+              fontSize: Math.max(16, Math.round(26 * scale * textScale)),
+              textShadowColor: 'rgba(0,0,0,0.75)',
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 2,
+            }}
+          >
+            {shotLabel}
+          </Text>
+        ) : null}
         {showWatermarkBar ? (
         <WatermarkBarBackground
           style={options.watermarkStyle}
@@ -237,6 +256,7 @@ export function StampExportCard({
             resizeMode="cover"
             onLoadEnd={notifyImageReady}
           />
+          {shotLabel ? <Text style={styles.shotClock}>{shotLabel}</Text> : null}
           {showWatermarkBar ? (
           <WatermarkBarBackground style={options.watermarkStyle} barStyle={styles.watermarkBar}>
             {title ? (
@@ -389,6 +409,18 @@ const styles = StyleSheet.create({
   photoWrap: {
     position: 'relative',
     overflow: 'hidden',
+  },
+  shotClock: {
+    position: 'absolute',
+    right: 8,
+    bottom: 36,
+    zIndex: 4,
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: 14,
+    textShadowColor: 'rgba(0,0,0,0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   watermarkBar: {
     position: 'absolute',

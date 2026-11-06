@@ -56,6 +56,8 @@ import {
 import { ensureStampThumb } from './stampThumb';
 import type { Stamp } from '../types/stamp';
 import { generateId } from '../utils/id';
+import { epochFromExifDateTime, normalizeTakenAt } from './shotClock';
+import { readShotDateTimeFromFile } from 'voicestamp-gallery';
 
 type SaveStampInput = {
   tempImageUri: string;
@@ -80,6 +82,8 @@ type SaveStampInput = {
   parentId?: string | null;
   /** Round photo notes (JSON). */
   photoNotePad?: string | null;
+  /** EXIF shutter instant. When omitted, the photo file is read once. */
+  takenAt?: number | null;
   /** album = 갤러리 보내기/앨범 저장, shot = 촬영 저장. */
   joinSendWay?: 'album' | 'shot';
   captureForExport?: (
@@ -89,6 +93,16 @@ type SaveStampInput = {
   /** 저장 화면에서 캡션 JPEG를 바로 넣은 뒤 idle 캡션 중복을 건너뜁니다. */
   skipIdleCaptionGallery?: boolean;
 };
+
+async function resolveSaveTakenAt(input: SaveStampInput): Promise<number | null> {
+  const given = normalizeTakenAt(input.takenAt);
+  if (given != null) {
+    return given;
+  }
+  const uri = input.originalTempUri?.trim() || input.tempImageUri;
+  const raw = await readShotDateTimeFromFile(uri);
+  return epochFromExifDateTime(raw);
+}
 
 function resolveStampTitle(title: string, fallbackTimestamp: number): string {
   const trimmed = title.trim();
@@ -321,6 +335,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
       ? persistOriginalImageCopy(input.originalTempUri, title, id, groupName).catch(() => {})
       : Promise.resolve();
 
+  const takenAt = await resolveSaveTakenAt(input);
   const imagePath = await Promise.all([
     persistImage(input.tempImageUri, title, id, groupName),
     copyOriginal,
@@ -332,6 +347,7 @@ export async function saveStamp(input: SaveStampInput): Promise<Stamp> {
     memo: input.memo.trim(),
     imagePath,
     createdAt: now,
+    takenAt,
     updatedAt: now,
     galleryAssetId: null,
     latitude: input.latitude ?? null,

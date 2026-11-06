@@ -35,6 +35,8 @@ type QuickCaptureSaveInput = {
   reuseLocation?: QuickCaptureLocation;
   /** 미리보기에서 잠근 http(s) QR. 없으면 비움. */
   sourceUrl?: string | null;
+  /** EXIF shutter instant when the capture step already read it. */
+  takenAt?: number | null;
 };
 
 async function resolveQuickCaptureLocation(reuseLocation?: QuickCaptureLocation): Promise<{
@@ -140,6 +142,7 @@ export async function saveQuickCapture(
     floor,
     placeLabel: placeLabel ?? null,
     sourceUrl: input.sourceUrl?.trim() || null,
+    takenAt: input.takenAt ?? null,
     captureForExport: input.captureForExport,
   });
 

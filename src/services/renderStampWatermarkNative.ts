@@ -25,6 +25,11 @@ import {
 } from './overlayMark';
 import { parsePhotoNotePad } from './photoNotePad';
 import { applyPhotoNotePadToUri } from './applyPhotoNotePad';
+import {
+  estimateShotClockWidth,
+  resolveWatermarkShotLabel,
+  shotClockTopLeft,
+} from './shotClock';
 
 const EXPORT_PHOTO_WIDTH = 1032;
 
@@ -123,35 +128,6 @@ export async function renderStampWatermarkNative(
     overlayLines.push(footerPhrase);
   }
   const text = overlayLines.join('\n');
-
-  let baseUri = notedUri;
-  if (text) {
-  const markedUri = await Marker.markText({
-    backgroundImage: { src: notedUri, scale: 1 },
-    watermarkTexts: [
-      {
-        text,
-        positionOptions: { position: watermarkPosition(options.titleAlign) },
-        style: {
-          color: theme.titleColor,
-          fontSize: titleSize,
-          bold: true,
-          textAlign: options.titleAlign,
-          textBackgroundStyle: {
-            type: TextBackgroundType.stretchX,
-            color: theme.nativeBarColor,
-            paddingX,
-            paddingY,
-          },
-        },
-      },
-    ],
-    quality: Math.round(jpegCompress * 100),
-    saveFormat: ImageFormat.jpg,
-  });
-
-  baseUri = normalizeMarkedUri(markedUri);
-  }
   const barHeight =
     overlayLines.length === 0
       ? 0
@@ -161,6 +137,7 @@ export async function renderStampWatermarkNative(
     scale: number;
     position: { X: number; Y: number };
   }[] = [];
+  let qrSize = 0;
 
   const markUri =
     (await getOverlayShowMark()) ? await resolveOverlayMarkFileUri() : null;
@@ -179,6 +156,7 @@ export async function renderStampWatermarkNative(
     const qrTarget = qrPixelSizeForPhoto(Math.min(prepared.width, prepared.height));
     const qr = await renderSourceUrlQrPngUri(qrUrl, qrTarget);
     if (qr) {
+      qrSize = qr.size;
       const qrMargin = Math.max(8, Math.round(prepared.width * 0.02));
       extras.push({
         src: qr.uri,
@@ -191,16 +169,73 @@ export async function renderStampWatermarkNative(
     }
   }
 
-  if (extras.length === 0) {
-    return baseUri;
+  let baseUri = notedUri;
+  if (text) {
+    const markedUri = await Marker.markText({
+      backgroundImage: { src: notedUri, scale: 1 },
+      watermarkTexts: [
+        {
+          text,
+          positionOptions: { position: watermarkPosition(options.titleAlign) },
+          style: {
+            color: theme.titleColor,
+            fontSize: titleSize,
+            bold: true,
+            textAlign: options.titleAlign,
+            textBackgroundStyle: {
+              type: TextBackgroundType.stretchX,
+              color: theme.nativeBarColor,
+              paddingX,
+              paddingY,
+            },
+          },
+        },
+      ],
+      quality: Math.round(jpegCompress * 100),
+      saveFormat: ImageFormat.jpg,
+    });
+    baseUri = normalizeMarkedUri(markedUri);
   }
 
-  const withMarks = await Marker.markImage({
+  if (extras.length > 0) {
+    const withMarks = await Marker.markImage({
+      backgroundImage: { src: baseUri, scale: 1 },
+      watermarkImages: extras,
+      quality: Math.round(jpegCompress * 100),
+      saveFormat: ImageFormat.jpg,
+    });
+    baseUri = normalizeMarkedUri(withMarks);
+  }
+
+  const shotLabel = await resolveWatermarkShotLabel(stamp);
+  if (!shotLabel) {
+    return baseUri;
+  }
+  const shotSize = Math.max(16, Math.round(26 * scale * textScale));
+  const shotPos = shotClockTopLeft({
+    photoWidth: prepared.width,
+    photoHeight: prepared.height,
+    barHeight,
+    fontSize: shotSize,
+    textWidth: estimateShotClockWidth(shotLabel, shotSize),
+    qrSize,
+  });
+  const withClock = await Marker.markText({
     backgroundImage: { src: baseUri, scale: 1 },
-    watermarkImages: extras,
+    watermarkTexts: [
+      {
+        text: shotLabel,
+        positionOptions: { X: shotPos.x, Y: shotPos.y },
+        style: {
+          color: '#FFFFFF',
+          fontSize: shotSize,
+          bold: true,
+          shadowStyle: { dx: 0, dy: 1, radius: 3, color: '#000000' },
+        },
+      },
+    ],
     quality: Math.round(jpegCompress * 100),
     saveFormat: ImageFormat.jpg,
   });
-
-  return normalizeMarkedUri(withMarks);
+  return normalizeMarkedUri(withClock);
 }

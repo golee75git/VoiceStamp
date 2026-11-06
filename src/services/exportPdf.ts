@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 
 import { readImageDataUriForPdf } from './pdfImageForExport';
 import { captionFieldTitle, formatStampFooterDatetime } from './pdfTitleFormat';
+import { resolveWatermarkShotLabel } from './shotClock';
 import { stampCoordinatesLine } from './stampCoords';
 import { stampPlaceLine } from './stampPlace';
 import {
@@ -105,6 +106,7 @@ function buildStampItem(
   fieldLabels: FieldLabels,
   textSizeScale = 1,
   qrDataUri: string | null = null,
+  shotLabel = '',
 ): string {
   const labels = resolveFieldLabels(fieldLabels);
   const titleRaw = captionFieldTitle(stamp.title, showDatetime);
@@ -180,6 +182,11 @@ function buildStampItem(
         <div class="photo-slot photo-slot-watermark" style="height: ${slotHeight};">
           <img src="${imageDataUri}" alt="stamp" />
           ${qrImg}
+          ${
+            shotLabel
+              ? `<div class="shot-clock${qrImg ? ' shot-clock-by-qr' : ''}">${escapeHtml(shotLabel)}</div>`
+              : ''
+          }
           ${watermarkBar}
         </div>
       </div>`;
@@ -249,6 +256,7 @@ function buildHtml(
   fieldLabels: FieldLabels,
   stampTextSize: StampTextSize = 'medium',
   qrDataUris: Array<string | null> = [],
+  shotLabels: string[] = [],
 ): string {
   const textSizeScale = stampTextSizeScale(stampTextSize);
   const fs = (n: number) => Math.max(10, Math.round(n * textSizeScale));
@@ -258,6 +266,7 @@ function buildHtml(
       stamp,
       imageDataUri: imageDataUris[index],
       qrDataUri: qrDataUris[index] ?? null,
+      shotLabel: shotLabels[index] ?? '',
     })),
     photosPerPage,
   );
@@ -266,7 +275,7 @@ function buildHtml(
     .map((group, pageIndex) => {
       const shrinkImages = pageIndex === 0 && reportTitleTrimmed.length > 0;
       const items = group
-        .map(({ stamp, imageDataUri, qrDataUri }) =>
+        .map(({ stamp, imageDataUri, qrDataUri, shotLabel }) =>
           buildStampItem(
             stamp,
             imageDataUri,
@@ -286,6 +295,7 @@ function buildHtml(
             },
             textSizeScale,
             qrDataUri,
+            shotLabel,
           ),
         )
         .join('');
@@ -348,6 +358,20 @@ function buildHtml(
   }
   .photo-slot-watermark > img.qr-mark {
     bottom: 24%;
+  }
+  .photo-slot-watermark > .shot-clock {
+    position: absolute;
+    right: 2%;
+    bottom: 24%;
+    z-index: 2;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: ${fs(12)}px;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+  }
+  .photo-slot-watermark > .shot-clock.shot-clock-by-qr {
+    right: calc(2% + 16% + 8px);
   }
   .item-caption .stamp-figure {
     width: 100%;
@@ -569,7 +593,12 @@ export async function createStampsPdf(
     getExtra3FieldLabel(),
   ]);
   const imageDataUris = await Promise.all(
-    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality)),
+    stamps.map((stamp) => readImageDataUriForPdf(stamp.imagePath, imageQuality, stamp.photoNotePad)),
+  );
+  const shotLabels = await Promise.all(
+    stamps.map((stamp) =>
+      textLayout === 'watermark' ? resolveWatermarkShotLabel(stamp) : Promise.resolve(''),
+    ),
   );
   const qrDataUris = await Promise.all(
     stamps.map(async (stamp) => {
@@ -599,6 +628,7 @@ export async function createStampsPdf(
     { titleFieldLabel, placeFieldLabel, memoFieldLabel, extra1FieldLabel, extra2FieldLabel, extra3FieldLabel },
     stampTextSize,
     qrDataUris,
+    shotLabels,
   );
 
   if (Platform.OS === 'web') {

@@ -19,6 +19,7 @@ import {
   ALTER_STAMPS_ADD_PARENT_ID,
   ALTER_STAMPS_ADD_UPLOADED_BY_MARK,
   ALTER_STAMPS_ADD_PHOTO_NOTE_PAD,
+  ALTER_STAMPS_ADD_TAKEN_AT,
   ALTER_STAMPS_ADD_LATITUDE,
   ALTER_STAMPS_ADD_LONGITUDE,
   CREATE_STAMPS_PARENT_INDEX,
@@ -111,6 +112,10 @@ async function migrateStampsTable(db: SQLite.SQLiteDatabase): Promise<void> {
   const hasPhotoNotePad = columns.some((column) => column.name === 'photo_note_pad');
   if (!hasPhotoNotePad) {
     await db.execAsync(ALTER_STAMPS_ADD_PHOTO_NOTE_PAD);
+  }
+  const hasTakenAt = columns.some((column) => column.name === 'taken_at');
+  if (!hasTakenAt) {
+    await db.execAsync(ALTER_STAMPS_ADD_TAKEN_AT);
   }
   await db.execAsync(CREATE_STAMPS_TRASH_INDEX);
   await db.execAsync(CREATE_STAMPS_PARENT_INDEX);

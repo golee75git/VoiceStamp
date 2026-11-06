@@ -1,3 +1,40 @@
+# 수정기록 — 워터마크 오른쪽 아래 EXIF 촬영 시각 (2026-11-06)
+
+## 목적
+워터마크 레이아웃에서 사진 오른쪽 아래(QR과 같은 모서리, QR이 있으면 그 왼쪽)에 원본 EXIF 촬영 시각을 `YYYY.MM.DD HH:mm`으로 표시한다. 태그가 없으면 칸을 비운다. 저장 시각 `createdAt`은 쓰지 않는다.
+
+## 변경 파일
+| 구분 | 경로 |
+|------|------|
+| **신규** | `src/services/shotClock.ts`, `restore-shot-clock.bat`, `docs/SECURITY-shot-clock-20261106.md` |
+| **신규(스냅샷)** | `src.pre-shot-clock/` |
+| **재사용·수정** | `src/types/stamp.ts`, `src/db/schema.ts`, `src/db/database.ts`, `src/services/stampRepository.ts`, `src/services/saveStamp.ts` |
+| **재사용·수정** | `src/services/pickStampImage.ts`, `src/services/quickCaptureSave.ts`, `src/services/joinStampSend.ts` |
+| **재사용·수정** | `src/services/renderStampWatermarkNative.ts`, `src/services/exportStampImage.ts`, `src/services/exportPdf.ts` |
+| **재사용·수정** | `src/services/exportProject.ts`, `src/services/projectImportService.ts`, `src/services/projectUploadQueue.ts`, `api/project.js` |
+| **재사용·수정** | `src/components/StampSavePreview.tsx`, `src/components/StampExportCard.tsx`, `src/components/StampSaveModal.tsx` |
+| **재사용·수정** | `src/components/CameraScreen.tsx`, `src/components/StampListScreen.tsx`, `src/components/WatermarkBarBackground.tsx` |
+| **재사용·수정** | `modules/voicestamp-gallery/src/index.ts`, `modules/voicestamp-gallery/android/.../VoicestampGalleryModule.kt` |
+| **재사용·수정** | `public/help.html`, `RESTORE.md` |
+| **신규/갱신** | `수정기록.txt` |
+
+## 설계 요약
+- 우선순위는 `DateTimeOriginal` → `DateTimeDigitized` → `DateTime`. 현지 시각 문자열을 그대로 시·분으로 보여 주고, 초는 버린다.
+- 새 스탬프는 `taken_at`에 밀리초로 남긴다. 예전 스탬프는 보낼 때 원본 JPEG에서 같은 태그를 읽는다.
+- 별도 영역 하단의 「하단 촬영 일시」 스위치는 그대로다. 워터마크 모서리 시각은 그 스위치와 별개다.
+- 글꼴 파일을 넣지 않았다. 기기 기본 글자만 사용한다. 패키지를 추가하지 않았다.
+
+## 보안
+- 경로에 `..`·http(s)를 거절하고, 반환은 촬영 시각 문자열만 허용한다. 자세한 내용은 `docs/SECURITY-shot-clock-20261106.md`.
+
+## 특허
+- 사진 모서리에 촬영 시각을 그리는 구성이다. 특허 비침해를 보장하지 않는다. 카메라 워터마크 청구항 대조가 필요하면 그 구성을 따로 본다.
+
+## Play 스토어
+- 새 권한 없음. 사업 취합 메타에 촬영 시각 정수만 추가된다.
+
+---
+
 # 수정기록 — 빈 칸은 별도 영역·워터마크에서 빼기 (2026-11-05)
 
 ## 목적

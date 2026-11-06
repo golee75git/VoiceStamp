@@ -1,11 +1,12 @@
 import { getDatabase } from '../db/database';
+import { normalizeTakenAt } from './shotClock';
 import { sanitizeStampFloor } from './stampFloor';
 import { resolveFieldLabels, type FieldLabels } from './fieldLabels';
 import { normalizeHttpUrl } from './qrUrlExtractService';
 import type { Stamp, StampRow } from '../types/stamp';
 
 const STAMP_COLUMNS =
-  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad';
+  'id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad, taken_at';
 
 function normalizeOptionalText(value?: string | null): string | null {
   return value?.trim() || null;
@@ -50,6 +51,7 @@ function mapRow(row: StampRow): Stamp {
     memo: row.memo,
     imagePath: row.image_path,
     createdAt: row.created_at,
+    takenAt: normalizeTakenAt(row.taken_at),
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at ?? null,
     galleryAssetId: row.gallery_asset_id ?? null,
@@ -102,8 +104,8 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     extra3FieldLabel: stamp.extra3FieldLabel ?? undefined,
   });
   await db.runAsync(
-    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO stamps (id, title, memo, image_path, created_at, updated_at, deleted_at, gallery_asset_id, latitude, longitude, floor, place_label, extra1, extra2, extra3, source_url, template_id, title_field_label, place_field_label, memo_field_label, extra1_field_label, extra2_field_label, extra3_field_label, parent_id, uploaded_by_mark, photo_note_pad, taken_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     stamp.id,
     stamp.title,
     stamp.memo,
@@ -130,6 +132,7 @@ export async function insertStamp(stamp: Stamp): Promise<void> {
     normalizeParentId(stamp.parentId),
     normalizeJoinMark(stamp.uploadedByMark),
     normalizeOptionalText(stamp.photoNotePad),
+    normalizeTakenAt(stamp.takenAt),
   );
 }
 

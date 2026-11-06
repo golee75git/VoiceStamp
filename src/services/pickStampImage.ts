@@ -1,6 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 
 import { STAMP_CAPTURE_JPEG_QUALITY } from '../constants/captureImageBudget';
+import { readShotEpochFromExif } from './shotClock';
 
 const PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
@@ -16,6 +17,12 @@ export type PickedStampImage = {
   uri: string;
   latitude: number | null;
   longitude: number | null;
+  shotAt: number | null;
+};
+
+export type CapturedCameraPhoto = {
+  uri: string;
+  shotAt: number | null;
 };
 
 function toFiniteNumber(value: unknown): number | null {
@@ -109,6 +116,7 @@ export async function pickImageFromLibrary(): Promise<PickedStampImage | null> {
     uri: asset.uri,
     latitude: gps?.latitude ?? null,
     longitude: gps?.longitude ?? null,
+    shotAt: readShotEpochFromExif(asset.exif as Record<string, unknown> | null | undefined),
   };
 }
 
@@ -137,12 +145,13 @@ export async function pickImagesFromLibrary(): Promise<PickedStampImage[]> {
       uri: asset.uri,
       latitude: gps?.latitude ?? null,
       longitude: gps?.longitude ?? null,
+      shotAt: readShotEpochFromExif(asset.exif as Record<string, unknown> | null | undefined),
     });
   }
   return out;
 }
 
-export async function takePhotoWithSystemCamera(): Promise<string | null> {
+export async function takePhotoWithSystemCamera(): Promise<CapturedCameraPhoto | null> {
   const permission = await ImagePicker.requestCameraPermissionsAsync();
   if (!permission.granted) {
     throw new Error('카메라 접근 권한이 필요합니다.');
@@ -153,5 +162,9 @@ export async function takePhotoWithSystemCamera(): Promise<string | null> {
     return null;
   }
 
-  return result.assets[0].uri;
+  const asset = result.assets[0];
+  return {
+    uri: asset.uri,
+    shotAt: readShotEpochFromExif(asset.exif as Record<string, unknown> | null | undefined),
+  };
 }

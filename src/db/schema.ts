@@ -100,6 +100,10 @@ export const ALTER_STAMPS_ADD_PHOTO_NOTE_PAD = `
   ALTER TABLE stamps ADD COLUMN photo_note_pad TEXT;
 `;
 
+export const ALTER_STAMPS_ADD_TAKEN_AT = `
+  ALTER TABLE stamps ADD COLUMN taken_at INTEGER;
+`;
+
 export const CREATE_STAMPS_PARENT_INDEX = `
   CREATE INDEX IF NOT EXISTS idx_stamps_parent_id ON stamps(parent_id);
 `;

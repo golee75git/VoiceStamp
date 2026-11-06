@@ -148,6 +148,7 @@ async function uploadOne(stampId: string): Promise<void> {
       latitude: stamp.latitude,
       longitude: stamp.longitude,
       createdAt: stamp.createdAt,
+      takenAt: stamp.takenAt ?? null,
       localGroupName: null,
       templateId: stamp.templateId || null,
       extra1: stamp.extra1 || null,

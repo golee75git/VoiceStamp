@@ -19,6 +19,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { CaptureActionSheet } from './CaptureActionSheet';
 import { FieldTemplateSheet } from './FieldTemplateSheet';
 import { takePhotoWithSystemCamera } from '../services/pickStampImage';
+import { readShotEpochFromExif } from '../services/shotClock';
 import { getCurrentLocationSnapshot, getFastLocationSnapshot, type LocationSnapshot } from '../services/locationService';
 import { saveQuickCapture, type QuickCaptureLocation } from '../services/quickCaptureSave';
 import { getCameraHand, getCameraHomeBg, getCaptureAfterMode, getContinuousCaptureCamera, getPrimaryCaptureCamera, getShutterSoundEnabled, isGpsPlaceEnabled, cameraHomeBgFill, type CameraHand, type CameraHomeBg, type ContinuousCaptureCamera } from '../services/settingsService';
@@ -91,7 +92,9 @@ export function CameraScreen({
 }: CameraScreenProps) {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
+  const [capturedShotAt, setCapturedShotAt] = useState<number | null>(null);
   const [pendingCaptureUri, setPendingCaptureUri] = useState<string | null>(null);
+  const [pendingShotAt, setPendingShotAt] = useState<number | null>(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const [templateSheetVisible, setTemplateSheetVisible] = useState(false);
   const [projectCollectEnabled, setProjectCollectEnabled] = useState(false);
@@ -338,17 +341,19 @@ export function CameraScreen({
     return () => sub.remove();
   }, [isWeb]);
 
-  const openSaveModal = useCallback((uri: string, seedSourceUrl?: string | null) => {
+  const openSaveModal = useCallback((uri: string, seedSourceUrl?: string | null, shotAt?: number | null) => {
     setInAppCameraMode(null);
     setInAppCameraReady(false);
     setSaveSeedSourceUrl(seedSourceUrl ?? null);
     setCapturedUri(uri);
+    setCapturedShotAt(shotAt ?? null);
     setModalVisible(true);
   }, []);
 
   const closeSaveModal = useCallback(() => {
     setModalVisible(false);
     setCapturedUri(null);
+    setCapturedShotAt(null);
     setSaveSeedSourceUrl(null);
     cancelLocationPrefetch();
     savedAndClosingRef.current = false;
@@ -361,9 +366,10 @@ export function CameraScreen({
   }, []);
 
   const showCaptureActionSheet = useCallback(
-    (uri: string) => {
+    (uri: string, shotAt?: number | null) => {
       actionSheetVisibleRef.current = true;
       setPendingCaptureUri(uri);
+      setPendingShotAt(shotAt ?? null);
       setActionSheetVisible(true);
       startLocationPrefetch(uri);
     },
@@ -377,7 +383,7 @@ export function CameraScreen({
   }, []);
 
   const handleCapturedUri = useCallback(
-    async (uri: string, seedSourceUrl?: string | null) => {
+    async (uri: string, seedSourceUrl?: string | null, shotAt?: number | null) => {
       setCameraBusy(true);
       setBusyHint('처리 중…');
       setSaveSeedSourceUrl(seedSourceUrl ?? null);
@@ -385,10 +391,10 @@ export function CameraScreen({
         const mode = await getCaptureAfterMode();
         if (mode === 'save_modal') {
           startLocationPrefetch(uri);
-          openSaveModal(uri, seedSourceUrl);
+          openSaveModal(uri, seedSourceUrl, shotAt);
           return;
         }
-        showCaptureActionSheet(uri);
+        showCaptureActionSheet(uri, shotAt);
       } catch (error) {
         handleCameraError(error);
         clearCaptureBusy();
@@ -407,11 +413,13 @@ export function CameraScreen({
     actionSheetVisibleRef.current = false;
     setActionSheetVisible(false);
     setPendingCaptureUri(null);
+    setPendingShotAt(null);
   }, []);
 
   const runContinuousCaptureLoop = useCallback(
-    async (firstUri: string, initialLocation?: QuickCaptureLocation) => {
+    async (firstUri: string, initialLocation?: QuickCaptureLocation, firstShotAt?: number | null) => {
       let nextUri: string | null = firstUri;
+      let nextShotAt: number | null = firstShotAt ?? null;
       let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
       while (nextUri) {
         setCameraBusy(true);
@@ -419,6 +427,7 @@ export function CameraScreen({
         try {
           const savedLocation = await saveQuickCapture({
             tempImageUri: nextUri,
+            takenAt: nextShotAt,
             captureForExport: captureStampForExport,
             reuseLocation: reuseLocation ?? undefined,
           });
@@ -428,7 +437,7 @@ export function CameraScreen({
           onSaved();
         } catch (error) {
           handleCameraError(error);
-          openSaveModal(nextUri);
+          openSaveModal(nextUri, null, nextShotAt);
           return;
         } finally {
           setBusyHint(null);
@@ -437,7 +446,9 @@ export function CameraScreen({
         setBusyHint(isWeb ? '카메라 여는 중…' : '시스템 카메라 여는 중…');
         launchingRef.current = true;
         try {
-          nextUri = await takePhotoWithSystemCamera();
+          const photo = await takePhotoWithSystemCamera();
+          nextUri = photo?.uri ?? null;
+          nextShotAt = photo?.shotAt ?? null;
         } catch (error) {
           setAutoLaunch(false);
           handleCameraError(error);
@@ -468,13 +479,14 @@ export function CameraScreen({
   }, []);
 
   const startInAppContinuousCapture = useCallback(
-    async (firstUri: string, initialLocation?: QuickCaptureLocation) => {
+    async (firstUri: string, initialLocation?: QuickCaptureLocation, firstShotAt?: number | null) => {
       setCameraBusy(true);
       setBusyHint('저장 중…');
       try {
         let reuseLocation: QuickCaptureLocation | null = initialLocation ?? null;
         const savedLocation = await saveQuickCapture({
           tempImageUri: firstUri,
+          takenAt: firstShotAt,
           captureForExport: captureStampForExport,
           reuseLocation: reuseLocation ?? undefined,
         });
@@ -486,7 +498,7 @@ export function CameraScreen({
         setInAppCameraMode('continuous');
       } catch (error) {
         handleCameraError(error);
-        openSaveModal(firstUri);
+        openSaveModal(firstUri, null, firstShotAt);
       } finally {
         setCameraBusy(false);
         setBusyHint(null);
@@ -568,6 +580,7 @@ export function CameraScreen({
         quality: STAMP_CAPTURE_JPEG_QUALITY,
         skipProcessing: false,
         shutterSound,
+        exif: true,
       });
       if (!photo?.uri) {
         if (seedHref) {
@@ -580,12 +593,15 @@ export function CameraScreen({
         setInAppCameraMode(null);
         setInAppCameraReady(false);
         previewHrefRef.current = null;
-        await handleCapturedUri(photo.uri, seedHref);
+        const shotAt = readShotEpochFromExif(photo.exif as Record<string, unknown> | null | undefined);
+        await handleCapturedUri(photo.uri, seedHref, shotAt);
         return;
       }
 
+      const shotAt = readShotEpochFromExif(photo.exif as Record<string, unknown> | null | undefined);
       const savedLocation = await saveQuickCapture({
         tempImageUri: photo.uri,
+        takenAt: shotAt,
         captureForExport: captureStampForExport,
         reuseLocation: reuseLocationRef.current ?? undefined,
         sourceUrl: seedHref || undefined,
@@ -635,10 +651,10 @@ export function CameraScreen({
     startLocationWarmup();
     let postCapturePending = false;
     try {
-      const uri = await takePhotoWithSystemCamera();
-      if (uri) {
+      const photo = await takePhotoWithSystemCamera();
+      if (photo?.uri) {
         postCapturePending = true;
-        await handleCapturedUri(uri);
+        await handleCapturedUri(photo.uri, null, photo.shotAt);
         return;
       }
       setAutoLaunch(false);
@@ -707,14 +723,16 @@ export function CameraScreen({
   const handleActionSave = useCallback(() => {
     const uri = pendingCaptureUri;
     const seed = saveSeedSourceUrl;
+    const shotAt = pendingShotAt;
     clearCaptureActionSheet();
     if (uri) {
-      openSaveModal(uri, seed);
+      openSaveModal(uri, seed, shotAt);
     }
-  }, [clearCaptureActionSheet, openSaveModal, pendingCaptureUri, saveSeedSourceUrl]);
+  }, [clearCaptureActionSheet, openSaveModal, pendingCaptureUri, pendingShotAt, saveSeedSourceUrl]);
 
   const handleActionContinuous = useCallback(() => {
     const uri = pendingCaptureUri;
+    const shotAt = pendingShotAt;
     const initialLocation =
       prefetchedLocation &&
       prefetchedLocation.latitude != null &&
@@ -733,14 +751,15 @@ export function CameraScreen({
     void (async () => {
       const mode = isWeb ? 'system' : await getContinuousCaptureCamera();
       if (mode === 'in_app') {
-        await startInAppContinuousCapture(uri, initialLocation);
+        await startInAppContinuousCapture(uri, initialLocation, shotAt);
         return;
       }
-      await runContinuousCaptureLoop(uri, initialLocation);
+      await runContinuousCaptureLoop(uri, initialLocation, shotAt);
     })();
   }, [
     clearCaptureActionSheet,
     pendingCaptureUri,
+    pendingShotAt,
     prefetchedLocation,
     isWeb,
     startInAppContinuousCapture,
@@ -792,7 +811,12 @@ export function CameraScreen({
           directOpenedRef.current = true;
           setAutoLaunch(false);
           setInAppCameraMode(null);
-          await handleCapturedUri(pending.assets[0].uri);
+          const asset = pending.assets[0];
+          await handleCapturedUri(
+            asset.uri,
+            null,
+            readShotEpochFromExif(asset.exif as Record<string, unknown> | null | undefined),
+          );
         }
       } finally {
         if (!cancelled) {
@@ -1153,6 +1177,7 @@ export function CameraScreen({
       <StampSaveModal
         visible={modalVisible}
         imageUri={capturedUri}
+        shotAt={capturedShotAt}
         captureStampForExport={captureStampForExport}
         prefetchedLocationSnapshot={prefetchedLocation}
         locationPrefetchLoading={locationPrefetchLoading}

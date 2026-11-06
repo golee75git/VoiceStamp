@@ -4586,3 +4586,11 @@ restore-empty-caption-lines.bat
 ```
 
 Restores caption and watermark text from `*.pre-empty-caption-lines/` (before a blank title, place, memo, or extra field was left out of the separate area and the watermark, and before a floor line was hidden when the place field was empty).
+
+## Watermark EXIF shot clock restore (2026-11-06)
+
+```bat
+restore-shot-clock.bat
+```
+
+Restores the watermark, save, and EXIF read path from `src.pre-shot-clock/` and deletes `src/services/shotClock.ts` (before the bottom-right `YYYY.MM.DD HH:mm` shutter time).

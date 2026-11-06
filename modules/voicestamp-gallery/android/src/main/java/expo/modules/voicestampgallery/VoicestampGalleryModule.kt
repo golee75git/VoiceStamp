@@ -86,6 +86,10 @@ class VoicestampGalleryModule : Module() {
       "file://${outFile.absolutePath}"
     }
 
+    AsyncFunction("readShotDateTime") { localUri: String ->
+      readShotDateTimeOrNull(localUri)
+    }
+
     AsyncFunction("embedExifFromSource") { captionUri: String, sourceUri: String?, latitude: Double?, longitude: Double? ->
       val captionPath = captionUri.removePrefix("file://")
       val captionFile = File(captionPath)
@@ -170,6 +174,49 @@ class VoicestampGalleryModule : Module() {
         resolver.delete(itemUri, null, null)
         throw error
       }
+    }
+  }
+
+  /** Shutter tag only. Missing files and odd paths return null. */
+  private fun readShotDateTimeOrNull(localUri: String): String? {
+    val trimmed = localUri.trim()
+    if (trimmed.isEmpty() || trimmed.contains("..") || trimmed.length > 1024) {
+      return null
+    }
+    val lower = trimmed.lowercase()
+    if (lower.startsWith("http://") || lower.startsWith("https://")) {
+      return null
+    }
+    if (
+      !trimmed.startsWith("file://") &&
+        !trimmed.startsWith("content://") &&
+        !trimmed.startsWith("/")
+    ) {
+      return null
+    }
+    return try {
+      val context = appContext.reactContext ?: return null
+      val sourceFile = materializeLocalFile(trimmed, context.cacheDir)
+      val createdTemp = sourceFile.name.startsWith("voicestamp-orient-src-")
+      try {
+        val exif = ExifInterface(sourceFile.absolutePath)
+        val raw =
+          exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+            ?: exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED)
+            ?: exif.getAttribute(ExifInterface.TAG_DATETIME)
+            ?: return null
+        val value = raw.trim()
+        if (value.length > 32 || !value.matches(Regex("^\\d{4}:\\d{2}:\\d{2}[ T]\\d{2}:\\d{2}"))) {
+          return null
+        }
+        value.take(19)
+      } finally {
+        if (createdTemp) {
+          sourceFile.delete()
+        }
+      }
+    } catch (_: Exception) {
+      null
     }
   }
 

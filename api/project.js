@@ -384,6 +384,14 @@ function presignPut({
   return 'https://' + HOST + canonicalUri + '?' + canonicalQuery + '&X-Amz-Signature=' + sig;
 }
 
+function shotEpochOrNull(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const t = Math.round(n);
+  if (t < Date.UTC(1979, 0, 1) || t > Date.UTC(2101, 0, 1)) return null;
+  return t;
+}
+
 function buildStampMeta(projectId, stampId, meta) {
   const rawMark = meta.uploadedByMark == null ? '' : String(meta.uploadedByMark);
   const uploadedByMark = rawMark.trim().replace(/\s+/g, ' ').slice(0, 40) || null;
@@ -408,6 +416,7 @@ function buildStampMeta(projectId, stampId, meta) {
     latitude: meta.latitude ?? null,
     longitude: meta.longitude ?? null,
     createdAt: meta.createdAt ?? Date.now(),
+    takenAt: shotEpochOrNull(meta.takenAt),
     localGroupName: meta.localGroupName ?? null,
     extra1: textOrNull(meta.extra1, 500),
     extra2: textOrNull(meta.extra2, 500),

@@ -280,6 +280,8 @@ type StampSaveModalProps = {
   allowLiveLocationFallback?: boolean;
   /** 앱 내 미리보기에서 잠근 http(s) QR. 저장 칸 초안. */
   capturedSourceUrl?: string | null;
+  /** EXIF shutter instant for a new photo. Edits keep the stored stamp value. */
+  shotAt?: number | null;
   onClose: () => void;
   onSaved: () => void;
   onTrashed?: (id: string) => void;
@@ -346,6 +348,7 @@ export function StampSaveModal({
   locationPrefetchFinished = false,
   allowLiveLocationFallback = true,
   capturedSourceUrl = null,
+  shotAt = null,
   onClose,
   onSaved,
   onTrashed,
@@ -2053,6 +2056,7 @@ export function StampSaveModal({
         extra3FieldLabel,
       },
       photoNotePad: serializePhotoNotePad(photoNoteItems),
+      takenAt: shotAt,
     });
     if (placeLabel?.trim()) {
       await setLastPlaceLabel(placeLabel);
@@ -2350,6 +2354,8 @@ export function StampSaveModal({
                     showDatetime={showDatetime}
                     showFooterDatetime={showFooterDatetime}
                     createdAt={isEdit && stamp ? stamp.createdAt : Date.now()}
+                    shotAt={isEdit && stamp ? stamp.takenAt ?? null : shotAt}
+                    qrSourceUrl={sourceUrl}
                     orgName={overlayOrgName}
                     footerPhrase={overlayFooterPhrase}
                     showOrgName={overlayShowOrgName}
@@ -2841,6 +2847,8 @@ export function StampSaveModal({
                   showDatetime={showDatetime}
                   showFooterDatetime={showFooterDatetime}
                   createdAt={isEdit && stamp ? stamp.createdAt : Date.now()}
+                  shotAt={isEdit && stamp ? stamp.takenAt ?? null : shotAt}
+                  qrSourceUrl={sourceUrl}
                   orgName={overlayOrgName}
                   footerPhrase={overlayFooterPhrase}
                   showOrgName={overlayShowOrgName}
